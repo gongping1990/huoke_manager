@@ -1,8 +1,8 @@
 import axios from '../http'
 
 const goods = {
-  listGoodsCourseByPage(data) {
-    return axios.get('/goods/listGoodsCourseByPage', {params: data})
+  courseGoodsList(data) {
+    return axios.get('/goods/listPage', {params: data})
   },
 
   // 获取课程详情

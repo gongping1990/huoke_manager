@@ -2,12 +2,12 @@ import axios from '../http'
 
 const common = {
   // 发送验证码
-  sendCode(data) {
-    return axios.get('/common/sendCode', {params: data})
+  sendCode(param) {
+    return axios.get('/common/sendCode', {params: param})
   },
-  // 上传图片
-  uploadPublicFile() {
-    return axios.post('/common/uploadPublicFile', data)
+  // 上传签名
+  uploadSign(param) {
+    return axios.post('/common/getTencentCosSign', param)
   }
 }
 

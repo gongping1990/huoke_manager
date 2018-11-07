@@ -2,9 +2,9 @@ import axios from "../http";
 import qs from "querystring";
 
 const user = {
-  // 微信登录
-  wxUserLogin(params) {
-    return axios.post("/user/wxUserLogin", qs.stringify(params));
+  // 获取用户信息
+  userList(params) {
+    return axios.get("/user/queryUser", {params});
   },
   // 手机登录
   loginWithPhone(data) {

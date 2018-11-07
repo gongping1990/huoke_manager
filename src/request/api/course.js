@@ -7,9 +7,9 @@ const course = {
         return axios.get('/course/category/listAllOn')
     },
 
-    //我的课程列表
+    //课程列表
     courseList () {
-      return axios.get('/course/queryBuyCourse')
+      return axios.get('/course/list')
     },
     // 获取课程学习进度
     getComplete(params) {

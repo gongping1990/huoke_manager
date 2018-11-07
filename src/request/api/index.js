@@ -7,6 +7,8 @@ import order from "./order";
 import wechat from "./wechat";
 import lesson from "./lesson";
 import giftpack from "./giftpack";
+import admin from "./admin";
+import coupon from "./coupon";
 
 
 export default {
@@ -18,5 +20,7 @@ export default {
   order,
   wechat,
   lesson,
-  giftpack
+  giftpack,
+  admin,
+  coupon
 }

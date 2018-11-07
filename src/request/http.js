@@ -1,31 +1,27 @@
 import axios from 'axios'
 import router from '../router'
 import store from '../store/index'
-import { Toast } from 'vant'
-import {isWeiXin, getBaseUrl} from '@/utils'
+import {Message} from 'iview'
+import {getBaseUrl} from '@/libs'
 
 /** 
  * 提示函数 
  * 禁止点击蒙层、显示一秒后关闭
  */
-const tip = msg => {    
-    Toast({        
-        message: msg,        
-        duration: 1000,        
-        forbidClick: true    
-    })
+const tip = msg => {
+  Message.warning(msg)
 }
 
 /** 
  * 显示登录页
  * 清楚用户本地缓存信息，并显示登录弹框
  */
-const toLogin = () => {
-    store.commit('CLEAR_USER_INFO')
-    if (router.history.current.name != 'user' && !isWeiXin()) {
-      store.commit('CHANGE_LOGIN_STATUS')
-    }
-}
+// const toLogin = () => {
+//     store.commit('CLEAR_USER_INFO')
+//     if (router.history.current.name != 'user' && !isWeiXin()) {
+//       store.commit('CHANGE_LOGIN_STATUS')
+//     }
+// }
 
 /** 
  * 请求失败后的错误统一处理 
@@ -44,7 +40,7 @@ const errorHandle = (status, err) => {
             break;
         // 404请求不存在
         case 404:
-            tip('请求的资源不存在'); 
+            tip('请求的资源不存在');
             break;
         case 500:
             tip('网络连接异常')
@@ -73,7 +69,7 @@ var instance = axios.create({
 instance.interceptors.request.use(    
     config => {  
         if(config.url.indexOf('insertOrUpdate') == -1) {
-            store.commit('SET_LOADING', true)
+            // store.commit('SET_LOADING', true)
         }
         return config;    
     },    
@@ -83,14 +79,14 @@ instance.interceptors.request.use(
 instance.interceptors.response.use(    
     // 请求成功
     res => {
-        store.commit('SET_LOADING', false)
+        // store.commit('SET_LOADING', false)
         // 服务器请求成功，自定义code异常处理
         errorHandle(res.data.code, res.data.msg)
         return res.data.code === 200 ? Promise.resolve(res) : Promise.reject(res.data.msg)
     },    
     // 请求失败
     error => {
-        store.commit('SET_LOADING', false)
+        // store.commit('SET_LOADING', false)
         const { response } = error;
         if (response) {
             // 请求已发出，但是不在2xx的范围 
