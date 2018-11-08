@@ -111,7 +111,7 @@
             width: 190,
             align: 'center',
             render: (h, params) => {
-              if (params.row.status == '1' && !params.row.releaseType) {
+              if (params.row.status != '2' && !params.row.releaseType) {
                 return h('div', [
                   h('Button', {
                     props: {
