@@ -68,8 +68,8 @@
             title: '面额',
             render: (h, params) => {
               return h("div", [
-                h("div", params.row.denomination),
-                h("div", params.row.useCondition ? `满减${params.row.moneyOff}` : '指定课程无门槛使用')
+                h("div", params.row.denomination/100),
+                h("div", params.row.useCondition ? `满减${params.row.moneyOff}` : '全部课程通用')
               ]);
             }
           },
