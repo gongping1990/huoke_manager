@@ -8,7 +8,8 @@
           <Input v-model="couponInfo.name" placeholder="请输入优惠券名称"></Input>
         </Form-item>
         <Form-item label="优惠券面额" prop="denomination">
-          <Input-number style="width: 100%;" :min="0" :step="1" v-model="couponInfo.denomination"  placeholder="请输入优惠券面额"></Input-number>
+          <Input-number style="width: 100%;" :min="0" :step="1" v-model="couponInfo.denomination"
+                        placeholder="请输入优惠券面额（元）"></Input-number>
           <span class="-c-tips">* 精确到小数点后2位，如99.99</span>
         </Form-item>
         <Form-item label="使用条件" prop="useCondition" @on-change="changeUseCondition" class="ivu-form-item-required">
@@ -18,7 +19,8 @@
           </Radio-group>
         </Form-item>
         <Form-item label="满减金额" prop="moneyOff" v-if="couponInfo.useCondition">
-          <Input-number style="width: 100%;" :max="1000000" :min="0" :step="1" v-model="couponInfo.moneyOff"  placeholder="满减金额（元）"></Input-number>
+          <Input-number style="width: 100%;" :max="1000000" :min="0" :step="1" v-model="couponInfo.moneyOff"
+                        placeholder="满减金额（元）"></Input-number>
           <span class="-c-tips">* 精确到小数点后2位，如99.99</span>
         </Form-item>
         <Form-item label="有效期" class="ivu-form-item-required">
@@ -39,11 +41,13 @@
           </Row>
         </Form-item>
         <Form-item label="发行量" prop="total">
-          <Input-number style="width: 100%;" :max="1000000" :min="1" :step="1" v-model="couponInfo.total"  placeholder="请输入发行量"></Input-number>
+          <Input-number style="width: 100%;" :max="1000000" :min="1" :step="1" v-model="couponInfo.total"
+                        placeholder="请输入发行量"></Input-number>
           <span class="-c-tips">* 添加优惠券后，发行量只能增加，不能减少，总共不超过1,000,000张</span>
         </Form-item>
         <Form-item label="每人限领">
-          <Input-number style="width: 100%;"  :max="10" :min="1" :step="1" v-model="couponInfo.getTimePer"  placeholder="限领张数"></Input-number>
+          <Input-number style="width: 100%;" :max="10" :min="1" :step="1" v-model="couponInfo.getTimePer"
+                        placeholder="限领张数"></Input-number>
         </Form-item>
       </Form>
     </Card>
@@ -114,20 +118,25 @@
         </Form-item>
         <Form-item label="领取海报" prop="poster" v-if="!couponInfo.releaseType">
           <Upload
-            action=" "
-            :before-upload="beforeUpload">
+            v-if="!couponInfo.poster"
+            :action="baseUrl"
+            :show-upload-list="false"
+            :max-size="1024"
+            :on-success="handleSuccess"
+            :on-exceeded-size="handleSize"
+            :on-error="handleErr">
             <div class="-c-course-icon">
               <span>+</span>
               <span>上传海报</span>
             </div>
           </Upload>
-          <div class="-c-course-wrap" v-if="couponInfo.poster">
+          <div class="-c-course-wrap -upload" v-if="couponInfo.poster">
             <div class="-c-course-item">
               <img :src="couponInfo.poster">
-              <div class="-i-text">{{couponInfo.poster}}</div>
-              <div class="-i-del" @click="delCourse(item,index)">删除海报</div>
+              <div class="-i-del" @click="delPoster()">删除海报</div>
             </div>
           </div>
+          <span class="-c-tips" v-else>* 图片大小1M以内</span>
         </Form-item>
         <Form-item label="选择用户" prop="poster" v-if="couponInfo.releaseType">
           <Button @click="openUserModal">+请添加用户(已选 {{couponInfo.couponUsers.length}} 人)</Button>
@@ -153,6 +162,7 @@
   import Loading from "@/components/loading";
   import CheckCourse from "@/components/checkCourse";
   import UserSelection from "@/components/userSelection";
+  import { getBaseUrl } from "@/libs/index";
 
   export default {
     name: 'couponEdit',
@@ -170,6 +180,7 @@
         useEndTime: '',
         getStartTime: '',
         getEndTime: '',
+        baseUrl: `${getBaseUrl()}/common/uploadPublicFile`,
         couponInfo: {
           name: '', // 名称
           denomination: null, // 面额
@@ -232,6 +243,21 @@
           name: 'coupon'
         })
       },
+      handleSuccess(res,file) {
+        if (res.code === 200) {
+          this.$Message.success('上传成功')
+          this.couponInfo.poster = res.resultData.url
+        }
+      },
+      handleSize () {
+        this.$Message.info('文件超过限制')
+      },
+      delPoster () {
+        this.couponInfo.poster = ''
+      },
+      handleErr () {
+        this.$Message.error('上传失败，请重新上传')
+      },
       getInfo() {
         this.isFetching = true
         this.$api.coupon.couponInfo(this.couponId)
@@ -239,8 +265,8 @@
             response => {
               this.couponInfo = response.data.resultData;
               this.courseList = this.couponInfo.couponCourseObject
-              this.couponInfo.denomination = +(this.couponInfo.denomination/100);
-              this.couponInfo.moneyOff = this.couponInfo.moneyOff != null && +(this.couponInfo.moneyOff/100);
+              this.couponInfo.denomination = +(this.couponInfo.denomination / 100);
+              this.couponInfo.moneyOff = this.couponInfo.moneyOff != null && +(this.couponInfo.moneyOff / 100);
               this.useStartTime = new Date(this.couponInfo.useStartTime)
               this.useEndTime = new Date(this.couponInfo.useEndTime)
               this.getStartTime = this.couponInfo.releaseType == '0' ? new Date(this.couponInfo.getStartTime) : ''
@@ -285,8 +311,8 @@
         this.couponInfo.getStartTime = this.couponInfo.releaseType == '0' ? new Date(this.getStartTime).getTime() : ''
         this.couponInfo.getEndTime = this.couponInfo.releaseType == '0' ? new Date(this.getEndTime).getTime() + 24 * 60 * 60 * 1000 - 1 : ''
 
-        this.couponInfo.denomination = this.couponInfo.denomination*100
-        this.couponInfo.moneyOff = this.couponInfo.moneyOff!=null && this.couponInfo.moneyOff*100
+        this.couponInfo.denomination = this.couponInfo.denomination * 100
+        this.couponInfo.moneyOff = this.couponInfo.moneyOff != null && this.couponInfo.moneyOff * 100
         this.isSending = true
 
         this.$api.coupon.editCoupon(this.couponInfo)
@@ -302,50 +328,6 @@
           .finally(() => {
             this.isSending = false
           })
-      },
-
-      beforeUpload (param) {
-        let _self = this
-        let file = param;
-        let nowDate = new Date();
-        let file_key =`${nowDate.getFullYear()}/${nowDate.getMonth()}/${nowDate.getDate()}/${file.name}`
-
-        this.$cos.putObject(
-          {
-            Bucket: "huoke-public-1254282420",
-            Region: "ap-chengdu",
-            Key: file_key, //文件名必须
-            StorageClass: "STANDARD",
-            Body: file, // 上传文件对象
-            onProgress: function(progressData) {
-              var text =
-                "完成" +
-                (progressData.percent * 100).toFixed(1) +
-                "%；速度" +
-                Math.floor(progressData.speed / 1024) +
-                "k/s" +
-                "总大小：" +
-                (progressData.total / (1024 * 1024)).toFixed(1) +
-                "m";
-              console.log("上传进度", text); //上传成功的返回值
-              param.file.percent = progressData.percent * 100;
-
-              console.log("param.file.percent==>", param.file.percent);
-              param.onProgress(param.file);
-            }
-          },
-          function(err, data) {
-            if (err) {
-              console.error("上传异常", err);
-            }
-            if (data) {
-              console.log("正常上传", data); //上传失败的返回值
-              _self.couponInfo.poster = "//pub.file.k12.vip/" + file_key;
-            }
-          }
-        );
-
-        return true
       }
     }
   };
@@ -371,9 +353,9 @@
       cursor: pointer;
       text-align: center;
       color: #e9e9e9;
-      width: 200px;
-      height: 100px;
-      line-height: 100px;
+      width: 140px;
+      height: 70px;
+      line-height: 70px;
       border: 2px dashed #e9e9e9;
 
       span {
@@ -417,5 +399,14 @@
         }
       }
     }
+
+    .-upload{
+      margin: 0;
+
+      .-c-course-item{
+        margin: 0;
+      }
+    }
+
   }
 </style>

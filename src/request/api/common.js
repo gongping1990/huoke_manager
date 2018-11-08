@@ -1,13 +1,13 @@
 import axios from '../http'
 
 const common = {
-  // 发送验证码
-  sendCode(param) {
-    return axios.get('/common/sendCode', {params: param})
+  // 上传图片公有
+  uploadPublic(param) {
+    return axios.post('/common/uploadPublicFile', param)
   },
-  // 上传签名
-  uploadSign(param) {
-    return axios.post('/common/getTencentCosSign', param)
+  // 上传视频私有
+  uploadPrivate(param) {
+    return axios.post('/common/uploadPrivateFile', param)
   }
 }
 
