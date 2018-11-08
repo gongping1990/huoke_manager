@@ -16,7 +16,7 @@
     props: {
       userAvator: {
         type: String,
-        default: localStorage.userHead
+        default: 'http://pub.file.k12.vip/avatar/parenting.png'
       }
     },
     methods: {
@@ -27,6 +27,7 @@
               .then(
                 res => {
                   if (res.data.code == '200') {
+                    localStorage.clear()
                     this.$Message.error('退出成功')
                     this.$router.push('/login')
                   }

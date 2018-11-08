@@ -4,10 +4,10 @@
       <p slot="title">基础信息</p>
       <Form class="-c-form" ref="couponInfo" :model="couponInfo" :label-width="100"
             label-position="right">
-        <Form-item label="优惠券名称" prop="name">
+        <Form-item label="优惠券名称" prop="name" class="ivu-form-item-required">
           <Input v-model="couponInfo.name" placeholder="请输入优惠券名称"></Input>
         </Form-item>
-        <Form-item label="优惠券面额" prop="denomination">
+        <Form-item label="优惠券面额" prop="denomination" class="ivu-form-item-required">
           <Input-number style="width: 100%;" :min="0" :step="1" v-model="couponInfo.denomination"
                         placeholder="请输入优惠券面额（元）"></Input-number>
           <span class="-c-tips">* 精确到小数点后2位，如99.99</span>
@@ -40,15 +40,7 @@
             </Col>
           </Row>
         </Form-item>
-        <Form-item label="发行量" prop="total">
-          <Input-number style="width: 100%;" :max="1000000" :min="1" :step="1" v-model="couponInfo.total"
-                        placeholder="请输入发行量"></Input-number>
-          <span class="-c-tips">* 添加优惠券后，发行量只能增加，不能减少，总共不超过1,000,000张</span>
-        </Form-item>
-        <Form-item label="每人限领">
-          <Input-number style="width: 100%;" :max="10" :min="1" :step="1" v-model="couponInfo.getTimePer"
-                        placeholder="限领张数"></Input-number>
-        </Form-item>
+
       </Form>
     </Card>
 
@@ -89,6 +81,15 @@
             <Radio :label=0>用户领取</Radio>
             <Radio :label=1>主动推送</Radio>
           </Radio-group>
+        </Form-item>
+        <Form-item label="发行量" prop="total" v-if="!couponInfo.releaseType" class="ivu-form-item-required">
+          <Input-number style="width: 100%;" :max="1000000" :min="1" :step="1" v-model="couponInfo.total"
+                        placeholder="请输入发行量"></Input-number>
+          <span class="-c-tips">* 添加优惠券后，发行量只能增加，不能减少，总共不超过1,000,000张</span>
+        </Form-item>
+        <Form-item label="每人限领" v-if="!couponInfo.releaseType" class="ivu-form-item-required">
+          <Input-number style="width: 100%;" :max="10" :min="1" :step="1" v-model="couponInfo.getTimePer"
+                        placeholder="限领张数"></Input-number>
         </Form-item>
         <Form-item label="领取时间" v-if="!couponInfo.releaseType" class="ivu-form-item-required">
           <Row>
@@ -269,8 +270,8 @@
               this.couponInfo.moneyOff = this.couponInfo.moneyOff != null && +(this.couponInfo.moneyOff / 100);
               this.useStartTime = new Date(this.couponInfo.useStartTime)
               this.useEndTime = new Date(this.couponInfo.useEndTime)
-              this.getStartTime = this.couponInfo.releaseType == '0' ? new Date(this.couponInfo.getStartTime) : ''
-              this.getEndTime = this.couponInfo.releaseType == '0' ? new Date(this.couponInfo.getEndTime) : ''
+              this.getStartTime = !this.couponInfo.releaseType ? new Date(this.couponInfo.getStartTime) : ''
+              this.getEndTime = !this.couponInfo.releaseType ? new Date(this.couponInfo.getEndTime) : ''
             })
           .finally(() => {
             this.isFetching = false
@@ -283,9 +284,9 @@
           return this.$Message.error('请输入优惠券名称')
         } else if (!this.couponInfo.denomination) {
           return this.$Message.error('请输入优惠券面额')
-        } else if (this.couponInfo.useCondition == '1' && !this.couponInfo.moneyOff) {
+        } else if (this.couponInfo.useCondition && !this.couponInfo.moneyOff) {
           return this.$Message.error('请输入满减金额')
-        } else if (this.couponInfo.useScope == '1') {
+        } else if (this.couponInfo.useScope) {
           if (!this.courseList.length) {
             return this.$Message.error('请选择指定课程')
           } else {
@@ -294,15 +295,15 @@
               this.couponInfo.couponCourses.push(item.id)
             }
           }
-        } else if (!this.couponInfo.total) {
+        } else if (!this.couponInfo.releaseType && !this.couponInfo.total) {
           return this.$Message.error('请输入发行量')
-        } else if (!this.couponInfo.getTimePer) {
+        } else if (!this.couponInfo.releaseType && !this.couponInfo.getTimePer) {
           return this.$Message.error('请输入每人限领张数')
         } else if (!this.useStartTime || !this.useEndTime) {
           return this.$Message.error('请选择有效期')
-        } else if (this.couponInfo.releaseType == '0' && (!this.getStartTime || !this.getEndTime)) {
+        } else if (!this.couponInfo.releaseType && (!this.getStartTime || !this.getEndTime)) {
           return this.$Message.error('请选择领用时间')
-        } else if (this.couponInfo.releaseType == '1' && !this.couponInfo.couponUsers.length) {
+        } else if (this.couponInfo.releaseType && !this.couponInfo.couponUsers.length) {
           return this.$Message.error('请选择推送用户')
         }
 
@@ -312,7 +313,8 @@
         this.couponInfo.getEndTime = this.couponInfo.releaseType == '0' ? new Date(this.getEndTime).getTime() + 24 * 60 * 60 * 1000 - 1 : ''
 
         this.couponInfo.denomination = this.couponInfo.denomination * 100
-        this.couponInfo.moneyOff = this.couponInfo.moneyOff != null && this.couponInfo.moneyOff * 100
+
+        this.couponInfo.moneyOff = this.couponInfo.moneyOff != null  ? this.couponInfo.moneyOff * 100 : null
         this.isSending = true
 
         this.$api.coupon.editCoupon(this.couponInfo)

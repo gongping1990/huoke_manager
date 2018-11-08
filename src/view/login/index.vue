@@ -68,15 +68,15 @@
     },
     methods: {
       handleSubmit() {
+        localStorage.setItem('isLoginSuccess',false)
         this.$refs.loginForm.validate(vaild => {
           if (vaild) {
             this.$api.admin.loginAdmin(this.form)
               .then(res => {
                 if (res.data.code == 200) {
-                  // this.$store.commit("login", this.loginForm.username);
-                  // this.$store.commit("setAdminInfo", {});
-                  this.$Message.success('登录成功');
                   this.$router.push("/home");
+                  this.$Message.success('登录成功');
+                  localStorage.isLoginSuccess = true
                 }
               })
           }

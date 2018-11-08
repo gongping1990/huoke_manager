@@ -111,7 +111,7 @@
             width: 190,
             align: 'center',
             render: (h, params) => {
-              if (true || params.row.status == '1' && !params.row.releaseType) {
+              if (params.row.status == '1' && !params.row.releaseType) {
                 return h('div', [
                   h('Button', {
                     props: {
@@ -219,9 +219,8 @@
           this.isFetching = false
         })
       },
-      copyUrl() {
-        let url = copyUrl;
-        this.copy_url = url;
+      copyUrl(param) {
+        this.copy_url = param.shareLink;
         setTimeout(() => {
           this.$refs.copyInput.select();
           document.execCommand("copy");

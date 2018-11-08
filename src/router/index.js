@@ -4,9 +4,20 @@ import {routers} from './router'
 
 Vue.use(Router)
 
-const RouterConfig = {
+const RouterConfig = new Router({
   // mode: 'history',
   routes: routers
-};
+});
 
-export default new Router(RouterConfig);
+RouterConfig.beforeEach((to, from, next) => {
+
+  if (!localStorage.isLoginSuccess && to.path != '/login') {
+    next({
+      path: '/login'
+    })
+  } else {
+    next()
+  }
+});
+
+export default RouterConfig

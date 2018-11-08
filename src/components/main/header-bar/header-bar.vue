@@ -1,6 +1,6 @@
 <template>
   <div class="header-bar">
-    <custom-bread-crumb show-icon style="margin-left: 30px;" :list="breadCrumbList"></custom-bread-crumb>
+    <custom-bread-crumb show-icon></custom-bread-crumb>
     <user class="custom-content-con"></user>
   </div>
 </template>

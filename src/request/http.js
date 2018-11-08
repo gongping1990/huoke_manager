@@ -2,7 +2,7 @@ import axios from 'axios'
 import router from '../router'
 import store from '../store/index'
 import {Message} from 'iview'
-import {getBaseUrl} from '@/libs'
+import {getBaseUrl} from '@/libs/index'
 
 /** 
  * 提示函数 
@@ -16,12 +16,13 @@ const tip = msg => {
  * 显示登录页
  * 清楚用户本地缓存信息，并显示登录弹框
  */
-// const toLogin = () => {
-//     store.commit('CLEAR_USER_INFO')
-//     if (router.history.current.name != 'user' && !isWeiXin()) {
-//       store.commit('CHANGE_LOGIN_STATUS')
-//     }
-// }
+const toLogin = () => {
+    // store.commit('CLEAR_USER_INFO')
+    // if (router.history.current.name != 'user' && !isWeiXin()) {
+    //   store.commit('CHANGE_LOGIN_STATUS')
+    // }
+  router.push('/login')
+}
 
 /** 
  * 请求失败后的错误统一处理 

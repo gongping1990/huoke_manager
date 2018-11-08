@@ -41,7 +41,7 @@ export const otherRouter = {
     {
       path: 'couponEdit',
       name: 'couponEdit',
-      title: '编辑优惠券',
+      meta: ['营销管理','优惠券','编辑优惠券'],
       component: () => import("@/view/marketingMangement/coupon/couponEdit")
     }
   ]
@@ -57,9 +57,7 @@ export const appRouter = [
       {
         path: '/coupon',
         name: 'coupon',
-        meta: {
-          title: '优惠券'
-        },
+        meta: ['营销管理','优惠券'],
         component: () => import('@/view/marketingMangement/coupon/couponList')
       }
     ]

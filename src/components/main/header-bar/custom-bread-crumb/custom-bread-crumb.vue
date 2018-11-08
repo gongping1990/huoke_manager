@@ -1,47 +1,33 @@
 <template>
   <div class="custom-bread-crumb">
-    <Breadcrumb :style="{fontSize: `${fontSize}px`}">
-      <BreadcrumbItem v-for="item in list" :to="item.to" :key="`bread-crumb-${item.name}`">
-        <!--<common-icon style="margin-right: 4px;" :type="item.icon || ''"/>-->
-        {{ showTitle(item) }}
-      </BreadcrumbItem>
+    <Breadcrumb>
+      <Breadcrumb-item :to="'/'" v-if="isHome">首页</Breadcrumb-item>
+      <Breadcrumb-item v-for="(item, index) of breadcrumbList" :key="index">{{item}}</Breadcrumb-item>
     </Breadcrumb>
   </div>
 </template>
 <script>
-import { showTitle } from '@/libs/util'
-export default {
-  name: 'customBreadCrumb',
-  props: {
-    list: {
-      type: Array,
-      default: () => []
+  export default {
+    name: 'customBreadCrumb',
+    computed: {
+      breadcrumbList() {
+        return this.$route.meta
+      },
+      isHome() {
+        return this.$route.path != '/home'
+      }
     },
-    fontSize: {
-      type: Number,
-      default: 14
+    mounted() {
+      console.log(this.$route)
     },
-    showIcon: {
-      type: Boolean,
-      default: false
-    }
-  },
-  methods: {
-    showTitle (item) {
-      return showTitle(item, this)
-    },
-    isCustomIcon (iconName) {
-      return iconName.indexOf('_') === 0
-    },
-    getCustomIconName (iconName) {
-      return iconName.slice(1)
+    methods: {
     }
   }
-}
 </script>
 <style lang="less">
-  .custom-bread-crumb{
+  .custom-bread-crumb {
     display: inline-block;
     vertical-align: top;
+    float: left;
   }
 </style>
