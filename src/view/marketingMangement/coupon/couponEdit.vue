@@ -97,14 +97,14 @@
             <Col span="8">
               <Form-item prop="date">
                 <Date-picker :disabled="isEdit" style="width: 100%" type="date" placeholder="选择开始日期"
-                             v-model="getStartTime"></Date-picker>
+                             v-model="getStartTime" :options="dateStartOption"></Date-picker>
               </Form-item>
             </Col>
             <Col span="1" style="text-align: center">-</Col>
             <Col span="8">
               <Form-item prop="time">
                 <Date-picker :disabled="isEdit" style="width: 100%" type="date" placeholder="选择结束日期"
-                             v-model="getEndTime"></Date-picker>
+                             v-model="getEndTime" :options="dateStartOption"></Date-picker>
               </Form-item>
             </Col>
           </Row>
@@ -188,7 +188,7 @@
         baseUrl: `${getBaseUrl()}/common/uploadPublicFile`,
         dateStartOption: {
           disabledDate (date) {
-            return date && date.valueOf() < Date.now() - 86400000;
+            return date && (new Date(date).getTime() <= new Date().getTime()-24*3600*1000);
           }
         },
         dateEndOption: {
@@ -218,8 +218,12 @@
       }
     },
     watch: {
-      'couponInfo.useStartTime' (_new,_old) {
-        console.log(_new,_old)
+      'useStartTime' (_new,_old) {
+        this.dateEndOption = {
+          disabledDate (date) {
+            return date && date.valueOf() < new Date(_new).getTime();
+          }
+        }
       }
     },
     computed: {
