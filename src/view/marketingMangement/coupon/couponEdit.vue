@@ -142,7 +142,7 @@
           <span class="-c-tips" v-else>* 图片大小1M以内</span>
         </Form-item>
         <Form-item label="选择用户" prop="poster" v-if="couponInfo.releaseType">
-          <Button @click="openUserModal">+请添加用户(已选 {{couponInfo.couponUsers.length}} 人)</Button>
+          <Button @click="openUserModal">+请添加用户( {{isCheckAllPeople ? '已选择全部用户' : `已选 ${couponInfo.couponUsers.length} 人`}} )</Button>
           <div v-if="isShowUserSelection">
             <user-selection ref="childMethod"
                             @close="closeUserModal"
@@ -185,6 +185,7 @@
         getEndTime: '',
         oldTotal: '',
         oldCourse: '',
+        isCheckAllPeople: false,
         baseUrl: `${getBaseUrl()}/common/uploadPublicFile`,
         dateStartOption: {
           disabledDate (date) {
@@ -261,7 +262,11 @@
       },
       submitUserSelection(params) {
         this.isShowUserSelection = false
-        this.couponInfo.couponUsers = params.userIds
+        if(params.condition == '1') {
+          this.isCheckAllPeople = true
+        } else {
+          this.couponInfo.couponUsers = params.userIds
+        }
       },
       changeUseScope() {
         if (!this.couponInfo.useScope) {
