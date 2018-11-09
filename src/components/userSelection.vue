@@ -1,9 +1,9 @@
 <template>
-  <Modal top="6vh" @close="closeModal" :title="title" v-model="isAddOpenModal" width="40%">
+  <Modal top="6vh" @close="closeModal" :title="otherInfo.title" v-model="isAddOpenModal" width="40%">
     <Row class="p-user">
-      <Col :span="type != 3 ? 16 : 24">
+      <Col :span="otherInfo.type != 3 ? 16 : 24">
         <Card class="-card-left">
-          <p v-if="type != 3" slot="title">接收用户</p>
+          <p v-if="otherInfo.type != 3" slot="title">接收用户</p>
 
           <div class="-left-user">
             <div class="-user-left">
@@ -84,7 +84,7 @@
           </div>
         </Card>
       </Col>
-      <Col :span="8" v-if="type != 3">
+      <Col :span="8" v-if="otherInfo.type != 3">
         <Card class="-card-right-top">
           <div slot="title">
             <span>消息内容</span>
@@ -148,7 +148,7 @@
   export default {
     name: 'userSelection',
     components: {Loading},
-    props: ['title', 'type', 'templateId', 'userCheckList'],
+    props: ['title', 'type', 'templateId', 'userCheckList','otherInfo'],
     data() {
       return {
         search: {
@@ -165,7 +165,7 @@
           page: 1,
           pageSize: 10
         },
-        checkAll: false, // 是否全选
+        checkAll: this.otherInfo.isCheckAllPeople, // 是否全选
         isFetching: false, // 是否全选
         isAddOpenModal: false,
         isShowSearch: false,
@@ -196,7 +196,7 @@
       }
     },
     mounted() {
-      if (this.userCheckList.length) {
+      if (this.userCheckList.length && !this.checkAll) {
         this.lists = this.$store.state.userStorageList
         this.addStorage = this.userCheckList
       }
