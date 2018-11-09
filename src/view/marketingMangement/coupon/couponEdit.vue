@@ -28,14 +28,14 @@
             <Col span="8">
               <Form-item prop="date">
                 <Date-picker style="width: 100%" type="date" placeholder="选择开始日期"
-                             v-model="useStartTime" :disabled="isEdit"></Date-picker>
+                             v-model="useStartTime" :disabled="isEdit" :options="dateStartOption"></Date-picker>
               </Form-item>
             </Col>
             <Col span="1" style="text-align: center">-</Col>
             <Col span="8">
               <Form-item prop="time">
                 <Date-picker style="width: 100%" type="date" placeholder="选择结束日期"
-                             v-model="useEndTime" :disabled="isEdit"></Date-picker>
+                             v-model="useEndTime" :disabled="isEdit" :options="dateEndOption"></Date-picker>
               </Form-item>
             </Col>
           </Row>
@@ -52,6 +52,7 @@
             <Radio :label=0>全部课程通用</Radio>
             <Radio :label=1>指定课程可用</Radio>
           </Radio-group>
+          <div class="-c-tips">* 添加优惠券后，使用范围只能增加，不能减少</div>
         </Form-item>
         <Form-item label="选择课程" v-if="couponInfo.useScope">
           <div class="-c-course-icon" @click="isShowCourseModal=true">
@@ -110,12 +111,12 @@
         </Form-item>
         <Form-item label="是否在课程领取" prop="getInCourse" v-if="!couponInfo.releaseType">
           <Radio-group v-model="couponInfo.getInCourse">
-            <Radio :label=1>是</Radio>
-            <Radio :label=0>否</Radio>
+            <Radio :label=1 :disabled="isEdit">是</Radio>
+            <Radio :label=0 :disabled="isEdit">否</Radio>
           </Radio-group>
         </Form-item>
         <Form-item label="领取摘要" prop="getAbstract" v-if="!couponInfo.releaseType">
-          <Input v-model="couponInfo.getAbstract" placeholder="请输入领取摘要"></Input>
+          <Input v-model="couponInfo.getAbstract" placeholder="请输入领取摘要" :disabled="isEdit"></Input>
         </Form-item>
         <Form-item label="领取海报" prop="poster" v-if="!couponInfo.releaseType">
           <Upload
@@ -123,6 +124,7 @@
             :action="baseUrl"
             :show-upload-list="false"
             :max-size="1024"
+            :before-upload="beforeUpload"
             :on-success="handleSuccess"
             :on-exceeded-size="handleSize"
             :on-error="handleErr">
@@ -134,7 +136,7 @@
           <div class="-c-course-wrap -upload" v-if="couponInfo.poster">
             <div class="-c-course-item">
               <img :src="couponInfo.poster">
-              <div class="-i-del" @click="delPoster()">删除海报</div>
+              <div class="-i-del" @click="delPoster()" v-if="!isEdit">删除海报</div>
             </div>
           </div>
           <span class="-c-tips" v-else>* 图片大小1M以内</span>
@@ -184,6 +186,16 @@
         oldTotal: '',
         oldCourse: '',
         baseUrl: `${getBaseUrl()}/common/uploadPublicFile`,
+        dateStartOption: {
+          disabledDate (date) {
+            return date && date.valueOf() < Date.now() - 86400000;
+          }
+        },
+        dateEndOption: {
+          disabledDate (date) {
+            return date && date.valueOf() < Date.now() - 86400000;
+          }
+        },
         couponInfo: {
           name: '', // 名称
           denomination: null, // 面额
@@ -203,6 +215,11 @@
           getAbstract: '', // 领取摘要
           poster: '' // 海报连接
         }
+      }
+    },
+    watch: {
+      'couponInfo.useStartTime' (_new,_old) {
+        console.log(_new,_old)
       }
     },
     computed: {
@@ -269,6 +286,9 @@
       },
       handleSize() {
         this.$Message.info('文件超过限制')
+      },
+      beforeUpload () {
+        return !this.isEdit
       },
       delPoster() {
         this.couponInfo.poster = ''
