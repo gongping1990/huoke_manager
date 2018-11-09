@@ -279,6 +279,7 @@
       },
       handleSubmit() {
         if (this.isSending) return
+        this.couponInfo.couponCourses = []
 
         if (!this.couponInfo.name) {
           return this.$Message.error('请输入优惠券名称')
@@ -286,15 +287,8 @@
           return this.$Message.error('请输入优惠券面额')
         } else if (this.couponInfo.useCondition && !this.couponInfo.moneyOff) {
           return this.$Message.error('请输入满减金额')
-        } else if (this.couponInfo.useScope) {
-          if (!this.courseList.length) {
-            return this.$Message.error('请选择指定课程')
-          } else {
-            this.couponInfo.couponCourses = []
-            for (let item of this.courseList) {
-              this.couponInfo.couponCourses.push(item.id)
-            }
-          }
+        } else if (this.couponInfo.useScope && !this.courseList.length) {
+          return this.$Message.error('请选择指定课程')
         } else if (!this.couponInfo.releaseType && !this.couponInfo.total) {
           return this.$Message.error('请输入发行量')
         } else if (!this.couponInfo.releaseType && !this.couponInfo.getTimePer) {
@@ -307,10 +301,16 @@
           return this.$Message.error('请选择推送用户')
         }
 
+        if(this.courseList.length) {
+          for (let item of this.courseList) {
+            this.couponInfo.couponCourses.push(item.id)
+          }
+        }
+
         this.couponInfo.useStartTime = new Date(this.useStartTime).getTime()
         this.couponInfo.useEndTime = new Date(this.useEndTime).getTime() + 24 * 60 * 60 * 1000 - 1
-        this.couponInfo.getStartTime = this.couponInfo.releaseType == '0' ? new Date(this.getStartTime).getTime() : ''
-        this.couponInfo.getEndTime = this.couponInfo.releaseType == '0' ? new Date(this.getEndTime).getTime() + 24 * 60 * 60 * 1000 - 1 : ''
+        this.couponInfo.getStartTime = !this.couponInfo.releaseType ? new Date(this.getStartTime).getTime() : ''
+        this.couponInfo.getEndTime = !this.couponInfo.releaseType ? new Date(this.getEndTime).getTime() + 24 * 60 * 60 * 1000 - 1 : ''
 
         this.couponInfo.denomination = this.couponInfo.denomination * 100
 
