@@ -283,7 +283,7 @@
 
         if (!this.couponInfo.name) {
           return this.$Message.error('请输入优惠券名称')
-        } else if (this.couponInfo.name.length > 2) {
+        } else if (this.couponInfo.name.length > 25) {
           return this.$Message.error('优惠券名称不超过25个字')
         } else if (!this.couponInfo.denomination) {
           return this.$Message.error('请输入优惠券面额')
