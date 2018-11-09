@@ -283,6 +283,8 @@
 
         if (!this.couponInfo.name) {
           return this.$Message.error('请输入优惠券名称')
+        } else if (this.couponInfo.name.length > 2) {
+          return this.$Message.error('优惠券名称不超过25个字')
         } else if (!this.couponInfo.denomination) {
           return this.$Message.error('请输入优惠券面额')
         } else if (this.couponInfo.useCondition && !this.couponInfo.moneyOff) {
@@ -308,9 +310,9 @@
         }
 
         this.couponInfo.useStartTime = new Date(this.useStartTime).getTime()
-        this.couponInfo.useEndTime = new Date(this.useEndTime).getTime() + 24 * 60 * 60 * 1000 - 1
+        this.couponInfo.useEndTime = new Date(this.useEndTime).getTime()
         this.couponInfo.getStartTime = !this.couponInfo.releaseType ? new Date(this.getStartTime).getTime() : ''
-        this.couponInfo.getEndTime = !this.couponInfo.releaseType ? new Date(this.getEndTime).getTime() + 24 * 60 * 60 * 1000 - 1 : ''
+        this.couponInfo.getEndTime = !this.couponInfo.releaseType ? new Date(this.getEndTime).getTime() : ''
 
         this.couponInfo.denomination = this.couponInfo.denomination * 100
 
