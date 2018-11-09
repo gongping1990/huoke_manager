@@ -214,7 +214,7 @@
           releaseType: 0, // 推送方式
           getStartTime: null, // 领取开始时间
           getEndTime: null, // 领取结束时间
-          getInCourse: '', // 是否在课程详情里领取
+          getInCourse: 1, // 是否在课程详情里领取
           getAbstract: '', // 领取摘要
           poster: '' // 海报连接
         }
@@ -360,12 +360,10 @@
           return this.$Message.error('请选择有效期')
         } else if (!this.couponInfo.releaseType && (!this.getStartTime || !this.getEndTime)) {
           return this.$Message.error('请选择领用时间')
-        } else if (this.couponInfo.releaseType && !this.couponInfo.couponUsers.length) {
+        } else if (this.couponInfo.releaseType && !this.otherInfo.isCheckAllPeople && !this.couponInfo.couponUsers.length) {
           return this.$Message.error('请选择推送用户')
         } else if (this.couponInfo.id && this.couponInfo.id != '' && (this.couponInfo.total < this.oldTotal)) {
           return this.$Message.error('发行量只能增加不能减少')
-        } else if (this.couponInfo.releaseType && !this.couponInfo.couponUsers.length) {
-          return this.$Message.error('请选择推送用户')
         }
 
         if (this.courseList.length) {
