@@ -2,7 +2,8 @@
   <Modal v-model="isShow" title="选择课程" @on-ok="sureCourseModal" @on-cancel="sureCourseModal" width="500">
     <div class="p-course-modal">
       <Checkbox-group v-model="checkCourseIds">
-        <Checkbox class="-c-item" :label="item.id" v-for="(item,index) in courseList" :key="index">
+        <Checkbox class="-c-item" :label="item.id" v-for="(item,index) in courseList" :key="index"
+                  :disabled="item.isEdit">
           <img :src="item.courseImgUrl" alt="" class="downImg">
           <span>{{item.courseName}}</span>
         </Checkbox>
@@ -14,14 +15,16 @@
 
 <script>
   import Loading from "./loading";
+
   export default {
     name: 'checkCourse',
     components: {Loading},
-    props: ['isShowModal', 'checkCourseList'],
+    props: ['isShowModal', 'checkCourseList', 'isUpdate'],
     data() {
       return {
         isShow: this.isShowModal,
         isFetching: false,
+        isEdit: false,
         courseList: [],
         size: 10000,
         checkCourseIds: [],
@@ -30,6 +33,7 @@
     },
     mounted() {
       if (this.checkCourseList.length) {
+        this.isEdit = true
         for (let item of this.checkCourseList) {
           this.checkCourseIds.push(item.id)
         }
@@ -46,8 +50,18 @@
         }).then(
           res => {
             this.courseList = res.data.resultData.records;
+            if (this.isUpdate) {
+              console.log(this.checkCourseList, 'this.checkCourseList')
+              for (let item of this.checkCourseList) {
+                for (let list of this.courseList) {
+                  if ((item.id == list.id) && item.isOldCourse) {
+                    list.isEdit = true
+                  }
+                }
+              }
+            }
           })
-          .finally(()=>{
+          .finally(() => {
             this.isFetching = false
           })
       },

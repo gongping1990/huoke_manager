@@ -5,17 +5,17 @@
       <Form class="-c-form" ref="couponInfo" :model="couponInfo" :label-width="100"
             label-position="right">
         <Form-item label="优惠券名称" prop="name" class="ivu-form-item-required">
-          <Input v-model="couponInfo.name" placeholder="请输入优惠券名称"></Input>
+          <Input v-model="couponInfo.name" placeholder="请输入优惠券名称" :disabled="isEdit"></Input>
         </Form-item>
         <Form-item label="优惠券面额" prop="denomination" class="ivu-form-item-required">
           <Input-number style="width: 100%;" :min="0" :step="1" v-model="couponInfo.denomination"
-                        placeholder="请输入优惠券面额（元）"></Input-number>
+                        placeholder="请输入优惠券面额（元）" :disabled="isEdit"></Input-number>
           <span class="-c-tips">* 精确到小数点后2位，如99.99</span>
         </Form-item>
         <Form-item label="使用条件" prop="useCondition" @on-change="changeUseCondition" class="ivu-form-item-required">
           <Radio-group v-model="couponInfo.useCondition">
-            <Radio :label=0>无门槛使用</Radio>
-            <Radio :label=1>输入满减金额</Radio>
+            <Radio :label=0 :disabled="isEdit">无门槛使用</Radio>
+            <Radio :label=1 :disabled="isEdit">输入满减金额</Radio>
           </Radio-group>
         </Form-item>
         <Form-item label="满减金额" prop="moneyOff" v-if="couponInfo.useCondition">
@@ -28,14 +28,14 @@
             <Col span="8">
               <Form-item prop="date">
                 <Date-picker style="width: 100%" type="date" placeholder="选择开始日期"
-                             v-model="useStartTime"></Date-picker>
+                             v-model="useStartTime" :disabled="isEdit"></Date-picker>
               </Form-item>
             </Col>
             <Col span="1" style="text-align: center">-</Col>
             <Col span="8">
               <Form-item prop="time">
                 <Date-picker style="width: 100%" type="date" placeholder="选择结束日期"
-                             v-model="useEndTime"></Date-picker>
+                             v-model="useEndTime" :disabled="isEdit"></Date-picker>
               </Form-item>
             </Col>
           </Row>
@@ -59,14 +59,14 @@
             <span>选择课程</span>
           </div>
           <div v-if="isShowCourseModal">
-            <check-course :isShowModal="isShowCourseModal" :checkCourseList="courseList"
+            <check-course :isShowModal="isShowCourseModal" :checkCourseList="courseList" :isUpdate='isEdit'
                           @closeCourseModal="checkCourse"></check-course>
           </div>
           <div class="-c-course-wrap" v-if="courseList.length">
             <div class="-c-course-item" v-for="(item, index) of courseList" :key="index">
               <img :src="item.courseImgUrl">
               <div class="-i-text">{{item.courseName}}</div>
-              <div class="-i-del" @click="delCourse(item,index)">删除课程</div>
+              <div v-if="!item.isOldCourse" class="-i-del" @click="delCourse(item,index)">删除课程</div>
             </div>
           </div>
         </Form-item>
@@ -78,8 +78,8 @@
       <Form class="-c-form" ref="couponInfo" :model="couponInfo" :label-width="100">
         <Form-item label="推送方式" prop="releaseType">
           <Radio-group v-model="couponInfo.releaseType">
-            <Radio :label=0>用户领取</Radio>
-            <Radio :label=1>主动推送</Radio>
+            <Radio :disabled="isEdit" :label=0>用户领取</Radio>
+            <Radio :disabled="isEdit" :label=1>主动推送</Radio>
           </Radio-group>
         </Form-item>
         <Form-item label="发行量" prop="total" v-if="!couponInfo.releaseType" class="ivu-form-item-required">
@@ -89,20 +89,20 @@
         </Form-item>
         <Form-item label="每人限领" v-if="!couponInfo.releaseType" class="ivu-form-item-required">
           <Input-number style="width: 100%;" :max="10" :min="1" :step="1" v-model="couponInfo.getTimePer"
-                        placeholder="限领张数"></Input-number>
+                        placeholder="限领张数" :disabled="isEdit"></Input-number>
         </Form-item>
         <Form-item label="领取时间" v-if="!couponInfo.releaseType" class="ivu-form-item-required">
           <Row>
             <Col span="8">
               <Form-item prop="date">
-                <Date-picker style="width: 100%" type="date" placeholder="选择开始日期"
+                <Date-picker :disabled="isEdit" style="width: 100%" type="date" placeholder="选择开始日期"
                              v-model="getStartTime"></Date-picker>
               </Form-item>
             </Col>
             <Col span="1" style="text-align: center">-</Col>
             <Col span="8">
               <Form-item prop="time">
-                <Date-picker style="width: 100%" type="date" placeholder="选择结束日期"
+                <Date-picker :disabled="isEdit" style="width: 100%" type="date" placeholder="选择结束日期"
                              v-model="getEndTime"></Date-picker>
               </Form-item>
             </Col>
@@ -163,7 +163,7 @@
   import Loading from "@/components/loading";
   import CheckCourse from "@/components/checkCourse";
   import UserSelection from "@/components/userSelection";
-  import { getBaseUrl } from "@/libs/index";
+  import {getBaseUrl} from "@/libs/index";
 
   export default {
     name: 'couponEdit',
@@ -181,6 +181,8 @@
         useEndTime: '',
         getStartTime: '',
         getEndTime: '',
+        oldTotal: '',
+        oldCourse: '',
         baseUrl: `${getBaseUrl()}/common/uploadPublicFile`,
         couponInfo: {
           name: '', // 名称
@@ -203,12 +205,28 @@
         }
       }
     },
+    computed: {
+      isEdit() {
+        return this.couponInfo.id && this.couponInfo.id != ''
+      }
+    },
     mounted() {
       this.couponId && this.getInfo()
     },
     methods: {
       checkCourse(params) {
         this.isShowCourseModal = false
+        if(this.isEdit) {
+          for(let item of params) {
+            for (let data of this.couponInfo.couponCourseObject) {
+              if(item.id == data.id) {
+                item.isOldCourse = true
+              } else {
+                item.isOldCourse = false
+              }
+            }
+          }
+        }
         this.courseList = params
       },
       openUserModal() {
@@ -225,38 +243,37 @@
         this.couponInfo.couponUsers = params.userIds
       },
       changeUseScope() {
-        if (this.couponInfo.useScope == '0') {
+        if (!this.couponInfo.useScope) {
           this.courseList = []
           this.couponInfo.couponCourses = []
         }
       },
       changeUseCondition() {
-        if (this.couponInfo.useCondition == '0') {
+        if (!this.couponInfo.useCondition) {
           this.couponInfo.moneyOff = null
         }
       },
       delCourse(item, index) {
         this.courseList.splice(index, 1)
-        console.log(this.courseList)
       },
       handleReset() {
         this.$router.push({
           name: 'coupon'
         })
       },
-      handleSuccess(res,file) {
+      handleSuccess(res, file) {
         if (res.code === 200) {
           this.$Message.success('上传成功')
           this.couponInfo.poster = res.resultData.url
         }
       },
-      handleSize () {
+      handleSize() {
         this.$Message.info('文件超过限制')
       },
-      delPoster () {
+      delPoster() {
         this.couponInfo.poster = ''
       },
-      handleErr () {
+      handleErr() {
         this.$Message.error('上传失败，请重新上传')
       },
       getInfo() {
@@ -265,13 +282,24 @@
           .then(
             response => {
               this.couponInfo = response.data.resultData;
-              this.courseList = this.couponInfo.couponCourseObject
+              for (let item of this.couponInfo.couponCourseObject) {
+                this.courseList.push({
+                  courseImgUrl: item.courseImgUrl,
+                  courseName: item.name,
+                  id: item.id,
+                  isOldCourse: true
+                })
+              }
+
+              this.oldTotal = response.data.resultData.total
+              this.oldCourse = response.data.resultData.couponCourses
               this.couponInfo.denomination = +(this.couponInfo.denomination / 100);
               this.couponInfo.moneyOff = this.couponInfo.moneyOff != null && +(this.couponInfo.moneyOff / 100);
               this.useStartTime = new Date(this.couponInfo.useStartTime)
               this.useEndTime = new Date(this.couponInfo.useEndTime)
               this.getStartTime = !this.couponInfo.releaseType ? new Date(this.couponInfo.getStartTime) : ''
               this.getEndTime = !this.couponInfo.releaseType ? new Date(this.couponInfo.getEndTime) : ''
+
             })
           .finally(() => {
             this.isFetching = false
@@ -301,9 +329,13 @@
           return this.$Message.error('请选择领用时间')
         } else if (this.couponInfo.releaseType && !this.couponInfo.couponUsers.length) {
           return this.$Message.error('请选择推送用户')
+        } else if (this.couponInfo.id && this.couponInfo.id != '' && (this.couponInfo.total < this.oldTotal)) {
+          return this.$Message.error('发行量只能增加不能减少')
+        } else if (this.couponInfo.releaseType && !this.couponInfo.couponUsers.length) {
+          return this.$Message.error('请选择推送用户')
         }
 
-        if(this.courseList.length) {
+        if (this.courseList.length) {
           for (let item of this.courseList) {
             this.couponInfo.couponCourses.push(item.id)
           }
@@ -316,7 +348,7 @@
 
         this.couponInfo.denomination = this.couponInfo.denomination * 100
 
-        this.couponInfo.moneyOff = this.couponInfo.moneyOff != null  ? this.couponInfo.moneyOff * 100 : null
+        this.couponInfo.moneyOff = this.couponInfo.moneyOff != null ? this.couponInfo.moneyOff * 100 : null
         this.isSending = true
 
         this.$api.coupon.editCoupon(this.couponInfo)
@@ -404,10 +436,10 @@
       }
     }
 
-    .-upload{
+    .-upload {
       margin: 0;
 
-      .-c-course-item{
+      .-c-course-item {
         margin: 0;
       }
     }
