@@ -69,7 +69,7 @@
             render: (h, params) => {
               return h("div", [
                 h("div", params.row.denomination/100),
-                h("div", params.row.useCondition ? `满减${params.row.moneyOff}` : '全部课程通用')
+                h("div", params.row.useScope ? `指定课程可用` : '全部课程通用')
               ]);
             }
           },
