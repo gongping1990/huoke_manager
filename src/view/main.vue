@@ -80,9 +80,7 @@
       overflow: auto;
     }
     .left-sider{
-
-
-
+      background-color: #fff;
       .ivu-layout-sider-children{
         overflow-y: scroll;
         margin-right: -18px;

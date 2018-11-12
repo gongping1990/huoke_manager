@@ -41,7 +41,7 @@ export const otherRouter = {
     {
       path: 'couponEdit',
       name: 'couponEdit',
-      meta: ['营销管理','优惠券','编辑优惠券'],
+      meta: ['营销管理', '优惠券', '编辑优惠券'],
       component: () => import("@/view/marketingMangement/coupon/couponEdit")
     }
   ]
@@ -57,11 +57,25 @@ export const appRouter = [
       {
         path: '/coupon',
         name: 'coupon',
-        meta: ['营销管理','优惠券'],
+        meta: ['营销管理', '优惠券'],
         component: () => import('@/view/marketingMangement/coupon/couponList')
       }
     ]
-  }
+  },
+  {
+    path: '/user',
+    name: 'user',
+    title: '用户管理',
+    component: Main,
+    children: [
+      {
+        path: '/userList',
+        name: 'userList',
+        meta: ['用户管理', '用户列表'],
+        component: () => import('@/view/user/userList')
+      }
+    ]
+  },
 ]
 // 所有上面定义的路由都要写在下面的routers里
 export const routers = [

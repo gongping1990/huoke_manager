@@ -6,13 +6,13 @@ const user = {
   userList(params) {
     return axios.get("/user/queryUser", {params});
   },
-  // 手机登录
-  loginWithPhone(data) {
-    return axios.post("/user/loginWithPhone", qs.stringify(data));
+  // 用户列表信息
+  getUserPage(params) {
+    return axios.get("/user/queryUserPage", {params});
   },
-  // 获取用户信息
-  getUserBaseInfo() {
-    return axios.get("/user/getUserBaseInfo");
+  // 禁用启用用户
+  changeUserStatus(params) {
+    return axios.get("/user/updateUserDisabledStatusById",qs.stringify(params));
   },
   // 更改用户信息
   modifyNicknameOrHeadImgUrl(data) {
@@ -27,7 +27,7 @@ const user = {
     return axios.get("/user/loginOut");
   },
   // 绑定手机号
-  bindPhone(params) {
+  bindPhone() {
     return axios.post("/user/bindPhone", qs.stringify(params));
   }
 };

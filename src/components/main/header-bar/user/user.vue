@@ -16,7 +16,7 @@
     props: {
       userAvator: {
         type: String,
-        default: 'http://pub.file.k12.vip/avatar/parenting.png'
+        default: require('@/assets/images/userImg.png')
       }
     },
     methods: {

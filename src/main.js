@@ -5,8 +5,8 @@ import axios from "axios";
 import store from "./store";
 import api from "@/request/api";
 import iView from 'iview'
-import 'iview/dist/styles/iview.css'
-
+import './assets/styles/iview.css'
+// import './theme/index.less';
 
 Vue.use(iView)
 Vue.config.productionTip = false
