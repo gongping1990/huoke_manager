@@ -97,13 +97,13 @@ export const appRouter = [
       {
         path: '/user-info',
         name: 'user-info',
-        meta: ['设置', '用户资料'],
+        meta: ['设置', '个人资料'],
         component: () => import('@/view/setting/info')
       },
       {
-        path: '/role-setting',
-        name: 'role-setting',
-        meta: ['设置', '角色设置'],
+        path: '/user-role',
+        name: 'user-role',
+        meta: ['设置', '角色管理'],
         component: () => import('@/view/setting/role')
       }
     ]

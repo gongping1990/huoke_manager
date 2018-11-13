@@ -1,7 +1,7 @@
 <template>
   <div class="p-user">
     <Card>
-      <Row>
+      <Row class="g-search">
         <Col :span="6">
           <div class="-search">
             <Select v-model="selectInfo" class="-search-select">
@@ -9,7 +9,8 @@
               <Option value="2">手机号码</Option>
             </Select>
             <span class="-search-center">|</span>
-            <Input v-model="searchInfo" class="-search-input" placeholder="请输入关键字" icon="ios-search" @on-click="getList"></Input>
+            <Input v-model="searchInfo" class="-search-input" placeholder="请输入关键字" icon="ios-search"
+                   @on-click="getList"></Input>
           </div>
         </Col>
       </Row>
@@ -148,13 +149,12 @@
       toDetail(param) {
         this.$router.push({
           name: 'userInfo',
-          query:{
+          query: {
             id: param.userId
           }
         })
       },
       toChangeStatus(params) {
-        console.log(params)
 
         this.$api.user.changeUserStatus({
           userId: params.userId,
@@ -170,41 +170,10 @@
     }
   };
 </script>
-<style lang="less">
-  .p-user {
-    .ivu-input {
-      border: none !important;
-    }
 
-    .ivu-select-selection {
-      border: none !important;
-    }
-  }
-</style>
 
 <style lang="less" scoped>
   .p-user {
-    .-search {
-      display: flex;
-      align-items: center;
-      border: 1px solid #dcdee2;
-      border-radius: 4px;
-
-      .-search-select {
-        width: 150px;
-      }
-
-      .-search-center {
-        color: #dcdee2;
-      }
-
-    }
-
-    .-t-search {
-      display: inline-block;
-      margin-left: 20px;
-    }
-
     .-p-text-right {
       text-align: right;
     }

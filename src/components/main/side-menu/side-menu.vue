@@ -1,6 +1,6 @@
 <template>
   <div class="side-menu-wrapper">
-    <Menu :active-name="$route.name" theme="light" width="auto" :open-names="['market']" @on-select='selectMenu' class="info---">
+    <Menu :active-name="$route.name" theme="light" width="auto" :open-names="['market']" @on-select='selectMenu'>
       <div class="layout-logo-left">
         <img src="../../../assets/images/share-logo.png"/>
         <div class="-version">1.0</div>
@@ -19,14 +19,14 @@
         </template>
         <Menu-item name="coupon">优惠券</Menu-item>
       </Submenu>
-      <Submenu name="market" class="-left-li">
+      <Submenu name="setting" class="-left-li">
         <template slot="title">
           <Icon type="ios-navigate" class="hk-menu-icon"></Icon>
           <span>设置</span>
         </template>
         <Menu-item name="user-setting">用户管理</Menu-item>
-        <Menu-item name="coupon">角色管理</Menu-item>
-        <Menu-item name="coupon">个人资料</Menu-item>
+        <Menu-item name="user-role">角色管理</Menu-item>
+        <Menu-item name="user-info">个人资料</Menu-item>
       </Submenu>
     </Menu>
   </div>
