@@ -12,23 +12,15 @@ const user = {
   },
   // 禁用启用用户
   changeUserStatus(params) {
-    return axios.get("/user/updateUserDisabledStatusById",qs.stringify(params));
+    return axios.post("/user/updateUserDisabledStatusById",qs.stringify(params));
   },
-  // 更改用户信息
-  modifyNicknameOrHeadImgUrl(data) {
-    return axios.post("/user/modifyNicknameOrHeadImgUrl", qs.stringify(data));
+  // 获取用户详情
+  getUserInfo(params) {
+    return axios.get("/user/queryUserInfoById",{params});
   },
-  // 更改用户手机号
-  updateUserPhone(data) {
-    return axios.post("/user/updateUserPhone", qs.stringify(data));
-  },
-  // 退出登录
-  loginOut() {
-    return axios.get("/user/loginOut");
-  },
-  // 绑定手机号
-  bindPhone() {
-    return axios.post("/user/bindPhone", qs.stringify(params));
+  // 用户日志
+  userLoginInfo(params) {
+    return axios.get("/user/queryLoginInfoById", {params});
   }
 };
 

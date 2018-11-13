@@ -43,6 +43,12 @@ export const otherRouter = {
       name: 'couponEdit',
       meta: ['营销管理', '优惠券', '编辑优惠券'],
       component: () => import("@/view/marketingMangement/coupon/couponEdit")
+    },
+    {
+      path: 'userInfo',
+      name: 'userInfo',
+      meta: ['用户管理', '用户列表', '用户详情'],
+      component: () => import("@/view/user/userInfo")
     }
   ]
 };
