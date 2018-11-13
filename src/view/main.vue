@@ -1,7 +1,7 @@
 <template>
   <Layout style="height: 100%" class="main">
     <Sider class="left-sider" collapsible hide-trigger :width="256" :collapsed-width="64" :style="{overflow: 'hidden'}">
-      <side-menu></side-menu>
+      <side-menu class="hk_menu"></side-menu>
     </Sider>
     <Layout>
       <Header class="header-con">
@@ -57,7 +57,7 @@
       }
     }
     .header-con{
-      background: #fff;
+      background-color: #F5F5F5;
       padding: 0 20px;
       width: 100%;
     }
@@ -76,11 +76,14 @@
     }
     .content-wrapper{
       padding: 18px;
+      padding-top: 0;
       height: ~"calc(100% - 80px)";
       overflow: auto;
     }
     .left-sider{
       background-color: #fff;
+      border-right: 1px #eaeaea solid;
+      box-shadow:-1px 0px 0px 0px rgba(0,0,0,0.1);
       .ivu-layout-sider-children{
         overflow-y: scroll;
         margin-right: -18px;

@@ -7,17 +7,26 @@
       </div>
       <Submenu name="user" class="-left-li">
         <template slot="title">
-          <Icon type="ios-navigate"></Icon>
+          <Icon type="ios-navigate" class="hk-menu-icon"></Icon>
           <span>用户管理</span>
         </template>
         <Menu-item name="userList">用户列表</Menu-item>
       </Submenu>
       <Submenu name="market" class="-left-li">
         <template slot="title">
-          <Icon type="ios-navigate"></Icon>
+          <Icon type="ios-navigate" class="hk-menu-icon"></Icon>
           <span>营销管理</span>
         </template>
         <Menu-item name="coupon">优惠券</Menu-item>
+      </Submenu>
+      <Submenu name="market" class="-left-li">
+        <template slot="title">
+          <Icon type="ios-navigate" class="hk-menu-icon"></Icon>
+          <span>设置</span>
+        </template>
+        <Menu-item name="user-setting">用户管理</Menu-item>
+        <Menu-item name="coupon">角色管理</Menu-item>
+        <Menu-item name="coupon">个人资料</Menu-item>
       </Submenu>
     </Menu>
   </div>
@@ -71,6 +80,9 @@ export default {
 
     .-left-li{
       text-align: left;
+    }
+    .hk-menu-icon {
+      vertical-align: initial;
     }
   }
   .menu-title{

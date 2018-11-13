@@ -76,6 +76,32 @@ export const appRouter = [
       }
     ]
   },
+  {
+    path: 'setting',
+    name: 'setting',
+    title: '用户设置',
+    component: Main,
+    children: [
+      {
+        path: '/user-setting',
+        name: 'user-setting',
+        meta: ['设置', '用户设置'],
+        component: () => import('@/view/setting')
+      },
+      {
+        path: '/user-info',
+        name: 'user-info',
+        meta: ['设置', '用户资料'],
+        component: () => import('@/view/setting/info')
+      },
+      {
+        path: '/role-setting',
+        name: 'role-setting',
+        meta: ['设置', '角色设置'],
+        component: () => import('@/view/setting/role')
+      }
+    ]
+  }
 ]
 // 所有上面定义的路由都要写在下面的routers里
 export const routers = [
