@@ -1,8 +1,8 @@
 import axios from 'axios'
 import router from '../router'
-import store from '../store/index'
+import store from '@/store/index'
 import {Message} from 'iview'
-import {getBaseUrl} from '@/libs/index'
+import {getBaseUrl, oldBaseUrl} from '@/libs/index'
 
 /** 
  * 提示函数 
@@ -53,8 +53,9 @@ const errorHandle = (status, err) => {
 
 
 // 创建axios实例
+
 var instance = axios.create({
-    baseURL: getBaseUrl(),
+    baseURL:  getBaseUrl(),
     withCredentials: true,
     timeout: 10000
 });
@@ -68,9 +69,10 @@ var instance = axios.create({
  * 每次请求前，如果存在token则在请求头中携带token 
  */ 
 instance.interceptors.request.use(    
-    config => {  
-        if(config.url.indexOf('insertOrUpdate') == -1) {
-            // store.commit('SET_LOADING', true)
+    config => {
+
+        if(config.url.indexOf('boss') != -1) {
+            config.baseURL = oldBaseUrl()
         }
         return config;    
     },    
@@ -98,7 +100,7 @@ instance.interceptors.response.use(
             // eg:请求超时或断网时，更新state的network状态
             // network状态在app.vue中控制着一个全局的断网提示组件的显示隐藏
             // 关于断网组件中的刷新重新获取数据，会在断网组件中说明
-            store.commit('changeNetwork', true);
+            // store.commit('changeNetwork', true);
         }
     });
 

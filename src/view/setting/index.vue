@@ -108,16 +108,11 @@
           {
             title: '启用/禁用',
             render: (h, params) => {
-              return h('i-switch', {
+              return h('Tag', {
                 props: {
-                  value: params.row.disabled
-                },
-                on: {
-                  'on-change': () => {
-                    this.toChangeStatus(params.row)
-                  }
+                  color: params.row.desabled ? 'default' : 'success'
                 }
-              })
+              }, params.row.desabled ? '已禁用' : '已启用')
             }
           },
           {
@@ -132,6 +127,20 @@
                     size: 'small'
                   },
                   style: {
+                    color: '#5444E4'
+                  },
+                  on: {
+                    click: () => {
+                      this.toChangeStatus(params.row)
+                    }
+                  }
+                }, params.row.desabled ? '启用' : '禁用'),
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
                     color: '#DA374B'
                   },
                   on: {
@@ -139,7 +148,7 @@
                       this.openPwdModal(params.row)
                     }
                   }
-                }, '重置密码'),
+                }, '重置密码')
               ])
             }
           }
@@ -171,8 +180,7 @@
       },
       toChangeStatus(params) {
         this.$api.admin.changeAdminStatus({
-          userId: params.id,
-          disabled: !params.disabled
+          userId: params.id
         }).then(
           response => {
             if (response.data.code == '200') {

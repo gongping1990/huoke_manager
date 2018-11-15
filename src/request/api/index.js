@@ -9,6 +9,7 @@ import lesson from "./lesson";
 import giftpack from "./giftpack";
 import admin from "./admin";
 import coupon from "./coupon";
+import book from "./book";
 
 
 export default {
@@ -22,5 +23,6 @@ export default {
   lesson,
   giftpack,
   admin,
-  coupon
+  coupon,
+  book
 }

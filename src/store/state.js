@@ -5,7 +5,8 @@ const store = {
   // local: localRead('local'),
   errorList: [],
   hasReadErrorPage: false,
-  userStorageList:[]
+  userStorageList:[],
+  isChangeBaseUrl: false
 }
 
 export default store

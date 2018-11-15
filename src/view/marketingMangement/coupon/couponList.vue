@@ -36,7 +36,6 @@
 </template>
 
 <script>
-  import { copyUrl } from "@/config/env.js";
   import dayjs from 'dayjs'
   import Loading from "@/components/loading";
 

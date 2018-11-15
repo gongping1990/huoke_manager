@@ -59,3 +59,14 @@
 .g-search .-search .-search-center {
   color: #dcdee2;
 }
+
+/*居中*/
+.g-flex-j-sa {
+  display: flex;
+  justify-content: space-around;
+}
+
+
+.g-text-right{
+  text-align: right;
+}

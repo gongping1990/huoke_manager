@@ -49,7 +49,13 @@ export const otherRouter = {
       name: 'userInfo',
       meta: ['用户管理', '用户列表', '用户详情'],
       component: () => import("@/view/user/userInfo")
-    }
+    },
+    {
+      path: '/teachMain',
+      name: 'teachMain',
+      meta: ['同步学习', '教材管理', '章节管理'],
+      component: () => import('@/view/study/teachingManage/teachMain')
+    },
   ]
 };
 // 作为main组件的子页面展示并且在左侧菜单显示的路由写在appRouter里
@@ -80,6 +86,26 @@ export const appRouter = [
         meta: ['用户管理', '用户列表'],
         component: () => import('@/view/user/userList')
       }
+    ]
+  },
+  {
+    path: '/study',
+    name: 'study',
+    title: '同步学习',
+    component: Main,
+    children: [
+      {
+        path: '/subject',
+        name: 'subject',
+        meta: ['同步学习', '学科管理'],
+        component: () => import('@/view/study/subjectManage/subjectList')
+      },
+      {
+        path: '/teachingList',
+        name: 'teachingList',
+        meta: ['同步学习', '教材管理'],
+        component: () => import('@/view/study/teachingManage/tecchingList')
+      },
     ]
   },
   {

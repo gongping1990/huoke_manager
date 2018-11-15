@@ -77,16 +77,11 @@
           {
             title: '启用/禁用',
             render: (h, params) => {
-              return h('i-switch', {
+              return h('Tag', {
                 props: {
-                  value: params.row.disabled
-                },
-                on: {
-                  'on-change': () => {
-                    this.toChangeStatus(params.row)
-                  }
+                  color: params.row.disabled ? 'default' : 'success'
                 }
-              })
+              }, params.row.disabled ? '已禁用' : '已启用')
             }
           },
           {
@@ -94,21 +89,37 @@
             width: 190,
             align: 'center',
             render: (h, params) => {
-              return h('Button', {
-                props: {
-                  type: 'text',
-                  size: 'small'
-                },
-                style: {
-                  color: '#5444E4',
-                  marginRight: '5px'
-                },
-                on: {
-                  click: () => {
-                    this.toDetail(params.row)
+              return h('div',[
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: '#5444E4'
+                  },
+                  on: {
+                    click: () => {
+                      this.toChangeStatus(params.row)
+                    }
                   }
-                }
-              }, '详情')
+                }, params.row.disabled ? '启用' : '禁用'),
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: '#5444E4',
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.toDetail(params.row)
+                    }
+                  }
+                }, '详情')
+              ])
             }
           }
         ],

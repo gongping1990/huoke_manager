@@ -12,6 +12,14 @@
         </template>
         <Menu-item name="userList">用户列表</Menu-item>
       </Submenu>
+      <Submenu name="study" class="-left-li">
+        <template slot="title">
+          <Icon type="ios-navigate" class="hk-menu-icon"></Icon>
+          <span>同步学习</span>
+        </template>
+        <Menu-item name="subject">学科管理</Menu-item>
+        <Menu-item name="teachingList">教材管理</Menu-item>
+      </Submenu>
       <Submenu name="market" class="-left-li">
         <template slot="title">
           <Icon type="ios-navigate" class="hk-menu-icon"></Icon>
