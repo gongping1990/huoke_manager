@@ -1,7 +1,7 @@
 <template>
   <div class="p-teachMain">
     <Card>
-      <Row>
+      <Row class="-t-header">
         <Col :span="5">
           <RadioGroup v-model="typeInfo" type="button">
             <Radio label="1">课程内容</Radio>
@@ -38,6 +38,10 @@
 
 <style lang="less" scoped>
   .p-teachMain {
+    .-t-header{
+      margin-bottom: 20px;
+      text-align: left;
+    }
     .-t-text {
       display: flex;
       justify-content: flex-end;

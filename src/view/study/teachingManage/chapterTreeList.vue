@@ -1,14 +1,55 @@
 <template>
-  <div class="p-subject">
-    <Card>
-      <div class="g-add-btn" @click="openModal">
-        <Icon class="-btn-icon" color="#fff" type="ios-add" size="24"/>
-      </div>
-      <Table class="-c-tab" :loading="isFetching" :columns="columns" :data="dataList"></Table>
-    </Card>
+  <div class="p-tree">
+    <Row class="-t-wrap">
+      <Col :span="24" class="-t-top -t-border">
+        <Col :span="12">章节结构</Col>
+        <Col :span="6">排序值</Col>
+        <Col :span="6">操作</Col>
+      </Col>
+      <Col :span="24" class="-t-item -t-flex -t-border">
+        <Col :span="12">
+          <arrow-file nodeName="根节点" :sort="1" @openChildData="openNextChild"></arrow-file>
+        </Col>
+        <Col :span="6"> &nbsp;</Col>
+        <Col :span="6" class="g-t-left">
+          <Button type="text" class="-t-theme-color" @click="openModal('',1)">添加子章节</Button>
+        </Col>
+      </Col>
+      <Col :span="24" v-for="(item1,index) of firstChild" :key="index" v-if="isShowNextOneChild"
+           class="-t-item -t-border ">
+        <Col :span="12" class="-t-child-padding">
+          <arrow-file :nodeName="item1.name" :sort="2" @openChildData="openNextChildTwo(item1,index)"></arrow-file>
+        </Col>
+        <Col :span="6">
+          {{item1.sortNum}}
+        </Col>
+        <Col :span="6" class="g-t-left">
+          <Button type="text" class="-t-theme-color" @click="openModal(item1,2)">添加子章节</Button>
+          <Button type="text" class="-t-theme-color" @click="editModal('',item1,1)">编辑</Button>
+          <Button type="text" class="-t-red-color" @click="delItem(item1.id,1)">删除</Button>
+        </Col>
+        <Col :span="24" v-show="item1.isShowChild" v-for="(item2,index2) of item1.lessons" :key="index2"
+             class="-t-item -t-border">
+          <Col :span="12" class="-t-child-padding-two">
+            <arrow-file :nodeName="item2.name" :sort="3"></arrow-file>
+          </Col>
+          <Col :span="6">
+            {{item2.sortNum}}
+          </Col>
+          <Col :span="6" class="g-t-left">
+            <Button type="text" class="-t-theme-color" style="visibility: hidden">添加子章节</Button>
+            <Button type="text" class="-t-theme-color" @click="editModal(item1,item2,2)">编辑</Button>
+            <Button type="text" class="-t-red-color" @click="delItem(item2.id,2)">删除</Button>
+          </Col>
+        </Col>
+        <Col class="-t-border" :span="24" v-if="!item1.lessons.length && item1.isShowChild">暂无课时内容</Col>
+      </Col>
+      <Col :span="24" v-if="!firstChild.length">暂无章节内容</Col>
+
+    </Row>
 
     <Modal
-      class="p-subject"
+      class="p-tree"
       v-model="isOpenModal"
       @on-cancel="closeModal('addInfo')"
       width="350"
@@ -18,7 +59,7 @@
           <Input type="text" v-model="addInfo.name" placeholder="请输入章节名称"></Input>
         </FormItem>
         <FormItem label="排序值" prop="name">
-          <Input type="text" v-model="addInfo.name" placeholder="请输入排序值"></Input>
+          <Input type="text" v-model="addInfo.sortNum" placeholder="请输入排序值"></Input>
         </FormItem>
       </Form>
       <div slot="footer" class="g-flex-j-sa">
@@ -26,164 +67,155 @@
         <div @click="submitInfo('addInfo')" class="g-primary-btn "> {{isSending ? '提交中...' : '确 认'}}</div>
       </div>
     </Modal>
+
+    <loading v-if="isFetching"></loading>
   </div>
 </template>
 
 <script>
+  import ArrowFile from "@/components/tree/arrowFileTemplate";
+  import Loading from "../../../components/loading";
+  import { pattern } from '@/libs/regexp'
   export default {
     name: 'chapterTreeList',
+    components: {Loading, ArrowFile},
     data() {
       return {
-        tab: {
-          page: 1,
-          pageSize: 10
-        },
-        searchInfo: '',
-        selectInfo: '',
-        dataList: [],
-        total: 0,
+        firstChild: [],
+        oldList: [],
+        rootNode: '',
         isFetching: false,
         isOpenModal: false,
+        isShowNextOneChild: false,
+        isShowNextTwoChild: false,
         isSending: false,
-        indeterminate: true,
-        checkAll: false,
         addInfo: {
-          name: ''
+          name: '',
+          sortNum: ''
         },
+        paramsInfo: this.$route.query,
         ruleValidate: {
           name: [
-            {required: true, message: '请输入学科名称', trigger: 'blur'}
+            {required: true, message: '请输入章节名称', trigger: 'blur'}
+          ],
+          sortNum: [
+            {required: true, message: '请输入排序值', trigger: 'blur'}
           ]
         },
-        columns: [
-          {
-            title: '教材名称',
-            key: 'name',
-            align: 'center'
-          },
-          {
-            title: '教材版本',
-            key: 'name',
-            align: 'center'
-          },
-          {
-            title: '适用年级',
-            key: 'name',
-            align: 'center'
-          },
-          {
-            title: '适用学科',
-            key: 'name',
-            align: 'center'
-          },
-          {
-            title: '操作',
-            align: 'center',
-            render: (h, params) => {
-              return h('div', [
-                h('Button', {
-                  props: {
-                    type: 'text',
-                    size: 'small'
-                  },
-                  style: {
-                    color: '#5444E4'
-                  },
-                  on: {
-                    click: () => {
-                      this.openModal(params.row)
-                    }
-                  }
-                }, '章节管理'),
-                h('Button', {
-                  props: {
-                    type: 'text',
-                    size: 'small'
-                  },
-                  style: {
-                    color: '#5444E4'
-                  },
-                  on: {
-                    click: () => {
-                      this.openModal(params.row)
-                    }
-                  }
-                }, '编辑'),
-                h('Button', {
-                  props: {
-                    type: 'text',
-                    size: 'small'
-                  },
-                  style: {
-                    color: 'rgb(218, 55, 75)',
-                    marginRight: '5px'
-                  },
-                  on: {
-                    click: () => {
-                      this.delItem(params.row)
-                    }
-                  }
-                }, '删除')
-              ])
-            }
-          }
-        ],
       };
     },
     mounted() {
       this.getList()
     },
+    computed: {},
     methods: {
-      currentChange(val) {
-        this.tab.page = val;
-        this.getList();
+      openNextChild(data) {
+        this.isShowNextOneChild = !this.isShowNextOneChild
+        this.firstChild.forEach(item => {
+          item.isShowChild = false
+        })
       },
-      openModal(data) {
+      openNextChildTwo(data, index) {
+        this.firstChild[index].isShowChild = !this.firstChild[index].isShowChild
+        this.firstChild = Object.assign([], this.firstChild)
+        this.oldList = this.firstChild
+      },
+      openModal(data, num) {
         this.isOpenModal = true
-        this.addInfo = JSON.parse(JSON.stringify({
-          courseId : data.id,
-          name: data.name
-        }))
+        this.addInfo = {
+          name: '',
+          sortNum: ''
+        }
+        this.rootNode = {
+          id: data.id,
+          num: num
+        }
+      },
+      editModal(first, data, num) {
+        this.isOpenModal = true
+        this.addInfo = JSON.parse(JSON.stringify(data))
+        this.rootNode = {
+          id: data.id,
+          chapterId: first.id,
+          num: num
+        }
       },
       closeModal(name) {
         this.isOpenModal = false
         this.$refs[name].resetFields()
       },
-      //分页查询
       getList() {
         this.isFetching = true
-        this.$api.course.teachingList()
+        this.$api.book.treeList({
+          courseId: this.paramsInfo.courseId,
+          grade: this.paramsInfo.grade,
+          edition: this.paramsInfo.edition,
+          semester: this.paramsInfo.semester
+        })
           .then(
             response => {
-              this.dataList = response.data.resultData;
+              this.firstChild = response.data.resultData;
+
+              if (this.oldList.length) {
+                for (let data of this.firstChild) {
+                  for (let item of this.oldList) {
+                    if(data.id === item.id) {
+                      data.isShowChild = item.isShowChild
+                    }
+                  }
+                }
+              } else {
+                this.firstChild.forEach(item => {
+                  item.isShowChild = false
+                })
+              }
+
+              console.log(this.oldList,this.firstChild)
             })
           .finally(() => {
             this.isFetching = false
           })
       },
-      delItem(param) {
+      delItem(param, num) {
         this.$Modal.confirm({
           title: '提示',
-          content: '确认要删除该学科吗？',
+          content: '确认要删除吗？',
           onOk: () => {
-            this.$api.course.delTeaching({
-              id: param.id
-            }).then(
-              response => {
-                if (response.data.code == "200") {
-                  this.$Message.success("操作成功");
-                  this.getList();
-                }
-              })
+            let delInterface = num == '1' ? this.$api.book.delChapter({
+              id: param
+            }) : this.$api.book.delLesson({
+              id: param
+            })
+            delInterface
+              .then(
+                response => {
+                  if (response.data.code == "200") {
+                    this.$Message.success("操作成功");
+                    this.getList();
+                  }
+                })
           }
         })
       },
+
       submitInfo(name) {
         this.$refs[name].validate((valid) => {
           if (valid) {
+            let promiseDate = ''
+
+            if (!pattern.positiveInteger.exec(this.addInfo.sortNum)) {
+              return this.$Message.error('排序值为正整数')
+            }
             this.isSending = true
-            console.log(this.addInfo,1)
-            let promiseDate = this.addInfo.id  ? this.$api.course.updateTeaching(this.addInfo) : this.$api.course.addTeaching(this.addInfo)
+            this.addInfo.bookId = this.paramsInfo.bookId
+
+            if (this.rootNode.num == '1') {
+              promiseDate = this.addInfo.id ? this.$api.book.updateChapter(this.addInfo) : this.$api.book.addChapter(this.addInfo)
+            } else {
+              this.addInfo.chapterId = this.addInfo.id ? this.rootNode.chapterId : this.rootNode.id
+              promiseDate = this.addInfo.id ? this.$api.book.updateLesson(this.addInfo) : this.$api.book.addLesson(this.addInfo)
+            }
+
             promiseDate
               .then(
                 response => {
@@ -205,23 +237,46 @@
 
 
 <style lang="less" scoped>
-  .p-subject {
-    .-p-text-right {
-      text-align: right;
+  .p-tree {
+    .-t-wrap {
+      width: 100%;
+      border: 1px solid #F5F5F5;
+
+      .-t-border {
+        border-top: 1px solid #F5F5F5;
+      }
+
+      .-t-top {
+        line-height: 30px;
+      }
+
+      .-t-flex {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+      }
+    }
+    .-t-child-padding {
+      padding-left: 20px !important;
     }
 
-    .-g-m-tip {
-      color: #b3b5b8;
-      display: flex;
-      justify-content: space-between;
+    .-t-child-padding-two {
+      padding-left: 60px !important;
     }
 
-    .-g-m-item:nth-of-type(even) {
-      margin: 0;
-      float: right;
+    .-t-item {
+      line-height: 50px;
     }
-    .-c-tab {
-      margin: 20px 0;
+    .-t-img {
+      width: 24px;
+      height: 18px
+    }
+
+    .-t-theme-color {
+      color: #5444E4;
+    }
+    .-t-red-color {
+      color: rgb(218, 55, 75);
     }
   }
 </style>

@@ -248,10 +248,15 @@
         this.$router.push({
           name: 'teachMain',
           query: {
+            bookId: data.id,
             courseName: data.courseName,
+            courseId: data.courseId,
             gradeText: data.gradeText,
+            grade: data.grade,
             editionText: data.editionText,
-            semesterText: data.semesterText
+            edition: data.edition,
+            semesterText: data.semesterText,
+            semester: data.semester
           }
         })
       },

@@ -1,0 +1,62 @@
+<template>
+  <div class="p-c-arrow">
+    <div class="-c-a-flex -t-float" >
+      <div class="-c-a-flex" @click="openNextChild">
+        <Icon v-if="!isShow && sort != '3'" type="md-arrow-dropright" size="20"/>
+        <Icon v-if="isShow && sort != '3'" type="md-arrow-dropdown" size="20"/>
+        <img class="-t-img" v-if="sort != '3' && !isShow" src="../../assets/images/tree-file-close.png">
+        <img class="-t-img" v-if="sort != '3' && isShow" src="../../assets/images/tree-file.png">
+        <img class="-t-img" v-if="sort == '3'" src="../../assets/images/tree-text.png">
+      </div>
+      <div class="-t-name">{{title}}</div>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'arrowFile',
+  props: ['nodeName', 'sort'],
+  data () {
+    return {
+      isShow: false
+    }
+  },
+  computed: {
+    title () {
+      return this.nodeName
+    }
+  },
+  methods: {
+    openNextChild () {
+      this.isShow = !this.isShow
+      this.$emit('openChildData')
+    }
+  }
+}
+</script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped lang="less">
+
+  .p-c-arrow{
+    .-c-a-flex {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+    }
+
+    .-t-name{
+      margin-left: 15px;
+    }
+
+    .-t-float {
+      float: left;
+    }
+
+    .-t-img {
+      width: 24px;
+      height: 18px
+    }
+  }
+</style>

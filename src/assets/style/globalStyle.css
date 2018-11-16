@@ -70,3 +70,11 @@
 .g-text-right{
   text-align: right;
 }
+
+.g-t-left{
+  text-align: left;
+}
+
+.g-t-center{
+  text-align: center;
+}

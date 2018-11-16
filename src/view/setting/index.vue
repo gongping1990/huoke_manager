@@ -44,7 +44,6 @@
       <update-pwd @emitPwdModal="submitPwd" @closePwdModal="closePwdModal"></update-pwd>
     </div>
 
-
   </div>
 </template>
 
@@ -217,7 +216,7 @@
             response => {
               if (response.data.code == '200') {
                 this.$Message.success('修改成功');
-                this.closeModal()
+                this.closePwdModal()
               }
             })
       },

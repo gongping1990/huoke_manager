@@ -56,6 +56,13 @@ export const otherRouter = {
       meta: ['同步学习', '教材管理', '章节管理'],
       component: () => import('@/view/study/teachingManage/teachMain')
     },
+    {
+      path: '/courseInfo',
+      name: 'courseInfo',
+      meta: ['同步学习', '教材管理', '章节管理', '课程内容管理'],
+      component: () => import('@/view/study/teachingManage/courseInfo')
+    },
+
   ]
 };
 // 作为main组件的子页面展示并且在左侧菜单显示的路由写在appRouter里
