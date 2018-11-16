@@ -54,6 +54,14 @@ const book = {
   delLesson(params) {
     return axios.post('/book/lesson/remove', qs.stringify(params))
   },
+  //获取学习目标
+  getLessonTarget(params) {
+    return axios.get('/book/lesson/get', {params})
+  },
+  //修改学习目标
+  updateTarget(params) {
+    return axios.post('/book/lesson/updateTarget', qs.stringify(params))
+  },
 
 }
 

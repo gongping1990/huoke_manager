@@ -1,6 +1,6 @@
 <template>
-  <div class="p-teachMain">
-    <Card>
+  <div class="p-courseInfo">
+    <Card style="height: 100%">
       <Row class="-t-header">
         <Col :span="10">
           <RadioGroup v-model="typeInfo" type="button">
@@ -10,55 +10,56 @@
             <Radio label="4">课文精讲</Radio>
           </RadioGroup>
         </Col>
+        <Col :span="14">
+          <path-record :data-prop="detailInfo"></path-record>
+        </Col>
       </Row>
-      <div>
-        <div class="-t-btn">
-          <div>
-            <div class="g-primary-btn -t-width" @click="">进入编辑</div>
-            <Button ghost type="primary" class="-t-width">预览内容</Button>
-          </div>
-        </div>
-      </div>
-      <div>
-        <editor v-model="addInfo.content"></editor>
-      </div>
+      <Row style="height: 100%">
+        <learning-goals v-if="typeInfo == '1'"></learning-goals>
+      </Row>
     </Card>
   </div>
 </template>
 
 <script>
-  import Editor from "@/components/editor";
+  import LearningGoals from "./courseType/learningGoals";
+  import PathRecord from "@/components/tree/pathRecord";
   export default {
     name: 'courseInfo',
-    components: {Editor},
+    components: {PathRecord, LearningGoals},
     data() {
       return {
-        typeInfo: '1',
-        detailInfo: this.$route.query,
-        addInfo: {
-          content: ''
-        }
+        typeInfo: '1'
       }
+    },
+    computed: {
+      detailInfo () {
+        let param = {
+          ...this.$route.query
+        }
+        return param
+      }
+    },
+    methods: {
     }
   };
 </script>
 
+<style lang="less">
+  .p-courseInfo{
+    .ivu-card-body{
+      height: 98%;
+    }
+  }
+</style>
 
 <style lang="less" scoped>
-  .p-teachMain {
+  .p-courseInfo {
+    height: 100%;
+
     .-t-header{
       margin-bottom: 20px;
       text-align: left;
-    }
-    .-t-width {
-      margin-top: 20px;
-      width: 200px;
-    }
-    .-t-btn{
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 400px;
     }
   }
 </style>

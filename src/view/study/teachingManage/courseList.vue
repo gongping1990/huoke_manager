@@ -2,7 +2,7 @@
   <div class="p-course">
     <Row class="-c-wrap">
       <Col :span="3" v-for="(item, index) of dataList" class="-c-item g-t-center" :key="index" >
-        <div @click="toDetail" class="-c-item-cursor">
+        <div @click="toDetail(item)" class="-c-item-cursor">
           <img src="../../../assets/images/grade-logo.png">
           <h5>{{item.name}}</h5>
         </div>
@@ -24,79 +24,63 @@
 
   export default {
     name: 'courseList',
+    props: ['pathInfo'],
     components: {Loading},
     data() {
       return {
-        dataList: [
-          {
-            name: '一单元',
-          },
-          {
-            name: '二单元',
-          },
-          {
-            name: '三单元',
-          },
-          {
-            name: '四单元',
-          }
-        ],
+        dataList: [],
+        arrayName: [],
         isFetching: false,
         isNextChild: false,
       };
     },
     mounted() {
-      // this.getList()
+      this.getList()
     },
     methods: {
-      toDetail() {
+      toDetail(item) {
+        this.arrayName.push(item.name)
+        console.log(this.arrayName,1)
         if (this.isNextChild) {
           this.$router.push({
-            name: 'courseInfo'
+            name: 'courseInfo',
+            query: {
+              ...this.pathInfo,
+              chapterName: this.arrayName[0],
+              lessonName:  this.arrayName[1],
+              lessonId: item.id
+            }
           })
         } else {
           this.isNextChild = true
-          this.dataList = [
-            {
-              name: '小蝌蚪找妈妈',
-            },
-            {
-              name: '钢铁是怎样炼成的',
-            },
-            {
-              name: '狼来了的故事',
-            },
-            {
-              name: '名声讲座',
-            }
-          ]
+          this.getLessonList(item)
         }
       },
       toBack () {
-        console.log(22)
         this.isNextChild = false
-        this.dataList = [
-          {
-            name: '一单元',
-          },
-          {
-            name: '二单元',
-          },
-          {
-            name: '三单元',
-          },
-          {
-            name: '四单元',
-          }
-        ]
+        this.getList()
       },
       //分页查询
       getList() {
         this.isFetching = true
-        this.$api.course.gradeList()
+        this.$api.book.bookChapterList({
+          bookId: this.$route.query.bookId
+        })
           .then(
             response => {
-              this.dataList = response.data.resultData.records;
+              this.dataList = response.data.resultData;
+            }).finally(() => {
+          this.isFetching = false
+        })
+      },
+      getLessonList(item) {
+        this.isFetching = true
+        this.$api.book.chapterLessonList({
+          chapterId: item.id
+        })
+          .then(
+            response => {
+              this.dataList = response.data.resultData;
             }).finally(() => {
           this.isFetching = false
         })
