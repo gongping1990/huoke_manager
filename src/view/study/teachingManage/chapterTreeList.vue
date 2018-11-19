@@ -54,7 +54,7 @@
       @on-cancel="closeModal('addInfo')"
       width="350"
       title="编辑章节">
-      <Form ref="addInfo" :model="addInfo" :rules="ruleValidate" :label-width="70">
+      <Form ref="addInfo" :model="addInfo" :rules="ruleValidate" :label-width="80">
         <FormItem label="章节名称" prop="name">
           <Input type="text" v-model="addInfo.name" placeholder="请输入章节名称"></Input>
         </FormItem>

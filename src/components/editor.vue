@@ -134,7 +134,6 @@ export default {
     },
     // 设置富文本内容
     setHtml(str) {
-      debugger
       this.editor.txt.html(str);
     },
     // 获取富文本中的内容
@@ -209,11 +208,11 @@ export default {
             break;
         }
       };
-
+      this.created();
       if (this.value) {
         this.setHtml(this.value);
       }
-      this.created();
+
     }
   },
   created() {},

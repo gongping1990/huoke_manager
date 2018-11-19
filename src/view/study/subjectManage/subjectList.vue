@@ -1,9 +1,9 @@
 <template>
   <div class="p-subject">
     <Card>
-      <div class="g-add-btn" @click="openModal">
-        <Icon class="-btn-icon" color="#fff" type="ios-add" size="24"/>
-      </div>
+      <!--<div class="g-add-btn" @click="openModal">-->
+        <!--<Icon class="-btn-icon" color="#fff" type="ios-add" size="24"/>-->
+      <!--</div>-->
       <Table class="-c-tab" :loading="isFetching" :columns="columns" :data="dataList"></Table>
     </Card>
 
@@ -58,43 +58,43 @@
             key: 'name',
             align: 'center'
           },
-          {
-            title: '操作',
-            align: 'center',
-            render: (h, params) => {
-              return h('div', [
-                h('Button', {
-                  props: {
-                    type: 'text',
-                    size: 'small'
-                  },
-                  style: {
-                    color: '#5444E4'
-                  },
-                  on: {
-                    click: () => {
-                      this.openModal(params.row)
-                    }
-                  }
-                }, '编辑'),
-                h('Button', {
-                  props: {
-                    type: 'text',
-                    size: 'small'
-                  },
-                  style: {
-                    color: 'rgb(218, 55, 75)',
-                    marginRight: '5px'
-                  },
-                  on: {
-                    click: () => {
-                      this.delItem(params.row)
-                    }
-                  }
-                }, '删除')
-              ])
-            }
-          }
+          // {
+          //   title: '操作',
+          //   align: 'center',
+          //   render: (h, params) => {
+          //     return h('div', [
+          //       h('Button', {
+          //         props: {
+          //           type: 'text',
+          //           size: 'small'
+          //         },
+          //         style: {
+          //           color: '#5444E4'
+          //         },
+          //         on: {
+          //           click: () => {
+          //             this.openModal(params.row)
+          //           }
+          //         }
+          //       }, '编辑'),
+          //       h('Button', {
+          //         props: {
+          //           type: 'text',
+          //           size: 'small'
+          //         },
+          //         style: {
+          //           color: 'rgb(218, 55, 75)',
+          //           marginRight: '5px'
+          //         },
+          //         on: {
+          //           click: () => {
+          //             this.delItem(params.row)
+          //           }
+          //         }
+          //       }, '删除')
+          //     ])
+          //   }
+          // }
         ],
       };
     },

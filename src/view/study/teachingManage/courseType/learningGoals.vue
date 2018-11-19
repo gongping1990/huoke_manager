@@ -24,11 +24,10 @@
 
 <script>
   import Editor from "@/components/editor";
-  import PathRecord from "@/components/tree/pathRecord";
 
   export default {
     name: 'learningGoals',
-    components: {PathRecord, Editor},
+    components: {Editor},
     data() {
       return {
         isShowEditor: false,
@@ -36,7 +35,7 @@
         isFetching: false,
         addInfo: {
           id: this.$route.query.lessonId,
-          learnTarget: 'sadasdas'
+          learnTarget: ''
         }
       }
     },
@@ -64,7 +63,7 @@
         })
           .then(
             response => {
-              // this.addInfo.learnTarget = response.data.resultData.learnTarget;
+              this.addInfo.learnTarget = response.data.resultData.learnTarget;
             })
           .finally(() => {
             this.isFetching = false
