@@ -30,6 +30,7 @@
 
       <div class="-i-content">
         <div class="-i-content-wrap">
+          <div><img src="../assets/images/select-title.png"/></div>
           <div v-for="(item,index) in arraySelect" :key="index" class="-w-item">
             <div class="-item-padding">{{item.index}}</div>
             <div class="-item-padding">{{item.value}}</div>

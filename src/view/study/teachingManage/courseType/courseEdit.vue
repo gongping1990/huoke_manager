@@ -10,6 +10,7 @@
 
       <Form-item label="动态图片" prop="gifImg" class=" -c-form-item" v-if="addInfo.operate == '1'">
         <Upload
+          style="display: inline-block"
           :action="baseUrl"
           :show-upload-list="false"
           :max-size="500"
@@ -17,8 +18,8 @@
           :on-exceeded-size="handleSize"
           :on-error="handleErr">
           <Button ghost type="primary">上传图片</Button>
-          <span class="-c-tips">图片尺寸不低于285x432px 图片大小：500K以内</span>
         </Upload>
+        <span class="-c-tips">图片尺寸不低于285x432px 图片大小：500K以内</span>
         <div class="-c-course-wrap" v-if="gifImgUrl">
           <div class="-c-course-item">
             <img :src="gifImgUrl">
@@ -28,6 +29,7 @@
 
       <Form-item label="背景图片" prop="poster" class="ivu-form-item-required -c-form-item" v-if="addInfo.operate == '1'">
         <Upload
+          style="display: inline-block"
           :action="baseUrl"
           :show-upload-list="false"
           :max-size="500"
@@ -35,8 +37,9 @@
           :on-exceeded-size="handleSize"
           :on-error="handleErr">
           <Button ghost type="primary">上传图片</Button>
-          <span class="-c-tips">图片尺寸不低于640x1008px 图片大小：500K以内</span>
         </Upload>
+
+        <span class="-c-tips">图片尺寸不低于640x1008px 图片大小：500K以内</span>
         <div class="-c-course-wrap" v-if="backImgUrl">
           <div class="-c-course-item">
             <img :src="backImgUrl">
@@ -46,6 +49,7 @@
 
       <Form-item label="题干图片" prop="poster" class="ivu-form-item-required -c-form-item" v-if="addInfo.operate == '2'">
         <Upload
+          style="display: inline-block"
           :action="baseUrl"
           :show-upload-list="false"
           :max-size="500"
@@ -53,8 +57,8 @@
           :on-exceeded-size="handleSize"
           :on-error="handleErr">
           <Button ghost type="primary">上传图片</Button>
-          <span class="-c-tips">图片尺寸不低于640x238px 图片大小：200K以内</span>
         </Upload>
+        <span class="-c-tips">图片尺寸不低于640x238px 图片大小：200K以内</span>
         <div class="-c-course-wrap" v-if="stemImgUrl">
           <div class="-c-course-item">
             <img :src="stemImgUrl">

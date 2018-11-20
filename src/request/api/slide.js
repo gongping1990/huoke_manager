@@ -20,7 +20,7 @@ const slide = {
   },
   //调整页面顺序
   updateChapter(params) {
-    return axios.post('/slide/updatePageNo', qs.stringify(params))
+    return axios.post('/slide/updatePageNo', params)
   }
 }
 

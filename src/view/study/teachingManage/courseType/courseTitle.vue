@@ -122,14 +122,13 @@
         for (let item of this.sortList)  {
           param.push(item.id)
         }
-        this.$api.slide.updateChapter({
-          pageNoIds: JSON.stringify(param)
-        })
+        this.$api.slide.updateChapter(param)
           .then(
             response => {
              if(response.data.code == '200') {
                this.$Message.success('排序成功')
                this.closeModal()
+               this.getList()
              }
             })
           .finally(() => {
