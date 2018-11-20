@@ -40,7 +40,6 @@
     methods: {
       toDetail(item) {
         this.arrayName.push(item.name)
-        console.log(this.arrayName,1)
         if (this.isNextChild) {
           this.$router.push({
             name: 'courseInfo',

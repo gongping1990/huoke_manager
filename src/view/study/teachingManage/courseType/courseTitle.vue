@@ -1,23 +1,29 @@
 <template>
   <div class="p-content">
     <learning-goals v-if="type == '0'"></learning-goals>
+
     <div class="-c-wrap" v-if="!isShowEdit && type != '0'">
       <Row class="-c-wrap-row">
         <div v-for="(item,index) of itemList" :key="index" class="-c-item">
-          <div class="-c-point" :class="{'g-primary-btn': item.isActive}" @click="toCheckBtn(item,index)">第{{index+1}}关</div>
-          <Icon v-if="item.isActive" class="-c-item-icon" size="20" type="md-close-circle" @click="delCheckpoint"/>
+          <div class="-c-point" :class="{'g-primary-btn': item.isActive}" @click="toCheckBtn(item,index)">
+            第{{index+1}}关
+          </div>
+          <Icon v-if="item.isActive" class="-c-item-icon g-cursor" size="20" type="md-close-circle"
+                @click="delCheckpoint(item)"/>
         </div>
 
-        <div class="-c-item-no g-cursor" @click="openAdd">添加关卡 +</div>
+        <div class="-c-item-no g-cursor" @click="toEdit">添加关卡 +</div>
+        <div class="-c-item-no g-cursor" @click="toSort">关卡排序</div>
       </Row>
       <div class="-c-flex-align -c-wrap">
         <div>
-          <div class="g-primary-btn -t-width" @click="toEdit">进入编辑</div>
+          <div class="g-primary-btn -t-width" @click="toEdit">{{dataItem ? '进入编辑' : '添加关卡'}}</div>
           <Button ghost type="primary" class="-t-width" @click="openPreviewModal">预览内容</Button>
         </div>
       </div>
     </div>
-    <div v-else>
+
+    <div v-if="isShowEdit && type != '0'">
       <Row>
         <div class="g-t-left g-cursor" @click="toBack">
           <Icon type="ios-arrow-back"/>
@@ -26,7 +32,29 @@
         <course-edit :type="type" :dataObj="dataItem" @addCourseOk="addCourse"></course-edit>
       </Row>
     </div>
+
     <loading v-if="isFetching"></loading>
+
+    <Modal
+      class="p-content"
+      v-model="isOpenModal"
+      @on-cancel="closeModal()"
+      :mask-closable="false"
+      title="拖拽排序">
+      <div class="-c-wrap">
+        <draggable v-model="sortList">
+          <div v-for="(item,index) in sortList" :key="index" class="-c-item">
+            <div class="-c-point">
+              第{{item.pageNo}}关
+            </div>
+          </div>
+        </draggable>
+      </div>
+      <div slot="footer" class="g-flex-j-sa">
+        <Button @click="closeModal()" ghost type="primary" style="width: 100px;">取消</Button>
+        <div @click="submitInfo()" class="g-primary-btn "> {{isSending ? '提交中...' : '确 认'}}</div>
+      </div>
+    </Modal>
   </div>
 </template>
 
@@ -34,18 +62,21 @@
   import Loading from "@/components/loading";
   import CourseEdit from "./courseEdit";
   import LearningGoals from "./learningGoals";
+  import draggable from 'vuedraggable'
 
   export default {
     name: 'courseTitle',
-    components: {LearningGoals, CourseEdit, Loading},
+    components: {LearningGoals, CourseEdit, Loading, draggable},
     props: ['type'],
     data() {
       return {
         isShowEdit: false,
         isSending: false,
         isFetching: false,
+        isOpenModal: false,
         dataItem: '',
         dataList: [],
+        sortList: [],
         addInfo: {
           id: this.$route.query.lessonId,
           learnTarget: ''
@@ -54,6 +85,7 @@
     },
     watch: {
       'type'(_old, _new) {
+        this.dataItem = ''
         if (this.isShowEdit) {
           this.toBack()
         } else {
@@ -70,13 +102,23 @@
       this.type != '0' && this.getList()
     },
     methods: {
+      toSort() {
+        this.sortList = this.dataList
+        this.isOpenModal = true
+      },
+      closeModal() {
+        this.isOpenModal = false
+      },
+      submitInfo () {
+
+      },
       toBack() {
         this.$Modal.confirm({
           title: '提示',
           content: '返回列表页面，当前页面编辑内容将全部丢失',
           onOk: () => {
             this.isShowEdit = false
-            this.getList()
+            this.type != '0' && this.getList()
           },
           onCancel: () => {
             this.isShowEdit = true
@@ -97,19 +139,14 @@
         })
       },
       openPreviewModal() {
-        if (!this.addInfo.learnTarget) {
-          this.toEdit()
-        } else {
-          console.log('进入预览')
+        if (!this.dataItem) {
+          this.$Message.info('请选择关卡')
         }
-      },
-      openAdd() {
-        this.isShowEdit = true
       },
       toEdit() {
         this.isShowEdit = true
       },
-      closeModal() {
+      closeEdit() {
         this.isShowEdit = false
       },
       getList() {
@@ -130,13 +167,13 @@
             this.isFetching = false
           })
       },
-      delCheckpoint() {
+      delCheckpoint(data) {
         this.$Modal.confirm({
           title: '提示',
           content: '确认要删除该关卡吗？',
           onOk: () => {
             this.$api.slide.delCheckpoint({
-              courseId: param.id
+              id: data.id
             }).then(
               response => {
                 if (response.data.code == "200") {
@@ -148,7 +185,7 @@
         })
       },
       addCourse() {
-        this.closeModal()
+        this.closeEdit()
         this.getList()
       }
     }
@@ -175,17 +212,15 @@
       }
       .-c-item {
         position: relative;
-        width: 100px;
+        width: 75px;
         display: inline-block;
-        margin: 10px;
+        margin: 0 10px 0 0;
 
         &-icon {
           color: #5444E4;
-          /*border: 1px solid #fff;*/
-          /*border-radius: 50%;*/
           position: absolute;
           top: -12px;
-          right: 8px;
+          right: -10px;
         }
       }
 
@@ -226,7 +261,7 @@
       border: 1px solid #EBEBEB;
       height: 30px;
       line-height: 30px;
-      width: 80%;
+      width: 100%;
       cursor: pointer;
     }
   }

@@ -167,7 +167,7 @@
         stemImgUrl: '',
         optionLetter: ['A', 'B', 'C', 'D', 'E'],
         optionList: [],
-        audioType: ['mp3','wma','arm'],
+        audioType: ['mp3', 'wma', 'arm'],
         addInfo: {
           lessonId: this.$route.query.lessonId,
           contentType: this.type,
@@ -189,9 +189,24 @@
     },
 
     mounted() {
-      if(this.dataObj) {
-       this.addInfo = this.dataObj
+      if (this.dataObj) {
+
+        this.addInfo = {
+          ...this.dataObj
+        }
+
+        this.addInfo.autoPlay = this.addInfo.autoPlay ? 1 : 0
+        this.addInfo.playComplete = this.addInfo.playComplete ? 1 : 0
+        this.addInfo.speed = this.addInfo.speed ? 1 : 0
+        this.addInfo.topicOption.length && (this.optionList = JSON.parse(this.addInfo.topicOption))
+        this.addInfo.content = JSON.parse(this.addInfo.content)
+        this.playAudioUrl = this.addInfo.audioPlayUrl
+        this.gifImgUrl = this.addInfo.content.gifImg
+        this.backImgUrl = this.addInfo.content.backImg
+        this.stemImgUrl = this.addInfo.content.stemImg
       }
+
+      console.log(this.addInfo)
     },
     methods: {
       changeCheck(idx) {
@@ -212,6 +227,7 @@
       },
       submitInfo() {
         let isCheck = ''
+        let paramUrl = ''
 
         if (this.addInfo.operate == '2' && this.optionList.length) {
           isCheck = this.optionList.some(item => {
@@ -255,10 +271,11 @@
 
         this.addInfo.content = JSON.stringify(this.addInfo.content)
 
-        this.$api.slide.addContent(this.addInfo)
+        paramUrl = this.addInfo.id ? this.$api.slide.updateCheckpoint(this.addInfo) : this.$api.slide.addContent(this.addInfo)
+        paramUrl
           .then(res => {
             if (res.data.code == '200') {
-              this.$Message.success('创建成功')
+              this.$Message.success(`${this.addInfo.id ? '修改成功' : '创建成功'}`)
               this.$emit('addCourseOk')
             }
           })
@@ -270,11 +287,11 @@
       beforeUpload(file) {
         let fileType = file.type.split('/')
         let isPass = false
-        isPass = this.audioType.some(item=>{
-          return item == fileType[fileType.length-1]
+        isPass = this.audioType.some(item => {
+          return item == fileType[fileType.length - 1]
         })
         this.isFetching = isPass
-        if(!isPass) {
+        if (!isPass) {
           this.$Message.error('上传格式错误')
         }
         return isPass

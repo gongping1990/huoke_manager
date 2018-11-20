@@ -7,8 +7,15 @@
       </div>
       <div v-else class="g-t-left">
         <Form ref="addInfo" :model="addInfo" :label-width="70">
-          <FormItem label="学习目标" prop="learnTarget">
-            <editor v-model="addInfo.learnTarget"></editor>
+          <FormItem class="-select-wrap" v-for="(item,index) in optionList" :key="index">
+            <span class="-s-width -s-title"><span class="-s-color">*</span> 目标{{index+1}}</span>
+            <Input class="-s-width" v-model="item.value" type="textarea" :autosize="true" placeholder="请输入选项内容"
+                   :maxlength="22" style="width: 300px"/>
+            <span class="-s-width">文字字数不超过22字，包含标点符号</span>
+            <span class="-s-width -s-color g-cursor" @click="delOption(index)">删除</span>
+          </FormItem>
+          <FormItem class="-c-flex">
+            <div class="-form-btn g-cursor " v-if="optionList.length < 4" @click="addOption">+ 新增目标</div>
           </FormItem>
           <FormItem>
             <div class="-c-flex">
@@ -23,19 +30,18 @@
 </template>
 
 <script>
-  import Editor from "@/components/editor";
 
   export default {
     name: 'learningGoals',
-    components: {Editor},
     data() {
       return {
         isShowEditor: false,
         isSending: false,
         isFetching: false,
+        optionList: [],
         addInfo: {
           id: this.$route.query.lessonId,
-          learnTarget: ''
+          learnTarget: []
         }
       }
     },
@@ -43,8 +49,16 @@
       this.getLearnInfo()
     },
     methods: {
-      openPreviewModal () {
-        if(!this.addInfo.learnTarget) {
+      addOption() {
+        this.optionList.push({
+          value: ''
+        })
+      },
+      delOption(index) {
+        this.optionList.splice(index, 1)
+      },
+      openPreviewModal() {
+        if (!this.addInfo.learnTarget) {
           this.toEditor()
         } else {
           console.log('进入预览')
@@ -63,17 +77,21 @@
         })
           .then(
             response => {
-              this.addInfo.learnTarget = response.data.resultData.learnTarget;
+              if(response.data.resultData.learnTarget != null) {
+                this.optionList = JSON.parse(response.data.resultData.learnTarget)
+              }
             })
           .finally(() => {
             this.isFetching = false
           })
       },
       submitInfo() {
-        if (!this.addInfo.learnTarget || this.addInfo.learnTarget == '<p><br></p>') {
+        if (!this.optionList.length) {
           return this.$Message.error('请填写学习目标')
         }
         this.isSending = true
+
+        this.addInfo.learnTarget = JSON.stringify(this.optionList)
 
         this.$api.book.updateTarget(this.addInfo)
           .then(
@@ -81,6 +99,7 @@
               if (response.data.code == '200') {
                 this.$Message.success('提交成功');
                 this.closeModal()
+                this.getLearnInfo()
               }
             })
           .finally(() => {
@@ -117,5 +136,32 @@
       height: 40px;
       width: 120px;
     }
+
+    .-select-wrap {
+      padding: 10px 0;
+
+      .-s-title {
+        color: #b3b5b8;
+      }
+      .-s-width {
+        padding-right: 10px;
+      }
+
+      .-s-color {
+        color: rgb(218, 55, 75);
+      }
+    }
+
+    .-form-btn {
+      margin: 10px 0 0 0;
+      width: 333px;
+      height: 40px;
+      line-height: 40px;
+      text-align: center;
+      border-radius: 5px;
+      border: 1px dashed #5444E4;
+      color: #5444E4;
+    }
+
   }
 </style>

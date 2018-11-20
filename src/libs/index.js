@@ -50,7 +50,7 @@ export function setRouter(to, from) {
 export const getBaseUrl = () => {
   // 环境的切换
   if (process.env.NODE_ENV == 'development' || process.env.NODE_ENV == 'test') {    
-      return 'http://prep.test.k12.vip'
+      return 'http://192.168.50.64:7070'
   } 
   return 'http://prep.prod.k12.vip'
 }
