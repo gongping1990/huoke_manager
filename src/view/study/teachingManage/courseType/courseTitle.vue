@@ -6,18 +6,18 @@
       <Row class="-c-wrap-row">
         <div v-for="(item,index) of itemList" :key="index" class="-c-item">
           <div class="-c-point" :class="{'g-primary-btn': item.isActive}" @click="toCheckBtn(item,index)">
-            第{{index+1}}关
+            第{{item.pageNo}}关
           </div>
           <Icon v-if="item.isActive" class="-c-item-icon g-cursor" size="20" type="md-close-circle"
                 @click="delCheckpoint(item)"/>
         </div>
 
-        <div class="-c-item-no g-cursor" @click="toEdit">添加关卡 +</div>
-        <div class="-c-item-no g-cursor" @click="toSort">关卡排序</div>
+        <div class="-c-item-no g-cursor" @click="toEdit(0)">添加关卡 +</div>
+        <div class="-c-item-no g-cursor" @click="toSort()" v-if="itemList.length > 1">关卡排序</div>
       </Row>
       <div class="-c-flex-align -c-wrap">
         <div>
-          <div class="g-primary-btn -t-width" @click="toEdit">{{dataItem ? '进入编辑' : '添加关卡'}}</div>
+          <div class="g-primary-btn -t-width" @click="toEdit(1)">{{dataItem ? '进入编辑' : '添加关卡'}}</div>
           <Button ghost type="primary" class="-t-width" @click="openPreviewModal">预览内容</Button>
         </div>
       </div>
@@ -55,6 +55,10 @@
         <div @click="submitInfo()" class="g-primary-btn "> {{isSending ? '提交中...' : '确 认'}}</div>
       </div>
     </Modal>
+
+    <div v-if="isOpenImgModal">
+      <preview-pictures :dataProp="dataItem" @closePreviewModal="closePreview"></preview-pictures>
+    </div>
   </div>
 </template>
 
@@ -63,10 +67,11 @@
   import CourseEdit from "./courseEdit";
   import LearningGoals from "./learningGoals";
   import draggable from 'vuedraggable'
+  import PreviewPictures from "@/components/previewPictures";
 
   export default {
     name: 'courseTitle',
-    components: {LearningGoals, CourseEdit, Loading, draggable},
+    components: {PreviewPictures, LearningGoals, CourseEdit, Loading, draggable},
     props: ['type'],
     data() {
       return {
@@ -74,6 +79,7 @@
         isSending: false,
         isFetching: false,
         isOpenModal: false,
+        isOpenImgModal: false,
         dataItem: '',
         dataList: [],
         sortList: [],
@@ -110,7 +116,25 @@
         this.isOpenModal = false
       },
       submitInfo () {
-
+        if(this.isSending) return
+        this.isSending = true
+        let param = []
+        for (let item of this.sortList)  {
+          param.push(item.id)
+        }
+        this.$api.slide.updateChapter({
+          pageNoIds: JSON.stringify(param)
+        })
+          .then(
+            response => {
+             if(response.data.code == '200') {
+               this.$Message.success('排序成功')
+               this.closeModal()
+             }
+            })
+          .finally(() => {
+            this.isSending = false
+          })
       },
       toBack() {
         this.$Modal.confirm({
@@ -141,10 +165,16 @@
       openPreviewModal() {
         if (!this.dataItem) {
           this.$Message.info('请选择关卡')
+        } else {
+          this.isOpenImgModal = true
         }
       },
-      toEdit() {
+      closePreview () {
+        this.isOpenImgModal = false
+      },
+      toEdit(bool) {
         this.isShowEdit = true
+        !bool && (this.dataItem = '')
       },
       closeEdit() {
         this.isShowEdit = false
@@ -185,6 +215,7 @@
         })
       },
       addCourse() {
+        this.dataItem = ''
         this.closeEdit()
         this.getList()
       }

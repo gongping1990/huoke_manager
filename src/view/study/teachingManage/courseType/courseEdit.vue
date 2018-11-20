@@ -8,7 +8,7 @@
         </Radio-group>
       </Form-item>
 
-      <Form-item label="动态图片" prop="gifImg" class="ivu-form-item-required -c-form-item" v-if="addInfo.operate == '1'">
+      <Form-item label="动态图片" prop="gifImg" class=" -c-form-item" v-if="addInfo.operate == '1'">
         <Upload
           :action="baseUrl"
           :show-upload-list="false"
@@ -219,7 +219,8 @@
       addOption() {
         this.optionList.push({
           value: '',
-          isChecked: false
+          isChecked: false,
+          index: this.optionLetter[this.optionList.length]
         })
       },
       delOption(index) {
@@ -237,8 +238,6 @@
 
         if (!this.addInfo.operate) {
           return this.$Message.error('请选择模板样式')
-        } else if (this.addInfo.operate == '1' && !this.gifImgUrl) {
-          return this.$Message.error('请上传动态图片')
         } else if (this.addInfo.operate == '1' && !this.backImgUrl) {
           return this.$Message.error('请上传背景图片')
         } else if (this.addInfo.operate == '2' && !this.stemImgUrl) {
@@ -282,7 +281,7 @@
 
       },
       closeModal() {
-
+        this.$emit('addCourseOk')
       },
       beforeUpload(file) {
         let fileType = file.type.split('/')
@@ -390,6 +389,7 @@
 
       .-c-course-wrap {
         .-c-course-item {
+          background-color: #EBEBEB;
           width: 200px;
           margin-top: 20px;
           border: 1px solid #EBEBEB;
