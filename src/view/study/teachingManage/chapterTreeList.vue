@@ -45,7 +45,6 @@
         <Col class="-t-border" :span="24" v-if="!item1.lessons.length && item1.isShowChild">暂无课时内容</Col>
       </Col>
       <Col :span="24" v-if="!firstChild.length">暂无章节内容</Col>
-
     </Row>
 
     <Modal
@@ -55,6 +54,9 @@
       width="350"
       title="编辑章节">
       <Form ref="addInfo" :model="addInfo" :rules="ruleValidate" :label-width="80">
+        <FormItem label="上级章节" v-if="rootNode.num=='2'">
+          {{rootNode.name}}
+        </FormItem>
         <FormItem label="章节名称" prop="name">
           <Input type="text" v-model="addInfo.name" placeholder="请输入章节名称"></Input>
         </FormItem>
@@ -128,6 +130,7 @@
         }
         this.rootNode = {
           id: data.id,
+          name: data.name,
           num: num
         }
       },
@@ -137,8 +140,10 @@
         this.rootNode = {
           id: data.id,
           chapterId: first.id,
+          name: first.name,
           num: num
         }
+        console.log(this.rootNode)
       },
       closeModal(name) {
         this.isOpenModal = false
@@ -169,8 +174,6 @@
                   item.isShowChild = false
                 })
               }
-
-              console.log(this.oldList,this.firstChild)
             })
           .finally(() => {
             this.isFetching = false
