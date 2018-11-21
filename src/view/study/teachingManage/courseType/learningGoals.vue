@@ -97,11 +97,11 @@
       },
       submitInfo() {
         let isPass = this.optionList.length && this.optionList.every(item=>{
-          return item.value != ''
+          return (item.value != '' && item.value.length <= 22)
         })
 
         if (!this.optionList.length || !isPass) {
-          return this.$Message.error('请填写学习目标')
+          return this.$Message.error('学习目标不能为空或者字数不能超过22字')
         }
 
         this.isSending = true

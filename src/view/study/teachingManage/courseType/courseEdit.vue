@@ -243,7 +243,7 @@
 
         if (this.addInfo.operate == '2' && this.optionList.length) {
           isPass = this.optionList.every(item => {
-            return item.value != ''
+            return (item.value != '' && item.value.length <= 40)
           })
         }
 
@@ -264,7 +264,7 @@
         } else if (this.addInfo.operate == '2' && !this.addInfo.showMode) {
           return this.$Message.error('请选择展示逻辑')
         } else if (this.addInfo.operate == '2' && (!this.optionList.length || !isPass)) {
-          return this.$Message.error('请输入选择题题目')
+          return this.$Message.error('选择题目不能为空或字数不能超过40字')
         } else if (this.addInfo.operate == '2' && !isCheck) {
           return this.$Message.error('请设置正确的单选题答案')
         } else if (!this.addInfo.turn) {

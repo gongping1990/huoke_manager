@@ -51,7 +51,6 @@
           </div>
         </div>
       </div>
-
     </div>
   </Modal>
 </template>
@@ -81,9 +80,8 @@
           let temp = this.dataProp.slice(i * 2, i * 2 + 2);
           this.arraySelect.push(temp);
         }
-
-        this.isOpenModal = true
       }
+      this.isOpenModal = true
     },
     methods: {
       closeModal() {
@@ -210,6 +208,7 @@
           display: inline-block;
           width: 80%;
           margin-left: 10px;
+          word-wrap: break-word;
         }
       }
     }
