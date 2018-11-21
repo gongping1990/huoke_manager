@@ -232,11 +232,18 @@
       },
       submitInfo() {
         let isCheck = ''
+        let isPass = ''
         let paramUrl = ''
 
         if (this.addInfo.operate == '2' && this.optionList.length) {
           isCheck = this.optionList.some(item => {
             return item.isChecked == true
+          })
+        }
+
+        if (this.addInfo.operate == '2' && this.optionList.length) {
+          isPass = this.optionList.every(item => {
+            return item.value != ''
           })
         }
 
@@ -256,7 +263,7 @@
           return this.$Message.error('请选择完成条件')
         } else if (this.addInfo.operate == '2' && !this.addInfo.showMode) {
           return this.$Message.error('请选择展示逻辑')
-        } else if (this.addInfo.operate == '2' && !this.optionList.length) {
+        } else if (this.addInfo.operate == '2' && (!this.optionList.length || !isPass)) {
           return this.$Message.error('请输入选择题题目')
         } else if (this.addInfo.operate == '2' && !isCheck) {
           return this.$Message.error('请设置正确的单选题答案')

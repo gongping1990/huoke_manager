@@ -57,7 +57,7 @@
     </Modal>
 
     <div v-if="isOpenImgModal">
-      <preview-pictures :dataProp="dataItem" @closePreviewModal="closePreview"></preview-pictures>
+      <preview-pictures :dataProp="dataItem" :courseType="2" @closePreviewModal="closePreview"></preview-pictures>
     </div>
   </div>
 </template>

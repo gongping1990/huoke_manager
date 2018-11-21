@@ -26,18 +26,24 @@
         </Form>
       </div>
     </div>
+    <div v-if="isOpenImgModal">
+      <preview-pictures :dataProp="optionList" :courseType="1" @closePreviewModal="closePreview"></preview-pictures>
+    </div>
   </div>
 </template>
 
 <script>
 
+  import PreviewPictures from "@/components/previewPictures";
   export default {
     name: 'learningGoals',
+    components: {PreviewPictures},
     data() {
       return {
         isShowEditor: false,
         isSending: false,
         isFetching: false,
+        isOpenImgModal: false,
         optionList: [],
         addInfo: {
           id: this.$route.query.lessonId,
@@ -49,8 +55,12 @@
       this.getLearnInfo()
     },
     methods: {
+      closePreview () {
+        this.isOpenImgModal = false
+      },
       addOption() {
         this.optionList.push({
+          id: this.optionList.length+1,
           value: ''
         })
       },
@@ -61,7 +71,7 @@
         if (!this.addInfo.learnTarget) {
           this.toEditor()
         } else {
-          console.log('进入预览')
+          this.isOpenImgModal = true
         }
       },
       toEditor() {
@@ -86,9 +96,14 @@
           })
       },
       submitInfo() {
-        if (!this.optionList.length) {
+        let isPass = this.optionList.length && this.optionList.every(item=>{
+          return item.value != ''
+        })
+
+        if (!this.optionList.length || !isPass) {
           return this.$Message.error('请填写学习目标')
         }
+
         this.isSending = true
 
         this.addInfo.learnTarget = JSON.stringify(this.optionList)
