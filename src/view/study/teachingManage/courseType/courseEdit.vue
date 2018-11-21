@@ -1,14 +1,14 @@
 <template>
   <div class="p-courseEdit">
     <Form class="-c-form ivu-form-item-required g-t-left" ref="addInfo" :model="addInfo" :label-width="100">
-      <Form-item label="模板样式" prop="operate" class="-c-form-item">
+      <Form-item label="模板样式" prop="operate" class="-c-form-item -c-border">
         <Radio-group v-model="addInfo.operate ">
           <Radio :label=1>读课文</Radio>
           <Radio :label=2>单选题</Radio>
         </Radio-group>
       </Form-item>
 
-      <Form-item label="动态图片" prop="gifImg" class=" -c-form-item" v-if="addInfo.operate == '1'">
+      <Form-item label="动态图片" prop="gifImg" class=" -c-form-item -c-border" v-if="addInfo.operate == '1'">
         <Upload
           style="display: inline-block"
           :action="baseUrl"
@@ -27,7 +27,7 @@
         </div>
       </Form-item>
 
-      <Form-item label="背景图片" prop="poster" class="ivu-form-item-required -c-form-item" v-if="addInfo.operate == '1'">
+      <Form-item label="背景图片" prop="poster" class="ivu-form-item-required -c-form-item -c-border" v-if="addInfo.operate == '1'">
         <Upload
           style="display: inline-block"
           :action="baseUrl"
@@ -47,7 +47,8 @@
         </div>
       </Form-item>
 
-      <Form-item label="题干图片" prop="poster" class="ivu-form-item-required -c-form-item" v-if="addInfo.operate == '2'">
+      <Form-item label="题干图片" prop="poster" class="ivu-form-item-required -c-form-item -c-border"
+                 v-if="addInfo.operate == '2'">
         <Upload
           style="display: inline-block"
           :action="baseUrl"
@@ -104,17 +105,10 @@
         </Radio-group>
       </Form-item>
 
-      <Form-item label="完成条件" prop="playComplete" class="ivu-form-item-required -c-form-item">
+      <Form-item label="完成条件" prop="playComplete" class="ivu-form-item-required -c-form-item -c-border">
         <Radio-group v-model="addInfo.playComplete">
           <Radio :label=0>无条件</Radio>
           <Radio :label=1>音频播放完成</Radio>
-        </Radio-group>
-      </Form-item>
-
-      <Form-item label="展示逻辑" prop="showMode" class="ivu-form-item-required -c-form-item" v-if="addInfo.operate == '2'">
-        <Radio-group v-model="addInfo.showMode">
-          <Radio :label=1>同时展示</Radio>
-          <Radio :label=2>顺序展示（依赖模块完成条件）</Radio>
         </Radio-group>
       </Form-item>
 
@@ -130,7 +124,24 @@
         <div class="-form-btn g-cursor" v-if="optionList.length < 5" @click="addOption">+ 新增选项</div>
       </Form-item>
 
-      <Form-item label="翻页逻辑" prop="turn" class="ivu-form-item-required -c-form-item">
+      <Form-item label="完成条件" prop="answerComplete" class="ivu-form-item-required -c-form-item -c-border"
+                 v-if="addInfo.operate == '2'">
+        <Radio-group v-model="addInfo.answerComplete">
+          <Radio :label=1>无条件</Radio>
+          <Radio :label=2>选择任意选项</Radio>
+          <Radio :label=3>选择正确选项</Radio>
+        </Radio-group>
+      </Form-item>
+
+      <Form-item label="展示逻辑" prop="showMode" class="ivu-form-item-required -c-form-item -c-border"
+                 v-if="addInfo.operate == '2'">
+        <Radio-group v-model="addInfo.showMode">
+          <Radio :label=1>同时展示</Radio>
+          <Radio :label=2>顺序展示（依赖模块完成条件）</Radio>
+        </Radio-group>
+      </Form-item>
+
+      <Form-item label="翻页逻辑" prop="turn" class="ivu-form-item-required -c-form-item -c-border">
         <Radio-group v-model="addInfo.turn">
           <Radio :label=1>可直接翻页</Radio>
           <Radio :label=2>全部模块完成后可翻页</Radio>
@@ -178,6 +189,7 @@
           operate: 1, //类型（读课文，单选题）
           audioUrl: '', //音频路径
           playComplete: '', //完成条件
+          answerComplete: '', //完成条件
           turn: '', //翻译逻辑
           autoPlay: '', //自动播放
           speed: '', //音频进度
@@ -267,6 +279,8 @@
           return this.$Message.error('选择题目不能为空或字数不能超过40字')
         } else if (this.addInfo.operate == '2' && !isCheck) {
           return this.$Message.error('请设置正确的单选题答案')
+        } else if (this.addInfo.operate == '2' && this.addInfo.answerComplete === '') {
+          return this.$Message.error('请选择选择题的完成条件')
         } else if (!this.addInfo.turn) {
           return this.$Message.error('请选择翻页逻辑')
         }
@@ -436,6 +450,10 @@
     .-c-btn {
       margin: 20px;
       width: 120px;
+    }
+
+    .-c-border {
+      border-bottom: 1px solid #EBEBEB;
     }
   }
 </style>
