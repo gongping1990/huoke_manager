@@ -172,6 +172,11 @@
             align: 'center'
           },
           {
+            title: '适用学期',
+            key: 'semesterText',
+            align: 'center'
+          },
+          {
             title: '操作',
             width:200,
             align: 'center',

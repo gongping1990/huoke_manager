@@ -1,7 +1,7 @@
 <template>
   <Layout style="height: 100%" class="main">
     <Sider class="left-sider" collapsible hide-trigger :width="256" :collapsed-width="64" :style="{overflow: 'hidden'}">
-      <side-menu class="hk_menu"></side-menu>
+      <side-menu class="hk_menu" :openName='openName'></side-menu>
     </Sider>
     <Layout>
       <Header class="header-con">
@@ -28,80 +28,88 @@
       SideMenu,
       HeaderBar
     },
-    data () {
+    data() {
       return {
-        collapsed: false
+        collapsed: false,
+        openName: [],
+        openNameList: []
       }
     },
-    computed: {
-
-    },
-    methods: {
-
-    },
     mounted () {
+      this.$router.options.routes.forEach(item=>{
+        this.openNameList.push(item)
+      })
 
+      for (let item of this.openNameList) {
+        if(item.title === this.$route.meta[0]) {
+          this.openName.push(item.name)
+        }
+      }
     }
   }
 </script>
 <style scoped lang="less">
-  .main{
-    .logo-con{
+  .main {
+    .logo-con {
       height: 64px;
       padding: 10px;
-      img{
+      img {
         height: 44px;
         width: auto;
         display: block;
         margin: 0 auto;
       }
     }
-    .header-con{
+    .header-con {
       background-color: #F5F5F5;
       padding: 0 20px;
       width: 100%;
     }
-    .main-layout-con{
+    .main-layout-con {
       height: 100%;
       overflow: hidden;
     }
-    .main-content-con{
+    .main-content-con {
       height: ~"calc(100% - 60px)";
       overflow: hidden;
     }
-    .tag-nav-wrapper{
+    .tag-nav-wrapper {
       padding: 0;
-      height:40px;
-      background:#F0F0F0;
+      height: 40px;
+      background: #F0F0F0;
     }
-    .content-wrapper{
+    .content-wrapper {
       padding: 18px;
       padding-top: 0;
       height: ~"calc(100% - 80px)";
       overflow: auto;
     }
-    .left-sider{
+    .left-sider {
       background-color: #fff;
       border-right: 1px #eaeaea solid;
-      box-shadow:-1px 0px 0px 0px rgba(0,0,0,0.1);
-      .ivu-layout-sider-children{
+      box-shadow: -1px 0px 0px 0px rgba(0, 0, 0, 0.1);
+      .ivu-layout-sider-children {
         overflow-y: scroll;
         margin-right: -18px;
       }
     }
   }
-  .ivu-menu-item > i{
+
+  .ivu-menu-item > i {
     margin-right: 12px !important;
   }
+
   .ivu-menu-submenu > .ivu-menu > .ivu-menu-item > i {
     margin-right: 8px !important;
   }
+
   .ivu-menu-submenu > .ivu-menu-submenu-title {
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
-  .collased-menu-dropdown{
+
+  .collased-menu-dropdown {
     width: 100%;
     margin: 0;
     line-height: normal;
@@ -112,13 +120,13 @@
     list-style: none;
     cursor: pointer;
     transition: background 0.2s ease-in-out;
-    &:hover{
+    &:hover {
       background: rgba(100, 100, 100, 0.1);
     }
     & * {
       color: #515a6e;
     }
-    .ivu-menu-item > i{
+    .ivu-menu-item > i {
       margin-right: 12px !important;
     }
     .ivu-menu-submenu > .ivu-menu > .ivu-menu-item > i {
@@ -126,7 +134,7 @@
     }
   }
 
-  .ivu-select-dropdown.ivu-dropdown-transfer{
+  .ivu-select-dropdown.ivu-dropdown-transfer {
     max-height: 400px;
   }
 
