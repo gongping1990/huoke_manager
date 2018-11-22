@@ -4,8 +4,10 @@
       <Checkbox-group v-model="checkCourseIds">
         <Checkbox class="-c-item" :label="item.id" v-for="(item,index) in courseList" :key="index"
                   :disabled="item.isEdit">
-          <img :src="item.courseImgUrl" alt="" class="downImg">
-          <span>{{item.courseName}}</span>
+          <div class="-c-item-wrap">
+            <img :src="item.courseImgUrl" alt="" class="downImg">
+            <span>{{item.courseName}}</span>
+          </div>
         </Checkbox>
       </Checkbox-group>
     </div>
@@ -86,10 +88,17 @@
     overflow-y: auto;
     margin-bottom: 20px;
 
+    .-c-item-wrap{
+      display: flex;
+      align-items: center;
+    }
+
     .-c-item {
       display: flex;
       align-items: center;
-      margin-bottom: 10px;
+      border: 1px solid #F5F5F5;
+      border-bottom: none;
+      padding: 10px;
     }
 
     .downImg {

@@ -1,7 +1,5 @@
 <template>
   <div class="p-content">
-    <learning-goals v-if="type == '0'"></learning-goals>
-
     <div class="-c-wrap" v-if="!isShowEdit && type != '0'">
       <Row class="-c-wrap-row">
         <div v-for="(item,index) of itemList" :key="index" class="-c-item">
@@ -24,15 +22,13 @@
       </div>
     </div>
 
-    <div v-if="isShowEdit && type != '0'">
+    <div v-if="isShowEdit">
       <Row>
-        <!--<div class="g-t-left g-cursor" @click="toBack">-->
-          <!--<Icon type="ios-arrow-back"/>-->
-          <!--返回关卡列表-->
-        <!--</div>-->
-        <course-edit :type="type" :dataObj="dataItem" @addCourseOk="addCourse" @addCourseCancel="cancelCourse"></course-edit>
+        <course-edit :type="type" :dataObj="dataItem" @addCourseOk="addCourse"></course-edit>
       </Row>
     </div>
+
+    <learning-goals v-if="type == '0'"></learning-goals>
 
     <loading v-if="isFetching"></loading>
 
@@ -92,8 +88,9 @@
     },
     watch: {
       'type'(_old, _new) {
-        this.dataItem = ''
+       console.log(this.isShowEdit,this.type)
         if (this.isShowEdit) {
+          console.log(1)
           this.toBack()
         } else {
           this.type != '0' && this.getList()
@@ -106,6 +103,7 @@
       }
     },
     mounted() {
+      console.log(localStorage.typeId,'111')
       this.type != '0' && this.getList()
     },
     methods: {
@@ -232,10 +230,6 @@
         this.dataItem = ''
         this.closeEdit()
         this.getList()
-      },
-      cancelCourse () {
-        this.toBack()
-        this.addCourse()
       }
     }
   };

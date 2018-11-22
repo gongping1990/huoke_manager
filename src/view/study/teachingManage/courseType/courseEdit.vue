@@ -2,13 +2,13 @@
   <div class="p-courseEdit">
     <Form class="-c-form g-t-left" ref="addInfo" :model="addInfo" :label-width="100">
       <Form-item label="模板样式" prop="operate" class="ivu-form-item-required -c-form-item -c-border">
-        <Radio-group v-model="addInfo.operate ">
-          <Radio :label=1>读课文</Radio>
-          <Radio :label=2>单选题</Radio>
+        <Radio-group v-model="addInfo.operate " @on-change="changeTemplate">
+          <Radio  :disabled="addInfo.id ? true : false"  :label=1>读课文</Radio>
+          <Radio  :disabled="addInfo.id ? true : false"  :label=2>单选题</Radio>
         </Radio-group>
       </Form-item>
 
-      <Form-item label="动态图片" class="-c-form-item -c-border" v-if="addInfo.operate == '1'">
+      <Form-item label="动态图片" class="-c-form-item -c-border" v-if=" addInfo.operate == '1'">
         <Upload
           style="display: inline-block"
           :action="baseUrl"
@@ -28,7 +28,8 @@
         </div>
       </Form-item>
 
-      <Form-item label="背景图片" prop="poster" class="ivu-form-item-required -c-form-item -c-border" v-if="addInfo.operate == '1'">
+      <Form-item label="背景图片" prop="poster" class="ivu-form-item-required -c-form-item -c-border"
+                 v-if=" addInfo.operate == '1'">
         <Upload
           style="display: inline-block"
           :action="baseUrl"
@@ -49,7 +50,7 @@
       </Form-item>
 
       <Form-item label="题干图片" prop="poster" class="ivu-form-item-required -c-form-item -c-border"
-                 v-if="addInfo.operate == '2'">
+                 v-if=" addInfo.operate == '2'">
         <Upload
           style="display: inline-block"
           :action="baseUrl"
@@ -113,7 +114,8 @@
         </Radio-group>
       </Form-item>
 
-      <Form-item label="选择选项" prop="showMode" class="ivu-form-item-required -c-form-item" v-if="addInfo.operate == '2'">
+      <Form-item label="选择选项" prop="showMode" class="ivu-form-item-required -c-form-item"
+                 v-if=" addInfo.operate == '2'">
         <div v-for="(item,index) of optionList" class="-item-select-wrap">
           <span class="-s-width">选项{{optionLetter[index]}}</span>
           <Input class="-s-width" v-model="item.value" type="textarea" :autosize="true" placeholder="请输入选择题干"
@@ -126,7 +128,7 @@
       </Form-item>
 
       <Form-item label="完成条件" prop="answerComplete" class="ivu-form-item-required -c-form-item -c-border"
-                 v-if="addInfo.operate == '2'">
+                 v-if=" addInfo.operate == '2'">
         <Radio-group v-model="addInfo.answerComplete">
           <Radio :label=1>无条件</Radio>
           <Radio :label=2>选择任意选项</Radio>
@@ -135,7 +137,7 @@
       </Form-item>
 
       <Form-item label="展示逻辑" prop="showMode" class="ivu-form-item-required -c-form-item -c-border"
-                 v-if="addInfo.operate == '2'">
+                 v-if=" addInfo.operate == '2'">
         <Radio-group v-model="addInfo.showMode">
           <Radio :label=1>同时展示</Radio>
           <Radio :label=2>顺序展示（依赖模块完成条件）</Radio>
@@ -174,6 +176,7 @@
         isShowEdit: false,
         isSending: false,
         isFetching: false,
+        isSwitchTemplate: false,
         dataList: [],
         baseUrl: `${getBaseUrl()}/common/uploadPublicFile`, // 公有 （图片）
         baseUrlVa: `${getBaseUrl()}/common/uploadPrivateFile`, //私有地址 （音视频）
@@ -221,11 +224,37 @@
         this.gifImgUrl = this.addInfo.content.gifImg
         this.backImgUrl = this.addInfo.content.backImg
         this.stemImgUrl = this.addInfo.content.stemImg
+        localStorage.setItem('operate',this.addInfo.operate)
       }
 
       console.log(this.addInfo)
     },
     methods: {
+      changeTemplate() {
+        this.addInfo.operate = localStorage.operate
+        this.$Modal.confirm({
+          title: '提示',
+          content: '切换模板，当前页面编辑相关字段将被清空',
+          onOk: () => {
+
+            this.addInfo.operate = this.addInfo.operate == 1 ? 2 : 1
+            localStorage.operate = this.addInfo.operate
+
+            if ( this.addInfo.operate == '2') {
+              this.gifImgUrl = ''
+              this.backImgUrl = ''
+            } else {
+              this.stemImgUrl = ''
+              this.optionList = []
+              this.addInfo.showMode = ''
+              this.addInfo.answerComplete = ''
+            }
+          },
+          onCancel: () => {
+            this.addInfo.operate = this.addInfo.operate == 1 ? 1 : 2
+          }
+        })
+      },
       changeCheck(idx) {
         this.optionList.forEach((item, index) => {
           if (idx != index) {
@@ -307,7 +336,13 @@
 
       },
       closeModal() {
-        this.$emit('addCourseCancel')
+        this.$Modal.confirm({
+          title: '提示',
+          content: '返回关卡列表，当前页面编辑内容将全部丢失',
+          onOk: () => {
+            this.$emit('addCourseOk')
+          }
+        })
       },
       beforeUpload(file) {
         let fileType = file.type.split('/')

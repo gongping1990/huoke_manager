@@ -20,11 +20,13 @@
             <Button type="primary" class="-p-modal-btn" @click="resetSearch">重置</Button>
           </div>
         </Col>
-        <Col :span="4" class="-p-text-right">
-          <Button type="primary" class="-p-modal-btn" @click="toJump">添加优惠券</Button>
-        </Col>
+        <!--<Col :span="4" class="-p-text-right">-->
+          <!--<Button type="primary" class="-p-modal-btn" @click="toJump">添加优惠券</Button>-->
+        <!--</Col>-->
       </Row>
-
+      <div class="g-add-btn -t-add-icon" @click="toJump">
+        <Icon class="-btn-icon" color="#fff" type="ios-add" size="24"/>
+      </div>
       <Table class="-c-tab" :columns="columns" :data="dataList"></Table>
 
       <Page class="-p-text-right" :total="total" size="small" show-elevator :page-size="tab.pageSize"
@@ -249,6 +251,10 @@
 
 <style lang="less" scoped>
   .p-coupon {
+
+    .-t-add-icon {
+      top: 36px;
+    }
 
     .copy-input{
       position: absolute;
