@@ -2,30 +2,25 @@ import axios from '../http'
 import qs from 'querystring'
 
 const course = {
-    // 获取首页banner
-    listAllOn () {
-        return axios.get('/course/category/listAllOn')
+    // 新增学科
+    addSubject (params) {
+        return axios.post('/course/add', qs.stringify(params))
     },
-
-    //课程列表
-    courseList () {
+    // 修改学科
+    updateSubject (params) {
+        return axios.post('/course/update', qs.stringify(params))
+    },
+    // 删除学科
+    delSubject (params) {
+        return axios.post('/course/remove', qs.stringify(params))
+    },
+    //学科列表
+    subjectList () {
+      return axios.get('/course/get')
+    },
+    //添加教材时的学科列表
+    teachSubjectList () {
       return axios.get('/course/list')
-    },
-    // 获取课程学习进度
-    getComplete(params) {
-        return axios.get('/course/getComplete',{params})
-    },
-    //  获取用户最后一次学习的课时id
-    getLastStudy(params) {
-        return axios.get('/course/getLastStudy',{params})
-    },
-    // 课程模块 - 查看一个课程的信息 
-    getBaseCourse(params) {
-        return axios.get('/course/getBaseCourse',{params})
-    },
-    // 更新用户课程状态
-    updateStatus(params) {
-        return axios.post('/course/user/updateStatus', qs.stringify(params))
     }
 }
 

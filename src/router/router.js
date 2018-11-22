@@ -43,7 +43,26 @@ export const otherRouter = {
       name: 'couponEdit',
       meta: ['营销管理', '优惠券', '编辑优惠券'],
       component: () => import("@/view/marketingMangement/coupon/couponEdit")
-    }
+    },
+    {
+      path: 'userInfo',
+      name: 'userInfo',
+      meta: ['用户管理', '用户列表', '用户详情'],
+      component: () => import("@/view/user/userInfo")
+    },
+    {
+      path: '/teachMain',
+      name: 'teachMain',
+      meta: ['同步学习', '教材管理', '章节管理'],
+      component: () => import('@/view/study/teachingManage/teachMain')
+    },
+    {
+      path: '/courseInfo',
+      name: 'courseInfo',
+      meta: ['同步学习', '教材管理', '章节管理', '课程内容管理'],
+      component: () => import('@/view/study/teachingManage/courseInfo')
+    },
+
   ]
 };
 // 作为main组件的子页面展示并且在左侧菜单显示的路由写在appRouter里
@@ -77,6 +96,26 @@ export const appRouter = [
     ]
   },
   {
+    path: '/study',
+    name: 'study',
+    title: '同步学习',
+    component: Main,
+    children: [
+      {
+        path: '/subject',
+        name: 'subject',
+        meta: ['同步学习', '学科管理'],
+        component: () => import('@/view/study/subjectManage/subjectList')
+      },
+      {
+        path: '/teachingList',
+        name: 'teachingList',
+        meta: ['同步学习', '教材管理'],
+        component: () => import('@/view/study/teachingManage/tecchingList')
+      },
+    ]
+  },
+  {
     path: 'setting',
     name: 'setting',
     title: '用户设置',
@@ -91,13 +130,13 @@ export const appRouter = [
       {
         path: '/user-info',
         name: 'user-info',
-        meta: ['设置', '用户资料'],
+        meta: ['设置', '个人资料'],
         component: () => import('@/view/setting/info')
       },
       {
-        path: '/role-setting',
-        name: 'role-setting',
-        meta: ['设置', '角色设置'],
+        path: '/user-role',
+        name: 'user-role',
+        meta: ['设置', '角色管理'],
         component: () => import('@/view/setting/role')
       }
     ]

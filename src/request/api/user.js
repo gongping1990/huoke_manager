@@ -8,27 +8,19 @@ const user = {
   },
   // 用户列表信息
   getUserPage(params) {
-    return axios.get("/user/queryUserPage", {params});
+    return axios.get("/preuser/queryUserPage", {params});
   },
   // 禁用启用用户
   changeUserStatus(params) {
-    return axios.get("/user/updateUserDisabledStatusById",qs.stringify(params));
+    return axios.post("/preuser/updateUserDisabledStatusById",qs.stringify(params));
   },
-  // 更改用户信息
-  modifyNicknameOrHeadImgUrl(data) {
-    return axios.post("/user/modifyNicknameOrHeadImgUrl", qs.stringify(data));
+  // 获取用户详情
+  getUserInfo(params) {
+    return axios.get("/preuser/queryUserInfoById",{params});
   },
-  // 更改用户手机号
-  updateUserPhone(data) {
-    return axios.post("/user/updateUserPhone", qs.stringify(data));
-  },
-  // 退出登录
-  loginOut() {
-    return axios.get("/user/loginOut");
-  },
-  // 绑定手机号
-  bindPhone() {
-    return axios.post("/user/bindPhone", qs.stringify(params));
+  // 用户日志
+  userLoginInfo(params) {
+    return axios.get("/preuser/queryLoginInfoById", {params});
   }
 };
 

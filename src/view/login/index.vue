@@ -23,14 +23,8 @@
               <Input class="body_input" type="password" v-model="form.password" placeholder="请输入密码" size="large">
               </Input>
             </FormItem>
-
-            <FormItem prop="password">
-              <Input class="body_input" type="password" v-model="form.password" placeholder="请输入密码" size="large">
-              </Input>
-            </FormItem>
-
             <FormItem>
-              <Button @click="handleSubmit" type="primary" long>登录</Button>
+              <div @click="handleSubmit" class="g-primary-btn -width">登录</div>
             </FormItem>
           </Form>
         </div>
@@ -182,6 +176,10 @@
           font-size: 30px;
           margin-bottom: 40px;
           text-align: left;
+        }
+
+        .-width{
+          width: 100%;
         }
 
         .body_input {

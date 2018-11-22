@@ -1,0 +1,85 @@
+
+/*新增特殊按钮*/
+.g-add-btn {
+  position: absolute;
+  display: inline-block;
+  top: 16px;
+  right: 16px;
+  z-index: 999;
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  background: linear-gradient(270deg, rgba(237, 76, 96, 1) 0%, rgba(218, 55, 75, 1) 100%);
+  box-shadow: 0 6px 12px 0 rgba(218, 55, 75, 0.5);
+}
+
+.g-add-btn:hover {
+  box-shadow: 0 7px 14px 0 rgba(218, 55, 75, 0.5);
+}
+
+
+/*一般默认按钮*/
+.g-primary-btn{
+  width:100px;
+  height:40px;
+  line-height: 40px;
+  text-align: center;
+  cursor: pointer;
+  background:linear-gradient(270deg,rgba(133,78,247,1) 0%,rgba(84,68,228,1) 100%);
+  box-shadow:0 6px 12px 0 rgba(84,68,228,0.5);
+  border-radius:4px;
+  color:#fff;
+  border: none!important;
+}
+
+.g-primary-btn:hover{
+  background:linear-gradient(270deg,rgba(116,60,231,1) 0%,rgba(73,57,216,1) 100%);
+  box-shadow:0 6px 12px 0 rgba(84,68,228,0.5);
+}
+
+/*搜索框*/
+.g-search .ivu-input {
+  border: none !important;
+}
+.g-search .ivu-select-selection {
+   border: none !important;
+ }
+.g-search .-search {
+  display: flex;
+  align-items: center;
+  border: 1px solid #dcdee2;
+  border-radius: 4px;
+}
+
+.g-search .-search .-search-select {
+  width: 150px;
+}
+
+.g-search .-search .-search-center {
+  color: #dcdee2;
+}
+
+/*居中*/
+.g-flex-j-sa {
+  display: flex;
+  justify-content: space-around;
+}
+
+
+.g-text-right{
+  text-align: right;
+}
+
+.g-t-left{
+  text-align: left;
+}
+
+.g-t-center{
+  text-align: center;
+}
+
+.g-cursor{
+  cursor: pointer;
+}

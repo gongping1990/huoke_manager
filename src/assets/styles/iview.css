@@ -65,7 +65,7 @@
 }
 
 .ivu-breadcrumb a:hover {
-  color: #57a3f3
+  color: #4939D8
 }
 
 .ivu-breadcrumb>span:last-child {
@@ -420,7 +420,7 @@ a {
 }
 
 a:hover {
-  color: #57a3f3
+  color: #4939D8
 }
 
 a:active {
@@ -8229,9 +8229,9 @@ fieldset[disabled] .ivu-btn>a:only-child:after {
 }
 
 .ivu-btn:hover {
-  color: #57a3f3;
+  color: #4939D8;
   background-color: #fff;
-  border-color: #57a3f3
+  border-color: #4939D8
 }
 
 .ivu-btn:hover>a:only-child {
@@ -8307,8 +8307,8 @@ fieldset[disabled] .ivu-btn>a:only-child:after {
 
 .ivu-btn-primary:hover {
   color: #fff;
-  background-color: #57a3f3;
-  border-color: #57a3f3
+  background-color: #4939D8;
+  border-color: #4939D8
 }
 
 .ivu-btn-primary:hover>a:only-child {
@@ -8594,9 +8594,9 @@ fieldset[disabled] .ivu-btn-dashed>a:only-child:after {
 }
 
 .ivu-btn-dashed:hover {
-  color: #57a3f3;
+  color: #4939D8;
   background-color: #fff;
-  border-color: #57a3f3
+  border-color: #4939D8
 }
 
 .ivu-btn-dashed:hover>a:only-child {
@@ -8829,7 +8829,7 @@ fieldset[disabled] .ivu-btn-text>a:only-child:after {
 }
 
 .ivu-btn-text:hover {
-  color: #57a3f3;
+  color: #4939D8;
   background-color: #fff;
   border-color: transparent
 }
@@ -9654,8 +9654,8 @@ fieldset[disabled] .ivu-btn-info>a:only-child:after {
 
 .ivu-btn-ghost.ivu-btn-dashed:hover,
 .ivu-btn-ghost.ivu-btn-default:hover {
-  color: #57a3f3;
-  border-color: #57a3f3
+  color: #4939D8;
+  border-color: #4939D8
 }
 
 .ivu-btn-ghost.ivu-btn-primary {
@@ -9663,7 +9663,7 @@ fieldset[disabled] .ivu-btn-info>a:only-child:after {
 }
 
 .ivu-btn-ghost.ivu-btn-primary:hover {
-  color: #57a3f3;
+  color: #4939D8;
   background: rgba(245, 249, 254, .5)
 }
 
@@ -10820,8 +10820,8 @@ span.ivu-radio+* {
 }
 
 .ivu-radio-group-button .ivu-radio-wrapper-checked:hover {
-  border-color: #57a3f3;
-  color: #57a3f3
+  border-color: #4939D8;
+  color: #4939D8
 }
 
 .ivu-radio-group-button .ivu-radio-wrapper-checked:active {
@@ -11372,11 +11372,11 @@ span.ivu-radio+* {
 }
 
 .ivu-input-number:hover {
-  border-color: #57a3f3
+  border-color: #4939D8
 }
 
 .ivu-input-number:focus {
-  border-color: #57a3f3;
+  border-color: #4939D8;
   outline: 0;
   -webkit-box-shadow: 0 0 0 2px rgba(84, 68, 228, .2);
   box-shadow: 0 0 0 2px rgba(84, 68, 228, .2)
@@ -11460,7 +11460,7 @@ textarea.ivu-input-number {
 
 .ivu-input-number-handler:hover .ivu-input-number-handler-down-inner,
 .ivu-input-number-handler:hover .ivu-input-number-handler-up-inner {
-  color: #57a3f3
+  color: #4939D8
 }
 
 .ivu-input-number-handler-down-inner,
@@ -11481,11 +11481,11 @@ textarea.ivu-input-number {
 }
 
 .ivu-input-number:hover {
-  border-color: #57a3f3
+  border-color: #4939D8
 }
 
 .ivu-input-number-focused {
-  border-color: #57a3f3;
+  border-color: #4939D8;
   outline: 0;
   -webkit-box-shadow: 0 0 0 2px rgba(84, 68, 228, .2);
   box-shadow: 0 0 0 2px rgba(84, 68, 228, .2)
@@ -12717,11 +12717,11 @@ textarea.ivu-input-number {
 }
 
 .ivu-page-options-elevator input:hover {
-  border-color: #57a3f3
+  border-color: #4939D8
 }
 
 .ivu-page-options-elevator input:focus {
-  border-color: #57a3f3;
+  border-color: #4939D8;
   outline: 0;
   -webkit-box-shadow: 0 0 0 2px rgba(84, 68, 228, .2);
   box-shadow: 0 0 0 2px rgba(84, 68, 228, .2)
@@ -13523,7 +13523,7 @@ textarea.ivu-page-options-elevator input {
 
 .ivu-select-selection-focused,
 .ivu-select-selection:hover {
-  border-color: #57a3f3
+  border-color: #4939D8
 }
 
 .ivu-select-selection-focused .ivu-select-arrow,
@@ -13544,7 +13544,7 @@ textarea.ivu-page-options-elevator input {
 }
 
 .ivu-select-visible .ivu-select-selection {
-  border-color: #57a3f3;
+  border-color: #4939D8;
   outline: 0;
   -webkit-box-shadow: 0 0 0 2px rgba(84, 68, 228, .2);
   box-shadow: 0 0 0 2px rgba(84, 68, 228, .2)
@@ -14643,11 +14643,11 @@ textarea.ivu-page-options-elevator input {
 }
 
 .ivu-input:hover {
-  border-color: #57a3f3
+  border-color: #4939D8
 }
 
 .ivu-input:focus {
-  border-color: #57a3f3;
+  border-color: #4939D8;
   outline: 0;
   -webkit-box-shadow: 0 0 0 2px rgba(84, 68, 228, .2);
   box-shadow: 0 0 0 2px rgba(84, 68, 228, .2)
@@ -14803,8 +14803,8 @@ textarea.ivu-input {
 }
 
 .ivu-input-search:hover {
-  background: #57a3f3 !important;
-  border-color: #57a3f3 !important
+  background: #4939D8 !important;
+  border-color: #4939D8 !important
 }
 
 .ivu-input-search:active {
@@ -14850,7 +14850,7 @@ textarea.ivu-input {
 }
 
 .ivu-input-with-search:hover .ivu-input {
-  border-color: #57a3f3
+  border-color: #4939D8
 }
 
 .ivu-input-group {
@@ -15071,11 +15071,11 @@ textarea.ivu-input {
 }
 
 .ivu-form-item-error .ivu-transfer .ivu-input:hover {
-  border-color: #57a3f3
+  border-color: #4939D8
 }
 
 .ivu-form-item-error .ivu-transfer .ivu-input:focus {
-  border-color: #57a3f3;
+  border-color: #4939D8;
   outline: 0;
   -webkit-box-shadow: 0 0 0 2px rgba(84, 68, 228, .2);
   box-shadow: 0 0 0 2px rgba(84, 68, 228, .2)
@@ -15164,7 +15164,7 @@ textarea.ivu-form-item-error .ivu-transfer .ivu-input {
 .ivu-slider-button {
   width: 12px;
   height: 12px;
-  border: 2px solid #57a3f3;
+  border: 2px solid #4939D8;
   border-radius: 50%;
   background-color: #fff;
   -webkit-transition: all .2s linear;
@@ -15194,7 +15194,7 @@ textarea.ivu-form-item-error .ivu-transfer .ivu-input {
 
 .ivu-slider-bar {
   height: 4px;
-  background: #57a3f3;
+  background: #4939D8;
   border-radius: 3px;
   position: absolute
 }
@@ -16484,7 +16484,7 @@ tr.ivu-table-row-highlight.ivu-table-row-hover td {
 }
 
 .ivu-tabs-nav-container:focus .ivu-tabs-tab-focused {
-  border-color: #57a3f3 !important
+  border-color: #4939D8 !important
 }
 
 .ivu-tabs-nav-container-scrolling {
@@ -16574,7 +16574,7 @@ tr.ivu-table-row-highlight.ivu-table-row-hover td {
 }
 
 .ivu-tabs-nav .ivu-tabs-tab:hover {
-  color: #57a3f3
+  color: #4939D8
 }
 
 .ivu-tabs-nav .ivu-tabs-tab:active {
@@ -17311,7 +17311,7 @@ span.ivu-date-picker-cells-cell-disabled.ivu-date-picker-cells-cell-selected em 
 }
 
 .ivu-date-picker-focused input {
-  border-color: #57a3f3;
+  border-color: #4939D8;
   outline: 0;
   -webkit-box-shadow: 0 0 0 2px rgba(84, 68, 228, .2);
   box-shadow: 0 0 0 2px rgba(84, 68, 228, .2)
@@ -17394,7 +17394,7 @@ span.ivu-date-picker-cells-cell-disabled.ivu-date-picker-cells-cell-selected em 
 }
 
 .ivu-picker-confirm>span:hover {
-  color: #57a3f3
+  color: #4939D8
 }
 
 .ivu-picker-confirm>span:active {
@@ -18211,7 +18211,7 @@ span.ivu-date-picker-cells-cell-disabled.ivu-date-picker-cells-cell-selected em 
 }
 
 .ivu-color-picker>div:first-child:hover .ivu-input {
-  border-color: #57a3f3
+  border-color: #4939D8
 }
 
 .ivu-color-picker>div:first-child.ivu-color-picker-disabled:hover .ivu-input {
@@ -18228,7 +18228,7 @@ span.ivu-date-picker-cells-cell-disabled.ivu-date-picker-cells-cell-selected em 
 }
 
 .ivu-color-picker-focused {
-  border-color: #57a3f3;
+  border-color: #4939D8;
   outline: 0;
   -webkit-box-shadow: 0 0 0 2px rgba(84, 68, 228, .2);
   box-shadow: 0 0 0 2px rgba(84, 68, 228, .2)
@@ -18267,7 +18267,7 @@ span.ivu-date-picker-cells-cell-disabled.ivu-date-picker-cells-cell-selected em 
 }
 
 .ivu-color-picker-color-focused {
-  border-color: #57a3f3;
+  border-color: #4939D8;
   outline: 0;
   -webkit-box-shadow: 0 0 0 2px rgba(84, 68, 228, .2);
   box-shadow: 0 0 0 2px rgba(84, 68, 228, .2)
@@ -18323,7 +18323,7 @@ span.ivu-date-picker-cells-cell-disabled.ivu-date-picker-cells-cell-selected em 
 }
 
 .ivu-color-picker-picker-colors:focus {
-  border-color: #57a3f3;
+  border-color: #4939D8;
   outline: 0;
   -webkit-box-shadow: 0 0 0 2px rgba(84, 68, 228, .2);
   box-shadow: 0 0 0 2px rgba(84, 68, 228, .2)
@@ -18380,7 +18380,7 @@ span.ivu-date-picker-cells-cell-disabled.ivu-date-picker-cells-cell-selected em 
 }
 
 .ivu-color-picker-saturation-wrapper:focus {
-  border-color: #57a3f3;
+  border-color: #4939D8;
   outline: 0;
   -webkit-box-shadow: 0 0 0 2px rgba(84, 68, 228, .2);
   box-shadow: 0 0 0 2px rgba(84, 68, 228, .2)
@@ -18439,7 +18439,7 @@ span.ivu-date-picker-cells-cell-disabled.ivu-date-picker-cells-cell-selected em 
 }
 
 .ivu-color-picker-hue:focus {
-  border-color: #57a3f3;
+  border-color: #4939D8;
   outline: 0;
   -webkit-box-shadow: 0 0 0 2px rgba(84, 68, 228, .2);
   box-shadow: 0 0 0 2px rgba(84, 68, 228, .2)
@@ -18485,7 +18485,7 @@ span.ivu-date-picker-cells-cell-disabled.ivu-date-picker-cells-cell-selected em 
 }
 
 .ivu-color-picker-alpha:focus {
-  border-color: #57a3f3;
+  border-color: #4939D8;
   outline: 0;
   -webkit-box-shadow: 0 0 0 2px rgba(84, 68, 228, .2);
   box-shadow: 0 0 0 2px rgba(84, 68, 228, .2)
