@@ -10,7 +10,7 @@
       <Col :span="24" v-if="isNextChild">
         <div class="-c-margin g-primary-btn" @click="toBack">
           <Icon type="md-return-left"/>
-          返回单元章节
+          返回单元列表
         </div>
       </Col>
     </Row>

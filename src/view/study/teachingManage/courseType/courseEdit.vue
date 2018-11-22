@@ -19,7 +19,7 @@
           :on-error="handleErr">
           <Button ghost type="primary">上传图片</Button>
         </Upload>
-        <span class="-c-tips">图片尺寸不低于285x432px 图片大小：500K以内</span>
+        <span class="-c-tips">图片尺寸不低于285x432px 图片大小：100K以内</span>
         <div class="-c-course-wrap" v-if="gifImgUrl">
           <div class="-c-course-item">
             <img :src="gifImgUrl">
@@ -41,7 +41,7 @@
           <Button ghost type="primary">上传图片</Button>
         </Upload>
 
-        <span class="-c-tips">图片尺寸不低于640x1008px 图片大小：500K以内</span>
+        <span class="-c-tips">图片尺寸不低于640x1008px 图片大小：200K以内</span>
         <div class="-c-course-wrap" v-if="backImgUrl">
           <div class="-c-course-item">
             <img :src="backImgUrl">
