@@ -1,7 +1,7 @@
 <template>
   <div class="p-path">
     当前选择：<h5>
-    <span v-if="detailInfo.lessonName">{{detailInfo.lessonName}} · {{detailInfo.chapterName}} · </span>
+    <span v-if="detailInfo.chapterName && routeUrl != '/teachMain'">{{detailInfo.lessonName}} · {{detailInfo.chapterName}} · </span>
     {{detailInfo.courseName}} · {{detailInfo.gradeText}}（{{detailInfo.semesterText}}）- {{detailInfo.editionText}}</h5>
   </div>
 </template>
@@ -11,7 +11,9 @@
     name: 'pathRecord',
     props: ['dataProp'],
     data() {
-      return {}
+      return {
+        routeUrl: this.$route.path
+      }
     },
     computed: {
       detailInfo() {

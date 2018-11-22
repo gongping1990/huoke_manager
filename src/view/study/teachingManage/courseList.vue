@@ -1,7 +1,7 @@
 <template>
   <div class="p-course">
     <Row class="-c-wrap">
-      <Col :span="3" v-for="(item, index) of dataList" class="-c-item g-t-center" :key="index" >
+      <Col :span="3" v-for="(item, index) of dataList" class="-c-item g-t-center" :key="index">
         <div @click="toDetail(item)" class="-c-item-cursor">
           <img src="../../../assets/images/grade-logo.png">
           <h5>{{item.name}}</h5>
@@ -9,7 +9,7 @@
       </Col>
       <Col :span="24" v-if="isNextChild">
         <div class="-c-margin g-primary-btn" @click="toBack">
-          <Icon type="md-return-left" />
+          <Icon type="md-return-left"/>
           返回单元章节
         </div>
       </Col>
@@ -35,7 +35,13 @@
       };
     },
     mounted() {
-      this.getList()
+      //处理从某个课程反跳回单元下课程列表
+      if (this.$route.query.chapterId) {
+        this.isNextChild = true
+        this.getLessonList(this.$route.query.chapterId)
+      } else {
+        this.getList()
+      }
     },
     methods: {
       toDetail(item) {
@@ -45,18 +51,22 @@
             name: 'courseInfo',
             query: {
               ...this.pathInfo,
-              chapterName: this.arrayName[0],
-              lessonName:  this.arrayName[1],
-              lessonId: item.id
+              chapterName: this.$route.query.isBack ? this.$route.query.chapterName : this.arrayName[0],
+              lessonName: this.$route.query.isBack ? item.name : this.arrayName[1],
+              lessonId: item.id,
+              chapterId: item.chapterId,
+              isBack: false
             }
           })
         } else {
           this.isNextChild = true
-          this.getLessonList(item)
+          this.getLessonList(item.id)
         }
       },
-      toBack () {
+      toBack() {
+        this.arrayName = []
         this.isNextChild = false
+        this.$route.query.isBack = false
         this.getList()
       },
       //分页查询
@@ -68,14 +78,15 @@
           .then(
             response => {
               this.dataList = response.data.resultData;
-            }).finally(() => {
-          this.isFetching = false
-        })
+            })
+          .finally(() => {
+            this.isFetching = false
+          })
       },
-      getLessonList(item) {
+      getLessonList(param) {
         this.isFetching = true
         this.$api.book.chapterLessonList({
-          chapterId: item.id
+          chapterId: param
         })
           .then(
             response => {
@@ -107,7 +118,7 @@
         width: 60px;
       }
 
-      &-cursor{
+      &-cursor {
         cursor: pointer;
       }
     }

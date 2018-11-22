@@ -8,7 +8,7 @@
         <img class="-t-img" v-if="sort != '3' && isShow" src="../../assets/images/tree-file.png">
         <img class="-t-img" v-if="sort == '3'" src="../../assets/images/tree-text.png">
       </div>
-      <div class="-t-name">{{title}}</div>
+      <div class="-t-name">{{title}} <span v-if="pinyin">({{pinyin}})</span></div>
     </div>
   </div>
 </template>
@@ -16,7 +16,7 @@
 <script>
 export default {
   name: 'arrowFile',
-  props: ['nodeName', 'sort'],
+  props: ['nodeName', 'nodePinyin', 'sort'],
   data () {
     return {
       isShow: false
@@ -25,6 +25,9 @@ export default {
   computed: {
     title () {
       return this.nodeName
+    },
+    pinyin () {
+      return this.nodePinyin
     }
   },
   methods: {

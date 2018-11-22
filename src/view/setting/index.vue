@@ -12,12 +12,12 @@
       v-model="isOpenModal"
       @on-cancel="closeModal('addInfo')"
       width="350"
-      title="添加用户">
+      :title="addInfo.id ? '编辑用户' : '添加用户'">
       <Form ref="addInfo" :model="addInfo" :rules="ruleValidate" :label-width="70">
         <FormItem label="账号" prop="username">
-          <Input type="text" v-model="addInfo.username"></Input>
+          <Input type="text" v-model="addInfo.username" :disabled="addInfo.id ? true : false"></Input>
         </FormItem>
-        <FormItem label="初始密码" prop="password">
+        <FormItem label="初始密码" prop="password" v-if="!addInfo.id">
           <Input type="password" v-model="addInfo.password"></Input>
         </FormItem>
         <FormItem label="姓名" prop="nickname">
@@ -140,6 +140,20 @@
                     size: 'small'
                   },
                   style: {
+                    color: '#5444E4'
+                  },
+                  on: {
+                    click: () => {
+                      this.openModal(params.row)
+                    }
+                  }
+                }, '编辑'),
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
                     color: '#DA374B'
                   },
                   on: {
@@ -162,7 +176,8 @@
         this.tab.page = val;
         this.getList();
       },
-      openModal() {
+      openModal(data) {
+        this.addInfo = JSON.parse(JSON.stringify(data))
         this.isOpenModal = true
         this.getRoleList()
       },
@@ -170,7 +185,7 @@
         this.userId = data.id
         this.isOpenPasswordModal = true
       },
-      closePwdModal () {
+      closePwdModal() {
         this.isOpenPasswordModal = false
       },
       closeModal(name) {
@@ -192,7 +207,8 @@
         this.$refs[name].validate((valid) => {
           if (valid) {
             this.isSending = true
-            this.$api.admin.addAdmin(this.addInfo)
+            let param = this.addInfo.id ? this.$api.admin.updateAdmin(this.addInfo) : this.$api.admin.addAdmin(this.addInfo)
+            param
               .then(
                 response => {
                   if (response.data.code == '200') {
@@ -207,7 +223,7 @@
           }
         })
       },
-      submitPwd (params) {
+      submitPwd(params) {
         this.$api.admin.changeOtherAdminPassword({
           userId: this.userId,
           ...params

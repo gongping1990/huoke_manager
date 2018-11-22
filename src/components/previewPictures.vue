@@ -34,7 +34,7 @@
             <div class="-w-title"><img src="../assets/images/select-title.png"/></div>
             <div v-for="(item,index) in arraySelect" :key="index" class="-w-item">
               <div class="-item-padding">{{item.index}}</div>
-              <div class="-item-padding">{{item.value}}</div>
+              <div class="-item-padding -item-width">{{item.value}}</div>
               <div class="-item-padding"><img src="../assets/images/select-check.png"/></div>
             </div>
           </div>
@@ -151,6 +151,10 @@
 
             .-item-padding {
               padding: 0 10px;
+            }
+
+            .-item-width{
+              width: 240px;
             }
           }
         }

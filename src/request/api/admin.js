@@ -42,6 +42,10 @@ const admin = {
   changeOtherAdminPassword(params) {
     return axios.post("/admin/changePassword",qs.stringify(params));
   },
+  // 修改其他管理员信息
+  updateAdmin(params) {
+    return axios.post("/admin/user/update",qs.stringify(params));
+  },
 };
 
 export default admin;

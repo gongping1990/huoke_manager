@@ -1,14 +1,14 @@
 <template>
   <div class="p-courseEdit">
-    <Form class="-c-form ivu-form-item-required g-t-left" ref="addInfo" :model="addInfo" :label-width="100">
-      <Form-item label="模板样式" prop="operate" class="-c-form-item -c-border">
+    <Form class="-c-form g-t-left" ref="addInfo" :model="addInfo" :label-width="100">
+      <Form-item label="模板样式" prop="operate" class="ivu-form-item-required -c-form-item -c-border">
         <Radio-group v-model="addInfo.operate ">
           <Radio :label=1>读课文</Radio>
           <Radio :label=2>单选题</Radio>
         </Radio-group>
       </Form-item>
 
-      <Form-item label="动态图片" prop="gifImg" class=" -c-form-item -c-border" v-if="addInfo.operate == '1'">
+      <Form-item label="动态图片" class="-c-form-item -c-border" v-if="addInfo.operate == '1'">
         <Upload
           style="display: inline-block"
           :action="baseUrl"
@@ -24,6 +24,7 @@
           <div class="-c-course-item">
             <img :src="gifImgUrl">
           </div>
+          <Button class="g-cursor" type="text" @click="gifImgUrl= ''">删除</Button>
         </div>
       </Form-item>
 
@@ -306,7 +307,7 @@
 
       },
       closeModal() {
-        this.$emit('addCourseOk')
+        this.$emit('addCourseCancel')
       },
       beforeUpload(file) {
         let fileType = file.type.split('/')

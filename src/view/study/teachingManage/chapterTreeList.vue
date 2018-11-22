@@ -31,7 +31,7 @@
         <Col :span="24" v-show="item1.isShowChild" v-for="(item2,index2) of item1.lessons" :key="index2"
              class="-t-item -t-border">
           <Col :span="12" class="-t-child-padding-two">
-            <arrow-file :nodeName="item2.name" :sort="3"></arrow-file>
+            <arrow-file :nodeName="item2.name" :nodePinyin="item2.pinyin" :sort="3"></arrow-file>
           </Col>
           <Col :span="6">
             {{item2.sortNum}}
@@ -53,14 +53,17 @@
       @on-cancel="closeModal('addInfo')"
       width="350"
       title="编辑章节">
-      <Form ref="addInfo" :model="addInfo" :rules="ruleValidate" :label-width="80">
+      <Form ref="addInfo" :model="addInfo" :label-width="80">
         <FormItem label="上级章节" v-if="rootNode.num=='2'">
           {{rootNode.name}}
         </FormItem>
-        <FormItem label="章节名称" prop="name">
-          <Input type="text" v-model="addInfo.name" placeholder="请输入章节名称"></Input>
+        <FormItem label="章节名称" prop="name" class="ivu-form-item-required">
+          <Input type="text" v-model="addInfo.name" placeholder="请输入章节名称" @on-blur="changePinYin"></Input>
         </FormItem>
-        <FormItem label="排序值" prop="name">
+        <FormItem label="章节拼音" v-show="rootNode.num=='2'">
+          <Input type="text" v-model="pinyinInfo" placeholder="请输入章节拼音"></Input>
+        </FormItem>
+        <FormItem label="排序值" prop="sort" class="ivu-form-item-required">
           <Input type="text" v-model="addInfo.sortNum" placeholder="请输入排序值"></Input>
         </FormItem>
       </Form>
@@ -77,7 +80,8 @@
 <script>
   import ArrowFile from "@/components/tree/arrowFileTemplate";
   import Loading from "../../../components/loading";
-  import { pattern } from '@/libs/regexp'
+  import {pattern} from '@/libs/regexp'
+
   export default {
     name: 'chapterTreeList',
     components: {Loading, ArrowFile},
@@ -91,26 +95,21 @@
         isShowNextOneChild: false,
         isShowNextTwoChild: false,
         isSending: false,
+        pinyinInfo: '',
         addInfo: {
           name: '',
           sortNum: ''
         },
         paramsInfo: this.$route.query,
-        ruleValidate: {
-          name: [
-            {required: true, message: '请输入章节名称', trigger: 'blur'}
-          ],
-          sortNum: [
-            {required: true, message: '请输入排序值', trigger: 'blur'}
-          ]
-        },
       };
     },
     mounted() {
       this.getList()
     },
-    computed: {},
     methods: {
+      changePinYin() {
+        this.pinyinInfo = pinyinUtil.getPinyin(this.addInfo.name)
+      },
       openNextChild(data) {
         this.isShowNextOneChild = !this.isShowNextOneChild
         this.firstChild.forEach(item => {
@@ -126,7 +125,8 @@
         this.isOpenModal = true
         this.addInfo = {
           name: '',
-          sortNum: ''
+          sortNum: '',
+          pinyin: ''
         }
         this.rootNode = {
           id: data.id,
@@ -137,17 +137,17 @@
       editModal(first, data, num) {
         this.isOpenModal = true
         this.addInfo = JSON.parse(JSON.stringify(data))
+        this.pinyinInfo = this.addInfo.pinyin
         this.rootNode = {
           id: data.id,
           chapterId: first.id,
           name: first.name,
           num: num
         }
-        console.log(this.rootNode)
       },
       closeModal(name) {
         this.isOpenModal = false
-        this.$refs[name].resetFields()
+        this.pinyinInfo = ''
       },
       getList() {
         this.isFetching = true
@@ -164,7 +164,7 @@
               if (this.oldList.length) {
                 for (let data of this.firstChild) {
                   for (let item of this.oldList) {
-                    if(data.id === item.id) {
+                    if (data.id === item.id) {
                       data.isShowChild = item.isShowChild
                     }
                   }
@@ -202,37 +202,38 @@
       },
 
       submitInfo(name) {
-        this.$refs[name].validate((valid) => {
-          if (valid) {
-            let promiseDate = ''
+        let promiseDate = ''
 
-            if (!pattern.positiveInteger.exec(this.addInfo.sortNum)) {
-              return this.$Message.error('排序值为正整数')
-            }
-            this.isSending = true
-            this.addInfo.bookId = this.paramsInfo.bookId
+        if (!this.addInfo.name) {
+          return this.$Message.error('请输入章节名称')
+        } else if (!this.addInfo.sortNum) {
+          return this.$Message.error('请输入排序值')
+        } else if (!pattern.positiveInteger.exec(this.addInfo.sortNum)) {
+          return this.$Message.error('排序值为正整数')
+        }
+        this.isSending = true
+        this.addInfo.bookId = this.paramsInfo.bookId
 
-            if (this.rootNode.num == '1') {
-              promiseDate = this.addInfo.id ? this.$api.book.updateChapter(this.addInfo) : this.$api.book.addChapter(this.addInfo)
-            } else {
-              this.addInfo.chapterId = this.addInfo.id ? this.rootNode.chapterId : this.rootNode.id
-              promiseDate = this.addInfo.id ? this.$api.book.updateLesson(this.addInfo) : this.$api.book.addLesson(this.addInfo)
-            }
+        if (this.rootNode.num == '1') {
+          promiseDate = this.addInfo.id ? this.$api.book.updateChapter(this.addInfo) : this.$api.book.addChapter(this.addInfo)
+        } else {
+          this.addInfo.pinyin = this.pinyinInfo
+          this.addInfo.chapterId = this.addInfo.id ? this.rootNode.chapterId : this.rootNode.id
+          promiseDate = this.addInfo.id ? this.$api.book.updateLesson(this.addInfo) : this.$api.book.addLesson(this.addInfo)
+        }
 
-            promiseDate
-              .then(
-                response => {
-                  if (response.data.code == '200') {
-                    this.$Message.success('提交成功');
-                    this.getList()
-                    this.closeModal(name)
-                  }
-                })
-              .finally(() => {
-                this.isSending = false
-              })
-          }
-        })
+        promiseDate
+          .then(
+            response => {
+              if (response.data.code == '200') {
+                this.$Message.success('提交成功');
+                this.getList()
+                this.closeModal(name)
+              }
+            })
+          .finally(() => {
+            this.isSending = false
+          })
       }
     }
   };

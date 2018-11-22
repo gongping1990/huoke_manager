@@ -12,24 +12,25 @@
                 @click="delCheckpoint(item)"/>
         </div>
 
-        <div class="-c-item-no g-cursor" @click="toEdit(0)">添加关卡 +</div>
+        <div class="-c-item-no g-cursor" v-if="itemList.length" @click="toEdit(0)">添加关卡 +</div>
         <div class="-c-item-no g-cursor" @click="toSort()" v-if="itemList.length > 1">关卡排序</div>
       </Row>
       <div class="-c-flex-align -c-wrap">
         <div>
           <div class="g-primary-btn -t-width" @click="toEdit(1)">{{dataItem ? '进入编辑' : '添加关卡'}}</div>
-          <Button ghost type="primary" class="-t-width" @click="openPreviewModal">预览内容</Button>
+          <Button ghost type="primary" class="-t-width"  v-if="itemList.length" @click="openPreviewModal">预览内容</Button>
+          <div class="-c-color -t-width g-cursor" @click="backCourseList">返回课时列表</div>
         </div>
       </div>
     </div>
 
     <div v-if="isShowEdit && type != '0'">
       <Row>
-        <div class="g-t-left g-cursor" @click="toBack">
-          <Icon type="ios-arrow-back"/>
-          返回关卡列表
-        </div>
-        <course-edit :type="type" :dataObj="dataItem" @addCourseOk="addCourse"></course-edit>
+        <!--<div class="g-t-left g-cursor" @click="toBack">-->
+          <!--<Icon type="ios-arrow-back"/>-->
+          <!--返回关卡列表-->
+        <!--</div>-->
+        <course-edit :type="type" :dataObj="dataItem" @addCourseOk="addCourse" @addCourseCancel="cancelCourse"></course-edit>
       </Row>
     </div>
 
@@ -108,6 +109,15 @@
       this.type != '0' && this.getList()
     },
     methods: {
+      backCourseList () {
+        this.$router.push({
+          name: 'teachMain',
+          query:{
+            ...this.$route.query,
+            isBack: true
+          }
+        })
+      },
       toSort() {
         this.sortList = this.dataList
         this.isOpenModal = true
@@ -187,8 +197,13 @@
           .then(
             response => {
               this.dataList = response.data.resultData;
-              this.dataList.forEach(item => {
-                item.isActive = false
+              this.dataList.forEach((item, index) => {
+                if(index == '0') {
+                  item.isActive = true
+                  this.dataItem = item
+                } else {
+                  item.isActive = false
+                }
               })
               localStorage.setItem('typeId', this.type)
             })
@@ -217,6 +232,10 @@
         this.dataItem = ''
         this.closeEdit()
         this.getList()
+      },
+      cancelCourse () {
+        this.toBack()
+        this.addCourse()
       }
     }
   };
@@ -293,6 +312,10 @@
       line-height: 30px;
       width: 100%;
       cursor: pointer;
+    }
+
+    .-c-color {
+      color: #5444E4;
     }
   }
 </style>
