@@ -234,7 +234,7 @@
         this.addInfo.operate = localStorage.operate
         this.$Modal.confirm({
           title: '提示',
-          content: '切换模板，当前页面编辑相关字段将被清空',
+          content: '切换模板，当前模板编辑内容将被清空',
           onOk: () => {
 
             this.addInfo.operate = this.addInfo.operate == 1 ? 2 : 1
@@ -338,7 +338,7 @@
       closeModal() {
         this.$Modal.confirm({
           title: '提示',
-          content: '返回关卡列表，当前页面编辑内容将全部丢失',
+          content: '返回关卡列表，当前模板编辑内容将被清空',
           onOk: () => {
             this.$emit('addCourseOk')
           }

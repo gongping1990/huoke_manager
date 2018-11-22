@@ -88,11 +88,10 @@
     },
     watch: {
       'type'(_old, _new) {
-       console.log(this.isShowEdit,this.type)
         if (this.isShowEdit) {
-          console.log(1)
           this.toBack()
         } else {
+          this.dataItem = ''
           this.type != '0' && this.getList()
         }
       }
@@ -103,7 +102,6 @@
       }
     },
     mounted() {
-      console.log(localStorage.typeId,'111')
       this.type != '0' && this.getList()
     },
     methods: {
