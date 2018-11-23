@@ -69,13 +69,13 @@ var instance = axios.create({
  */
 instance.interceptors.request.use(
   config => {
-    let otherUrl = ['/goods/listPage', '/boss/coupon', '/user/queryUser']
-    let isPass = otherUrl.some(item => {
-      return config.url.indexOf(item) != -1
-    })
-    if (isPass) {
-      config.baseURL = oldBaseUrl()
-    }
+    // let otherUrl = ['/goods/listPage', '/boss/coupon', '/user/queryUser']
+    // let isPass = otherUrl.some(item => {
+    //   return config.url.indexOf(item) != -1
+    // })
+    // if (isPass) {
+    //   config.baseURL = oldBaseUrl()
+    // }
     return config;
   },
   error => Promise.error(error))

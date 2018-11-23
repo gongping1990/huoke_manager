@@ -4,7 +4,7 @@
       <div class="left_logo"><img src="../../assets/images/login-logo.png"></div>
       <div class="left_text">
         <div class="text_version">v1.0</div>
-        <div class="text_sub">获课预习宝运营中心</div>
+        <div class="text_sub">获课学堂</div>
         <div class="text-en">PRE-CLASS</div>
         <div class="text-en">OPERATION CENTER</div>
       </div>
