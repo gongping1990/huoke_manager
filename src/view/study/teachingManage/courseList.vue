@@ -47,17 +47,17 @@
       toDetail(item) {
         this.arrayName.push(item.name)
         if (this.isNextChild) {
-          this.$router.push({
-            name: 'courseInfo',
-            query: {
-              ...this.pathInfo,
-              chapterName: this.$route.query.isBack ? this.$route.query.chapterName : this.arrayName[0],
-              lessonName: this.$route.query.isBack ? item.name : this.arrayName[1],
-              lessonId: item.id,
-              chapterId: item.chapterId,
-              isBack: false
-            }
-          })
+            this.$router.push({
+              name: 'courseInfo',
+              query: {
+                ...this.pathInfo,
+                chapterName: this.$route.query.isBack ? this.$route.query.chapterName : this.arrayName[0],
+                lessonName: this.$route.query.isBack ? item.name : this.arrayName[1],
+                lessonId: item.id,
+                chapterId: item.chapterId,
+                isBack: false
+              }
+            })
         } else {
           this.isNextChild = true
           this.getLessonList(item.id)

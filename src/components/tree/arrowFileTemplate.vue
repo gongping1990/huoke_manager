@@ -2,10 +2,10 @@
   <div class="p-c-arrow">
     <div class="-c-a-flex -t-float" >
       <div class="-c-a-flex" @click="openNextChild">
-        <Icon v-if="!isShow && sort != '3'" type="md-arrow-dropright" size="20"/>
-        <Icon v-if="isShow && sort != '3'" type="md-arrow-dropdown" size="20"/>
+        <Icon v-if="!isShow && sort != '3' && sort!=1" type="md-arrow-dropright" size="20"/>
+        <Icon v-if="isShow && sort != '3' && sort!=1" type="md-arrow-dropdown" size="20"/>
         <img class="-t-img" v-if="sort != '3' && !isShow" src="../../assets/images/tree-file-close.png">
-        <img class="-t-img" v-if="sort != '3' && isShow" src="../../assets/images/tree-file.png">
+        <img class="-t-img" v-if="sort != '3' && isShow " src="../../assets/images/tree-file.png">
         <img class="-t-img" v-if="sort == '3'" src="../../assets/images/tree-text.png">
       </div>
       <div class="-t-name">{{title}} <span v-if="pinyin">({{pinyin}})</span></div>
@@ -16,7 +16,7 @@
 <script>
 export default {
   name: 'arrowFile',
-  props: ['nodeName', 'nodePinyin', 'sort'],
+  props: ['nodeData', 'nodePinyin', 'sort'],
   data () {
     return {
       isShow: false
@@ -24,10 +24,15 @@ export default {
   },
   computed: {
     title () {
-      return this.nodeName
+      return this.nodeData.name
     },
     pinyin () {
       return this.nodePinyin
+    }
+  },
+  mounted () {
+    if(localStorage.chapterId == this.nodeData.id) {
+      this.isShow = true
     }
   },
   methods: {

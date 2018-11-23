@@ -2,25 +2,25 @@
   <div class="p-tree">
     <Row class="-t-wrap">
       <Col :span="24" class="-t-top -t-border">
-        <Col :span="12">章节结构</Col>
-        <Col :span="6">排序值</Col>
+        <Col :span="10">章节结构</Col>
+        <Col :span="8">排序值</Col>
         <Col :span="6">操作</Col>
       </Col>
       <Col :span="24" class="-t-item -t-flex -t-border">
-        <Col :span="12">
-          <arrow-file nodeName="根节点" :sort="1" @openChildData="openNextChild"></arrow-file>
+        <Col :span="10" class="-t-child-padding">
+          <arrow-file :nodeData="{name:'根节点'}" :sort="1" @openChildData="openNextChild"></arrow-file>
         </Col>
-        <Col :span="6"> &nbsp;</Col>
+        <Col :span="8"> &nbsp;</Col>
         <Col :span="6" class="g-t-left">
           <Button type="text" class="-t-theme-color" @click="openModal('',1)">添加子章节</Button>
         </Col>
       </Col>
-      <Col :span="24" v-for="(item1,index) of firstChild" :key="index" v-if="isShowNextOneChild"
+      <Col :span="24" v-for="(item1,index) of firstChild" :key="index"
            class="-t-item -t-border ">
-        <Col :span="12" class="-t-child-padding">
-          <arrow-file :nodeName="item1.name" :sort="2" @openChildData="openNextChildTwo(item1,index)"></arrow-file>
+        <Col :span="10" class="-t-child-padding">
+          <arrow-file :nodeData="item1" :sort="2" @openChildData="openNextChildTwo(item1,index)"></arrow-file>
         </Col>
-        <Col :span="6">
+        <Col :span="8" class="-t-item-text -t-theme-color">
           {{item1.sortNum}}
         </Col>
         <Col :span="6" class="g-t-left">
@@ -30,14 +30,14 @@
         </Col>
         <Col :span="24" v-show="item1.isShowChild" v-for="(item2,index2) of item1.lessons" :key="index2"
              class="-t-item -t-border">
-          <Col :span="12" class="-t-child-padding-two">
-            <arrow-file :nodeName="item2.name" :nodePinyin="item2.pinyin" :sort="3"></arrow-file>
+          <Col :span="10" class="-t-child-padding-two">
+            <arrow-file :nodeData="item2" :nodePinyin="item2.pinyin" :sort="3"></arrow-file>
           </Col>
-          <Col :span="6">
-            {{item2.sortNum}}
+          <Col :span="8">
+            <div class="-t-child-padding-two">{{item2.sortNum}}</div>
           </Col>
           <Col :span="6" class="g-t-left">
-            <Button type="text" class="-t-theme-color" style="visibility: hidden">添加子章节</Button>
+            <Button type="text" class="-t-theme-color" @click="toDetail(item1,item2)">&nbsp;&nbsp;&nbsp;&nbsp;课程内容</Button>
             <Button type="text" class="-t-theme-color" @click="editModal(item1,item2,2)">编辑</Button>
             <Button type="text" class="-t-red-color" @click="delItem(item2.id,2)">删除</Button>
           </Col>
@@ -79,7 +79,7 @@
 
 <script>
   import ArrowFile from "@/components/tree/arrowFileTemplate";
-  import Loading from "../../../components/loading";
+  import Loading from "@/components/loading";
   import {pattern} from '@/libs/regexp'
 
   export default {
@@ -92,7 +92,6 @@
         rootNode: '',
         isFetching: false,
         isOpenModal: false,
-        isShowNextOneChild: false,
         isShowNextTwoChild: false,
         isSending: false,
         pinyinInfo: '',
@@ -107,11 +106,23 @@
       this.getList()
     },
     methods: {
+      toDetail (item1,item2) {
+        console.log(item1,item2)
+        this.$router.push({
+          name: 'courseInfo',
+          query: {
+            ...this.paramsInfo,
+            chapterName: item1.name,
+            chapterId: item1.chapterId,
+            lessonName: item2.name,
+            lessonId: item2.id
+          }
+        })
+      },
       changePinYin() {
         this.pinyinInfo = pinyinUtil.getPinyin(this.addInfo.name)
       },
       openNextChild(data) {
-        this.isShowNextOneChild = !this.isShowNextOneChild
         this.firstChild.forEach(item => {
           item.isShowChild = false
         })
@@ -119,7 +130,7 @@
       openNextChildTwo(data, index) {
         this.firstChild[index].isShowChild = !this.firstChild[index].isShowChild
         this.firstChild = Object.assign([], this.firstChild)
-        this.oldList = this.firstChild
+        localStorage.setItem('chapterId',data.id)
       },
       openModal(data, num) {
         this.isOpenModal = true
@@ -160,13 +171,12 @@
           .then(
             response => {
               this.firstChild = response.data.resultData;
-
-              if (this.oldList.length) {
+              if (localStorage.chapterId) {
                 for (let data of this.firstChild) {
-                  for (let item of this.oldList) {
-                    if (data.id === item.id) {
-                      data.isShowChild = item.isShowChild
-                    }
+                  if(data.id == localStorage.chapterId) {
+                    data.isShowChild = true
+                  } else {
+                    data.isShowChild = false
                   }
                 }
               } else {
@@ -200,7 +210,6 @@
           }
         })
       },
-
       submitInfo(name) {
         let promiseDate = ''
 
@@ -274,6 +283,10 @@
     .-t-img {
       width: 24px;
       height: 18px
+    }
+
+    .-t-item-text{
+      font-weight: bold;
     }
 
     .-t-theme-color {

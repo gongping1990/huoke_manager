@@ -17,7 +17,7 @@
         <div>
           <div class="g-primary-btn -t-width" @click="toEdit(1)">{{dataItem ? '进入编辑' : '添加关卡'}}</div>
           <Button ghost type="primary" class="-t-width"  v-if="itemList.length" @click="openPreviewModal">预览内容</Button>
-          <div class="-c-color -t-width g-cursor" @click="backCourseList">返回课时列表</div>
+          <div class="-c-color -t-width g-cursor" @click="backCourseList">返回章节管理</div>
         </div>
       </div>
     </div>
@@ -109,8 +109,7 @@
         this.$router.push({
           name: 'teachMain',
           query:{
-            ...this.$route.query,
-            isBack: true
+            ...this.$route.query
           }
         })
       },

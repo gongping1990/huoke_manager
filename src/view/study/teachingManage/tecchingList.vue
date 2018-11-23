@@ -241,7 +241,7 @@
         this.getList();
       },
       openModal(data) {
-        console.log(data)
+
         this.isOpenModal = true
         this.addInfo = JSON.parse(JSON.stringify(data))
       },
@@ -250,6 +250,7 @@
         this.$refs[name].resetFields()
       },
       toJump (data) {
+        localStorage.setItem('chapterId','')
         this.$router.push({
           name: 'teachMain',
           query: {

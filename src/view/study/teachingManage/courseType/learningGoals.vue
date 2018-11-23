@@ -4,7 +4,7 @@
       <div v-if="!isShowEditor">
         <div class="g-primary-btn -t-width" @click="toEditor">进入编辑</div>
         <Button ghost type="primary" class="-t-width" @click="openPreviewModal">预览内容</Button>
-        <div class="-c-color -t-width g-cursor" @click="backCourseList">返回课时列表</div>
+        <div class="-c-color -t-width g-cursor" @click="backCourseList">返回章节管理</div>
       </div>
       <div v-else class="g-t-left">
         <Form ref="addInfo" :model="addInfo" :label-width="70">
@@ -60,8 +60,7 @@
         this.$router.push({
           name: 'teachMain',
           query:{
-            ...this.$route.query,
-            isBack: true
+            ...this.$route.query
           }
         })
       },
