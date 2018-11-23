@@ -120,7 +120,7 @@
                       size: 'small'
                     },
                     style: {
-                      color: '#20a0ff',
+                      color: '#5444E4',
                       marginRight: '5px'
                     },
                     on: {
@@ -135,7 +135,7 @@
                       size: 'small'
                     },
                     style: {
-                      color: '#20a0ff',
+                      color: '#5444E4',
                       marginRight: '5px'
                     },
                     on: {
@@ -150,7 +150,7 @@
                       size: 'small'
                     },
                     style: {
-                      color: '#20a0ff'
+                      color: '#5444E4'
                     },
                     on: {
                       click: () => {
@@ -166,7 +166,7 @@
                     size: 'small'
                   },
                   style: {
-                    color: '#20a0ff',
+                    color: '#5444E4',
                     marginRight: '5px'
                   },
                   on: {
