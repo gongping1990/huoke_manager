@@ -27,6 +27,14 @@
           <span>营销管理</span>
         </template>
         <Menu-item name="coupon">优惠券</Menu-item>
+        <Menu-item name="aloneBuy">单独购</Menu-item>
+      </Submenu>
+      <Submenu name="operate" class="-left-li">
+        <template slot="title">
+          <Icon type="ios-text-outline" class="hk-menu-icon"></Icon>
+          <span>运营管理</span>
+        </template>
+        <Menu-item name="topBar">topBar管理</Menu-item>
       </Submenu>
       <!--<Submenu name="setting" class="-left-li">-->
         <!--<template slot="title">-->

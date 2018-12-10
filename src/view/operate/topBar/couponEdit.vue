@@ -55,7 +55,7 @@
           <div class="-c-tips">* 添加优惠券后，使用范围只能增加，不能减少</div>
         </Form-item>
         <Form-item label="选择课程" v-if="couponInfo.useScope">
-          <div class="g-course-add-style" @click="isShowCourseModal=true">
+          <div class="-c-course-icon" @click="isShowCourseModal=true">
             <span>+</span>
             <span>选择课程</span>
           </div>
@@ -142,15 +142,13 @@
           <span class="-c-tips" v-else>* 图片大小1M以内</span>
         </Form-item>
         <Form-item label="选择用户" prop="poster" v-if="couponInfo.releaseType">
-          <Button @click="openUserModal">+请添加用户( {{otherInfo.isCheckAllPeople ? '已选择全部用户' : `已选
-            ${couponInfo.couponUsers.length} 人`}} )
-          </Button>
+          <Button @click="openUserModal">+请添加用户( {{otherInfo.isCheckAllPeople ? '已选择全部用户' : `已选 ${couponInfo.couponUsers.length} 人`}} )</Button>
           <div v-if="isShowUserSelection">
             <user-selection ref="childMethod"
                             @close="closeUserModal"
                             @submitModal="submitUserSelection"
                             :userCheckList="couponInfo.couponUsers"
-                            :otherInfo="otherInfo">
+                            :otherInfo = "otherInfo">
             </user-selection>
           </div>
         </Form-item>
@@ -192,12 +190,12 @@
         },
         baseUrl: `${getBaseUrl()}/common/uploadPublicFile`,
         dateStartOption: {
-          disabledDate(date) {
-            return date && (new Date(date).getTime() <= new Date().getTime() - 24 * 3600 * 1000);
+          disabledDate (date) {
+            return date && (new Date(date).getTime() <= new Date().getTime()-24*3600*1000);
           }
         },
         dateEndOption: {
-          disabledDate(date) {
+          disabledDate (date) {
             return date && date.valueOf() < Date.now() - 86400000;
           }
         },
@@ -223,9 +221,9 @@
       }
     },
     watch: {
-      'useStartTime'(_new, _old) {
+      'useStartTime' (_new,_old) {
         this.dateEndOption = {
-          disabledDate(date) {
+          disabledDate (date) {
             return date && date.valueOf() < new Date(_new).getTime();
           }
         }
@@ -242,10 +240,10 @@
     methods: {
       checkCourse(params) {
         this.isShowCourseModal = false
-        if (this.isEdit) {
-          for (let item of params) {
+        if(this.isEdit) {
+          for(let item of params) {
             for (let data of this.couponInfo.couponCourseObject) {
-              if (item.id == data.id) {
+              if(item.id == data.id) {
                 item.isOldCourse = true
               } else {
                 item.isOldCourse = false
@@ -267,7 +265,7 @@
       submitUserSelection(params) {
         console.log(params, 'params')
         this.isShowUserSelection = false
-        if (params.condition == '1') {
+        if(params.condition == '1') {
           this.otherInfo.isCheckAllPeople = true
         } else {
           this.otherInfo.isCheckAllPeople = false
@@ -302,7 +300,7 @@
       handleSize() {
         this.$Message.info('文件超过限制')
       },
-      beforeUpload() {
+      beforeUpload () {
         return !this.isEdit
       },
       delPoster() {
@@ -416,6 +414,21 @@
 
     .-c-tips {
       color: #39f
+    }
+
+    .-c-course-icon {
+      cursor: pointer;
+      text-align: center;
+      color: #e9e9e9;
+      width: 140px;
+      height: 70px;
+      line-height: 70px;
+      border: 2px dashed #e9e9e9;
+
+      span {
+        font-size: 16px;
+        display: inline-block;
+      }
     }
 
     .-c-course-wrap {

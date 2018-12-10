@@ -41,10 +41,11 @@
       })
 
       for (let item of this.openNameList) {
-        if(item.title === this.$route.meta[0]) {
+        if(item.title === this.$route.meta[0].name) {
           this.openName.push(item.name)
         }
       }
+      console.log(this.openName,'this.openName')
     }
   }
 </script>

@@ -107,7 +107,6 @@
     },
     methods: {
       toDetail (item1,item2) {
-        console.log(item1,item2)
         this.$router.push({
           name: 'courseInfo',
           query: {

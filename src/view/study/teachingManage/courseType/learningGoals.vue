@@ -2,17 +2,19 @@
   <div class="p-learn">
     <div class="-t-btn">
       <div v-if="!isShowEditor">
-        <div class="g-primary-btn -t-width" @click="toEditor">进入编辑</div>
-        <Button ghost type="primary" class="-t-width" @click="openPreviewModal">预览内容</Button>
-        <div class="-c-color -t-width g-cursor" @click="backCourseList">返回章节管理</div>
+        <preview-pictures v-if="optionList.length" :dataProp="optionList" :courseType="1" :style="styleInfo" :directEntry="true"></preview-pictures>
+        <div class="-t-btn-wrap">
+          <div class="g-primary-btn -t-width" @click="toEditor">{{optionList.length ? '进入编辑' : '添加学习目标'}}</div>
+          <Button ghost type="primary" class="-t-width" v-if="optionList.length" @click="openPreviewModal">预览大图</Button>
+        </div>
       </div>
       <div v-else class="g-t-left">
         <Form ref="addInfo" :model="addInfo" :label-width="70">
           <FormItem class="-select-wrap" v-for="(item,index) in optionList" :key="index">
             <span class="-s-width -s-title"><span class="-s-color">*</span> 目标{{index+1}}</span>
             <Input class="-s-width" v-model="item.value" type="textarea" :autosize="true" placeholder="请输入选项内容"
-                   :maxlength="22" style="width: 300px"/>
-            <span class="-s-width">文字字数不超过22字，包含标点符号</span>
+                   :maxlength="20" style="width: 300px"/>
+            <span class="-s-width">文字字数不超过20字，包含标点符号</span>
             <span class="-s-width -s-color g-cursor" @click="delOption(index)">删除</span>
           </FormItem>
           <FormItem class="-c-flex">
@@ -28,17 +30,17 @@
       </div>
     </div>
     <div v-if="isOpenImgModal">
-      <preview-pictures :dataProp="optionList" :courseType="1" @closePreviewModal="closePreview"></preview-pictures>
+      <preview-pictures-model :dataProp="optionList" :courseType="1" @closePreviewFirst="closePreview"></preview-pictures-model>
     </div>
   </div>
 </template>
 
 <script>
-
+  import PreviewPicturesModel from "@/components/previewPicturesModel";
   import PreviewPictures from "@/components/previewPictures";
   export default {
     name: 'learningGoals',
-    components: {PreviewPictures},
+    components: {PreviewPictures, PreviewPicturesModel},
     data() {
       return {
         isShowEditor: false,
@@ -49,6 +51,12 @@
         addInfo: {
           id: this.$route.query.lessonId,
           learnTarget: []
+        },
+        styleInfo:{
+          'width': '300px',
+          'height': '500px',
+          'margin':'auto',
+          'overflow': 'hidden'
         }
       }
     },
@@ -77,8 +85,8 @@
         this.optionList.splice(index, 1)
       },
       openPreviewModal() {
-        if (!this.addInfo.learnTarget) {
-          this.toEditor()
+        if (!this.optionList.length) {
+          this.$Message.info('暂无学习目标，无法预览，请添加学习目标')
         } else {
           this.isOpenImgModal = true
         }
@@ -106,11 +114,11 @@
       },
       submitInfo() {
         let isPass = this.optionList.length && this.optionList.every(item=>{
-          return (item.value != '' && item.value.length <= 22)
+          return (item.value != '' && item.value.length <= 20)
         })
 
         if (!this.optionList.length || !isPass) {
-          return this.$Message.error('学习目标不能为空或者字数不能超过22字')
+          return this.$Message.error('学习目标不能为空或者字数不能超过20字')
         }
 
         this.isSending = true
@@ -138,15 +146,19 @@
   .p-learn {
     height: 100%;
 
+
+    .-t-btn-wrap {
+      display: flex;
+    }
+
     .-t-width {
-      margin-top: 20px;
+      margin: 20px;
       height: 40px;
       width: 200px;
     }
     .-t-btn {
       display: flex;
       justify-content: center;
-      align-items: center;
       height: 100%;
     }
 

@@ -74,20 +74,7 @@
         isSending: false,
         indeterminate: true,
         checkAll: false,
-        teachVersion: [
-          {
-            name: '人教版',
-            key: 1
-          },
-          {
-            name: '北师大版',
-            key: 2
-          },
-          {
-            name: '苏教版',
-            key: 3
-          }
-        ],
+        teachVersion: [],
         gradeList: [
           {
             name: '一年级',
@@ -234,6 +221,7 @@
     mounted() {
       this.getList()
       this.getSubjectList()
+      this.getEditionList()
     },
     methods: {
       currentChange(val) {
@@ -286,6 +274,22 @@
           .then(
             response => {
               this.courseList = response.data.resultData;
+            })
+          .finally(() => {
+
+          })
+      },
+      getEditionList() {
+        this.$api.course.editionList()
+          .then(
+            response => {
+              let array = Object.keys(response.data.resultData).map(key=> response.data.resultData[key])
+              array.forEach((item,index) => {
+                this.teachVersion.push({
+                  name: item,
+                  key: index+1
+                })
+              } )
             })
           .finally(() => {
 

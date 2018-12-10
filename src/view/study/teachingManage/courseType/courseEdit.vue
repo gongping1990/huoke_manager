@@ -224,20 +224,20 @@
         this.gifImgUrl = this.addInfo.content.gifImg
         this.backImgUrl = this.addInfo.content.backImg
         this.stemImgUrl = this.addInfo.content.stemImg
-        localStorage.setItem('operate',this.addInfo.operate)
+        // localStorage.setItem('operate',this.addInfo.operate)
       }
 
       console.log(this.addInfo)
     },
     methods: {
       changeTemplate() {
-        this.addInfo.operate = localStorage.operate
+        // this.addInfo.operate = localStorage.operate
         this.$Modal.confirm({
           title: '提示',
           content: '切换模板，当前模板编辑内容将被清空',
           onOk: () => {
 
-            this.addInfo.operate = this.addInfo.operate == 1 ? 2 : 1
+            // this.addInfo.operate = this.addInfo.operate == 1 ? 2 : 1
             localStorage.operate = this.addInfo.operate
 
             if ( this.addInfo.operate == '2') {
@@ -251,7 +251,12 @@
             }
           },
           onCancel: () => {
-            this.addInfo.operate = this.addInfo.operate == 1 ? 1 : 2
+            // this.addInfo.operate = localStorage.operate
+            if(this.addInfo.operate == '1') {
+              this.addInfo.operate = 2
+            } else {
+              this.addInfo.operate = 1
+            }
           }
         })
       },

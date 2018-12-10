@@ -13,11 +13,14 @@
         <div class="-c-item-no g-cursor" v-if="itemList.length" @click="toEdit(0)">添加关卡 +</div>
         <div class="-c-item-no g-cursor" @click="toSort()" v-if="itemList.length > 1">关卡排序</div>
       </Row>
-      <div class="-c-flex-align -c-wrap">
+      <div class="-t-btn-wrap">
         <div>
-          <div class="g-primary-btn -t-width" @click="toEdit(1)">{{dataItem ? '进入编辑' : '添加关卡'}}</div>
-          <Button ghost type="primary" class="-t-width"  v-if="itemList.length" @click="openPreviewModal">预览内容</Button>
-          <div class="-c-color -t-width g-cursor" @click="backCourseList">返回章节管理</div>
+          <preview-pictures v-if="itemList.length" :dataProp="dataItem" :courseType="2" :style="styleInfo" :directEntry="true"></preview-pictures>
+
+          <div class="-t-btn-wrap">
+            <div class="g-primary-btn -t-width" @click="toEdit(1)">{{dataItem ? '进入编辑' : '添加关卡'}}</div>
+            <Button ghost type="primary" class="-t-width"  v-if="itemList.length" @click="openPreviewModal">预览大图</Button>
+          </div>
         </div>
       </div>
     </div>
@@ -54,7 +57,7 @@
     </Modal>
 
     <div v-if="isOpenImgModal">
-      <preview-pictures :dataProp="dataItem" :courseType="2" @closePreviewModal="closePreview"></preview-pictures>
+      <preview-pictures-model :dataProp="dataItem" :courseType="2" @closePreviewFirst="closePreview"></preview-pictures-model>
     </div>
   </div>
 </template>
@@ -64,11 +67,12 @@
   import CourseEdit from "./courseEdit";
   import LearningGoals from "./learningGoals";
   import draggable from 'vuedraggable'
+  import PreviewPicturesModel from "@/components/previewPicturesModel";
   import PreviewPictures from "@/components/previewPictures";
 
   export default {
     name: 'courseTitle',
-    components: {PreviewPictures, LearningGoals, CourseEdit, Loading, draggable},
+    components: {PreviewPictures, PreviewPicturesModel, LearningGoals, CourseEdit, Loading, draggable},
     props: ['type'],
     data() {
       return {
@@ -83,6 +87,12 @@
         addInfo: {
           id: this.$route.query.lessonId,
           learnTarget: ''
+        },
+        styleInfo:{
+          'width': '300px',
+          'height': '500px',
+          'margin':'auto',
+          'overflow': 'hidden'
         }
       }
     },
@@ -237,8 +247,14 @@
     overflow-y: auto;
     height: 100%;
 
+    .-t-btn-wrap {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
     .-t-width {
-      margin-top: 20px;
+      margin: 20px;
       height: 40px;
       width: 200px;
     }
@@ -246,7 +262,7 @@
       height: 100%;
 
       .-c-wrap-row {
-        position: absolute;
+        /*position: absolute;*/
         text-align: left;
         width: 100%;
       }
@@ -254,7 +270,7 @@
         position: relative;
         width: 75px;
         display: inline-block;
-        margin: 0 10px 0 0;
+        margin: 0 10px 20px 0;
 
         &-icon {
           color: #5444E4;

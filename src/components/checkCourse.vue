@@ -1,15 +1,24 @@
 <template>
   <Modal v-model="isShow" title="选择课程" @on-ok="sureCourseModal" @on-cancel="sureCourseModal" width="500">
     <div class="p-course-modal">
-      <Checkbox-group v-model="checkCourseIds">
+      <Checkbox-group v-model="checkCourseIds" v-if="!isRadio">
         <Checkbox class="-c-item" :label="item.id" v-for="(item,index) in courseList" :key="index"
                   :disabled="item.isEdit">
           <div class="-c-item-wrap">
             <img :src="item.courseImgUrl" alt="" class="downImg">
-            <span>{{item.courseName}}</span>
+            <span class="-item-text">{{item.courseName}}</span>
           </div>
         </Checkbox>
       </Checkbox-group>
+
+      <RadioGroup v-model="radioCourseId" v-else style="width: 100%">
+        <Radio class="-c-item" :label="item.id" v-for="(item,index) in courseList" :key="index">
+          <div class="-c-item-wrap">
+            <img :src="item.courseImgUrl" alt="" class="downImg">
+            <span class="-item-text">{{item.courseName}}</span>
+          </div>
+        </Radio>
+      </RadioGroup>
     </div>
     <loading v-if="isFetching"></loading>
   </Modal>
@@ -21,24 +30,28 @@
   export default {
     name: 'checkCourse',
     components: {Loading},
-    props: ['isShowModal', 'checkCourseList', 'isUpdate'],
+    props: ['isShowModal', 'checkCourseList', 'isUpdate', 'isRadioModal'],
     data() {
       return {
         isShow: this.isShowModal,
+        isRadio: this.isRadioModal, //是否是单选，默认多选
         isFetching: false,
         isEdit: false,
         courseList: [],
+        radioCourseId: '',
         size: 10000,
         checkCourseIds: [],
         checkCourseArray: []
       }
     },
     mounted() {
-      if (this.checkCourseList.length) {
+      if (this.checkCourseList.length && !this.isRadio) {
         this.isEdit = true
         for (let item of this.checkCourseList) {
           this.checkCourseIds.push(item.id)
         }
+      } else {
+        this.radioCourseId = this.checkCourseList.length && this.checkCourseList[0].id
       }
       this.getCourseList()
     },
@@ -53,7 +66,6 @@
           res => {
             this.courseList = res.data.resultData.records;
             if (this.isUpdate) {
-              console.log(this.checkCourseList, 'this.checkCourseList')
               for (let item of this.checkCourseList) {
                 for (let list of this.courseList) {
                   if ((item.id == list.id) && item.isOldCourse) {
@@ -68,10 +80,18 @@
           })
       },
       sureCourseModal() {
-        for (let item of this.checkCourseIds) {
+        if (this.isRadio) {
           for (let data of this.courseList) {
-            if (item == data.id) {
+            if (this.radioCourseId == data.id) {
               this.checkCourseArray.push(data)
+            }
+          }
+        } else {
+          for (let item of this.checkCourseIds) {
+            for (let data of this.courseList) {
+              if (item == data.id) {
+                this.checkCourseArray.push(data)
+              }
             }
           }
         }
@@ -88,7 +108,7 @@
     overflow-y: auto;
     margin-bottom: 20px;
 
-    .-c-item-wrap{
+    .-c-item-wrap {
       display: flex;
       align-items: center;
     }
@@ -100,7 +120,12 @@
       border-bottom: none;
       padding: 10px;
     }
-
+    .-item-text {
+      overflow: hidden;
+      text-overflow:ellipsis;
+      white-space: nowrap;
+      width: 200px;
+    }
     .downImg {
       margin: 0 20px;
       width: 40%;

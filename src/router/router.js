@@ -33,9 +33,9 @@ export const otherRouter = {
     {
       path: '/home',
       name: 'Home',
-      meta: {
-        title: '首页'
-      },
+      meta: [{
+        name: '首页'
+      }],
       component: () => import('@/view/home/home')
     },
     {
@@ -47,19 +47,32 @@ export const otherRouter = {
     {
       path: 'userInfo',
       name: 'userInfo',
-      meta: ['用户管理', '用户列表', '用户详情'],
+      meta: [
+        {name: '用户管理'},
+        {name: '用户列表', url: 'userList'},
+        {name: '用户详情'}
+      ],
       component: () => import("@/view/user/userInfo")
     },
     {
       path: '/teachMain',
       name: 'teachMain',
-      meta: ['同步学习', '教材管理', '章节管理'],
+      meta: [
+        {name: '同步学习'},
+        {name: '教材管理', url: 'teachingList'},
+        {name: '章节管理'}
+      ],
       component: () => import('@/view/study/teachingManage/teachMain')
     },
     {
       path: '/courseInfo',
       name: 'courseInfo',
-      meta: ['同步学习', '教材管理', '章节管理', '课程内容管理'],
+      meta: [
+        {name: '同步学习'},
+        {name: '教材管理', url: 'teachingList'},
+        {name: '章节管理', url: 'teachMain'},
+        {name: '课程内容管理'},
+      ],
       component: () => import('@/view/study/teachingManage/courseInfo')
     },
 
@@ -76,71 +89,130 @@ export const appRouter = [
       {
         path: '/coupon',
         name: 'coupon',
-        meta: ['营销管理', '优惠券'],
+        meta: [
+          {
+            name: '营销管理'
+          },
+          {
+            name: '优惠券'
+          }
+        ],
+        component: () => import('@/view/marketingMangement/coupon/couponList')
+      },
+      {
+        path: '/aloneBuy',
+        name: 'aloneBuy',
+        meta: [
+          {
+            name: '营销管理'
+          },
+          {
+            name: '单独购'
+          }
+        ],
+        component: () => import('@/view/marketingMangement/aloneBuy/aloneBuyList')
+      }
+    ]
+  },
+  {
+    path: '/operate',
+    name: 'operate',
+    title: '运营管理',
+    component: Main,
+    children: [
+      {
+        path: '/topBar',
+        name: 'topBar',
+        meta: [
+          {
+            name: '运营管理'
+          },
+          {
+            name: 'topBar管理'
+          }
+        ],
         component: () => import('@/view/marketingMangement/coupon/couponList')
       }
     ]
   },
-  {
-    path: '/user',
-    name: 'user',
-    title: '用户管理',
-    component: Main,
-    children: [
-      {
-        path: '/userList',
-        name: 'userList',
-        meta: ['用户管理', '用户列表'],
-        component: () => import('@/view/user/userList')
-      }
-    ]
-  },
-  {
-    path: '/study',
-    name: 'study',
-    title: '同步学习',
-    component: Main,
-    children: [
-      {
-        path: '/subject',
-        name: 'subject',
-        meta: ['同步学习', '学科管理'],
-        component: () => import('@/view/study/subjectManage/subjectList')
-      },
-      {
-        path: '/teachingList',
-        name: 'teachingList',
-        meta: ['同步学习', '教材管理'],
-        component: () => import('@/view/study/teachingManage/tecchingList')
-      },
-    ]
-  },
-  {
-    path: 'setting',
-    name: 'setting',
-    title: '用户设置',
-    component: Main,
-    children: [
-      {
-        path: '/user-setting',
-        name: 'user-setting',
-        meta: ['设置', '用户设置'],
-        component: () => import('@/view/setting')
-      },
-      {
-        path: '/user-info',
-        name: 'user-info',
-        meta: ['设置', '个人资料'],
-        component: () => import('@/view/setting/info')
-      },
-      {
-        path: '/user-role',
-        name: 'user-role',
-        meta: ['设置', '角色管理'],
-        component: () => import('@/view/setting/role')
-      }
-    ]
-  }
+  // {
+  //   path: '/user',
+  //   name: 'user',
+  //   title: '用户管理',
+  //   component: Main,
+  //   children: [
+  //     {
+  //       path: '/userList',
+  //       name: 'userList',
+  //       meta: [
+  //         {name:'用户管理'},
+  //         {name:'用户列表'}
+  //       ],
+  //       component: () => import('@/view/user/userList')
+  //     }
+  //   ]
+  // },
+  // {
+  //   path: '/study',
+  //   name: 'study',
+  //   title: '同步学习',
+  //   component: Main,
+  //   children: [
+  //     {
+  //       path: '/subject',
+  //       name: 'subject',
+  //       meta: [
+  //         {name:'同步学习'},
+  //         {name:'学科管理'}
+  //       ],
+  //       component: () => import('@/view/study/subjectManage/subjectList')
+  //     },
+  //     {
+  //       path: '/teachingList',
+  //       name: 'teachingList',
+  //       meta: [
+  //         {name:'同步学习'},
+  //         {name:'教材管理'}
+  //       ],
+  //       component: () => import('@/view/study/teachingManage/tecchingList')
+  //     },
+  //   ]
+  // },
+  // {
+  //   path: 'setting',
+  //   name: 'setting',
+  //   title: '用户设置',
+  //   component: Main,
+  //   children: [
+  //     {
+  //       path: '/user-setting',
+  //       name: 'user-setting',
+  //       meta: [
+  //         {name:'设置'},
+  //         {name:'用户设置'}
+  //       ],
+  //       component: () => import('@/view/setting')
+  //     },
+  //     {
+  //       path: '/user-info',
+  //       name: 'user-info',
+  //       meta: [
+  //         {name:'设置'},
+  //         {name:'个人资料'}
+  //       ],
+  //       component: () => import('@/view/setting/info')
+  //     },
+  //     {
+  //       path: '/user-role',
+  //       name: 'user-role',
+  //       meta: [
+  //         {name:'设置'},
+  //         {name:'角色管理'}
+  //       ],
+  //       component: () => import('@/view/setting/role')
+  //     }
+  //   ]
+  // }
 ]
 // 所有上面定义的路由都要写在下面的routers里
 export const routers = [

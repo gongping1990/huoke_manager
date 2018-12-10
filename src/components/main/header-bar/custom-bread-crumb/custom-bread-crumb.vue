@@ -2,7 +2,7 @@
   <div class="custom-bread-crumb">
     <Breadcrumb>
       <Breadcrumb-item :to="'/'" v-if="isHome">首页</Breadcrumb-item>
-      <Breadcrumb-item v-for="(item, index) of breadcrumbList" :key="index">{{item}}</Breadcrumb-item>
+      <Breadcrumb-item v-for="(item, index) of breadcrumbList" :to="{name:item.url,query:$route.query}" :key="index">{{item.name}}</Breadcrumb-item>
     </Breadcrumb>
   </div>
 </template>
@@ -18,7 +18,6 @@
       }
     },
     mounted() {
-      console.log(this.$route)
     },
     methods: {
     }
