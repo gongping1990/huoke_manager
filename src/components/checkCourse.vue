@@ -1,5 +1,17 @@
 <template>
   <Modal v-model="isShow" title="选择课程" @on-ok="sureCourseModal" @on-cancel="sureCourseModal" width="500">
+    <Row class="g-search -course-search">
+      <Col :span="24">
+        <div class="-search">
+          <Select v-model="selectInfo" class="-search-select">
+            <Option value="1">课程名称</Option>
+          </Select>
+          <span class="-search-center">|</span>
+          <Input v-model="searchInfo" class="-search-input" placeholder="请输入关键字" icon="ios-search"
+                 @on-click="getCourseList"></Input>
+        </div>
+      </Col>
+    </Row>
     <div class="p-course-modal">
       <Checkbox-group v-model="checkCourseIds" v-if="!isRadio">
         <Checkbox class="-c-item" :label="item.id" v-for="(item,index) in courseList" :key="index"
@@ -33,6 +45,8 @@
     props: ['isShowModal', 'checkCourseList', 'isUpdate', 'isRadioModal'],
     data() {
       return {
+        searchInfo:'',
+        selectInfo:'1',
         isShow: this.isShowModal,
         isRadio: this.isRadioModal, //是否是单选，默认多选
         isFetching: false,
@@ -101,12 +115,23 @@
   }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style lang="less">
+  .p-course-modal{
+    .ivu-radio-wrapper{
+      margin-right:0 ;
+    }
+  }
+</style>
+
 <style lang="less" scoped>
+  .-course-search{
+    margin-bottom: 20px;
+  }
   .p-course-modal {
     height: 400px;
     overflow-y: auto;
     margin-bottom: 20px;
+    border-bottom: 1px solid #F5F5F5;
 
     .-c-item-wrap {
       display: flex;
