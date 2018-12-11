@@ -87,6 +87,12 @@
   justify-content: space-around;
 }
 
+.g-flex-a-j-center{
+  display: flex;
+  align-items: center;
+  justify-items: center;
+}
+
 .g-text-right {
   text-align: right;
 }

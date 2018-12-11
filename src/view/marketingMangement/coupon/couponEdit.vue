@@ -128,7 +128,7 @@
             :on-success="handleSuccess"
             :on-exceeded-size="handleSize"
             :on-error="handleErr">
-            <div class="-c-course-icon">
+            <div class="g-course-add-style">
               <span>+</span>
               <span>上传海报</span>
             </div>

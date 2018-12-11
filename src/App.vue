@@ -28,4 +28,8 @@
     width: 100%;
     height: 100%;
   }
+
+  .ivu-form .ivu-form-item-label {
+    color: #B3B5B8;
+  }
 </style>

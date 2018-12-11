@@ -111,6 +111,19 @@ export const appRouter = [
           }
         ],
         component: () => import('@/view/marketingMangement/aloneBuy/aloneBuyList')
+      },
+      {
+        path: '/friendHelp',
+        name: 'friendHelp',
+        meta: [
+          {
+            name: '营销管理'
+          },
+          {
+            name: '好友助力'
+          }
+        ],
+        component: () => import('@/view/marketingMangement/friendHelp/friendHelpList')
       }
     ]
   },
@@ -131,7 +144,41 @@ export const appRouter = [
             name: 'topBar管理'
           }
         ],
-        component: () => import('@/view/marketingMangement/coupon/couponList')
+        component: () => import('@/view/operate/topBar/topBar')
+      }
+    ]
+  },
+  {
+    path: '/feedback',
+    name: 'feedback',
+    title: '反馈管理',
+    component: Main,
+    children: [
+      {
+        path: '/userFeedback',
+        name: 'userFeedback',
+        meta: [
+          {
+            name: '反馈管理'
+          },
+          {
+            name: '用户反馈'
+          }
+        ],
+        component: () => import('@/view/feedback/userFeedback/userFeedback')
+      },
+      {
+        path: '/customerService',
+        name: 'customerService',
+        meta: [
+          {
+            name: '反馈管理'
+          },
+          {
+            name: '客服管理'
+          }
+        ],
+        component: () => import('@/view/feedback/customerService/customerService')
       }
     ]
   },
