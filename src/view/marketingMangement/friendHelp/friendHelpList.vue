@@ -32,7 +32,7 @@
       v-model="isOpenModal"
       @on-cancel="closeModal('addInfo')"
       width="500"
-      title="编辑单独购">
+      title="编辑好友助力">
       <Form ref="addInfo" :model="addInfo" :rules="ruleValidate" :label-width="90">
         <FormItem label="关联课程" prop="courseId">
           <div class="g-course-add-style" @click="isShowCourseModal=true">

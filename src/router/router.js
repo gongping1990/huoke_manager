@@ -124,6 +124,19 @@ export const appRouter = [
           }
         ],
         component: () => import('@/view/marketingMangement/friendHelp/friendHelpList')
+      },
+      {
+        path: '/groupLesson',
+        name: 'groupLesson',
+        meta: [
+          {
+            name: '营销管理'
+          },
+          {
+            name: '拼课'
+          }
+        ],
+        component: () => import('@/view/marketingMangement/groupLesson/groupLesson')
       }
     ]
   },

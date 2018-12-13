@@ -1,7 +1,15 @@
 <template>
-  <div class="p-alone">
+  <div class="p-help">
     <Card>
       <Row class="g-search">
+        <Col :span="3" class="g-t-left">
+          <div class="g-flex-a-j-center">
+            <div class="-search-select-text">拼课状态：</div>
+            <Select v-model="selectInfoOne" @on-change="getList" class="-search-selectOne">
+              <Option v-for="(item,index) in statusList" :label="item.name" :value="item.id" :key="index"></Option>
+            </Select>
+          </div>
+        </Col>
         <Col :span="6">
           <div class="-search">
             <Select v-model="selectInfo" class="-search-select">
@@ -13,24 +21,21 @@
           </div>
         </Col>
       </Row>
-      <div class="g-add-btn g-add-top" @click="openModal()">
+      <div class="g-add-btn g-add-top" @click="openModal">
         <Icon class="-btn-icon" color="#fff" type="ios-add" size="24"/>
       </div>
       <Table class="-c-tab" :loading="isFetching" :columns="columns" :data="dataList"></Table>
-
-      <Page class="g-text-right" :total="total" size="small" show-elevator :page-size="tab.pageSize"
-            @on-change="currentChange"></Page>
     </Card>
 
     <Modal
-      class="p-alone"
+      class="p-help"
       v-model="isOpenModal"
       @on-cancel="closeModal('addInfo')"
-      width="450"
-      title="编辑单独购">
-      <Form ref="addInfo" :model="addInfo" :rules="ruleValidate" :label-width="90">
+      width="500"
+      title="编辑拼课">
+      <Form ref="addInfo" :model="addInfo" :rules="ruleValidate" :label-width="110">
         <FormItem label="关联课程" prop="courseId">
-          <div class="g-course-add-style" @click="isShowCourseModal=true" v-if="!courseList.length">
+          <div class="g-course-add-style" @click="isShowCourseModal=true">
             <span>+</span>
             <span>选择课程</span>
           </div>
@@ -43,15 +48,44 @@
             <div class="-c-course-item" v-for="(item, index) of courseList" :key="index">
               <img :src="item.courseImgUrl">
               <div class="-i-text">{{item.courseName}}</div>
-              <div v-if="!isEdit" class="-i-del" @click="delCourse(item,index)">删除课程</div>
+              <div v-if="!item.isOldCourse" class="-i-del" @click="delCourse(item,index)">删除课程</div>
             </div>
           </div>
         </FormItem>
-        <FormItem label="单独购价格" prop="priceYuan">
-          <Input type="text" v-model="addInfo.priceYuan" placeholder="请输入单独购价格"></Input>
+        <FormItem label="拼课人数" prop="priceYuan">
+          <Input type="text" v-model="addInfo.priceYuan" placeholder="请输入拼课人数"></Input>
         </FormItem>
-        <FormItem label="初始销量" prop="showSaleNum">
-          <Input type="text" v-model="addInfo.showSaleNum" placeholder="请输入初始销量"></Input>
+        <FormItem label="拼课时限" prop="priceYuan">
+          <Input type="text" v-model="addInfo.priceYuan" placeholder="请输入拼课时限（小时）"></Input>
+        </FormItem>
+        <FormItem label="团长优惠" prop="showSaleNum">
+          <Radio-group v-model="addInfo.useScope">
+            <Radio :label=0>不启用</Radio>
+            <Radio :label=1>启用</Radio>
+          </Radio-group>
+        </FormItem>
+        <FormItem label="团长优惠价格" prop="showSaleNum" v-if="addInfo.useScope">
+          <Input type="text" v-model="addInfo.showSaleNum" placeholder="请输入团长优惠价格(元)"></Input>
+        </FormItem>
+        <FormItem label="有效期" prop="showSaleNum">
+          <Row>
+            <Col span="11">
+              <Form-item prop="date">
+                <Date-picker :disabled="isEdit" style="width: 100%" type="datetime" placeholder="选择开始日期"
+                             v-model="getStartTime" :options="dateStartOption"></Date-picker>
+              </Form-item>
+            </Col>
+            <Col span="2" style="text-align: center">-</Col>
+            <Col span="11">
+              <Form-item prop="time">
+                <Date-picker :disabled="isEdit" style="width: 100%" type="datetime" placeholder="选择结束日期"
+                             v-model="getEndTime" :options="dateEndOption"></Date-picker>
+              </Form-item>
+            </Col>
+          </Row>
+        </FormItem>
+        <FormItem label="分享摘要" prop="showSaleNum">
+          <Input type="textarea" :rows="4" v-model="addInfo.showSaleNum" placeholder="请输入分享摘要"></Input>
         </FormItem>
       </Form>
       <div slot="footer" class="g-flex-j-sa">
@@ -66,7 +100,7 @@
   import CheckCourse from "../../../components/checkCourse";
 
   export default {
-    name: 'aloneBuy',
+    name: 'friendHelp',
     components: {CheckCourse},
     data() {
       return {
@@ -75,7 +109,26 @@
           pageSize: 10
         },
         searchInfo: '',
+        selectInfoOne: '',
         selectInfo: '',
+        statusList: [
+          {
+            name: '全部',
+            id: ''
+          },{
+            name: '未开始',
+            id: '0'
+          },{
+            name: '进行中',
+            id: '1'
+          },{
+            name: '已过期',
+            id: '2'
+          },{
+            name: '已结束',
+            id: '3'
+          },
+        ],
         dataList: [],
         courseList: [],
         total: 0,
@@ -84,10 +137,22 @@
         isSending: false,
         isEdit: false,
         isShowCourseModal: false,
+        getStartTime: '',
+        getEndTime: '',
         addInfo: {
           courseId: '',
           priceYuan: '',
           showSaleNum: ''
+        },
+        dateStartOption: {
+          disabledDate(date) {
+            return date && (new Date(date).getTime() <= new Date().getTime() - 24 * 3600 * 1000);
+          }
+        },
+        dateEndOption: {
+          disabledDate(date) {
+            return date && date.valueOf() < Date.now() - 86400000;
+          }
         },
         ruleValidate: {
           priceYuan: [
@@ -105,60 +170,54 @@
           },
           {
             title: '课程封面',
-            render: (h, params) => {
-              return h('img', {
-                attrs: {
-                  src: params.row.coverUrl
-                },
-                style: {
-                  width: '100px',
-                  height: '60px',
-                  margin: '10px'
-                }
-              })
-            },
+            key: 'name',
             align: 'center'
           },
           {
-            title: '单独购价格',
-            key: 'priceYuan',
+            title: '拼课时限',
+            key: 'name',
             align: 'center'
           },
           {
-            title: '单独购销量',
-            key: 'amount',
+            title: '拼课人数',
+            key: 'name',
             align: 'center'
           },
           {
-            title: '是否上架',
-            render: (h, params) => {
-              return h('Tag', {
-                props: {
-                  color: params.row.disabled ? 'default' : 'success'
-                }
-              }, params.row.disabled ? '是' : '否')
-            }
+            title: '拼课购价格',
+            key: 'name',
+            align: 'center'
+          },
+          {
+            title: '团长优惠价格',
+            key: 'name',
+            align: 'center'
+          },
+          {
+            title: '拼课销量',
+            key: 'name',
+            align: 'center'
+          },
+          {
+            title: '拼课状态',
+            key: 'name',
+            align: 'center'
+          },
+          {
+            title: '有效期开始',
+            key: 'name',
+            align: 'center'
+          },
+          {
+            title: '有效期结束',
+            key: 'name',
+            align: 'center'
           },
           {
             title: '操作',
             align: 'center',
             render: (h, params) => {
               return h('div', [
-                h('Button', {
-                  props: {
-                    type: 'text',
-                    size: 'small'
-                  },
-                  style: {
-                    color: '#5444E4',
-                    marginRight: '5px'
-                  },
-                  on: {
-                    click: () => {
-                      this.delItem(params.row)
-                    }
-                  }
-                }, '上架'),
                 h('Button', {
                   props: {
                     type: 'text',
@@ -172,20 +231,41 @@
                       this.openModal(params.row)
                     }
                   }
-                }, '编辑')
+                }, '编辑'),
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: 'rgb(218, 55, 75)',
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.delItem(params.row)
+                    }
+                  }
+                }, '结束')
               ])
             }
           }
         ],
       };
     },
+    watch: {
+      'useStartTime'(_new, _old) {
+        this.dateEndOption = {
+          disabledDate(date) {
+            return date && date.valueOf() < new Date(_new).getTime();
+          }
+        }
+      }
+    },
     mounted() {
       this.getList()
     },
     methods: {
-      delCourse(item, index) {
-        this.courseList.splice(index, 1)
-      },
       currentChange(val) {
         this.tab.page = val;
         this.getList();
@@ -193,21 +273,10 @@
       openModal(data) {
         this.courseList = []
         this.isOpenModal = true
-        if (data) {
-          this.isEdit = true
-          this.addInfo = JSON.parse(JSON.stringify(data))
-          this.courseList.push({
-            courseImgUrl: this.addInfo.coverUrl,
-            courseName: this.addInfo.name
-          })
-        } else {
-          this.isEdit = false
-          this.addInfo = {
-            courseId: '',
-            priceYuan: '',
-            showSaleNum: ''
-          }
-        }
+        this.addInfo = JSON.parse(JSON.stringify({
+          courseId: data.id,
+          name: data.name
+        }))
       },
       closeModal(name) {
         this.isOpenModal = false
@@ -216,19 +285,31 @@
       //分页查询
       getList() {
         this.isFetching = true
-        this.$api.goods.aloneList({
-          current: this.tab.page,
-          size: this.tab.pageSize,
-          name: this.searchInfo
-        })
+        this.$api.goods.groupList()
           .then(
             response => {
               this.dataList = response.data.resultData.records;
-              this.total = response.data.resultData.total
             })
           .finally(() => {
             this.isFetching = false
           })
+      },
+      delItem(param) {
+        this.$Modal.confirm({
+          title: '提示',
+          content: '确认要删除该学科吗？',
+          onOk: () => {
+            this.$api.course.delSubject({
+              courseId: param.id
+            }).then(
+              response => {
+                if (response.data.code == "200") {
+                  this.$Message.success("操作成功");
+                  this.getList();
+                }
+              })
+          }
+        })
       },
       submitInfo(name) {
         if (!this.addInfo.courseId) {
@@ -237,7 +318,8 @@
         this.$refs[name].validate((valid) => {
           if (valid) {
             this.isSending = true
-            let promiseDate = this.addInfo.goodsId ? this.$api.goods.updateAlone(this.addInfo) : this.$api.goods.addAlone(this.addInfo)
+            console.log(this.addInfo, 1)
+            let promiseDate = this.addInfo.courseId ? this.$api.course.updateSubject(this.addInfo) : this.$api.course.addSubject(this.addInfo)
             promiseDate
               .then(
                 response => {
@@ -262,9 +344,18 @@
   };
 </script>
 
-
 <style lang="less" scoped>
-  .p-alone {
+  .p-help {
+    .-search-select-text {
+      min-width: 70px;
+    }
+    .-search-selectOne {
+      width: 100px;
+      border: 1px solid #dcdee2;
+      border-radius: 4px;
+      margin-right: 20px;
+    }
+
     .-p-text-right {
       text-align: right;
     }
@@ -284,6 +375,7 @@
     }
 
     .-c-course-wrap {
+      margin-top: 10px;
       display: inline-block;
       .-c-course-item {
         position: relative;

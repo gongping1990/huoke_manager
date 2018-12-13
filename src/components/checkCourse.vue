@@ -45,8 +45,8 @@
     props: ['isShowModal', 'checkCourseList', 'isUpdate', 'isRadioModal'],
     data() {
       return {
-        searchInfo:'',
-        selectInfo:'1',
+        searchInfo: '',
+        selectInfo: '1',
         isShow: this.isShowModal,
         isRadio: this.isRadioModal, //是否是单选，默认多选
         isFetching: false,
@@ -73,12 +73,16 @@
       getCourseList() {
         if (this.isFetching) return
         this.isFetching = true
-        this.$api.goods.courseGoodsList({
+        this.$api.course.teachSubjectList({
           current: 1,
           size: this.size
         }).then(
           res => {
             this.courseList = res.data.resultData.records;
+            for (let data of this.courseList) {
+              data.courseImgUrl = data.url
+              data.courseName = data.name
+            }
             if (this.isUpdate) {
               for (let item of this.checkCourseList) {
                 for (let list of this.courseList) {
@@ -116,17 +120,18 @@
 </script>
 
 <style lang="less">
-  .p-course-modal{
-    .ivu-radio-wrapper{
-      margin-right:0 ;
+  .p-course-modal {
+    .ivu-radio-wrapper {
+      margin-right: 0;
     }
   }
 </style>
 
 <style lang="less" scoped>
-  .-course-search{
+  .-course-search {
     margin-bottom: 20px;
   }
+
   .p-course-modal {
     height: 400px;
     overflow-y: auto;
@@ -147,7 +152,7 @@
     }
     .-item-text {
       overflow: hidden;
-      text-overflow:ellipsis;
+      text-overflow: ellipsis;
       white-space: nowrap;
       width: 200px;
     }
