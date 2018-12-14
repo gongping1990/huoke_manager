@@ -42,7 +42,7 @@
   export default {
     name: 'checkCourse',
     components: {Loading},
-    props: ['isShowModal', 'checkCourseList', 'isUpdate', 'isRadioModal'],
+    props: ['isShowModal', 'checkCourseList', 'isUpdate', 'isRadioModal', 'courseType'],
     data() {
       return {
         searchInfo: '',
@@ -72,17 +72,26 @@
     methods: {
       getCourseList() {
         if (this.isFetching) return
+        let routeUrl = ''
         this.isFetching = true
-        this.$api.course.teachSubjectList({
+        routeUrl = this.courseType ? this.$api.goods.aloneList : this.$api.course.teachSubjectList
+        routeUrl({
           current: 1,
-          size: this.size
+          size: this.size,
+          name: this.searchInfo
         }).then(
           res => {
             this.courseList = res.data.resultData.records;
+
             for (let data of this.courseList) {
-              data.courseImgUrl = data.url
+              data.courseImgUrl = data.url || data.coverUrl
               data.courseName = data.name
+
+              if (this.courseType == 1) {
+                data.id = data.goodsId
+              }
             }
+
             if (this.isUpdate) {
               for (let item of this.checkCourseList) {
                 for (let list of this.courseList) {
@@ -99,6 +108,7 @@
       },
       sureCourseModal() {
         if (this.isRadio) {
+          console.log(this.radioCourseId, this.courseList)
           for (let data of this.courseList) {
             if (this.radioCourseId == data.id) {
               this.checkCourseArray.push(data)

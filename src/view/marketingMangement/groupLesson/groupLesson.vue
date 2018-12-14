@@ -1,5 +1,5 @@
 <template>
-  <div class="p-help">
+  <div class="p-group">
     <Card>
       <Row class="g-search">
         <Col :span="3" class="g-t-left">
@@ -28,7 +28,7 @@
     </Card>
 
     <Modal
-      class="p-help"
+      class="p-group"
       v-model="isOpenModal"
       @on-cancel="closeModal('addInfo')"
       width="500"
@@ -170,7 +170,18 @@
           },
           {
             title: '课程封面',
-            key: 'name',
+            render: (h, params) => {
+              return h('img', {
+                attrs: {
+                  src: params.row.coverUrl
+                },
+                style: {
+                  width: '100px',
+                  height: '60px',
+                  margin: '10px'
+                }
+              })
+            },
             align: 'center'
           },
           {
@@ -345,7 +356,7 @@
 </script>
 
 <style lang="less" scoped>
-  .p-help {
+  .p-group {
     .-search-select-text {
       min-width: 70px;
     }

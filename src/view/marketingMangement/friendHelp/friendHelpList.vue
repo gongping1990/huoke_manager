@@ -21,10 +21,15 @@
           </div>
         </Col>
       </Row>
-      <div class="g-add-btn g-add-top" @click="openModal">
+
+      <div class="g-add-btn g-add-top" @click="openModal()">
         <Icon class="-btn-icon" color="#fff" type="ios-add" size="24"/>
       </div>
+
       <Table class="-c-tab" :loading="isFetching" :columns="columns" :data="dataList"></Table>
+
+      <Page class="g-text-right" :total="total" size="small" show-elevator :page-size="tab.pageSize"
+            @on-change="currentChange"></Page>
     </Card>
 
     <Modal
@@ -33,62 +38,63 @@
       @on-cancel="closeModal('addInfo')"
       width="500"
       title="编辑好友助力">
-      <Form ref="addInfo" :model="addInfo" :rules="ruleValidate" :label-width="90">
-        <FormItem label="关联课程" prop="courseId">
-          <div class="g-course-add-style" @click="isShowCourseModal=true">
+      <Form ref="addInfo" :model="addInfo" :label-width="90" class="ivu-form-item-required">
+        <FormItem label="关联课程" prop="goodsId">
+          <div class="g-course-add-style" @click="isShowCourseModal=true" v-if="!courseList.length">
             <span>+</span>
             <span>选择课程</span>
           </div>
           <div v-if="isShowCourseModal">
             <check-course :isShowModal="isShowCourseModal" :checkCourseList="courseList" :isUpdate='isEdit'
-                          :isRadioModal="true"
+                          :isRadioModal="true" :courseType="1"
                           @closeCourseModal="checkCourse"></check-course>
           </div>
           <div class="-c-course-wrap" v-if="courseList.length">
             <div class="-c-course-item" v-for="(item, index) of courseList" :key="index">
               <img :src="item.courseImgUrl">
               <div class="-i-text">{{item.courseName}}</div>
-              <div v-if="!item.isOldCourse" class="-i-del" @click="delCourse(item,index)">删除课程</div>
+              <div v-if="!isEdit" class="-i-del" @click="delCourse(item,index)">删除课程</div>
             </div>
           </div>
         </FormItem>
-        <FormItem label="助力人数" prop="priceYuan">
-          <Input type="text" v-model="addInfo.priceYuan" placeholder="请输入助力人数"></Input>
+        <FormItem label="助力人数" prop="frendHelpCount">
+          <Input type="text" :disabled="isEdit" v-model="addInfo.frendHelpCount" placeholder="请输入助力人数"></Input>
         </FormItem>
-        <FormItem label="最大限制" prop="showSaleNum">
-          <Radio-group v-model="addInfo.useScope">
-            <Radio :label=0>不启用</Radio>
-            <Radio :label=1>启用</Radio>
+        <FormItem label="最大限制">
+          <Radio-group v-model="addInfo.limit">
+            <Radio :label=0 :disabled="isEdit">不启用</Radio>
+            <Radio :label=1 :disabled="isEdit">启用</Radio>
           </Radio-group>
         </FormItem>
-        <FormItem label="限制人数" prop="showSaleNum" v-if="addInfo.useScope">
-          <Input type="text" v-model="addInfo.showSaleNum" placeholder="请输入初始销量"></Input>
+        <FormItem label="限制人数" prop="activityCount" v-if="addInfo.limit">
+          <Input type="text" v-model="addInfo.activityCount" placeholder="请输入限制人数" :disabled="isEdit"></Input>
         </FormItem>
-        <FormItem label="有效期" prop="showSaleNum">
+        <FormItem label="有效期">
           <Row>
             <Col span="11">
-              <Form-item prop="date">
+              <Form-item prop="getStartTime">
                 <Date-picker :disabled="isEdit" style="width: 100%" type="datetime" placeholder="选择开始日期"
                              v-model="getStartTime" :options="dateStartOption"></Date-picker>
               </Form-item>
             </Col>
             <Col span="2" style="text-align: center">-</Col>
             <Col span="11">
-              <Form-item prop="time">
-                <Date-picker :disabled="isEdit" style="width: 100%" type="datetime" placeholder="选择结束日期"
+              <Form-item prop="getEndTime">
+                <Date-picker style="width: 100%" type="datetime" placeholder="选择结束日期"
                              v-model="getEndTime" :options="dateEndOption"></Date-picker>
               </Form-item>
             </Col>
           </Row>
         </FormItem>
-        <FormItem label="反馈形式" prop="showSaleNum">
-          <Radio-group v-model="addInfo.useScope">
-            <Radio :label=0>课程详情弹窗</Radio>
-            <Radio :label=1>独立页面</Radio>
+        <FormItem label="反馈形式" prop="helpType">
+          <Radio-group v-model="addInfo.helpType">
+            <Radio :label=0 :disabled="isEdit">课程详情弹窗</Radio>
+            <Radio :label=1 :disabled="isEdit">独立页面</Radio>
           </Radio-group>
         </FormItem>
-        <FormItem label="分享摘要" prop="showSaleNum">
-          <Input type="textarea" :rows="4" v-model="addInfo.showSaleNum" placeholder="请输入分享摘要"></Input>
+        <FormItem label="分享摘要" prop="helpAbstract">
+          <Input type="textarea" :disabled="isEdit" :rows="4" v-model="addInfo.helpAbstract"
+                 placeholder="请输入分享摘要"></Input>
         </FormItem>
 
       </Form>
@@ -102,6 +108,7 @@
 
 <script>
   import CheckCourse from "../../../components/checkCourse";
+  import dayjs from 'dayjs'
 
   export default {
     name: 'friendHelp',
@@ -113,24 +120,24 @@
           pageSize: 10
         },
         searchInfo: '',
-        selectInfoOne: '',
-        selectInfo: '',
+        selectInfoOne: '-1',
+        selectInfo: '1',
         statusList: [
           {
             name: '全部',
-            id: ''
-          },{
+            id: '-1'
+          }, {
             name: '未开始',
             id: '0'
-          },{
+          }, {
             name: '进行中',
-            id: '1'
-          },{
+            id: '10'
+          }, {
             name: '已过期',
-            id: '2'
-          },{
+            id: '20'
+          }, {
             name: '已结束',
-            id: '3'
+            id: '30'
           },
         ],
         dataList: [],
@@ -144,9 +151,8 @@
         getStartTime: '',
         getEndTime: '',
         addInfo: {
-          courseId: '',
-          priceYuan: '',
-          showSaleNum: ''
+          limit: 0,
+          helpType: 0
         },
         dateStartOption: {
           disabledDate(date) {
@@ -155,100 +161,114 @@
         },
         dateEndOption: {
           disabledDate(date) {
-            return date && date.valueOf() < Date.now() - 86400000;
+            return date && (new Date(date).getTime() <= new Date().getTime() - 24 * 3600 * 1000);
           }
-        },
-        ruleValidate: {
-          priceYuan: [
-            {required: true, message: '请输入单独购价格', trigger: 'blur'},
-          ],
-          showSaleNum: [
-            {required: true, message: '请输入初始销量', trigger: 'blur'},
-          ]
         },
         columns: [
           {
             title: '课程名称',
-            key: 'name',
+            key: 'courseName',
             align: 'center'
           },
           {
             title: '课程封面',
-            key: 'name',
+            render: (h, params) => {
+              return h('img', {
+                attrs: {
+                  src: params.row.courseCover
+                },
+                style: {
+                  width: '100px',
+                  height: '60px',
+                  margin: '10px'
+                }
+              })
+            },
             align: 'center'
           },
           {
             title: '助力人数',
-            key: 'name',
+            key: 'frendHelpCount',
             align: 'center'
           },
           {
             title: '最大限制',
-            key: 'name',
+            render: (h, params) => {
+              return h('div', params.row.activityCount == '-1' ? '无限制' : params.row.activityCount)
+            },
             align: 'center'
           },
           {
             title: '助力销量',
-            key: 'name',
+            key: 'successCount',
             align: 'center'
           },
           {
             title: '助力状态',
             key: 'name',
+            render: (h, params) => {
+              return h('div', this.initStatus(params.row.status))
+            },
             align: 'center'
           },
           {
             title: '有效期开始',
-            key: 'name',
+            render: (h, params) => {
+              return h('div', dayjs(params.row.startTime).format("YYYY-MM-DD HH:mm:ss"))
+            },
             align: 'center'
           },
           {
             title: '有效期结束',
-            key: 'name',
+            render: (h, params) => {
+              return h('div', dayjs(params.row.endTime).format("YYYY-MM-DD HH:mm:ss"))
+            },
             align: 'center'
           },
           {
             title: '操作',
             align: 'center',
             render: (h, params) => {
-              return h('div', [
-                h('Button', {
-                  props: {
-                    type: 'text',
-                    size: 'small'
-                  },
-                  style: {
-                    color: '#5444E4'
-                  },
-                  on: {
-                    click: () => {
-                      this.openModal(params.row)
+              if (params.row.status == 0 || params.row.status == 10) {
+                return h('div', [
+                  h('Button', {
+                    props: {
+                      type: 'text',
+                      size: 'small'
+                    },
+                    style: {
+                      color: '#5444E4'
+                    },
+                    on: {
+                      click: () => {
+                        this.openModal(params.row)
+                      }
                     }
-                  }
-                }, '编辑'),
-                h('Button', {
-                  props: {
-                    type: 'text',
-                    size: 'small'
-                  },
-                  style: {
-                    color: 'rgb(218, 55, 75)',
-                    marginRight: '5px'
-                  },
-                  on: {
-                    click: () => {
-                      this.delItem(params.row)
+                  }, '编辑'),
+                  h('Button', {
+                    props: {
+                      type: 'text',
+                      size: 'small'
+                    },
+                    style: {
+                      color: 'rgb(218, 55, 75)',
+                      marginRight: '5px'
+                    },
+                    on: {
+                      click: () => {
+                        this.delItem(params.row)
+                      }
                     }
-                  }
-                }, '结束')
-              ])
+                  }, '结束')
+                ])
+              }
             }
           }
         ],
       };
     },
     watch: {
-      'useStartTime'(_new, _old) {
+      'getStartTime'(_new, _old) {
         this.dateEndOption = {
           disabledDate(date) {
             return date && date.valueOf() < new Date(_new).getTime();
@@ -260,6 +280,18 @@
       this.getList()
     },
     methods: {
+      delCourse(item, index) {
+        this.courseList.splice(index, 1)
+      },
+      initStatus(data) {
+        let name = ''
+        for (let item of this.statusList) {
+          if (item.id == data) {
+            name = item.name
+          }
+        }
+        return name
+      },
       currentChange(val) {
         this.tab.page = val;
         this.getList();
@@ -267,22 +299,48 @@
       openModal(data) {
         this.courseList = []
         this.isOpenModal = true
-        this.addInfo = JSON.parse(JSON.stringify({
-          courseId: data.id,
-          name: data.name
-        }))
+        if (data) {
+          let _self = this
+          this.isEdit = true
+          this.addInfo = JSON.parse(JSON.stringify(data))
+          this.addInfo.limit = this.addInfo.activityCount == '-1' ? 0 : 1
+          this.getStartTime = new Date(this.addInfo.startTime)
+          this.getEndTime = new Date(this.addInfo.endTime)
+          this.courseList.push({
+            courseImgUrl: this.addInfo.courseCover,
+            courseName: this.addInfo.courseName
+          })
+          this.dateEndOption = {
+            disabledDate(date) {
+              return date && date.valueOf() < (_self.addInfo.endTime - 24 * 60 * 60 * 1000)
+            }
+          }
+        } else {
+          this.getStartTime = ''
+          this.getEndTime = ''
+          this.isEdit = false
+          this.addInfo = {
+            limit: 0,
+            helpType: 0
+          }
+        }
       },
       closeModal(name) {
         this.isOpenModal = false
-        this.$refs[name].resetFields()
       },
       //分页查询
       getList() {
         this.isFetching = true
-        this.$api.course.teachSubjectList()
+        this.$api.goods.friendHelpList({
+          current: this.tab.page,
+          size: this.tab.pageSize,
+          name: this.searchInfo,
+          status: this.selectInfoOne,
+        })
           .then(
             response => {
               this.dataList = response.data.resultData.records;
+              this.total = response.data.resultData.total;
             })
           .finally(() => {
             this.isFetching = false
@@ -291,10 +349,10 @@
       delItem(param) {
         this.$Modal.confirm({
           title: '提示',
-          content: '确认要删除该学科吗？',
+          content: '确认结束好友助力吗？',
           onOk: () => {
-            this.$api.course.delSubject({
-              courseId: param.id
+            this.$api.goods.closeFrendHelp({
+              id: param.id
             }).then(
               response => {
                 if (response.data.code == "200") {
@@ -306,33 +364,40 @@
         })
       },
       submitInfo(name) {
-        if (!this.addInfo.courseId) {
+        if (!this.addInfo.goodsId) {
           return this.$Message.error('请选择关联课程')
+        } else if (this.addInfo.limit && !this.addInfo.activityCount) {
+          return this.$Message.error('请输入限制人数')
+        } else if (!this.addInfo.frendHelpCount) {
+          return this.$Message.error('请输入助力人数')
+        } else if (!this.getStartTime) {
+          return this.$Message.error('请输入开始时间')
+        } else if (!this.getEndTime) {
+          return this.$Message.error('请输入结束时间')
+        } else if (!this.addInfo.helpAbstract) {
+          return this.$Message.error('请输入分享摘要')
         }
-        this.$refs[name].validate((valid) => {
-          if (valid) {
-            this.isSending = true
-            console.log(this.addInfo, 1)
-            let promiseDate = this.addInfo.courseId ? this.$api.course.updateSubject(this.addInfo) : this.$api.course.addSubject(this.addInfo)
-            promiseDate
-              .then(
-                response => {
-                  if (response.data.code == '200') {
-                    this.$Message.success('提交成功');
-                    this.getList()
-                    this.closeModal(name)
-                  }
-                })
-              .finally(() => {
-                this.isSending = false
-              })
-          }
-        })
+        this.isSending = true
+        this.addInfo.startTime = new Date(this.getStartTime).getTime()
+        this.addInfo.endTime = new Date(this.getEndTime).getTime()
+        this.addInfo.activityCount = this.addInfo.limit ? this.addInfo.activityCount : '-1'
+        this.$api.goods.editFriendHelp(this.addInfo)
+          .then(
+            response => {
+              if (response.data.code == '200') {
+                this.$Message.success('提交成功');
+                this.getList()
+                this.closeModal(name)
+              }
+            })
+          .finally(() => {
+            this.isSending = false
+          })
       },
       checkCourse(params) {
         this.isShowCourseModal = false;
         this.courseList = params
-        this.addInfo.courseId = params.length && this.courseList[0].id
+        this.addInfo.goodsId = params.length && this.courseList[0].id
       }
     }
   };
@@ -369,24 +434,22 @@
     }
 
     .-c-course-wrap {
-      margin-top: 10px;
       display: inline-block;
       .-c-course-item {
         position: relative;
         display: inline-block;
-        width: 140px;
+        /*width: 140px;*/
         overflow: hidden;
-        margin: 10px 10px 10px 0;
 
         img {
-          width: 100%;
+          width: 140px;
           height: 70px;
         }
 
         .-i-text {
           display: -webkit-box;
           -webkit-box-orient: vertical;
-          -webkit-line-clamp: 1;
+          /*-webkit-line-clamp: 1;*/
           line-height: normal;
         }
 
