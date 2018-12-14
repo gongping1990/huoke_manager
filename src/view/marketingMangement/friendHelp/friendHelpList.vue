@@ -36,7 +36,7 @@
       class="p-help"
       v-model="isOpenModal"
       @on-cancel="closeModal('addInfo')"
-      width="500"
+      width="600"
       title="编辑好友助力">
       <Form ref="addInfo" :model="addInfo" :label-width="90" class="ivu-form-item-required">
         <FormItem label="关联课程" prop="goodsId">
@@ -85,6 +85,7 @@
               </Form-item>
             </Col>
           </Row>
+          <span class="-c-tips">* 添加拼课后，有效期开始时间不能更改，结束时间只能增加，不能减少</span>
         </FormItem>
         <FormItem label="反馈形式" prop="helpType">
           <Radio-group v-model="addInfo.helpType">
@@ -205,7 +206,6 @@
           },
           {
             title: '助力状态',
-            key: 'name',
             render: (h, params) => {
               return h('div', this.initStatus(params.row.status))
             },
@@ -269,9 +269,11 @@
     },
     watch: {
       'getStartTime'(_new, _old) {
-        this.dateEndOption = {
-          disabledDate(date) {
-            return date && date.valueOf() < new Date(_new).getTime();
+        if(!this.isEdit) {
+          this.dateEndOption = {
+            disabledDate(date) {
+              return date && date.valueOf() < new Date(_new).getTime();
+            }
           }
         }
       }
@@ -433,6 +435,10 @@
       margin: 20px 0;
     }
 
+    .-c-tips {
+      color: #39f
+    }
+
     .-c-course-wrap {
       display: inline-block;
       .-c-course-item {
@@ -456,7 +462,7 @@
         .-i-del {
           position: absolute;
           top: 0;
-          right: 0;
+          right: 53px;
           color: #ffff;
           background-color: rgba(0, 0, 0, 0.4);
           line-height: normal;

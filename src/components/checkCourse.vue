@@ -108,7 +108,6 @@
       },
       sureCourseModal() {
         if (this.isRadio) {
-          console.log(this.radioCourseId, this.courseList)
           for (let data of this.courseList) {
             if (this.radioCourseId == data.id) {
               this.checkCourseArray.push(data)

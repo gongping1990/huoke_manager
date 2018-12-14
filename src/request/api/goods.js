@@ -45,14 +45,22 @@ const goods = {
   updateGroup(params) {
     return axios.post('/goods/updateGroup', qs.stringify(params))
   },
+
+  // 结束拼课
+  closeGroup(params) {
+    return axios.post('/goods/updateCloseGroup', qs.stringify(params))
+  },
+
   // 好友助力列表
   friendHelpList(params) {
     return axios.get('/goods/activty/frendHelpList', {params: params})
   },
+
   // 修改好友助力
   editFriendHelp(params) {
     return axios.post('/goods/activty/frendHelp/save', qs.stringify(params))
   },
+
   // 修改拼课
   closeFrendHelp(params) {
     return axios.post('/goods/activty/closeFrendHelp', qs.stringify(params))

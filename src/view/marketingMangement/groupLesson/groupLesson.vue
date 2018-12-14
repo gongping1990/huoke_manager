@@ -1,5 +1,5 @@
 <template>
-  <div class="p-group">
+  <div class="p-groupLesson">
     <Card>
       <Row class="g-search">
         <Col :span="3" class="g-t-left">
@@ -21,53 +21,63 @@
           </div>
         </Col>
       </Row>
-      <div class="g-add-btn g-add-top" @click="openModal">
+
+      <div class="g-add-btn g-add-top" @click="openModal()">
         <Icon class="-btn-icon" color="#fff" type="ios-add" size="24"/>
       </div>
+
       <Table class="-c-tab" :loading="isFetching" :columns="columns" :data="dataList"></Table>
+
+      <Page class="g-text-right" :total="total" size="small" show-elevator :page-size="tab.pageSize"
+            @on-change="currentChange"></Page>
     </Card>
 
     <Modal
-      class="p-group"
+      class="p-groupLesson"
       v-model="isOpenModal"
       @on-cancel="closeModal('addInfo')"
-      width="500"
+      width="600"
       title="编辑拼课">
-      <Form ref="addInfo" :model="addInfo" :rules="ruleValidate" :label-width="110">
-        <FormItem label="关联课程" prop="courseId">
-          <div class="g-course-add-style" @click="isShowCourseModal=true">
+      <Form ref="addInfo" :model="addInfo" :label-width="110" class="ivu-form-item-required">
+        <FormItem label="关联课程">
+          <div class="g-course-add-style" @click="isShowCourseModal=true" v-if="!courseList.length">
             <span>+</span>
             <span>选择课程</span>
           </div>
           <div v-if="isShowCourseModal">
             <check-course :isShowModal="isShowCourseModal" :checkCourseList="courseList" :isUpdate='isEdit'
-                          :isRadioModal="true"
+                          :isRadioModal="true" :courseType="1"
                           @closeCourseModal="checkCourse"></check-course>
           </div>
           <div class="-c-course-wrap" v-if="courseList.length">
             <div class="-c-course-item" v-for="(item, index) of courseList" :key="index">
               <img :src="item.courseImgUrl">
               <div class="-i-text">{{item.courseName}}</div>
-              <div v-if="!item.isOldCourse" class="-i-del" @click="delCourse(item,index)">删除课程</div>
+              <div v-if="!isEdit" class="-i-del" @click="delCourse(item,index)">删除课程</div>
             </div>
           </div>
         </FormItem>
-        <FormItem label="拼课人数" prop="priceYuan">
-          <Input type="text" v-model="addInfo.priceYuan" placeholder="请输入拼课人数"></Input>
+        <FormItem label="拼课人数">
+          <Input type="text" :disabled="isEdit"  v-model="addInfo.groupPersonNum" placeholder="请输入拼课人数"></Input>
         </FormItem>
-        <FormItem label="拼课时限" prop="priceYuan">
-          <Input type="text" v-model="addInfo.priceYuan" placeholder="请输入拼课时限（小时）"></Input>
+        <FormItem label="拼课时限">
+          <Input type="text" :disabled="isEdit"  v-model="addInfo.groupWaitTime" placeholder="请输入拼课时限（小时）"></Input>
         </FormItem>
-        <FormItem label="团长优惠" prop="showSaleNum">
-          <Radio-group v-model="addInfo.useScope">
-            <Radio :label=0>不启用</Radio>
-            <Radio :label=1>启用</Radio>
+        <FormItem label="拼课价格">
+          <Input type="text" :disabled="isEdit"  v-model="addInfo.groupPriceYuan" placeholder="请输入拼课时限（元）"></Input>
+          <span class="-c-tips">* 精确到小数点后2位，如99.99</span>
+        </FormItem>
+        <FormItem label="团长优惠">
+          <Radio-group v-model="addInfo.limit">
+            <Radio :label=0 :disabled="isEdit" >不启用</Radio>
+            <Radio :label=1 :disabled="isEdit" >启用</Radio>
           </Radio-group>
         </FormItem>
-        <FormItem label="团长优惠价格" prop="showSaleNum" v-if="addInfo.useScope">
-          <Input type="text" v-model="addInfo.showSaleNum" placeholder="请输入团长优惠价格(元)"></Input>
+        <FormItem label="团长优惠价格" v-if="addInfo.limit">
+          <Input type="text" :disabled="isEdit"  v-model="addInfo.groupFirstPriceYuan" placeholder="请输入团长优惠价格(元)"></Input>
+          <span class="-c-tips">* 精确到小数点后2位，如99.99</span>
         </FormItem>
-        <FormItem label="有效期" prop="showSaleNum">
+        <FormItem label="有效期">
           <Row>
             <Col span="11">
               <Form-item prop="date">
@@ -78,14 +88,15 @@
             <Col span="2" style="text-align: center">-</Col>
             <Col span="11">
               <Form-item prop="time">
-                <Date-picker :disabled="isEdit" style="width: 100%" type="datetime" placeholder="选择结束日期"
+                <Date-picker style="width: 100%" type="datetime" placeholder="选择结束日期"
                              v-model="getEndTime" :options="dateEndOption"></Date-picker>
               </Form-item>
             </Col>
           </Row>
+          <span class="-c-tips">* 添加拼课后，有效期开始时间不能更改，结束时间只能增加，不能减少</span>
         </FormItem>
-        <FormItem label="分享摘要" prop="showSaleNum">
-          <Input type="textarea" :rows="4" v-model="addInfo.showSaleNum" placeholder="请输入分享摘要"></Input>
+        <FormItem label="分享摘要">
+          <Input type="textarea" :disabled="isEdit"  :rows="4" v-model="addInfo.shareText" placeholder="请输入分享摘要"></Input>
         </FormItem>
       </Form>
       <div slot="footer" class="g-flex-j-sa">
@@ -98,6 +109,7 @@
 
 <script>
   import CheckCourse from "../../../components/checkCourse";
+  import dayjs from 'dayjs'
 
   export default {
     name: 'friendHelp',
@@ -109,12 +121,12 @@
           pageSize: 10
         },
         searchInfo: '',
-        selectInfoOne: '',
-        selectInfo: '',
+        selectInfoOne: '-1',
+        selectInfo: '1',
         statusList: [
           {
             name: '全部',
-            id: ''
+            id: '-1'
           },{
             name: '未开始',
             id: '0'
@@ -123,10 +135,10 @@
             id: '1'
           },{
             name: '已过期',
-            id: '2'
+            id: '3'
           },{
             name: '已结束',
-            id: '3'
+            id: '2'
           },
         ],
         dataList: [],
@@ -140,9 +152,7 @@
         getStartTime: '',
         getEndTime: '',
         addInfo: {
-          courseId: '',
-          priceYuan: '',
-          showSaleNum: ''
+          limit: 0
         },
         dateStartOption: {
           disabledDate(date) {
@@ -154,18 +164,10 @@
             return date && date.valueOf() < Date.now() - 86400000;
           }
         },
-        ruleValidate: {
-          priceYuan: [
-            {required: true, message: '请输入单独购价格', trigger: 'blur'},
-          ],
-          showSaleNum: [
-            {required: true, message: '请输入初始销量', trigger: 'blur'},
-          ]
-        },
         columns: [
           {
             title: '课程名称',
-            key: 'name',
+            key: 'courseName',
             align: 'center'
           },
           {
@@ -173,7 +175,7 @@
             render: (h, params) => {
               return h('img', {
                 attrs: {
-                  src: params.row.coverUrl
+                  src: params.row.courseImgUrl
                 },
                 style: {
                   width: '100px',
@@ -186,89 +188,97 @@
           },
           {
             title: '拼课时限',
-            key: 'name',
+            key: 'groupWaitTime',
             align: 'center'
           },
           {
             title: '拼课人数',
-            key: 'name',
+            key: 'groupPersonNum',
             align: 'center'
           },
           {
             title: '拼课购价格',
-            key: 'name',
+            key: 'groupPriceYuan',
             align: 'center'
           },
           {
             title: '团长优惠价格',
-            key: 'name',
+            key: 'groupFirstPriceYuan',
             align: 'center'
           },
           {
             title: '拼课销量',
-            key: 'name',
+            key: 'showSaleNum',
             align: 'center'
           },
           {
             title: '拼课状态',
-            key: 'name',
+            render: (h, params) => {
+              return h('div', this.initStatus(params.row.showStatus))
+            },
             align: 'center'
           },
           {
             title: '有效期开始',
-            key: 'name',
-            align: 'center'
+            key: 'showTime',
+            align: 'center',
+            width: 100
           },
           {
             title: '有效期结束',
-            key: 'name',
-            align: 'center'
+            key: 'endTime',
+            align: 'center',
+            width: 100
           },
           {
             title: '操作',
             align: 'center',
             render: (h, params) => {
-              return h('div', [
-                h('Button', {
-                  props: {
-                    type: 'text',
-                    size: 'small'
-                  },
-                  style: {
-                    color: '#5444E4'
-                  },
-                  on: {
-                    click: () => {
-                      this.openModal(params.row)
+              if(params.row.showStatus == '0' || params.row.showStatus == '1') {
+                return h('div', [
+                  h('Button', {
+                    props: {
+                      type: 'text',
+                      size: 'small'
+                    },
+                    style: {
+                      color: '#5444E4'
+                    },
+                    on: {
+                      click: () => {
+                        this.openModal(params.row)
+                      }
                     }
-                  }
-                }, '编辑'),
-                h('Button', {
-                  props: {
-                    type: 'text',
-                    size: 'small'
-                  },
-                  style: {
-                    color: 'rgb(218, 55, 75)',
-                    marginRight: '5px'
-                  },
-                  on: {
-                    click: () => {
-                      this.delItem(params.row)
+                  }, '编辑'),
+                  h('Button', {
+                    props: {
+                      type: 'text',
+                      size: 'small'
+                    },
+                    style: {
+                      color: 'rgb(218, 55, 75)',
+                      marginRight: '5px'
+                    },
+                    on: {
+                      click: () => {
+                        this.delItem(params.row)
+                      }
                     }
-                  }
-                }, '结束')
-              ])
+                  }, '结束')
+                ])
+              }
             }
           }
         ],
       };
     },
     watch: {
-      'useStartTime'(_new, _old) {
-        this.dateEndOption = {
-          disabledDate(date) {
-            return date && date.valueOf() < new Date(_new).getTime();
+      'getStartTime'(_new, _old) {
+        if(!this.isEdit) {
+          this.dateEndOption = {
+            disabledDate(date) {
+              return date && date.valueOf() < new Date(_new).getTime();
+            }
           }
         }
       }
@@ -277,6 +287,15 @@
       this.getList()
     },
     methods: {
+      initStatus(data) {
+        let name = ''
+        for (let item of this.statusList) {
+          if (item.id == data) {
+            name = item.name
+          }
+        }
+        return name
+      },
       currentChange(val) {
         this.tab.page = val;
         this.getList();
@@ -284,22 +303,47 @@
       openModal(data) {
         this.courseList = []
         this.isOpenModal = true
-        this.addInfo = JSON.parse(JSON.stringify({
-          courseId: data.id,
-          name: data.name
-        }))
+        if (data) {
+          let _self = this
+          this.isEdit = true
+          this.addInfo = JSON.parse(JSON.stringify(data))
+          this.addInfo.limit = this.addInfo.activityCount == '-1' ? 0 : 1
+          this.getStartTime = new Date(this.addInfo.showTime)
+          this.getEndTime = new Date(this.addInfo.endTime)
+          this.courseList.push({
+            courseImgUrl: this.addInfo.courseImgUrl,
+            courseName: this.addInfo.courseName
+          })
+          this.dateEndOption = {
+            disabledDate(date) {
+              return date && date.valueOf() < (new Date(_self.addInfo.endTime).getTime() - 24 * 60 * 60 * 1000)
+            }
+          }
+        } else {
+          this.getStartTime = ''
+          this.getEndTime = ''
+          this.isEdit = false
+          this.addInfo = {
+            limit: 0
+          }
+        }
       },
       closeModal(name) {
         this.isOpenModal = false
-        this.$refs[name].resetFields()
       },
       //分页查询
       getList() {
         this.isFetching = true
-        this.$api.goods.groupList()
+        this.$api.goods.groupList({
+          current: this.tab.page,
+          size: this.tab.pageSize,
+          name: this.searchInfo,
+          status: this.selectInfoOne,
+        })
           .then(
             response => {
               this.dataList = response.data.resultData.records;
+              this.total = response.data.resultData.total;
             })
           .finally(() => {
             this.isFetching = false
@@ -308,10 +352,10 @@
       delItem(param) {
         this.$Modal.confirm({
           title: '提示',
-          content: '确认要删除该学科吗？',
+          content: '确认结束该拼课吗？',
           onOk: () => {
-            this.$api.course.delSubject({
-              courseId: param.id
+            this.$api.goods.closeGroup({
+              goodsId: param.id
             }).then(
               response => {
                 if (response.data.code == "200") {
@@ -323,40 +367,60 @@
         })
       },
       submitInfo(name) {
-        if (!this.addInfo.courseId) {
+        if (!this.addInfo.goodsId) {
           return this.$Message.error('请选择关联课程')
+        } else if (!this.addInfo.groupPersonNum) {
+          return this.$Message.error('请输入拼课人数')
+        } else if (this.addInfo.groupPersonNum > 999 || this.addInfo.groupPersonNum < 1) {
+          return this.$Message.error('拼课人数范围为 1-999')
+        } else if (!this.addInfo.groupWaitTime) {
+          return this.$Message.error('请输入拼课时限')
+        } else if (this.addInfo.groupWaitTime > 99 || this.addInfo.groupWaitTime < 0) {
+          return this.$Message.error('拼课时限范围为 1-99')
+        } else if (!this.addInfo.groupPriceYuan) {
+          return this.$Message.error('请输入拼团价格')
+        } else if (this.addInfo.groupPriceYuan > 99999 || this.addInfo.groupPriceYuan < 0) {
+          return this.$Message.error('拼团价格范围为 1-99999')
+        } else if (this.isShowGroupFirstPrice && !this.addInfo.groupFirstPriceYuan) {
+          return this.$Message.error('请输入团长优惠价格')
+        } else if (this.isShowGroupFirstPrice && (this.addInfo.groupFirstPriceYuan > 99999 || this.addInfo.groupFirstPriceYuan < 0)) {
+          return this.$Message.error('团长优惠价格范围为 1-99999')
+        } else if (!this.getStartTime) {
+          return this.$Message.error('请输入课程上架时间')
+        } else if (!this.getEndTime) {
+          return this.$Message.error('请输入课程结束时间')
+        } else if (!this.addInfo.shareText) {
+          return this.$Message.error('请输入分享摘要')
         }
-        this.$refs[name].validate((valid) => {
-          if (valid) {
-            this.isSending = true
-            console.log(this.addInfo, 1)
-            let promiseDate = this.addInfo.courseId ? this.$api.course.updateSubject(this.addInfo) : this.$api.course.addSubject(this.addInfo)
-            promiseDate
-              .then(
-                response => {
-                  if (response.data.code == '200') {
-                    this.$Message.success('提交成功');
-                    this.getList()
-                    this.closeModal(name)
-                  }
-                })
-              .finally(() => {
-                this.isSending = false
-              })
-          }
-        })
+
+        this.isSending = true
+        this.addInfo.showTime = dayjs(this.getStartTime).format("YYYY/MM/DD HH:mm:ss")
+        this.addInfo.endTime = dayjs(this.getEndTime).format("YYYY/MM/DD HH:mm:ss")
+        let promiseDate = this.addInfo.id ? this.$api.goods.updateGroup(this.addInfo) : this.$api.goods.addGroup(this.addInfo)
+        promiseDate
+          .then(
+            response => {
+              if (response.data.code == '200') {
+                this.$Message.success('提交成功');
+                this.getList()
+                this.closeModal(name)
+              }
+            })
+          .finally(() => {
+            this.isSending = false
+          })
       },
       checkCourse(params) {
         this.isShowCourseModal = false;
         this.courseList = params
-        this.addInfo.courseId = params.length && this.courseList[0].id
+        this.addInfo.goodsId = params.length && this.courseList[0].id
       }
     }
   };
 </script>
 
 <style lang="less" scoped>
-  .p-group {
+  .p-groupLesson {
     .-search-select-text {
       min-width: 70px;
     }
@@ -376,41 +440,35 @@
       display: flex;
       justify-content: space-between;
     }
-
-    .-g-m-item:nth-of-type(even) {
-      margin: 0;
-      float: right;
-    }
+    
     .-c-tab {
       margin: 20px 0;
     }
-
+    .-c-tips {
+      color: #39f
+    }
     .-c-course-wrap {
-      margin-top: 10px;
       display: inline-block;
       .-c-course-item {
         position: relative;
         display: inline-block;
-        width: 140px;
         overflow: hidden;
-        margin: 10px 10px 10px 0;
 
         img {
-          width: 100%;
+          width: 140px;
           height: 70px;
         }
 
         .-i-text {
           display: -webkit-box;
           -webkit-box-orient: vertical;
-          -webkit-line-clamp: 1;
           line-height: normal;
         }
 
         .-i-del {
           position: absolute;
           top: 0;
-          right: 0;
+          right: 53px;
           color: #ffff;
           background-color: rgba(0, 0, 0, 0.4);
           line-height: normal;

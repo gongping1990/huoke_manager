@@ -75,7 +75,7 @@
           pageSize: 10
         },
         searchInfo: '',
-        selectInfo: '',
+        selectInfo: '1',
         dataList: [],
         courseList: [],
         total: 0,
@@ -150,21 +150,6 @@
                     size: 'small'
                   },
                   style: {
-                    color: '#5444E4',
-                    marginRight: '5px'
-                  },
-                  on: {
-                    click: () => {
-                      this.delItem(params.row)
-                    }
-                  }
-                }, !params.row.disabled ? '下架' : '上架'),
-                h('Button', {
-                  props: {
-                    type: 'text',
-                    size: 'small'
-                  },
-                  style: {
                     color: '#5444E4'
                   },
                   on: {
@@ -172,7 +157,22 @@
                       this.openModal(params.row)
                     }
                   }
-                }, '编辑')
+                }, '编辑'),
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: !params.row.disabled ? 'rgb(218, 55, 75)' : '#5444E4',
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.delItem(params.row)
+                    }
+                  }
+                }, !params.row.disabled ? '下架' : '上架')
               ])
             }
           }
