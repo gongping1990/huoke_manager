@@ -26,6 +26,11 @@ const goods = {
     return axios.post('/goods/updateSingle', qs.stringify(params))
   },
 
+  // 是否上下架
+  changeAloneStatus(params) {
+    return axios.post('/goods/changeStatus',  qs.stringify(params))
+  },
+
   // 获取拼课列表
   groupList(params) {
     return axios.get('/goods/listGroupGoodsByPage', {params: params})

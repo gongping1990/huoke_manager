@@ -136,7 +136,7 @@
                 props: {
                   color: params.row.disabled ? 'default' : 'success'
                 }
-              }, params.row.disabled ? '是' : '否')
+              }, !params.row.disabled ? '是' : '否')
             }
           },
           {
@@ -158,7 +158,7 @@
                       this.delItem(params.row)
                     }
                   }
-                }, '上架'),
+                }, !params.row.disabled ? '下架' : '上架'),
                 h('Button', {
                   props: {
                     type: 'text',
@@ -185,6 +185,23 @@
     methods: {
       delCourse(item, index) {
         this.courseList.splice(index, 1)
+      },
+      delItem(param) {
+        this.$Modal.confirm({
+          title: '提示',
+          content: '确认更改该商品状态？',
+          onOk: () => {
+            this.$api.goods.changeAloneStatus({
+              goodsId: param.goodsId
+            }).then(
+              response => {
+                if (response.data.code == "200") {
+                  this.$Message.success("操作成功");
+                  this.getList();
+                }
+              })
+          }
+        })
       },
       currentChange(val) {
         this.tab.page = val;
