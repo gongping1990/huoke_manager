@@ -27,12 +27,12 @@
         <FormItem label="客服电话" prop="phone" style="width: 400px">
           <Input type="text" v-model="addInfo.phone" placeholder="请输入电话号码" :disabled="!isEdit"></Input>
         </FormItem>
-        <FormItem>
-          <div class="-c-flex">
-            <Button @click="isEdit = true" ghost type="primary" class="-c-btn" v-if="!isEdit">进入编辑</Button>
-            <div @click="submitInfo('addInfo')" class="g-primary-btn -c-btn" v-else> {{isSending ? '提交中...' : '确 认'}}</div>
-          </div>
-        </FormItem>
+        <!--<FormItem>-->
+          <!--<div class="-c-flex">-->
+            <!--<Button @click="isEdit = true" ghost type="primary" class="-c-btn" v-if="!isEdit">进入编辑</Button>-->
+            <!--<div @click="submitInfo('addInfo')" class="g-primary-btn -c-btn" v-else> {{isSending ? '提交中...' : '确 认'}}</div>-->
+          <!--</div>-->
+        <!--</FormItem>-->
       </Form>
     </Card>
     <loading v-if="isFetching"></loading>
@@ -65,6 +65,7 @@
       }
     },
     mounted() {
+      this.getList()
     },
     methods: {
       delImg () {
@@ -83,6 +84,17 @@
       handleErr() {
         this.isFetching = false
         this.$Message.error('上传失败，请重新上传')
+      },
+      getList() {
+        this.isFetching = true
+        this.$api.common.getService()
+          .then(
+            response => {
+              this.dataList = response.data.resultData.records;
+            })
+          .finally(() => {
+            this.isFetching = false
+          })
       },
       submitInfo(name) {
         if (!this.addInfo.qrCode) {

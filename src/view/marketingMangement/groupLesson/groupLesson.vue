@@ -51,30 +51,33 @@
           </div>
           <div class="-c-course-wrap" v-if="courseList.length">
             <div class="-c-course-item" v-for="(item, index) of courseList" :key="index">
-              <img :src="item.courseImgUrl">
+              <div>
+                <img :src="item.courseImgUrl">
+                <div v-if="!isEdit" class="-i-del" @click="delCourse(item,index)">删除课程</div>
+              </div>
               <div class="-i-text">{{item.courseName}}</div>
-              <div v-if="!isEdit" class="-i-del" @click="delCourse(item,index)">删除课程</div>
             </div>
           </div>
         </FormItem>
         <FormItem label="拼课人数">
-          <Input type="text" :disabled="isEdit"  v-model="addInfo.groupPersonNum" placeholder="请输入拼课人数"></Input>
+          <Input type="text" :disabled="isEdit" v-model="addInfo.groupPersonNum" placeholder="请输入拼课人数"></Input>
         </FormItem>
         <FormItem label="拼课时限">
-          <Input type="text" :disabled="isEdit"  v-model="addInfo.groupWaitTime" placeholder="请输入拼课时限（小时）"></Input>
+          <Input type="text" :disabled="isEdit" v-model="addInfo.groupWaitTime" placeholder="请输入拼课时限（小时）"></Input>
         </FormItem>
         <FormItem label="拼课价格">
-          <Input type="text" :disabled="isEdit"  v-model="addInfo.groupPriceYuan" placeholder="请输入拼课时限（元）"></Input>
+          <Input type="text" :disabled="isEdit" v-model="addInfo.groupPriceYuan" placeholder="请输入拼课时限（元）"></Input>
           <span class="-c-tips">* 精确到小数点后2位，如99.99</span>
         </FormItem>
         <FormItem label="团长优惠">
           <Radio-group v-model="addInfo.limit">
-            <Radio :label=0 :disabled="isEdit" >不启用</Radio>
-            <Radio :label=1 :disabled="isEdit" >启用</Radio>
+            <Radio :label=0 :disabled="isEdit">不启用</Radio>
+            <Radio :label=1 :disabled="isEdit">启用</Radio>
           </Radio-group>
         </FormItem>
         <FormItem label="团长优惠价格" v-if="addInfo.limit">
-          <Input type="text" :disabled="isEdit"  v-model="addInfo.groupFirstPriceYuan" placeholder="请输入团长优惠价格(元)"></Input>
+          <Input type="text" :disabled="isEdit" v-model="addInfo.groupFirstPriceYuan"
+                 placeholder="请输入团长优惠价格(元)"></Input>
           <span class="-c-tips">* 精确到小数点后2位，如99.99</span>
         </FormItem>
         <FormItem label="有效期">
@@ -96,7 +99,7 @@
           <span class="-c-tips">* 添加拼课后，有效期开始时间不能更改，结束时间只能增加，不能减少</span>
         </FormItem>
         <FormItem label="分享摘要">
-          <Input type="textarea" :disabled="isEdit"  :rows="4" v-model="addInfo.shareText" placeholder="请输入分享摘要"></Input>
+          <Input type="textarea" :disabled="isEdit" :rows="4" v-model="addInfo.shareText" placeholder="请输入分享摘要"></Input>
         </FormItem>
       </Form>
       <div slot="footer" class="g-flex-j-sa">
@@ -109,6 +112,7 @@
 
 <script>
   import CheckCourse from "../../../components/checkCourse";
+  import {pattern} from '@/libs/regexp'
   import dayjs from 'dayjs'
 
   export default {
@@ -127,16 +131,16 @@
           {
             name: '全部',
             id: '-1'
-          },{
+          }, {
             name: '未开始',
             id: '0'
-          },{
+          }, {
             name: '进行中',
             id: '1'
-          },{
+          }, {
             name: '已过期',
             id: '3'
-          },{
+          }, {
             name: '已结束',
             id: '2'
           },
@@ -234,7 +238,7 @@
             title: '操作',
             align: 'center',
             render: (h, params) => {
-              if(params.row.showStatus == '0' || params.row.showStatus == '1') {
+              if (params.row.showStatus == '0' || params.row.showStatus == '1') {
                 return h('div', [
                   h('Button', {
                     props: {
@@ -274,7 +278,7 @@
     },
     watch: {
       'getStartTime'(_new, _old) {
-        if(!this.isEdit) {
+        if (!this.isEdit) {
           this.dateEndOption = {
             disabledDate(date) {
               return date && date.valueOf() < new Date(_new).getTime();
@@ -287,6 +291,9 @@
       this.getList()
     },
     methods: {
+      delCourse(item, index) {
+        this.courseList.splice(index, 1)
+      },
       initStatus(data) {
         let name = ''
         for (let item of this.statusList) {
@@ -307,9 +314,10 @@
           let _self = this
           this.isEdit = true
           this.addInfo = JSON.parse(JSON.stringify(data))
-          this.addInfo.limit = this.addInfo.activityCount == '-1' ? 0 : 1
+          this.addInfo.limit = this.addInfo.groupFirstPriceYuan ? 1 : 0
           this.getStartTime = new Date(this.addInfo.showTime)
           this.getEndTime = new Date(this.addInfo.endTime)
+          this.addInfo.goodsId = this.addInfo.id
           this.courseList.push({
             courseImgUrl: this.addInfo.courseImgUrl,
             courseName: this.addInfo.courseName
@@ -338,7 +346,7 @@
           current: this.tab.page,
           size: this.tab.pageSize,
           name: this.searchInfo,
-          status: this.selectInfoOne,
+          groupStatus: this.selectInfoOne,
         })
           .then(
             response => {
@@ -371,22 +379,26 @@
           return this.$Message.error('请选择关联课程')
         } else if (!this.addInfo.groupPersonNum) {
           return this.$Message.error('请输入拼课人数')
-        } else if (this.addInfo.groupPersonNum > 999 || this.addInfo.groupPersonNum < 1) {
-          return this.$Message.error('拼课人数范围为 1-999')
+        } else if (this.addInfo.groupPersonNum > 999 || this.addInfo.groupPersonNum < 2) {
+          return this.$Message.error('拼课人数范围为 2-999')
         } else if (!this.addInfo.groupWaitTime) {
           return this.$Message.error('请输入拼课时限')
         } else if (this.addInfo.groupWaitTime > 99 || this.addInfo.groupWaitTime < 0) {
           return this.$Message.error('拼课时限范围为 1-99')
         } else if (!this.addInfo.groupPriceYuan) {
-          return this.$Message.error('请输入拼团价格')
+          return this.$Message.error('请输入拼课价格')
         } else if (this.addInfo.groupPriceYuan > 99999 || this.addInfo.groupPriceYuan < 0) {
-          return this.$Message.error('拼团价格范围为 1-99999')
-        } else if (this.isShowGroupFirstPrice && !this.addInfo.groupFirstPriceYuan) {
+          return this.$Message.error('拼课价格范围为 1-99999')
+        } else if (!pattern.positive.exec(this.addInfo.groupPriceYuan)) {
+          return this.$Message.error('拼课价格保留两位小数')
+        } else if (this.addInfo.limit && !this.addInfo.groupFirstPriceYuan) {
           return this.$Message.error('请输入团长优惠价格')
-        } else if (this.isShowGroupFirstPrice && (this.addInfo.groupFirstPriceYuan > 99999 || this.addInfo.groupFirstPriceYuan < 0)) {
+        } else if (this.addInfo.limit && (this.addInfo.groupFirstPriceYuan > 99999 || this.addInfo.groupFirstPriceYuan < 0)) {
           return this.$Message.error('团长优惠价格范围为 1-99999')
+        } else if (this.addInfo.limit && !pattern.positive.exec(this.addInfo.groupFirstPriceYuan)) {
+          return this.$Message.error('团长优惠价格保留两位小数')
         } else if (!this.getStartTime) {
-          return this.$Message.error('请输入课程上架时间')
+          return this.$Message.error('请输入课程开始时间')
         } else if (!this.getEndTime) {
           return this.$Message.error('请输入课程结束时间')
         } else if (!this.addInfo.shareText) {
@@ -396,6 +408,8 @@
         this.isSending = true
         this.addInfo.showTime = dayjs(this.getStartTime).format("YYYY/MM/DD HH:mm:ss")
         this.addInfo.endTime = dayjs(this.getEndTime).format("YYYY/MM/DD HH:mm:ss")
+        this.addInfo.groupFirstPriceYuan = this.addInfo.limit ? this.addInfo.groupFirstPriceYuan : ''
+
         let promiseDate = this.addInfo.id ? this.$api.goods.updateGroup(this.addInfo) : this.$api.goods.addGroup(this.addInfo)
         promiseDate
           .then(
@@ -440,7 +454,7 @@
       display: flex;
       justify-content: space-between;
     }
-    
+
     .-c-tab {
       margin: 20px 0;
     }
@@ -468,7 +482,7 @@
         .-i-del {
           position: absolute;
           top: 0;
-          right: 53px;
+          left: 84px;
           color: #ffff;
           background-color: rgba(0, 0, 0, 0.4);
           line-height: normal;

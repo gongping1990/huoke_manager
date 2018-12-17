@@ -13,6 +13,10 @@ const common = {
   // 上传视频私有
   uploadPrivate(param) {
     return axios.post('/common/uploadPrivateFile', param)
+  },
+  // 获取客服信息
+  getService(param) {
+    return axios.post('/common/sysConfig', param)
   }
 }
 

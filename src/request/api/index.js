@@ -11,6 +11,7 @@ import admin from "./admin";
 import coupon from "./coupon";
 import book from "./book";
 import slide from "./slide";
+import feedback from "./feedback";
 
 
 export default {
@@ -26,5 +27,6 @@ export default {
   admin,
   coupon,
   book,
-  slide
+  slide,
+  feedback
 }

@@ -2,7 +2,7 @@
   <div class="p-user-feedback">
     <Card>
       <Row class="g-t-left">
-        <Radio-group v-model="feedbackType"  type="button">
+        <Radio-group v-model="feedbackType" type="button" @on-change="getList">
           <Radio :label=0>未回复</Radio>
           <Radio :label=1>已回复</Radio>
         </Radio-group>
@@ -15,7 +15,7 @@
               <Option value="1">用户昵称</Option>
             </Select>
             <span class="-search-center">|</span>
-            <Input v-model="searchInfo.name" class="-search-input" placeholder="请输入关键字" icon="ios-search"
+            <Input v-model="searchInfo.nickname" class="-search-input" placeholder="请输入关键字" icon="ios-search"
                    @on-click="getList"></Input>
           </div>
         </Col>
@@ -26,7 +26,7 @@
               <Date-picker class="date-time" type="datetime" placeholder="选择开始日期"
                            v-model="searchInfo.startTime"></Date-picker>
             </div>
-            <div>-</div>
+            <div>&nbsp;-&nbsp;</div>
             <div>
               <Date-picker class="date-time" type="datetime" placeholder="选择结束日期"
                            v-model="searchInfo.endTime"></Date-picker>
@@ -38,7 +38,11 @@
         </Col>
       </Row>
 
-      <Table class="-c-tab" :loading="isFetching" :columns="feedbackType ? columnsUnanswered : columns" :data="dataList"></Table>
+      <Table class="-c-tab" :loading="isFetching" :columns="feedbackType ? columnsUnanswered : columns"
+             :data="dataList"></Table>
+
+      <Page class="g-text-right" :total="total" size="small" show-elevator :page-size="tab.pageSize"
+            @on-change="currentChange"></Page>
     </Card>
 
     <Modal
@@ -61,6 +65,8 @@
 </template>
 
 <script>
+  import dayjs from 'dayjs'
+
   export default {
     name: 'aloneBuy',
     data() {
@@ -70,11 +76,11 @@
           pageSize: 10
         },
         searchInfo: {
-          name: '',
+          nickname: '',
           startTime: '',
           endTime: ''
         },
-        selectInfo: '',
+        selectInfo: '1',
         dataList: [],
         total: 0,
         feedbackType: 0,
@@ -92,22 +98,26 @@
         columns: [
           {
             title: '反馈内容',
-            key: 'name',
+            key: 'content',
             align: 'center'
           },
           {
             title: '用户昵称',
-            key: 'name',
+            key: 'createUserName',
             align: 'center'
           },
           {
             title: '反馈状态',
-            key: 'name',
+            render: (h, params) => {
+              return h('div', params.row.replyed ? '已回复' : '未回复')
+            },
             align: 'center'
           },
           {
             title: '反馈时间',
-            key: 'name',
+            render: (h, params) => {
+              return h('div', dayjs(params.row.createTime).format("YYYY-MM-DD HH:mm:ss"))
+            },
             align: 'center'
           },
           {
@@ -136,32 +146,38 @@
         columnsUnanswered: [
           {
             title: '反馈内容',
-            key: 'name',
+            key: 'content',
             align: 'center'
           },
           {
             title: '回复内容',
-            key: 'name',
+            key: 'replyContent',
             align: 'center'
           },
           {
             title: '用户昵称',
-            key: 'name',
+            key: 'createUserName',
             align: 'center'
           },
           {
             title: '反馈状态',
-            key: 'name',
+            render: (h, params) => {
+              return h('div', params.row.replyed ? '已回复' : '未回复')
+            },
             align: 'center'
           },
           {
             title: '反馈时间',
-            key: 'name',
+            render: (h, params) => {
+              return h('div', dayjs(params.row.createTime).format("YYYY-MM-DD HH:mm:ss"))
+            },
             align: 'center'
           },
           {
             title: '回复时间',
-            key: 'name',
+            render: (h, params) => {
+              return h('div', dayjs(params.row.replyTime).format("YYYY-MM-DD HH:mm:ss"))
+            },
             align: 'center'
           }
         ]
@@ -178,8 +194,8 @@
       openModal(data) {
         this.isOpenModal = true
         this.addInfo = JSON.parse(JSON.stringify({
-          courseId: data.id,
-          name: data.name
+          sourceId : data.id,
+          content: ''
         }))
       },
       closeModal(name) {
@@ -189,10 +205,20 @@
       //分页查询
       getList() {
         this.isFetching = true
-        this.$api.course.teachSubjectList()
+        this.searchInfo.startTime = this.searchInfo.startTime ? dayjs(this.searchInfo.startTime).format("YYYY/MM/DD HH:mm:ss") : ''
+        this.searchInfo.endTime = this.searchInfo.endTime ? dayjs(this.searchInfo.endTime).format("YYYY/MM/DD HH:mm:ss") : ''
+        this.$api.feedback.feedbackList({
+          current: this.tab.page,
+          size: this.tab.pageSize,
+          replyed: this.feedbackType,
+          nickname: this.searchInfo.nickname,
+          startDate: this.searchInfo.startTime,
+          endDate: this.searchInfo.endTime
+        })
           .then(
             response => {
               this.dataList = response.data.resultData.records;
+              this.total = response.data.resultData.total;
             })
           .finally(() => {
             this.isFetching = false
@@ -203,9 +229,7 @@
         this.$refs[name].validate((valid) => {
           if (valid) {
             this.isSending = true
-            console.log(this.addInfo, 1)
-            let promiseDate = this.addInfo.courseId ? this.$api.course.updateSubject(this.addInfo) : this.$api.course.addSubject(this.addInfo)
-            promiseDate
+            this.$api.feedback.addReply(this.addInfo)
               .then(
                 response => {
                   if (response.data.code == '200') {
@@ -234,7 +258,7 @@
       min-width: 155px;
     }
 
-    .-date-search{
+    .-date-search {
       margin-left: 20px;
     }
 

@@ -85,7 +85,7 @@
               </Form-item>
             </Col>
           </Row>
-          <span class="-c-tips">* 添加拼课后，有效期开始时间不能更改，结束时间只能增加，不能减少</span>
+          <span class="-c-tips">* 添加助力后，有效期开始时间不能更改，结束时间只能增加，不能减少</span>
         </FormItem>
         <FormItem label="反馈形式" prop="helpType">
           <Radio-group v-model="addInfo.helpType">
