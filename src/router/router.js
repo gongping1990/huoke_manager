@@ -137,6 +137,19 @@ export const appRouter = [
           }
         ],
         component: () => import('@/view/marketingMangement/groupLesson/groupLesson')
+      },
+      {
+        path: '/active',
+        name: 'active',
+        meta: [
+          {
+            name: '营销管理'
+          },
+          {
+            name: '新人礼包'
+          }
+        ],
+        component: () => import('@/view/marketingMangement/active/active')
       }
     ]
   },

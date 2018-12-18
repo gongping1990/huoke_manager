@@ -324,7 +324,7 @@
           })
           this.dateEndOption = {
             disabledDate(date) {
-              return date && date.valueOf() < (new Date(_self.addInfo.endTime).getTime() - 24 * 60 * 60 * 1000)
+              return date && date.valueOf() < (new Date(_self.addInfo.endTime).getTime())
             }
           }
         } else {

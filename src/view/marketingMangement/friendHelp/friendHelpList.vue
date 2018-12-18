@@ -460,7 +460,7 @@
         .-i-del {
           position: absolute;
           top: 0;
-          right: 53px;
+          left: 84px;
           color: #ffff;
           background-color: rgba(0, 0, 0, 0.4);
           line-height: normal;

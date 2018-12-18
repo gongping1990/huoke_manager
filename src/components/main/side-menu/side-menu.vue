@@ -29,6 +29,7 @@
         <Menu-item name="groupLesson">拼课</Menu-item>
         <Menu-item name="aloneBuy">单独购</Menu-item>
         <Menu-item name="friendHelp">好友助力</Menu-item>
+        <Menu-item name="active">新人礼包</Menu-item>
         <Menu-item name="coupon">优惠券</Menu-item>
       </Submenu>
       <Submenu name="operate" class="-left-li">

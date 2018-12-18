@@ -1,5 +1,5 @@
 <template>
-  <Modal v-model="isShow" title="选择课程" @on-ok="sureCourseModal" @on-cancel="sureCourseModal" width="500">
+  <Modal v-model="isShow" title="选择课程" width="500">
     <Row class="g-search -course-search">
       <Col :span="24">
         <div class="-search">
@@ -32,6 +32,10 @@
         </Radio>
       </RadioGroup>
     </div>
+    <span slot="footer" class="dialog-footer">
+      <Button @click="sureCourseModal">取 消</Button>
+      <Button type="primary" @click="sureCourseModal()">确 定</Button>
+    </span>
     <loading v-if="isFetching"></loading>
   </Modal>
 </template>
@@ -42,7 +46,7 @@
   export default {
     name: 'checkCourse',
     components: {Loading},
-    props: ['isShowModal', 'checkCourseList', 'isUpdate', 'isRadioModal', 'courseType'],
+    props: ['isShowModal', 'checkCourseList', 'isUpdate', 'isRadioModal', 'courseType'],// 显示，父组件带进列表，是否是编辑，单选/多选，课程类别（单独购接口/课程接口）,多选课程限制
     data() {
       return {
         searchInfo: '',
@@ -60,6 +64,7 @@
     },
     mounted() {
       if (this.checkCourseList.length && !this.isRadio) {
+        console.log(this.checkCourseList)
         this.isEdit = true
         for (let item of this.checkCourseList) {
           this.checkCourseIds.push(item.id)
@@ -107,6 +112,7 @@
           })
       },
       sureCourseModal() {
+        this.checkCourseArray = []
         if (this.isRadio) {
           for (let data of this.courseList) {
             if (this.radioCourseId == data.id) {
