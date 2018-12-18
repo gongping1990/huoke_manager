@@ -91,10 +91,10 @@
         },
         ruleValidate: {
           priceYuan: [
-            {required: true, message: '请输入单独购价格', trigger: 'blur'},
+            {required: true, type: 'number', message: '请输入单独购价格', trigger: 'blur'},
           ],
           showSaleNum: [
-            {required: true, message: '请输入初始销量', trigger: 'blur'},
+            {required: true, type: 'number', message: '请输入初始销量', trigger: 'blur'},
           ]
         },
         columns: [
@@ -251,7 +251,7 @@
         if (!this.addInfo.courseId) {
           return this.$Message.error('请选择关联课程')
         }
-        this.$refs[name].validate((valid) => {
+        this.$refs[name].validate((valid,data) => {
           if (valid) {
             this.isSending = true
             let promiseDate = this.addInfo.goodsId ? this.$api.goods.updateAlone(this.addInfo) : this.$api.goods.addAlone(this.addInfo)
@@ -268,6 +268,7 @@
                 this.isSending = false
               })
           }
+          console.log(data,'1')
         })
       },
       checkCourse(params) {

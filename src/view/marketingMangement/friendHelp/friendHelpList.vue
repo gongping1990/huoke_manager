@@ -87,12 +87,12 @@
           </Row>
           <span class="-c-tips">* 添加助力后，有效期开始时间不能更改，结束时间只能增加，不能减少</span>
         </FormItem>
-        <FormItem label="反馈形式" prop="helpType">
-          <Radio-group v-model="addInfo.helpType">
-            <Radio :label=0 :disabled="isEdit">课程详情弹窗</Radio>
-            <Radio :label=1 :disabled="isEdit">独立页面</Radio>
-          </Radio-group>
-        </FormItem>
+        <!--<FormItem label="反馈形式" prop="helpType">-->
+          <!--<Radio-group v-model="addInfo.helpType">-->
+            <!--<Radio :label=0 :disabled="isEdit">课程详情弹窗</Radio>-->
+            <!--<Radio :label=1 :disabled="isEdit">独立页面</Radio>-->
+          <!--</Radio-group>-->
+        <!--</FormItem>-->
         <FormItem label="分享摘要" prop="helpAbstract">
           <Input type="textarea" :disabled="isEdit" :rows="4" v-model="addInfo.helpAbstract"
                  placeholder="请输入分享摘要"></Input>
@@ -152,8 +152,7 @@
         getStartTime: '',
         getEndTime: '',
         addInfo: {
-          limit: 0,
-          helpType: 0
+          limit: 0
         },
         dateStartOption: {
           disabledDate(date) {
@@ -322,8 +321,7 @@
           this.getEndTime = ''
           this.isEdit = false
           this.addInfo = {
-            limit: 0,
-            helpType: 0
+            limit: 0
           }
         }
       },

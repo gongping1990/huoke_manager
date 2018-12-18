@@ -16,7 +16,7 @@ const common = {
   },
   // 获取客服信息
   getService(param) {
-    return axios.post('/common/sysConfig', param)
+    return axios.get('/common/sysConfig', param)
   }
 }
 

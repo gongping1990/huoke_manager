@@ -4,7 +4,7 @@
       <Form class="-c-form g-t-left" ref="addInfo" :model="addInfo" :label-width="100" :rules="ruleValidate">
         <Form-item label="客服二维码" prop="turn" class="ivu-form-item-required -c-form-item ">
           <Upload
-            v-if="!addInfo.qrCode"
+            v-if="!addInfo.wxercodeurl"
             :action="baseUrl"
             :show-upload-list="false"
             :max-size="100"
@@ -16,16 +16,16 @@
               <span>上传客服二维码</span>
             </div>
           </Upload>
-          <div class="-c-wrap" v-if="addInfo.qrCode">
+          <div class="-c-wrap" v-if="addInfo.wxercodeurl">
             <div class="-c-item">
-              <img :src="addInfo.qrCode">
-              <div class="-i-del" @click="delImg()">删除</div>
+              <img :src="addInfo.wxercodeurl">
+              <!--<div class="-i-del" @click="delImg()">删除</div>-->
             </div>
           </div>
-          <span class="-c-tips">* 图片大小100k以内</span>
+          <!--<span class="-c-tips">* 图片大小100k以内</span>-->
         </Form-item>
         <FormItem label="客服电话" prop="phone" style="width: 400px">
-          <Input type="text" v-model="addInfo.phone" placeholder="请输入电话号码" :disabled="!isEdit"></Input>
+          <Input type="text" v-model="addInfo.kftel" placeholder="请输入电话号码" :disabled="!isEdit"></Input>
         </FormItem>
         <!--<FormItem>-->
           <!--<div class="-c-flex">-->
@@ -90,7 +90,7 @@
         this.$api.common.getService()
           .then(
             response => {
-              this.dataList = response.data.resultData.records;
+              this.addInfo = response.data.resultData
             })
           .finally(() => {
             this.isFetching = false
