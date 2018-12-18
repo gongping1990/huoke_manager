@@ -205,15 +205,17 @@
       //分页查询
       getList() {
         this.isFetching = true
-        this.searchInfo.startTime = this.searchInfo.startTime ? dayjs(this.searchInfo.startTime).format("YYYY/MM/DD HH:mm:ss") : ''
-        this.searchInfo.endTime = this.searchInfo.endTime ? dayjs(this.searchInfo.endTime).format("YYYY/MM/DD HH:mm:ss") : ''
+        let startTime = ''
+        let endTime = ''
+        startTime = this.searchInfo.startTime ? new Date(this.searchInfo.startTime).getTime() : ''
+        endTime = this.searchInfo.endTime ? new Date(this.searchInfo.endTime).getTime() : ''
         this.$api.feedback.feedbackList({
           current: this.tab.page,
           size: this.tab.pageSize,
           replyed: this.feedbackType,
           nickname: this.searchInfo.nickname,
-          startDate: this.searchInfo.startTime,
-          endDate: this.searchInfo.endTime
+          startDate: startTime,
+          endDate: endTime
         })
           .then(
             response => {

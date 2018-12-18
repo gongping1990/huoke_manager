@@ -251,25 +251,25 @@
         if (!this.addInfo.courseId) {
           return this.$Message.error('请选择关联课程')
         }
-        this.$refs[name].validate((valid,data) => {
-          if (valid) {
-            this.isSending = true
-            let promiseDate = this.addInfo.goodsId ? this.$api.goods.updateAlone(this.addInfo) : this.$api.goods.addAlone(this.addInfo)
-            promiseDate
-              .then(
-                response => {
-                  if (response.data.code == '200') {
-                    this.$Message.success('提交成功');
-                    this.getList()
-                    this.closeModal(name)
-                  }
+          this.$refs[name].validate((valid,data) => {
+            if (valid) {
+              this.isSending = true
+              let promiseDate = this.addInfo.goodsId ? this.$api.goods.updateAlone(this.addInfo) : this.$api.goods.addAlone(this.addInfo)
+              promiseDate
+                .then(
+                  response => {
+                    if (response.data.code == '200') {
+                      this.$Message.success('提交成功');
+                      this.getList()
+                      this.closeModal(name)
+                    }
+                  })
+                .finally(() => {
+                  this.isSending = false
                 })
-              .finally(() => {
-                this.isSending = false
-              })
-          }
-          console.log(data,'1')
-        })
+            }
+            console.log(data,'1')
+          })
       },
       checkCourse(params) {
         this.isShowCourseModal = false;

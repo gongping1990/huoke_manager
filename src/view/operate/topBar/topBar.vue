@@ -1,26 +1,28 @@
 <template>
   <div class="p-topBar">
     <Card>
-      <Form class="-c-form g-t-left" ref="addInfo" :model="addInfo" :label-width="100">
-        <Form-item label="是否启用" prop="turn" class="ivu-form-item-required -c-form-item ">
-          <Radio-group v-model="addInfo.turn">
-            <Radio :label=1>不启用</Radio>
-            <Radio :label=2>启用</Radio>
+      <Form class="-c-form g-t-left ivu-form-item-required" ref="addInfo" :model="addInfo" :rules="ruleValidate"
+            :label-width="100">
+        <Form-item label="是否启用" prop="turn" class=" -c-form-item ">
+          <Radio-group v-model="addInfo.enable">
+            <Radio :label=0 :disabled="!isShowEdit">不启用</Radio>
+            <Radio :label=1 :disabled="!isShowEdit">启用</Radio>
           </Radio-group>
         </Form-item>
-        <FormItem label="top文案" prop="priceYuan">
-          <Input type="text" v-model="addInfo.priceYuan" placeholder="请输入top文案"></Input>
+        <FormItem label="top文案" prop="content">
+          <Input type="text" v-model="addInfo.content" placeholder="请输入top文案" :disabled="!isShowEdit"></Input>
         </FormItem>
-        <FormItem label="top按键文案" prop="priceYuan">
-          <Input type="text" v-model="addInfo.priceYuan" placeholder="请输入top按键文案"></Input>
+        <FormItem label="top按键文案" prop="buttonCon">
+          <Input type="text" v-model="addInfo.buttonCon" placeholder="请输入top按键文案" :disabled="!isShowEdit"></Input>
         </FormItem>
-        <FormItem label="跳转链接" prop="priceYuan">
-          <Input type="text" v-model="addInfo.priceYuan" placeholder="请输入跳转链接"></Input>
+        <FormItem label="跳转链接" prop="url">
+          <Input type="text" v-model="addInfo.url" placeholder="请输入跳转链接" :disabled="!isShowEdit"></Input>
         </FormItem>
         <FormItem>
           <div class="-c-flex">
-            <Button @click="closeModal()" ghost type="primary" class="-c-btn">取消</Button>
-            <div @click="submitInfo()" class="g-primary-btn -c-btn"> {{isSending ? '提交中...' : '确 认'}}</div>
+            <Button @click="isShowEdit = true" ghost type="primary" class="-c-btn" v-if="!isShowEdit">进入编辑</Button>
+            <Button @click="closeEdit" ghost type="primary" class="-c-btn" v-else>取消</Button>
+            <div v-if="isShowEdit" @click="submitInfo('addInfo')" class="g-primary-btn -c-btn"> {{isSending ? '提交中...' : '确 认'}}</div>
           </div>
         </FormItem>
       </Form>
@@ -41,41 +43,62 @@
         isShowEdit: false,
         isSending: false,
         isFetching: false,
-        isSwitchTemplate: false,
-        dataList: [],
         addInfo: {
-          lessonId: this.$route.query.lessonId,
-          contentType: this.type,
-          operate: 1, //类型（读课文，单选题）
-        }
+          enable: 0
+        },
+        ruleValidate: {
+          content: [
+            {required: true, message: '请输入top文案', trigger: 'blur'},
+          ],
+          buttonCon: [
+            {required: true, message: '请输入top按键文案', trigger: 'blur'},
+          ],
+          url: [
+            {required: true, message: '请输入跳转链接', trigger: 'blur'},
+          ]
+        },
       }
     },
     mounted() {
+      this.getList()
     },
     methods: {
-      submitInfo() {
-        let paramUrl = ''
-        if (!this.addInfo.operate) {
-          return this.$Message.error('请选择模板样式')
-        } else if (this.addInfo.operate == '1' && !this.backImgUrl) {
-          return this.$Message.error('请上传背景图片')
-        } else if (this.addInfo.operate == '2' && !this.stemImgUrl) {
-          return this.$Message.error('请上传题干图片')
-        } else if (!this.addInfo.audioUrl) {
-          return this.$Message.error('请上传音频内容')
-        } else if (this.addInfo.autoPlay === '') {
-          return this.$Message.error('请选择是否自动播放')
-        }
-
-        paramUrl = this.addInfo.id ? this.$api.slide.updateCheckpoint(this.addInfo) : this.$api.slide.addContent(this.addInfo)
-        paramUrl
-          .then(res => {
-            if (res.data.code == '200') {
-              this.$Message.success(`${this.addInfo.id ? '修改成功' : '创建成功'}`)
-              this.$emit('addCourseOk')
-            }
+      closeEdit () {
+        this.isShowEdit = false
+        this.getList()
+      },
+      getList() {
+        this.isFetching = true
+        this.$api.banner.getTopbar()
+          .then(
+            response => {
+              if(response.data.resultData) {
+                this.addInfo = response.data.resultData;
+                this.addInfo.enable = this.addInfo.enable ? 1 : 0
+              }
+            })
+          .finally(() => {
+            this.isFetching = false
           })
-
+      },
+      submitInfo(name) {
+        this.$refs[name].validate((valid, data) => {
+          if (valid) {
+            this.isSending = true
+            this.$api.banner.updateTopbar(this.addInfo)
+              .then(
+                response => {
+                  if (response.data.code == '200') {
+                    this.$Message.success('提交成功');
+                    this.closeEdit()
+                    this.$refs[name].resetFields()
+                  }
+                })
+              .finally(() => {
+                this.isSending = false
+              })
+          }
+        })
       },
     }
   };
@@ -85,7 +108,7 @@
   .p-topBar {
 
     .-c-form {
-      width:50%;
+      width: 50%;
 
       .-c-form-item {
         padding: 14px 0;
@@ -95,6 +118,7 @@
 
     .-c-flex {
       display: flex;
+      justify-content: center;
     }
 
     .-c-btn {
