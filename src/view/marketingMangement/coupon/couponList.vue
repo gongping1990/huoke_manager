@@ -2,28 +2,50 @@
   <div class="p-coupon">
     <input type="text" v-model="copy_url" class="copy-input" ref="copyInput">
     <Card>
-      <Row class="-c-flex-center">
-        <Col :span="6">
-          优惠券名称：
-          <Input style="width: 50%" v-model="form.name" placeholder="输入关键词"></Input>
-        </Col>
-        <Col :span="14" class="-c-flex-center">优惠券状态：
-          <Select style="width: 100px;" v-model="form.state" placeholder="请选择">
-            <Option label="全部" value="-1"></Option>
-            <Option label="未开始" value="0"></Option>
-            <Option label="领取中" value="1"></Option>
-            <Option label="已结束" value="2"></Option>
-          </Select>
+      <!--<Row class="-c-flex-center">-->
+        <!--<Col :span="6">-->
+          <!--优惠券名称：-->
+          <!--<Input style="width: 50%" v-model="form.name" placeholder="输入关键词"></Input>-->
+        <!--</Col>-->
+        <!--<Col :span="14" class="-c-flex-center">优惠券状态：-->
+          <!--<Select style="width: 100px;" v-model="form.state" placeholder="请选择">-->
+            <!--<Option label="全部" value="-1"></Option>-->
+            <!--<Option label="未开始" value="0"></Option>-->
+            <!--<Option label="领取中" value="1"></Option>-->
+            <!--<Option label="已结束" value="2"></Option>-->
+          <!--</Select>-->
 
-          <div class="-t-search">
-            <Button type="primary" class="-p-modal-btn" @click="getList">搜索</Button>
-            <Button type="primary" class="-p-modal-btn" @click="resetSearch">重置</Button>
-          </div>
-        </Col>
+          <!--<div class="-t-search">-->
+            <!--<Button type="primary" class="-p-modal-btn" @click="getList">搜索</Button>-->
+            <!--<Button type="primary" class="-p-modal-btn" @click="resetSearch">重置</Button>-->
+          <!--</div>-->
+        <!--</Col>-->
         <!--<Col :span="4" class="-p-text-right">-->
           <!--<Button type="primary" class="-p-modal-btn" @click="toJump">添加优惠券</Button>-->
         <!--</Col>-->
+      <!--</Row>-->
+
+      <Row class="g-search">
+        <Col :span="3" class="g-t-left">
+          <div class="g-flex-a-j-center">
+            <div class="-search-select-text">优惠券状态：</div>
+            <Select v-model="form.state" @on-change="getList" class="-search-selectOne">
+              <Option v-for="(item,index) in statusList" :label="item.name" :value="item.id" :key="index"></Option>
+            </Select>
+          </div>
+        </Col>
+        <Col :span="6">
+          <div class="-search">
+            <Select v-model="selectInfo" class="-search-select">
+              <Option value="1">优惠券名称</Option>
+            </Select>
+            <span class="-search-center">|</span>
+            <Input v-model="form.name" class="-search-input" placeholder="请输入关键字" icon="ios-search"
+                   @on-click="getList"></Input>
+          </div>
+        </Col>
       </Row>
+
       <div class="g-add-btn -t-add-icon" @click="toJump">
         <Icon class="-btn-icon" color="#fff" type="ios-add" size="24"/>
       </div>
@@ -54,11 +76,27 @@
           name: "",
           state: "-1"
         },
+        selectInfo: '1',
         dataList: [],
         total: 0,
         copy_url: '',
         isFetching: false,
         isAddOpenModal: false,
+        statusList: [
+          {
+            name: '全部',
+            id: '-1'
+          }, {
+            name: '未开始',
+            id: '0'
+          }, {
+            name: '领取中',
+            id: '1'
+          }, {
+            name: '已结束',
+            id: '2'
+          }
+        ],
         statusArray: ['未开始','领取中','已结束'],
         columns: [
           {
@@ -251,6 +289,16 @@
 
 <style lang="less" scoped>
   .p-coupon {
+    .-search-select-text {
+      min-width: 85px;
+    }
+
+    .-search-selectOne {
+      width: 100px;
+      border: 1px solid #dcdee2;
+      border-radius: 4px;
+      margin-right: 20px;
+    }
 
     .-t-add-icon {
       top: 36px;

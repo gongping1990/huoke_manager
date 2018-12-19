@@ -33,7 +33,7 @@
       </RadioGroup>
     </div>
     <span slot="footer" class="dialog-footer">
-      <Button @click="sureCourseModal">取 消</Button>
+      <Button @click="cancleCourseModal">取 消</Button>
       <Button type="primary" @click="sureCourseModal()">确 定</Button>
     </span>
     <loading v-if="isFetching"></loading>
@@ -129,6 +129,9 @@
           }
         }
         this.$emit('closeCourseModal', this.checkCourseArray)
+      },
+      cancleCourseModal () {
+        this.$emit('cancleCourseModal')
       }
     }
   }

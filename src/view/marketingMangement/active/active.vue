@@ -25,7 +25,7 @@
           <div v-if="isShowCourseModal">
             <check-course :isShowModal="isShowCourseModal" :checkCourseList="courseList" :isUpdate='isShowEdit'
                           :courseType='true'
-                          @closeCourseModal="checkCourse"></check-course>
+                          @closeCourseModal="checkCourse" @cancleCourseModal="isShowCourseModal= false"></check-course>
           </div>
 
           <div class="-c-course-wrap" v-if="courseList.length">
