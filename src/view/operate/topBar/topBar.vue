@@ -49,9 +49,11 @@
         ruleValidate: {
           content: [
             {required: true, message: '请输入top文案', trigger: 'blur'},
+            { type: 'string', max: 15, message: '文案不能超过15字', trigger: 'blur' }
           ],
           buttonCon: [
             {required: true, message: '请输入top按键文案', trigger: 'blur'},
+            { type: 'string', max: 5, message: '按键文案不能超过5字', trigger: 'blur' }
           ],
           url: [
             {required: true, message: '请输入跳转链接', trigger: 'blur'},
@@ -82,6 +84,7 @@
           })
       },
       submitInfo(name) {
+
         this.$refs[name].validate((valid, data) => {
           if (valid) {
             this.isSending = true

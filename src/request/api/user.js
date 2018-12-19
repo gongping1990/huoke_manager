@@ -8,19 +8,19 @@ const user = {
   },
   // 用户列表信息
   getUserPage(params) {
-    return axios.get("/preuser/queryUserPage", {params});
+    return axios.get("/user/queryUserPage", {params});
   },
   // 禁用启用用户
   changeUserStatus(params) {
-    return axios.post("/preuser/updateUserDisabledStatusById",qs.stringify(params));
+    return axios.post("/user/updateUserDisabledStatusById",qs.stringify(params));
   },
   // 获取用户详情
   getUserInfo(params) {
-    return axios.get("/preuser/queryUserInfoById",{params});
+    return axios.get("/user/queryUserInfoById",{params});
   },
   // 用户日志
   userLoginInfo(params) {
-    return axios.get("/preuser/queryLoginInfoById", {params});
+    return axios.get("/user/queryLoginInfoById", {params});
   }
 };
 
