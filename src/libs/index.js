@@ -58,7 +58,7 @@ export function setRouter(to, from) {
 export const getBaseUrl = () => {
   // 环境的切换
   if (process.env.NODE_ENV == 'development' || process.env.NODE_ENV == 'test') {
-      return 'http://huoke.test.k12.vip/dev'
+      return 'http://huoke.test.k12.vip'
   }
   return 'http://huoke.prod.k12.vip'
 }

@@ -3,22 +3,22 @@
     <Card>
       <Form class="-c-form g-t-left" ref="addInfo" :model="addInfo" :label-width="100" :rules="ruleValidate">
         <Form-item label="客服二维码" prop="turn" class="ivu-form-item-required -c-form-item ">
-          <Upload
-            v-if="!addInfo.wxercodeurl"
-            :action="baseUrl"
-            :show-upload-list="false"
-            :max-size="100"
-            :on-success="handleSuccess"
-            :on-exceeded-size="handleSize"
-            :on-error="handleErr">
-            <div class="g-course-add-style">
-              <span>+</span>
-              <span>上传客服二维码</span>
-            </div>
-          </Upload>
-          <div class="-c-wrap" v-if="addInfo.wxercodeurl">
+          <!--<Upload-->
+            <!--v-if="!addInfo.kfercode"-->
+            <!--:action="baseUrl"-->
+            <!--:show-upload-list="false"-->
+            <!--:max-size="100"-->
+            <!--:on-success="handleSuccess"-->
+            <!--:on-exceeded-size="handleSize"-->
+            <!--:on-error="handleErr">-->
+            <!--<div class="g-course-add-style">-->
+              <!--<span>+</span>-->
+              <!--<span>上传客服二维码</span>-->
+            <!--</div>-->
+          <!--</Upload>-->
+          <div class="-c-wrap">
             <div class="-c-item">
-              <img :src="addInfo.wxercodeurl">
+              <img :src="addInfo.kfercode">
               <!--<div class="-i-del" @click="delImg()">删除</div>-->
             </div>
           </div>

@@ -74,7 +74,6 @@
         this.$router.push({
           name: name
         })
-        console.log(name,2)
       }
     },
     computed: {

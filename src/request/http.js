@@ -21,6 +21,7 @@ const toLogin = () => {
   // if (router.history.current.name != 'user' && !isWeiXin()) {
   //   store.commit('CHANGE_LOGIN_STATUS')
   // }
+  Message.info('登录失效，请重新登录')
   router.push('/login')
 }
 

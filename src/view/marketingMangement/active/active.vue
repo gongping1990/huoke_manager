@@ -107,6 +107,7 @@
                 this.addInfo = response.data.resultData;
                 this.addInfo.couponMoney = this.addInfo.couponMoney.toString()
                 this.addInfo.keepTime = this.addInfo.keepTime.toString()
+                this.addInfo.enable = this.addInfo.enable ? 1 : 0
                 for (let item of this.addInfo.courseGoodsList) {
                   this.courseList.push({
                     courseImgUrl: item.coverUrl,
@@ -121,20 +122,33 @@
           })
       },
       submitInfo(name) {
+        let param = {}
         if (!pattern.positive.exec(this.addInfo.couponMoney)) {
           return this.$Message.error('金额保留两位小数')
         } else if (!this.courseList.length) {
           return this.$Message.error('请选择体验课')
         }
+
         this.addInfo.courseGoodsIdList = []
+
         for (let item of this.courseList) {
-          this.addInfo.courseGoodsIdList.push(item.goodsId)
+          this.addInfo.courseGoodsIdList.push(item.goodsId || item.id)
+        }
+
+        param = {
+          couponMoney:  this.addInfo.couponMoney,
+          enable: this.addInfo.enable != '0',
+          keepTime:  this.addInfo.keepTime,
+          courseGoodsIdList:  this.addInfo.courseGoodsIdList,
         }
 
         this.$refs[name].validate((valid) => {
           if (valid) {
             this.isSending = true
-            let promiseDate = this.addInfo.id ? this.$api.giftpack.updateGiftPackInfo(this.addInfo) : this.$api.giftpack.addGiftPackInfo(this.addInfo)
+            let promiseDate = this.addInfo.id ? this.$api.giftpack.updateGiftPackInfo({
+              ...param,
+              id: this.addInfo.id
+            }) : this.$api.giftpack.addGiftPackInfo(param)
             promiseDate
               .then(
                 response => {
@@ -195,7 +209,10 @@
         .-i-text {
           display: -webkit-box;
           -webkit-box-orient: vertical;
+          -webkit-line-clamp: 3;
           line-height: normal;
+          overflow: hidden;
+          height: 50px;
         }
 
         .-i-del {

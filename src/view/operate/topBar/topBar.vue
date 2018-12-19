@@ -85,7 +85,10 @@
         this.$refs[name].validate((valid, data) => {
           if (valid) {
             this.isSending = true
-            this.$api.banner.updateTopbar(this.addInfo)
+            this.$api.banner.updateTopbar({
+              ...this.addInfo,
+              enable: this.addInfo.enable != '0'
+            })
               .then(
                 response => {
                   if (response.data.code == '200') {

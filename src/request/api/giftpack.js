@@ -5,7 +5,7 @@ const giftpack = {
  
   //新用户礼包信息
   giftPackInfo () {
-    return axios.get('/giftpack/getNewUserGiftPack')
+    return axios.get('/giftpack/viewNewUserGiftPack')
   },
 
   //修改获取用户礼包信息
@@ -15,7 +15,7 @@ const giftpack = {
 
   //新增获取用户礼包信息
   addGiftPackInfo (params) {
-    return axios.post('/giftpack/create',qs.stringify(params))
+    return axios.post('/giftpack/create',params)
   }
 }
 
