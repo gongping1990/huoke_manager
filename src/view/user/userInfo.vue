@@ -14,6 +14,11 @@
                 <span><Icon type="ios-call"/>: {{userInfo.phone || '暂无'}}</span>
                 <span><Icon type="ios-time-outline"/>: {{userInfo.createTime}}</span>
               </div>
+              <div class="-r-dev">
+                <span>关注公众号: {{userInfo.subscripbe ? '是' : '否'}}</span>
+                <span>购买课程数: {{userInfo.buyCourseCount || '0'}}</span>
+                <span>消费金额￥: {{userInfo.totalFee/100}}</span>
+              </div>
             </div>
           </div>
         </Col>

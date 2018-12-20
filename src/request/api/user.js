@@ -1,5 +1,5 @@
 import axios from "../http";
-import qs from "querystring";
+import qs from "qs";
 
 const user = {
   // 获取用户信息
@@ -21,6 +21,14 @@ const user = {
   // 用户日志
   userLoginInfo(params) {
     return axios.get("/user/queryLoginInfoById", {params});
+  },
+  // 新增虚拟用户
+  addVirtualUser(params) {
+    return axios.post("/user/saveVirtualUser", qs.stringify(params));
+  },
+  // 更新虚拟用户
+  uploadVirtualUser(params) {
+    return axios.post("/user/updateVirtualUser", qs.stringify(params));
   }
 };
 

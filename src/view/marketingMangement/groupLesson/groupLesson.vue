@@ -212,7 +212,7 @@
           },
           {
             title: '拼课销量',
-            key: 'showSaleNum',
+            key: 'amount',
             align: 'center'
           },
           {

@@ -19,8 +19,8 @@ const course = {
     return axios.get('/course/get')
   },
   //添加教材时的学科列表
-  teachSubjectList() {
-    return axios.get('/course/list')
+  teachSubjectList(params) {
+    return axios.get('/course/list', {params: params})
   },
   //教材版本列表
   editionList() {

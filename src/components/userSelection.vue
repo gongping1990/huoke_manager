@@ -47,7 +47,7 @@
                               class="-c-l-list">
                       <div class="-list">
                         <div class="-list-img">
-                          <img :src="item.headimgurl">
+                          <img :src="item.headImgurl">
                         </div>
                         <div class="-list-text">
                           <div>{{item.nickname}}</div>
@@ -71,7 +71,7 @@
                 <div v-for="item of selecedUser" class="-user-r-wrap">
                   <div class="-list">
                     <div class="-list-img">
-                      <img :src="item.headimgurl">
+                      <img :src="item.headImgurl">
                     </div>
                     <div class="-list-text">
                       <div>{{item.nickname}}</div>

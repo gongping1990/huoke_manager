@@ -212,23 +212,32 @@ export const appRouter = [
       }
     ]
   },
-  // {
-  //   path: '/user',
-  //   name: 'user',
-  //   title: '用户管理',
-  //   component: Main,
-  //   children: [
-  //     {
-  //       path: '/userList',
-  //       name: 'userList',
-  //       meta: [
-  //         {name:'用户管理'},
-  //         {name:'用户列表'}
-  //       ],
-  //       component: () => import('@/view/user/userList')
-  //     }
-  //   ]
-  // },
+  {
+    path: '/user',
+    name: 'user',
+    title: '用户管理',
+    component: Main,
+    children: [
+      {
+        path: '/userList',
+        name: 'userList',
+        meta: [
+          {name:'用户管理'},
+          {name:'用户列表'}
+        ],
+        component: () => import('@/view/user/userList')
+      },
+       {
+        path: '/virtualUser',
+        name: 'virtualUser',
+        meta: [
+          {name:'用户管理'},
+          {name:'虚拟用户'}
+        ],
+        component: () => import('@/view/user/virtualUser')
+      }
+    ]
+  },
   // {
   //   path: '/study',
   //   name: 'study',

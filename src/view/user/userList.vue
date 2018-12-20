@@ -2,6 +2,26 @@
   <div class="p-user">
     <Card>
       <Row class="g-search">
+        <Col :span="3" class="g-t-left">
+          <div class="g-flex-a-j-center">
+            <div class="-search-select-text">电话号码：</div>
+            <Select v-model="searchInfo.hasPhone" @on-change="getList" class="-search-selectOne">
+              <Option label="全部" value="-1"></Option>
+              <Option label="有" value="1"></Option>
+              <Option label="无" value="2"></Option>
+            </Select>
+          </div>
+        </Col>
+        <Col :span="3" class="g-t-left">
+          <div class="g-flex-a-j-center">
+            <div class="-search-select-text">关注公众号：</div>
+            <Select v-model="searchInfo.subscripbe" @on-change="getList" class="-search-selectOne">
+              <Option label="全部" value="-1"></Option>
+              <Option label="是" value="1"></Option>
+              <Option label="否" value="2"></Option>
+            </Select>
+          </div>
+        </Col>
         <Col :span="6">
           <div class="-search">
             <Select v-model="selectInfo" class="-search-select">
@@ -9,7 +29,7 @@
               <Option value="2">手机号码</Option>
             </Select>
             <span class="-search-center">|</span>
-            <Input v-model="searchInfo" class="-search-input" placeholder="请输入关键字" icon="ios-search"
+            <Input v-model="searchInfo.manner" class="-search-input" placeholder="请输入关键字" icon="ios-search"
                    @on-click="getList"></Input>
           </div>
         </Col>
@@ -36,8 +56,11 @@
           page: 1,
           pageSize: 10
         },
-        searchInfo: '',
-        selectInfo: '',
+        searchInfo: {
+          hasPhone: '-1',
+          subscripbe: '-1'
+        },
+        selectInfo: '1',
         dataList: [],
         total: 0,
         isFetching: false,
@@ -53,7 +76,7 @@
               }, [
                 h('img', {
                   attrs: {
-                    src: params.row.headimgurl
+                    src: params.row.headImgurl
                   },
                   style: {
                     width: '36px',
@@ -73,6 +96,13 @@
           {
             title: '创建时间',
             key: 'creatTime'
+          },
+          {
+            title: '关注公众号',
+            render: (h, params) => {
+              return h('span', params.row.subscripbe ? '是' : '否')
+            },
+            align: 'center'
           },
           {
             title: '启用/禁用',
@@ -137,13 +167,15 @@
       getList() {
         let params = {
           current: this.tab.page,
-          size: this.tab.pageSize
+          size: this.tab.pageSize,
+          hasPhone: this.searchInfo.hasPhone != '-1' ? (this.searchInfo.hasPhone == '1') : '',
+          subscripbe: this.searchInfo.subscripbe != '-1' ? (this.searchInfo.subscripbe == '1') : '',
         }
 
         if (this.selectInfo == '1' && this.searchInfo) {
-          params.nickname = this.searchInfo
+          params.nickname = this.searchInfo.manner
         } else if (this.selectInfo == '2' && this.searchInfo) {
-          params.phone = this.searchInfo
+          params.phone = this.searchInfo.manner
         }
 
         this.isFetching = true
@@ -185,6 +217,16 @@
 
 <style lang="less" scoped>
   .p-user {
+    .-search-select-text {
+      min-width: 85px;
+    }
+    .-search-selectOne {
+      width: 100px;
+      border: 1px solid #dcdee2;
+      border-radius: 4px;
+      margin-right: 20px;
+    }
+
     .-p-text-right {
       text-align: right;
     }

@@ -108,3 +108,10 @@
 .g-cursor {
   cursor: pointer;
 }
+
+.g-success{
+  color: rgba(57, 186, 92, 1);
+}
+.g-error{
+  color: rgba(218, 55, 75, 1)
+}
