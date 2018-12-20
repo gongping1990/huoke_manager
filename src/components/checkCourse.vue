@@ -1,5 +1,5 @@
 <template>
-  <Modal v-model="isShow" title="选择课程" width="500">
+  <Modal v-model="isShow" title="选择课程" width="500" @on-cancel="cancleCourseModal">
     <Row class="g-search -course-search">
       <Col :span="24">
         <div class="-search">
