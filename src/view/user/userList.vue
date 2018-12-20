@@ -76,7 +76,7 @@
               }, [
                 h('img', {
                   attrs: {
-                    src: params.row.headImgurl
+                    src: params.row.headImgUrl
                   },
                   style: {
                     width: '36px',

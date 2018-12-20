@@ -28,7 +28,7 @@
                 :on-exceeded-size="handleSize"
                 :on-error="handleErr">
                 <div class="-p-upload-img"
-                     :style="{backgroundImage: 'url('+addInfo.headImgurl+')',backgroundRepeat:'no-repeat', backgroundSize: 'cover'}">
+                     :style="{backgroundImage: 'url('+addInfo.headImgUrl+')',backgroundRepeat:'no-repeat', backgroundSize: 'cover'}">
                   <Icon size="30" type="ios-camera"/>
                 </div>
               </Upload>
@@ -94,7 +94,7 @@
               }, [
                 h('img', {
                   attrs: {
-                    src: params.row.headImgurl
+                    src: params.row.headImgUrl
                   },
                   style: {
                     width: '36px',
@@ -168,7 +168,7 @@
       handleSuccess(res, file) {
         if (res.code === 200) {
           this.textType = '2'
-          this.addInfo.headImgurl = res.resultData.url
+          this.addInfo.headImgUrl = res.resultData.url
         }
       },
       handleSize() {
@@ -200,7 +200,7 @@
           })
       },
       submitInfo () {
-        if(!this.addInfo.headImgurl) {
+        if(!this.addInfo.headImgUrl) {
           return this.$Message.error('请上传头像')
         } else if (!this.addInfo.nickname) {
           return this.$Message.error('请输入昵称')
