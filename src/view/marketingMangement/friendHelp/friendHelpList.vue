@@ -38,8 +38,8 @@
       @on-cancel="closeModal('addInfo')"
       width="600"
       title="编辑好友助力">
-      <Form ref="addInfo" :model="addInfo" :label-width="90" class="ivu-form-item-required">
-        <FormItem label="关联课程" prop="goodsId">
+      <Form ref="addInfo" :model="addInfo" :label-width="90">
+        <FormItem label="关联课程" prop="goodsId" class="ivu-form-item-required">
           <div class="g-course-add-style" @click="isShowCourseModal=true" v-if="!courseList.length">
             <span>+</span>
             <span>选择课程</span>
@@ -58,19 +58,19 @@
             </div>
           </div>
         </FormItem>
-        <FormItem label="助力人数" prop="frendHelpCount">
+        <FormItem label="助力人数" prop="frendHelpCount" class="ivu-form-item-required">
           <Input type="text" :disabled="isEdit" v-model="addInfo.frendHelpCount" placeholder="请输入助力人数"></Input>
         </FormItem>
-        <FormItem label="最大限制">
+        <FormItem label="最大限制" class="ivu-form-item-required">
           <Radio-group v-model="addInfo.limit">
             <Radio :label=0 :disabled="isEdit">不启用</Radio>
             <Radio :label=1 :disabled="isEdit">启用</Radio>
           </Radio-group>
         </FormItem>
-        <FormItem label="限制人数" prop="activityCount" v-if="addInfo.limit">
+        <FormItem label="限制人数" prop="activityCount" v-if="addInfo.limit" class="ivu-form-item-required">
           <Input type="text" v-model="addInfo.activityCount" placeholder="请输入限制人数" :disabled="isEdit"></Input>
         </FormItem>
-        <FormItem label="有效期">
+        <FormItem label="有效期" class="ivu-form-item-required">
           <Row>
             <Col span="11">
               <Form-item prop="getStartTime">
@@ -375,8 +375,6 @@
           return this.$Message.error('请输入开始时间')
         } else if (!this.getEndTime) {
           return this.$Message.error('请输入结束时间')
-        } else if (!this.addInfo.helpAbstract) {
-          return this.$Message.error('请输入分享摘要')
         }
         this.isSending = true
         this.addInfo.startTime = new Date(this.getStartTime).getTime()

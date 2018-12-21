@@ -38,8 +38,8 @@
       @on-cancel="closeModal('addInfo')"
       width="600"
       title="编辑拼课">
-      <Form ref="addInfo" :model="addInfo" :label-width="110" class="ivu-form-item-required">
-        <FormItem label="关联课程">
+      <Form ref="addInfo" :model="addInfo" :label-width="110">
+        <FormItem label="关联课程" class="ivu-form-item-required">
           <div class="g-course-add-style" @click="isShowCourseModal=true" v-if="!courseList.length">
             <span>+</span>
             <span>选择课程</span>
@@ -60,28 +60,28 @@
             </div>
           </div>
         </FormItem>
-        <FormItem label="拼课人数">
+        <FormItem label="拼课人数" class="ivu-form-item-required">
           <Input type="text" :disabled="isEdit" v-model="addInfo.groupPersonNum" placeholder="请输入拼课人数"></Input>
         </FormItem>
-        <FormItem label="拼课时限">
+        <FormItem label="拼课时限" class="ivu-form-item-required">
           <Input type="text" :disabled="isEdit" v-model="addInfo.groupWaitTime" placeholder="请输入拼课时限（小时）"></Input>
         </FormItem>
-        <FormItem label="拼课价格">
+        <FormItem label="拼课价格" class="ivu-form-item-required">
           <Input type="text" :disabled="isEdit" v-model="addInfo.groupPriceYuan" placeholder="请输入拼课时限（元）"></Input>
           <span class="-c-tips">* 精确到小数点后2位，如99.99</span>
         </FormItem>
-        <FormItem label="团长优惠">
+        <FormItem label="团长优惠" class="ivu-form-item-required">
           <Radio-group v-model="addInfo.limit">
             <Radio :label=0 :disabled="isEdit">不启用</Radio>
             <Radio :label=1 :disabled="isEdit">启用</Radio>
           </Radio-group>
         </FormItem>
-        <FormItem label="团长优惠价格" v-if="addInfo.limit">
+        <FormItem label="团长优惠价格" v-if="addInfo.limit" class="ivu-form-item-required">
           <Input type="text" :disabled="isEdit" v-model="addInfo.groupFirstPriceYuan"
                  placeholder="请输入团长优惠价格(元)"></Input>
           <span class="-c-tips">* 精确到小数点后2位，如99.99</span>
         </FormItem>
-        <FormItem label="有效期">
+        <FormItem label="有效期" class="ivu-form-item-required">
           <Row>
             <Col span="11">
               <Form-item prop="date">
@@ -402,8 +402,6 @@
           return this.$Message.error('请输入课程开始时间')
         } else if (!this.getEndTime) {
           return this.$Message.error('请输入课程结束时间')
-        } else if (!this.addInfo.shareText) {
-          return this.$Message.error('请输入分享摘要')
         }
 
         this.isSending = true
