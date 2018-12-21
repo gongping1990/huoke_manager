@@ -61,6 +61,7 @@
           </div>
           <div v-if="isShowCourseModal">
             <check-course :isShowModal="isShowCourseModal" :checkCourseList="courseList" :isUpdate='isEdit'
+                          :courseType="1" @cancleCourseModal="isShowCourseModal = false"
                           @closeCourseModal="checkCourse"></check-course>
           </div>
           <div class="-c-course-wrap" v-if="courseList.length">
@@ -243,12 +244,10 @@
       checkCourse(params) {
         this.isShowCourseModal = false
         if (this.isEdit) {
-          for (let item of params) {
-            for (let data of this.couponInfo.couponCourseObject) {
-              if (item.id == data.id) {
+          for (let data of this.couponInfo.couponCourseObject) {
+            for (let item of params) {
+              if (data.id == item.id) {
                 item.isOldCourse = true
-              } else {
-                item.isOldCourse = false
               }
             }
           }

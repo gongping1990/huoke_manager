@@ -79,7 +79,6 @@
         if (this.isFetching) return
         let routeUrl = ''
         this.isFetching = true
-        console.log(this.courseType)
         routeUrl = this.courseType ? this.$api.goods.aloneList : this.$api.course.teachSubjectList
         routeUrl({
           current: 1,
