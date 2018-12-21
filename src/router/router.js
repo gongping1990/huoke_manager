@@ -175,6 +175,19 @@ export const appRouter = [
           }
         ],
         component: () => import('@/view/operate/topBar/topBar')
+      },
+      {
+        path: '/bannerList',
+        name: 'bannerList',
+        meta: [
+          {
+            name: '运营管理'
+          },
+          {
+            name: 'banner管理'
+          }
+        ],
+        component: () => import('@/view/operate/banner/bannerList')
       }
     ]
   },
