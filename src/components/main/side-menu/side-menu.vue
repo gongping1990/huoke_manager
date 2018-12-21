@@ -27,8 +27,8 @@
           <Icon type="logo-usd" class="hk-menu-icon"></Icon>
           <span>营销管理</span>
         </template>
-        <Menu-item name="groupLesson">拼课</Menu-item>
         <Menu-item name="aloneBuy">单独购</Menu-item>
+        <Menu-item name="groupLesson">拼课</Menu-item>
         <Menu-item name="friendHelp">好友助力</Menu-item>
         <Menu-item name="active">新人礼包</Menu-item>
         <Menu-item name="coupon">优惠券</Menu-item>
@@ -39,6 +39,7 @@
           <span>运营管理</span>
         </template>
         <Menu-item name="topBar">topBar管理</Menu-item>
+        <Menu-item name="bannerList">banner管理</Menu-item>
       </Submenu>
       <Submenu name="feedback" class="-left-li">
         <template slot="title">
