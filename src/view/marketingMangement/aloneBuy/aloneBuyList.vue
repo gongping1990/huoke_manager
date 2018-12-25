@@ -1,5 +1,7 @@
 <template>
   <div class="p-alone">
+    <input type="text" v-model="copy_url" class="copy-input" ref="copyInput">
+
     <Card>
       <Row class="g-search">
         <Col :span="6">
@@ -65,6 +67,7 @@
 
 <script>
   import CheckCourse from "../../../components/checkCourse";
+  import {copyUrl} from  "@/libs/index"
 
   export default {
     name: 'aloneBuy',
@@ -85,6 +88,7 @@
         isSending: false,
         isEdit: false,
         isShowCourseModal: false,
+        copy_url: '',
         addInfo: {
           courseId: '',
           priceYuan: '',
@@ -165,6 +169,20 @@
                     size: 'small'
                   },
                   style: {
+                    color: '#5444E4'
+                  },
+                  on: {
+                    click: () => {
+                      this.copyUrlFn(params.row)
+                    }
+                  }
+                }, '复制链接'),
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
                     color: !params.row.disabled ? 'rgb(218, 55, 75)' : '#5444E4',
                     marginRight: '5px'
                   },
@@ -184,6 +202,15 @@
       this.getList()
     },
     methods: {
+      copyUrlFn(row) {
+        let url = `${copyUrl()}?goodsId=${row.goodsId}&type=0`;
+        this.copy_url = url;
+        setTimeout(() => {
+          this.$refs.copyInput.select();
+          document.execCommand("copy");
+          this.$Message.success('复制成功');
+        }, 500);
+      },
       delCourse(item, index) {
         this.courseList.splice(index, 1)
       },
@@ -285,6 +312,10 @@
 
 <style lang="less" scoped>
   .p-alone {
+    .copy-input{
+      position: absolute;
+      opacity: 0;
+    }
     .-p-text-right {
       text-align: right;
     }
