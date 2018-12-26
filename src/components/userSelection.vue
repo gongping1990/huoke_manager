@@ -8,23 +8,11 @@
           <div class="-left-user">
             <div class="-user-left">
               <div>
-                <div>
-                  <Select v-model="search.userType" placeholder="用户类别" size="small"
-                          @on-change="init"
-                          style="width: 100px">
-                    <Option label="全部用户" value="3"></Option>
-                    <Option label="付费用户" value="1"></Option>
-                    <Option label="未付费用户" value="0"></Option>
-                  </Select>
-                  <Button icon="el-icon-search" type="primary" size="small" class="-float-right"
-                          @click="searchSms">搜索
-                  </Button>
-                </div>
-                <div v-if="isShowSearch" style="margin-top: 10px">
+                <div style="margin-top: 10px">
                   <Select v-model="search.keyType" size="small"
                           style="width: 100px;margin-bottom: 10px">
                     <Option label="用户昵称" value="1"></Option>
-                    <Option label="用户ID" value="2"></Option>
+                    <Option label="用户电话" value="2"></Option>
                   </Select>
                   <div style="display: flex;margin-bottom: 10px">
                     <Input v-model="search.inputContent" placeholder="请输入内容" size="small"
@@ -32,14 +20,15 @@
                     <Button icon="ios-search" size="small" class="-search-icon"
                             @click="getSearch"></Button>
                     <Button icon="ios-close" size="small" class="-search-icon"
+                            v-if="isShowDelIcon"
                             @click="backSearch"></Button>
                   </div>
                 </div>
 
-                <div class="-c-l-check" v-if="!isShowSearch">
+                <div class="-c-l-check">
                   <Checkbox v-model="checkAll" @on-change="checkAllUser">全选所有用户</Checkbox>
                 </div>
-                <div class="-c-l-wrap">
+                <div class="-c-l-wrap" v-viewmore="loadMore">
                   <Checkbox-group v-model="addStorage">
                     <Checkbox :label="item.userId" v-for="(item,index) in userList"
                               :key="index"
@@ -56,11 +45,11 @@
                       </div>
                     </Checkbox>
                   </Checkbox-group>
-                  <div class="-c-btn">
-                    <Button type="text" @click="loadMore()"
-                            v-if="isShowLoadMore && !isShowSearch">点击加载更多
-                    </Button>
-                  </div>
+                  <!--<div class="-c-btn">-->
+                    <!--<Button type="text" @click="loadMore()"-->
+                            <!--v-if="isShowLoadMore && !isShowSearch">点击加载更多-->
+                    <!--</Button>-->
+                  <!--</div>-->
                 </div>
               </div>
             </div>
@@ -154,7 +143,7 @@
         search: {
           userType: "3",
           keyType: "1",
-          userId: "",
+          phone: "",
           nickname: "",
           inputContent: ""
         },
@@ -168,9 +157,9 @@
         checkAll: this.otherInfo.isCheckAllPeople, // 是否全选
         isFetching: false, // 是否全选
         isAddOpenModal: false,
-        isShowSearch: false,
         isShowLoadMoreSearch: false,
         isShowLoadMore: false,
+        isShowDelIcon: false,
         lists: {},
         userList: [],
         userLists: [],
@@ -219,26 +208,26 @@
       getSearch() {
         if (this.search.keyType == "1") {
           this.search.nickname = this.search.inputContent;
+          this.search.phone = ''
         } else {
-          this.search.userId = this.search.inputContent;
+          this.search.phone = this.search.inputContent;
+          this.search.nickname = ''
         }
+        this.isShowDelIcon = true
         this.tabAddUser.page = 1;
         this.userList = [];
         this.getUserList();
       },
       backSearch() {
         this.search.nickname = "";
-        this.search.userId = "";
-        this.isShowSearch = false;
+        this.search.inputContent = "";
+        this.search.phone = "";
+        this.isShowDelIcon = false
         this.init();
       },
       loadMore() {
         this.tabAddUser.page++;
         this.getUserList();
-      },
-      searchSms() {
-        this.userList = [];
-        this.isShowSearch = true;
       },
       checkAllUser() {
         !this.checkAll && (this.userInfo.condition = "");
@@ -252,25 +241,15 @@
           size: this.tabAddUser.pageSize,
           condition: this.search.userType,
           nickname: this.search.nickname,
-          userId: this.search.userId
+          phone: this.search.phone
         }).then(
           response => {
-            if (!this.isShowSearch) {
-              if (this.userList.length) {
-                this.userList = this.userList.concat(
-                  response.data.resultData.records
-                );
-              } else {
-                this.userList = response.data.resultData.records;
-              }
+            if (this.userList.length) {
+              this.userList = this.userList.concat(
+                response.data.resultData.records
+              );
             } else {
-              if (this.userList.length) {
-                this.userList = this.userList.concat(
-                  response.data.resultData.records
-                );
-              } else {
-                this.userList = response.data.resultData.records;
-              }
+              this.userList = response.data.resultData.records;
             }
 
             this.userLists = this.userLists.concat(response.data.resultData.records)
