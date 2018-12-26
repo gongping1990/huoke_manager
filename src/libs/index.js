@@ -47,13 +47,13 @@ export function setRouter(to, from) {
   this.$store.commit('SET_TRANSTION_NAME', transitionName)
 }
 
-// export const getBaseUrl = () => {
-//   // 环境的切换
-//   if (process.env.NODE_ENV == 'development' || process.env.NODE_ENV == 'test') {
-//       return 'http://prep.test.k12.vip'
-//   }
-//   return 'http://prep.prod.k12.vip'
-// }
+export const copyUrl = () => {
+  // 环境的切换
+  if (process.env.NODE_ENV == 'development' || process.env.NODE_ENV == 'test') {
+      return 'http://testh5.k12.vip/courseInfo'
+  }
+  return 'http://huoke.k12.vip/courseInfo'
+}
 
 export const getBaseUrl = () => {
   // 环境的切换
