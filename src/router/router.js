@@ -192,6 +192,27 @@ export const appRouter = [
     ]
   },
   {
+    path: '/orderManager',
+    name: 'orderManager',
+    title: '订单管理',
+    component: Main,
+    children: [
+      {
+        path: '/orderList',
+        name: 'orderList',
+        meta: [
+          {
+            name: '订单管理'
+          },
+          {
+            name: '订单列表'
+          }
+        ],
+        component: () => import('@/view/orderManagement/orderList')
+      }
+    ]
+  },
+  {
     path: '/feedback',
     name: 'feedback',
     title: '反馈管理',
@@ -235,48 +256,48 @@ export const appRouter = [
         path: '/userList',
         name: 'userList',
         meta: [
-          {name:'用户管理'},
-          {name:'用户列表'}
+          {name: '用户管理'},
+          {name: '用户列表'}
         ],
         component: () => import('@/view/user/userList')
       },
-       {
+      {
         path: '/virtualUser',
         name: 'virtualUser',
         meta: [
-          {name:'用户管理'},
-          {name:'虚拟用户'}
+          {name: '用户管理'},
+          {name: '虚拟用户'}
         ],
         component: () => import('@/view/user/virtualUser')
       }
     ]
   },
-  // {
-  //   path: '/study',
-  //   name: 'study',
-  //   title: '同步学习',
-  //   component: Main,
-  //   children: [
-  //     {
-  //       path: '/subject',
-  //       name: 'subject',
-  //       meta: [
-  //         {name:'同步学习'},
-  //         {name:'学科管理'}
-  //       ],
-  //       component: () => import('@/view/study/subjectManage/subjectList')
-  //     },
-  //     {
-  //       path: '/teachingList',
-  //       name: 'teachingList',
-  //       meta: [
-  //         {name:'同步学习'},
-  //         {name:'教材管理'}
-  //       ],
-  //       component: () => import('@/view/study/teachingManage/tecchingList')
-  //     },
-  //   ]
-  // },
+  {
+    path: '/study',
+    name: 'study',
+    title: '同步学习',
+    component: Main,
+    children: [
+      {
+        path: '/subject',
+        name: 'subject',
+        meta: [
+          {name:'同步学习'},
+          {name:'学科管理'}
+        ],
+        component: () => import('@/view/study/subjectManage/subjectList')
+      },
+      {
+        path: '/teachingList',
+        name: 'teachingList',
+        meta: [
+          {name:'同步学习'},
+          {name:'教材管理'}
+        ],
+        component: () => import('@/view/study/teachingManage/tecchingList')
+      },
+    ]
+  },
   // {
   //   path: 'setting',
   //   name: 'setting',

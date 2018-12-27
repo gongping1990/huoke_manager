@@ -1,14 +1,20 @@
 <template>
   <div class="p-courseEdit">
     <Form class="-c-form g-t-left" ref="addInfo" :model="addInfo" :label-width="100">
-      <Form-item label="模板样式" prop="operate" class="ivu-form-item-required -c-form-item -c-border">
+      <Form-item label="模板样式" prop="operate" class="ivu-form-item-required -c-form-item -c-border" v-if="type == '3'">
         <Radio-group v-model="addInfo.operate " @on-change="changeTemplate">
-          <Radio  :disabled="addInfo.id ? true : false"  :label=1>读课文</Radio>
-          <Radio  :disabled="addInfo.id ? true : false"  :label=2>单选题</Radio>
+          <Radio :disabled="addInfo.id ? true : false" :label=1>读课文</Radio>
+          <Radio :disabled="addInfo.id ? true : false" :label=2>选择题</Radio>
         </Radio-group>
       </Form-item>
 
-      <Form-item label="动态图片" class="-c-form-item -c-border" v-if=" addInfo.operate == '1'">
+      <Form-item label="题干文案" class="-c-form-item -c-border" v-if=" addInfo.operate == '2'">
+        <Input class="-s-width" v-model="addInfo.question" placeholder="请输入题干文案" style="width: 300px"/>
+      </Form-item>
+
+      <Form-item :label="addInfo.operate == '2' ? '题干图片' : '动态图片'" class="-c-form-item -c-border"
+                 :class="{'ivu-form-item-required': addInfo.operate == '2'}"
+                 v-if="type=='1' || (type== '3' &&addInfo.operate == '2')">
         <Upload
           style="display: inline-block"
           :action="baseUrl"
@@ -20,11 +26,11 @@
           <Button ghost type="primary">上传图片</Button>
         </Upload>
         <span class="-c-tips">图片尺寸不低于285x432px 图片大小：100K以内</span>
-        <div class="-c-course-wrap" v-if="gifImgUrl">
+        <div class="-c-course-wrap" v-if="addInfo.tipcImgUrl">
           <div class="-c-course-item">
-            <img :src="gifImgUrl">
+            <img :src="addInfo.tipcImgUrl">
           </div>
-          <Button class="g-cursor" type="text" @click="gifImgUrl= ''">删除</Button>
+          <Button class="g-cursor" type="text" v-if="addInfo.operate == '1'" @click="addInfo.tipcImgUrl= ''">删除</Button>
         </div>
       </Form-item>
 
@@ -42,34 +48,14 @@
         </Upload>
 
         <span class="-c-tips">图片尺寸不低于640x1008px 图片大小：200K以内</span>
-        <div class="-c-course-wrap" v-if="backImgUrl">
+        <div class="-c-course-wrap" v-if="addInfo.bgImgUrl">
           <div class="-c-course-item">
-            <img :src="backImgUrl">
+            <img :src="addInfo.bgImgUrl">
           </div>
         </div>
       </Form-item>
 
-      <Form-item label="题干图片" prop="poster" class="ivu-form-item-required -c-form-item -c-border"
-                 v-if=" addInfo.operate == '2'">
-        <Upload
-          style="display: inline-block"
-          :action="baseUrl"
-          :show-upload-list="false"
-          :max-size="500"
-          :on-success="handleSuccessStem"
-          :on-exceeded-size="handleSize"
-          :on-error="handleErr">
-          <Button ghost type="primary">上传图片</Button>
-        </Upload>
-        <span class="-c-tips">图片尺寸不低于640x238px 图片大小：200K以内</span>
-        <div class="-c-course-wrap" v-if="stemImgUrl">
-          <div class="-c-course-item">
-            <img :src="stemImgUrl">
-          </div>
-        </div>
-      </Form-item>
-
-      <Form-item label="上传音频" prop="audioUrl" class="ivu-form-item-required -c-form-item">
+      <Form-item label="上传音频" prop="audioUrl" class="ivu-form-item-required -c-form-item -c-border">
         <Upload
           :action="baseUrlVa"
           :show-upload-list="false"
@@ -93,61 +79,43 @@
         </div>
       </Form-item>
 
-      <Form-item label="自动播放" prop="autoPlay" class="ivu-form-item-required -c-form-item">
-        <Radio-group v-model="addInfo.autoPlay">
-          <Radio :label=0>否</Radio>
-          <Radio :label=1>是</Radio>
+      <Form-item label="选择类型" class="ivu-form-item-required -c-form-item"
+                 v-if=" addInfo.operate == '2'">
+        <Radio-group v-model="singleAnswer">
+          <Radio :label=1>多选</Radio>
+          <Radio :label=0>单选</Radio>
         </Radio-group>
       </Form-item>
 
-      <Form-item label="音频进度" prop="speed" class="ivu-form-item-required -c-form-item">
-        <Radio-group v-model="addInfo.speed">
-          <Radio :label=0>不可控制</Radio>
-          <Radio :label=1>可控制</Radio>
+      <Form-item label="答案设置" class="ivu-form-item-required -c-form-item -c-border"
+                 v-if=" addInfo.operate == '2'">
+        <Radio-group v-model="anyAnswer">
+          <Radio :label=0>标准答案</Radio>
+          <Radio :label=1>任意选择</Radio>
         </Radio-group>
       </Form-item>
 
-      <Form-item label="完成条件" prop="playComplete" class="ivu-form-item-required -c-form-item -c-border">
-        <Radio-group v-model="addInfo.playComplete">
-          <Radio :label=0>无条件</Radio>
-          <Radio :label=1>音频播放完成</Radio>
-        </Radio-group>
-      </Form-item>
-
-      <Form-item label="选择选项" prop="showMode" class="ivu-form-item-required -c-form-item"
+      <Form-item label="选择选项" class="ivu-form-item-required -c-form-item"
                  v-if=" addInfo.operate == '2'">
         <div v-for="(item,index) of optionList" class="-item-select-wrap">
           <span class="-s-width">选项{{optionLetter[index]}}</span>
           <Input class="-s-width" v-model="item.value" type="textarea" :autosize="true" placeholder="请输入选择题干"
                  :maxlength="40" style="width: 300px"/>
           <span class="-s-width">文字字数不超过40字</span>
-          <Checkbox v-model="item.isChecked" @on-change="changeCheck(index)">设为答案</Checkbox>
-          <span class="-s-width -s-color g-cursor" @click="delOption(index)">删除</span>
+          <Checkbox v-if="anyAnswer!='1'" v-model="item.isChecked" @on-change="changeCheck(index)">设为答案
+          </Checkbox>
+          <span v-if="anyAnswer!='1'" class="-s-width -s-color g-cursor" @click="delOption(index)">删除</span>
         </div>
         <div class="-form-btn g-cursor" v-if="optionList.length < 5" @click="addOption">+ 新增选项</div>
       </Form-item>
 
-      <Form-item label="完成条件" prop="answerComplete" class="ivu-form-item-required -c-form-item -c-border"
-                 v-if=" addInfo.operate == '2'">
-        <Radio-group v-model="addInfo.answerComplete">
-          <Radio :label=1>无条件</Radio>
-          <Radio :label=2>选择任意选项</Radio>
-          <Radio :label=3>选择正确选项</Radio>
-        </Radio-group>
-      </Form-item>
-
-      <Form-item label="展示逻辑" prop="showMode" class="ivu-form-item-required -c-form-item -c-border"
-                 v-if=" addInfo.operate == '2'">
-        <Radio-group v-model="addInfo.showMode">
-          <Radio :label=1>同时展示</Radio>
-          <Radio :label=2>顺序展示（依赖模块完成条件）</Radio>
-        </Radio-group>
-      </Form-item>
-
-      <Form-item label="翻页逻辑" prop="turn" class="ivu-form-item-required -c-form-item -c-border">
-        <Radio-group v-model="addInfo.turn">
-          <Radio :label=1>可直接翻页</Radio>
-          <Radio :label=2>全部模块完成后可翻页</Radio>
+      <Form-item label="翻页延时" prop="turnDelay" class="ivu-form-item-required -c-form-item"
+                 v-if="addInfo.operate == '1'">
+        <Radio-group v-model="addInfo.turnDelay">
+          <Radio :label=0>0秒</Radio>
+          <Radio :label=1>1秒</Radio>
+          <Radio :label=2>2秒</Radio>
+          <Radio :label=3>3秒</Radio>
         </Radio-group>
       </Form-item>
 
@@ -168,7 +136,7 @@
 
   export default {
     name: 'courseEdit',
-    props: ['type', 'dataObj'],
+    props: ['type', 'wordType', 'dataObj'],
     components: {Loading},
     data() {
       return {
@@ -181,57 +149,54 @@
         baseUrl: `${getBaseUrl()}/common/uploadPublicFile`, // 公有 （图片）
         baseUrlVa: `${getBaseUrl()}/common/uploadPrivateFile`, //私有地址 （音视频）
         playAudioUrl: '',
-        gifImgUrl: '',
-        backImgUrl: '',
-        stemImgUrl: '',
+        singleAnswer: '',
+        anyAnswer: '',
         optionLetter: ['A', 'B', 'C', 'D', 'E'],
         optionList: [],
         audioType: ['mp3', 'wma', 'arm'],
         addInfo: {
           lessonId: this.$route.query.lessonId,
           contentType: this.type,
-          operate: 1, //类型（读课文，单选题）
+          operate: 1,
+          question: '', //题干题目
           audioUrl: '', //音频路径
-          playComplete: '', //完成条件
-          answerComplete: '', //完成条件
-          turn: '', //翻译逻辑
-          autoPlay: '', //自动播放
-          speed: '', //音频进度
-          showMode: '', //展示逻辑
-          topicOption: '', //选择题目
-          content: {
-            gifImg: '',
-            backImg: '',
-            stemImg: ''
-          } // 图片存储
+          anyAnswer: '', //答题类型
+          turnDelay: 0, //延时
+          singleAnswer: '', //选择类型
+          answerItem: '', //选择题目
+          tipcImgUrl: '', //动态图
+          bgImgUrl: '', //背景图
         }
       }
     },
 
     mounted() {
-      if (this.dataObj) {
 
-        this.addInfo = {
-          ...this.dataObj
+      if (this.dataObj) {
+        if (this.type == '1') {
+          this.dataObj.operate = this.wordType ? (this.wordType == 2 ? 1 : 2) : 1
         }
 
-        this.addInfo.autoPlay = this.addInfo.autoPlay ? 1 : 0
-        this.addInfo.playComplete = this.addInfo.playComplete ? 1 : 0
-        this.addInfo.speed = this.addInfo.speed ? 1 : 0
-        this.addInfo.topicOption.length && (this.optionList = JSON.parse(this.addInfo.topicOption))
-        this.addInfo.content = JSON.parse(this.addInfo.content)
-        this.playAudioUrl = this.addInfo.audioPlayUrl
-        this.gifImgUrl = this.addInfo.content.gifImg
-        this.backImgUrl = this.addInfo.content.backImg
-        this.stemImgUrl = this.addInfo.content.stemImg
-        // localStorage.setItem('operate',this.addInfo.operate)
-      }
+        if (this.dataObj.operate == '1') {
+          this.addInfo = {
+            ...this.dataObj.learn
+          }
+        } else {
+          this.addInfo = {
+            ...this.dataObj.question
+          }
 
-      console.log(this.addInfo)
+          this.singleAnswer = this.addInfo.singleAnswer ? 0 : 1
+          this.anyAnswer = this.addInfo.anyAnswer ? 1 : 0
+          this.addInfo.answerItem && (this.optionList = JSON.parse(this.addInfo.answerItem))
+        }
+        this.addInfo.id = this.dataObj.id
+        this.playAudioUrl = this.addInfo.audioPlayUrl
+        this.addInfo.operate = this.dataObj.operate
+      }
     },
     methods: {
       changeTemplate() {
-        // this.addInfo.operate = localStorage.operate
         this.$Modal.confirm({
           title: '提示',
           content: '切换模板，当前模板编辑内容将被清空',
@@ -240,19 +205,16 @@
             // this.addInfo.operate = this.addInfo.operate == 1 ? 2 : 1
             localStorage.operate = this.addInfo.operate
 
-            if ( this.addInfo.operate == '2') {
-              this.gifImgUrl = ''
-              this.backImgUrl = ''
+            if (this.addInfo.operate == '2') {
+              this.addInfo.audioUrl = ''
+              this.addInfo.tipcImgUrl = ''
+              this.addInfo.bgImgUrl = ''
             } else {
-              this.stemImgUrl = ''
               this.optionList = []
-              this.addInfo.showMode = ''
-              this.addInfo.answerComplete = ''
             }
           },
           onCancel: () => {
-            // this.addInfo.operate = localStorage.operate
-            if(this.addInfo.operate == '1') {
+            if (this.addInfo.operate == '1') {
               this.addInfo.operate = 2
             } else {
               this.addInfo.operate = 1
@@ -261,11 +223,13 @@
         })
       },
       changeCheck(idx) {
-        this.optionList.forEach((item, index) => {
-          if (idx != index) {
-            item.isChecked = false
-          }
-        })
+        if (this.singleAnswer == '0') {
+          this.optionList.forEach((item, index) => {
+            if (idx != index) {
+              item.isChecked = false
+            }
+          })
+        }
       },
       addOption() {
         this.optionList.push({
@@ -279,6 +243,7 @@
       },
       submitInfo() {
         let isCheck = ''
+        let checkLength = []
         let isPass = ''
         let paramUrl = ''
 
@@ -286,9 +251,13 @@
           isCheck = this.optionList.some(item => {
             return item.isChecked == true
           })
-        }
 
-        if (this.addInfo.operate == '2' && this.optionList.length) {
+          this.optionList.forEach(item => {
+            if (item.isChecked) {
+              checkLength.push(item)
+            }
+          })
+
           isPass = this.optionList.every(item => {
             return (item.value != '' && item.value.length <= 40)
           })
@@ -296,41 +265,45 @@
 
         if (!this.addInfo.operate) {
           return this.$Message.error('请选择模板样式')
-        } else if (this.addInfo.operate == '1' && !this.backImgUrl) {
-          return this.$Message.error('请上传背景图片')
-        } else if (this.addInfo.operate == '2' && !this.stemImgUrl) {
+        } else if (this.addInfo.operate == '2' && !this.addInfo.tipcImgUrl) {
           return this.$Message.error('请上传题干图片')
+        } else if (this.addInfo.operate == '1' && !this.addInfo.bgImgUrl) {
+          return this.$Message.error('请上传背景图片')
         } else if (!this.addInfo.audioUrl) {
           return this.$Message.error('请上传音频内容')
-        } else if (this.addInfo.autoPlay === '') {
-          return this.$Message.error('请选择是否自动播放')
-        } else if (this.addInfo.speed === '') {
-          return this.$Message.error('请选择音频进度')
-        } else if (this.addInfo.playComplete === '') {
-          return this.$Message.error('请选择完成条件')
-        } else if (this.addInfo.operate == '2' && !this.addInfo.showMode) {
-          return this.$Message.error('请选择展示逻辑')
+        } else if (this.addInfo.operate == '2' && this.singleAnswer === '') {
+          return this.$Message.error('请设置选择类型')
+        } else if (this.addInfo.operate == '2' && this.anyAnswer === '') {
+          return this.$Message.error('请设置答案类型')
         } else if (this.addInfo.operate == '2' && (!this.optionList.length || !isPass)) {
           return this.$Message.error('选择题目不能为空或字数不能超过40字')
-        } else if (this.addInfo.operate == '2' && !isCheck) {
+        } else if (this.addInfo.operate == '2' && this.singleAnswer == '1' && this.anyAnswer != '1' && checkLength.length < 2) {
+          return this.$Message.error('请设置至少2个答案')
+        } else if (this.addInfo.operate == '2' && this.singleAnswer == '0' && checkLength.length > 1) {
+          return this.$Message.error('只能设置一个答案')
+        } else if (this.addInfo.operate == '2' && this.anyAnswer != '1' && !isCheck) {
           return this.$Message.error('请设置正确的单选题答案')
-        } else if (this.addInfo.operate == '2' && this.addInfo.answerComplete === '') {
-          return this.$Message.error('请选择选择题的完成条件')
-        } else if (!this.addInfo.turn) {
-          return this.$Message.error('请选择翻页逻辑')
         }
 
-        if (this.addInfo.operate == '1') {
-          this.addInfo.content.gifImg = this.gifImgUrl
-          this.addInfo.content.backImg = this.backImgUrl
-        } else {
-          this.addInfo.topicOption = JSON.stringify(this.optionList)
-          this.addInfo.content.stemImg = this.stemImgUrl
+        if (this.addInfo.operate == '2') {
+          this.addInfo.answerItem = JSON.stringify(this.optionList)
         }
 
-        this.addInfo.content = JSON.stringify(this.addInfo.content)
+        this.addInfo.singleAnswer = this.singleAnswer == '0'
+        this.addInfo.anyAnswer = this.anyAnswer == '1'
 
-        paramUrl = this.addInfo.id ? this.$api.slide.updateCheckpoint(this.addInfo) : this.$api.slide.addContent(this.addInfo)
+        switch (+this.type) {
+          case 1:
+            paramUrl = this.addInfo.id ? this.addInfo.operate == '1' ? this.$api.mission.updateWord(this.addInfo) :
+              this.$api.mission.updateWordQuestion(this.addInfo) : this.$api.mission.addWord(this.addInfo)
+            break
+          case 2:
+            paramUrl = this.addInfo.id ? this.$api.mission.updateRead(this.addInfo) : this.$api.mission.addRead(this.addInfo)
+            break
+          case 3:
+            paramUrl = this.addInfo.id ? this.$api.mission.updateLecture(this.addInfo) : this.$api.mission.addLecture(this.addInfo)
+            break
+        }
         paramUrl
           .then(res => {
             if (res.data.code == '200') {
@@ -364,19 +337,17 @@
       handleSuccessGif(res) {
         if (res.code === 200) {
           this.$Message.success('上传成功')
-          this.gifImgUrl = res.resultData.url
+          this.addInfo.tipcImgUrl = res.resultData.url
+          console.log(this.addInfo.tipcImgUrl, 'tipcImgUrl')
         }
       },
       handleSuccessBack(res) {
         if (res.code === 200) {
-          this.backImgUrl = res.resultData.url
+          this.addInfo.bgImgUrl = res.resultData.url
+          console.log(this.addInfo.bgImgUrl, 'bgImgUrl')
         }
       },
-      handleSuccessStem(res) {
-        if (res.code === 200) {
-          this.stemImgUrl = res.resultData.url
-        }
-      },
+
       handleSuccessAudio(res) {
         if (res.code === 200) {
           this.isFetching = false

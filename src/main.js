@@ -14,7 +14,15 @@ Vue.prototype.$api = api;
 Vue.prototype.$axios = axios;
 
 
-
+Vue.directive('viewmore', {
+  bind: (el, binding) => {
+    el.addEventListener('scroll', () => {
+      if (el.scrollTop + el.offsetHeight >= el.scrollHeight) {
+        binding.value();
+      }
+    }, false)
+  }
+});
 
 /* eslint-disable no-new */
 new Vue({

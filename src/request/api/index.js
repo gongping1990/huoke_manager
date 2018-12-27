@@ -12,6 +12,7 @@ import coupon from "./coupon";
 import book from "./book";
 import slide from "./slide";
 import feedback from "./feedback";
+import mission from "./mission";
 
 
 export default {
@@ -28,5 +29,6 @@ export default {
   coupon,
   book,
   slide,
-  feedback
+  feedback,
+  mission
 }

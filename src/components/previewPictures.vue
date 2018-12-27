@@ -2,12 +2,12 @@
   <div class="p-img">
     <div v-if="courseType != '1'" :style="styles">
       <div v-if="dataProp.operate == '1'" class="-i-wrap" :class="{'-i-wrap-small':directEntry}"
-           :style="{ background: 'url(' + imgUrlInfo.backImg + ') no-repeat'}">
+           :style="{ background: 'url(' + imgUrlInfo.bgImgUrl + ') no-repeat'}">
         <div>
           <img class="-i-img" src="../assets/images/topbar.png">
         </div>
         <div class="-i-center" :class="{'-i-center-small': directEntry}">
-          <img class="-i-gif" :src="imgUrlInfo.gifImg">
+          <img class="-i-gif" :src="imgUrlInfo.tipcImgUrl">
         </div>
         <div class="-i-footer">
           <img class="-i-img" src="../assets/images/bottombar.png"/>
@@ -66,10 +66,11 @@
         return this.initData()
       },
       imgUrlInfo() {
-        return (this.courseType != '1' && this.dataProp) && JSON.parse(this.dataProp.content)
+        return (this.courseType != '1' && this.dataProp) && this.dataProp
       },
       arraySelect() {
-        return (this.courseType != '1' && this.dataProp) && (this.dataProp.operate != '1' && JSON.parse(this.dataProp.topicOption))
+        // return (this.courseType != '1' && this.dataProp) && (this.dataProp.operate != '1' && JSON.parse(this.dataProp.topicOption))
+        return []
       }
     },
     mounted() {

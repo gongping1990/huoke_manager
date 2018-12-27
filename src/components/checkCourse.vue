@@ -79,7 +79,7 @@
         if (this.isFetching) return
         let routeUrl = ''
         this.isFetching = true
-        routeUrl = this.courseType ? this.$api.goods.aloneList : this.$api.course.teachSubjectList
+        routeUrl = this.courseType ? this.$api.goods.aloneList : this.$api.course.courseList
         routeUrl({
           current: 1,
           size: this.size,

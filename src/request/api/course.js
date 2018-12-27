@@ -2,6 +2,9 @@ import axios from '../http'
 import qs from 'querystring'
 
 const course = {
+  courseList(params) {
+    return axios.get('/course/list', {params: params})
+  },
   // 新增学科
   addSubject(params) {
     return axios.post('/course/add', qs.stringify(params))
@@ -20,11 +23,11 @@ const course = {
   },
   //添加教材时的学科列表
   teachSubjectList(params) {
-    return axios.get('/course/list', {params: params})
+    return axios.get('/prep/course/list', {params: params})
   },
   //教材版本列表
   editionList() {
-    return axios.get('/course/listAllEdition')
+    return axios.get('/prep/course/listAllEdition')
   }
 }
 

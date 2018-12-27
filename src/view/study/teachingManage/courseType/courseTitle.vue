@@ -1,25 +1,35 @@
 <template>
   <div class="p-content">
-    <div class="-c-wrap" v-if="!isShowEdit && type != '0'">
+    <div class="-c-wrap" v-if="!isShowEdit && type != '0' && type!= '-1'">
       <Row class="-c-wrap-row">
         <div v-for="(item,index) of itemList" :key="index" class="-c-item">
           <div class="-c-point" :class="{'g-primary-btn': item.isActive}" @click="toCheckBtn(item,index)">
-            第{{item.pageNo}}关
+            {{type == '1' ? `${item.topic}` : `第${item.pageNo}页`}}
           </div>
           <Icon v-if="item.isActive" class="-c-item-icon g-cursor" size="20" type="md-close-circle"
                 @click="delCheckpoint(item)"/>
         </div>
-
-        <div class="-c-item-no g-cursor" v-if="itemList.length" @click="toEdit(0)">添加关卡 +</div>
-        <div class="-c-item-no g-cursor" @click="toSort()" v-if="itemList.length > 1">关卡排序</div>
+        <div class="-c-item-no g-cursor" v-if="itemList.length" @click="toEdit(0)">{{type == '1' ? '添加生字' : '添加页面'}} +
+        </div>
+        <div class="-c-item-no g-cursor" @click="toSort()" v-if="itemList.length > 1">{{type == '1' ? '生字排序' :
+          '页面排序'}}
+        </div>
       </Row>
       <div class="-t-btn-wrap">
         <div>
-          <preview-pictures v-if="itemList.length" :dataProp="dataItem" :courseType="2" :style="styleInfo" :directEntry="true"></preview-pictures>
+          <preview-pictures v-if="itemList.length" :dataProp="dataItem" :courseType="2" :style="styleInfo"
+                            :directEntry="true"></preview-pictures>
 
           <div class="-t-btn-wrap">
-            <div class="g-primary-btn -t-width" @click="toEdit(1)">{{dataItem ? '进入编辑' : '添加关卡'}}</div>
-            <Button ghost type="primary" class="-t-width"  v-if="itemList.length" @click="openPreviewModal">预览大图</Button>
+            <div class="g-primary-btn -t-width" @click="toEdit(1)" v-if="type!='1'">{{dataItem ? '进入编辑' : '添加页面'}}
+            </div>
+            <div v-if="type=='1' && itemList.length" class="g-flex-j-sa">
+              <div class="g-primary-btn -t-width -t-width-half" @click="toEdit(2)">编辑讲解</div>
+              <div class="g-primary-btn -t-width -t-width-half" @click="toEdit(3)">编辑练习</div>
+            </div>
+            <div class="g-primary-btn -t-width g-cursor" v-if="type=='1' && !itemList.length" @click="toEdit(0)">添加生字
+            </div>
+            <Button ghost type="primary" class="-t-width" v-if="itemList.length" @click="openPreviewModal">预览大图</Button>
           </div>
         </div>
       </div>
@@ -27,38 +37,47 @@
 
     <div v-if="isShowEdit">
       <Row>
-        <course-edit :type="type" :dataObj="dataItem" @addCourseOk="addCourse"></course-edit>
+        <course-edit :type="type" :wordType="wordType" :dataObj="dataItem" @addCourseOk="addCourse"></course-edit>
       </Row>
     </div>
 
     <learning-goals v-if="type == '0'"></learning-goals>
 
-    <loading v-if="isFetching"></loading>
+    <course-cover v-if="type == '-1'"></course-cover>
 
-    <Modal
-      class="p-content"
-      v-model="isOpenModal"
-      @on-cancel="closeModal()"
-      :mask-closable="false"
-      title="拖拽排序">
-      <div class="-c-wrap">
-        <draggable v-model="sortList">
-          <div v-for="(item,index) in sortList" :key="index" class="-c-item">
-            <div class="-c-point">
-              第{{item.pageNo}}关
+    <div v-if="isOpenModal">
+      <Modal
+        class="p-content"
+        v-model="isOpenModal"
+        @on-cancel="closeModal()"
+        :mask-closable="false"
+        title="拖拽排序">
+        <div class="-c-wrap">
+          <draggable v-model="sortList">
+            <div v-for="(item,index) in sortList" :key="index" class="-c-item">
+              <div class="-c-point">
+                {{type == '1' ? `${item.topic}` : `第${item.pageNo}页`}}
+              </div>
             </div>
-          </div>
-        </draggable>
-      </div>
-      <div slot="footer" class="g-flex-j-sa">
-        <Button @click="closeModal()" ghost type="primary" style="width: 100px;">取消</Button>
-        <div @click="submitInfo()" class="g-primary-btn "> {{isSending ? '提交中...' : '确 认'}}</div>
-      </div>
-    </Modal>
+          </draggable>
+        </div>
+        <div slot="footer" class="g-flex-j-sa">
+          <Button @click="closeModal()" ghost type="primary" style="width: 100px;">取消</Button>
+          <div @click="submitInfo()" class="g-primary-btn "> {{isSending ? '提交中...' : '确 认'}}</div>
+        </div>
+      </Modal>
+    </div>
+
+    <div v-if="isOpenWordModal">
+      <word-modal @closeWordModal="closeWord"></word-modal>
+    </div>
 
     <div v-if="isOpenImgModal">
-      <preview-pictures-model :dataProp="dataItem" :courseType="2" @closePreviewFirst="closePreview"></preview-pictures-model>
+      <preview-pictures-model :dataProp="dataItem" :courseType="2"
+                              @closePreviewFirst="closePreview"></preview-pictures-model>
     </div>
+
+    <loading v-if="isFetching"></loading>
   </div>
 </template>
 
@@ -69,10 +88,15 @@
   import draggable from 'vuedraggable'
   import PreviewPicturesModel from "@/components/previewPicturesModel";
   import PreviewPictures from "@/components/previewPictures";
+  import CourseCover from "./courseCover";
+  import WordModal from "../../../../components/tree/wordModal";
 
   export default {
     name: 'courseTitle',
-    components: {PreviewPictures, PreviewPicturesModel, LearningGoals, CourseEdit, Loading, draggable},
+    components: {
+      WordModal,
+      CourseCover, PreviewPictures, PreviewPicturesModel, LearningGoals, CourseEdit, Loading, draggable
+    },
     props: ['type'],
     data() {
       return {
@@ -81,6 +105,8 @@
         isFetching: false,
         isOpenModal: false,
         isOpenImgModal: false,
+        isOpenWordModal: false,
+        wordType: '',
         dataItem: '',
         dataList: [],
         sortList: [],
@@ -88,10 +114,10 @@
           id: this.$route.query.lessonId,
           learnTarget: ''
         },
-        styleInfo:{
+        styleInfo: {
           'width': '300px',
           'height': '500px',
-          'margin':'auto',
+          'margin': 'auto',
           'overflow': 'hidden'
         }
       }
@@ -101,8 +127,8 @@
         if (this.isShowEdit) {
           this.toBack()
         } else {
-          this.dataItem = ''
-          this.type != '0' && this.getList()
+          this.dataItem = '';
+          (this.type != '0' && this.type != '-1') && this.getList()
         }
       }
     },
@@ -112,16 +138,12 @@
       }
     },
     mounted() {
-      this.type != '0' && this.getList()
+      (this.type != '0' && this.type != '-1') && this.getList()
     },
     methods: {
-      backCourseList () {
-        this.$router.push({
-          name: 'teachMain',
-          query:{
-            ...this.$route.query
-          }
-        })
+      closeWord() {
+        this.isOpenWordModal = false
+        this.getList()
       },
       toSort() {
         this.sortList = this.dataList
@@ -130,21 +152,34 @@
       closeModal() {
         this.isOpenModal = false
       },
-      submitInfo () {
-        if(this.isSending) return
+      submitInfo() {
+        if (this.isSending) return
         this.isSending = true
         let param = []
-        for (let item of this.sortList)  {
+
+        for (let item of this.sortList) {
           param.push(item.id)
         }
-        this.$api.slide.updateChapter(param)
+        let interParams = ''
+        switch (+this.type) {
+          case 1:
+            interParams = this.$api.mission.wordPageNo
+            break
+          case 2:
+            interParams = this.$api.mission.readPageNo
+            break
+          case 3:
+            interParams = this.$api.mission.lecturePageNo
+            break
+        }
+        interParams(param)
           .then(
             response => {
-             if(response.data.code == '200') {
-               this.$Message.success('排序成功')
-               this.closeModal()
-               this.getList()
-             }
+              if (response.data.code == '200') {
+                this.$Message.success('排序成功')
+                this.closeModal()
+                this.getList()
+              }
             })
           .finally(() => {
             this.isSending = false
@@ -155,8 +190,8 @@
           title: '提示',
           content: '返回列表页面，当前页面编辑内容将全部丢失',
           onOk: () => {
-            this.isShowEdit = false
-            this.type != '0' && this.getList()
+            this.isShowEdit = false;
+            (this.type != '0' && this.type != '-1') && this.getList()
           },
           onCancel: () => {
             this.isShowEdit = true
@@ -183,27 +218,43 @@
           this.isOpenImgModal = true
         }
       },
-      closePreview () {
+      closePreview() {
         this.isOpenImgModal = false
       },
-      toEdit(bool) {
-        this.isShowEdit = true
-        !bool && (this.dataItem = '')
+      toEdit(num) {
+        if (this.type == '1' && num != '2' && num != '3') {
+          this.isOpenWordModal = true
+        } else {
+          this.isShowEdit = true
+          this.wordType = (num == 2 || num == 3) ? num : ''
+          !num && (this.dataItem = '')
+        }
       },
       closeEdit() {
         this.isShowEdit = false
       },
       getList() {
         this.isFetching = true
-        this.$api.slide.getListType({
+        let params = ''
+        switch (+this.type) {
+          case 1:
+            params = this.$api.mission.wordList
+            break
+          case 2:
+            params = this.$api.mission.readList
+            break
+          case 3:
+            params = this.$api.mission.lectureList
+            break
+        }
+        params({
           lessonId: this.$route.query.lessonId,
-          type: this.type
         })
           .then(
             response => {
               this.dataList = response.data.resultData;
               this.dataList.forEach((item, index) => {
-                if(index == '0') {
+                if (index == '0') {
                   item.isActive = true
                   this.dataItem = item
                 } else {
@@ -221,7 +272,19 @@
           title: '提示',
           content: '确认要删除该关卡吗？',
           onOk: () => {
-            this.$api.slide.delCheckpoint({
+            let params = ''
+            switch (+this.type) {
+              case 1:
+                params = this.$api.mission.delWord
+                break
+              case 2:
+                params = this.$api.mission.delRead
+                break
+              case 3:
+                params = this.$api.mission.delLecture
+                break
+            }
+            params({
               id: data.id
             }).then(
               response => {
@@ -245,7 +308,7 @@
 <style lang="less" scoped>
   .p-content {
     overflow-y: auto;
-    height: 100%;
+    height: 98%;
 
     .-t-btn-wrap {
       display: flex;
@@ -257,6 +320,11 @@
       margin: 20px;
       height: 40px;
       width: 200px;
+    }
+
+    .-t-width-half {
+      width: 100px;
+      margin: 20px 5px;
     }
     .-c-wrap {
       height: 100%;

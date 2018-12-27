@@ -4,9 +4,10 @@
       <Row class="-t-header">
         <Col :span="10" class="-t-col">
           <RadioGroup v-model="typeInfo" type="button">
+            <Radio label="-1">课程封面</Radio>
             <Radio label="0">学习目标</Radio>
-            <Radio label="1">字词过关</Radio>
-            <Radio label="2">初读语文</Radio>
+            <Radio label="1">学习生字</Radio>
+            <Radio label="2">听读语文</Radio>
             <Radio label="3">课文精讲</Radio>
           </RadioGroup>
         </Col>
@@ -29,7 +30,7 @@
     components: {CourseTitle, PathRecord},
     data() {
       return {
-        typeInfo: '0'
+        typeInfo: '-1'
       }
     },
     computed: {
@@ -51,7 +52,8 @@
 <style lang="less">
   .p-courseInfo{
     .ivu-card-body{
-      height: 98%;
+      overflow: hidden;
+      height: 100%;
     }
   }
 </style>

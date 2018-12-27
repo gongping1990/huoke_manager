@@ -14,14 +14,6 @@
         <Menu-item name="userList">用户列表</Menu-item>
         <Menu-item name="virtualUser">虚拟用户</Menu-item>
       </Submenu>
-      <!--<Submenu name="study" class="-left-li">-->
-      <!--<template slot="title">-->
-      <!--<Icon type="ios-school" class="hk-menu-icon"></Icon>-->
-      <!--<span>同步学习</span>-->
-      <!--</template>-->
-      <!--<Menu-item name="subject">学科管理</Menu-item>-->
-      <!--<Menu-item name="teachingList">教材管理</Menu-item>-->
-      <!--</Submenu>-->
       <Submenu name="market" class="-left-li">
         <template slot="title">
           <Icon type="logo-usd" class="hk-menu-icon"></Icon>
@@ -33,13 +25,28 @@
         <Menu-item name="active">新人礼包</Menu-item>
         <Menu-item name="coupon">优惠券</Menu-item>
       </Submenu>
+      <Submenu name="orderManager" class="-left-li">
+        <template slot="title">
+          <Icon type="ios-document" class="hk-menu-icon"/>
+          <span>订单管理</span>
+        </template>
+        <Menu-item name="orderList">订单列表</Menu-item>
+      </Submenu>
       <Submenu name="operate" class="-left-li">
         <template slot="title">
-          <Icon type="ios-text-outline" class="hk-menu-icon"></Icon>
+          <Icon type="md-trophy" class="hk-menu-icon"></Icon>
           <span>运营管理</span>
         </template>
         <Menu-item name="topBar">topBar管理</Menu-item>
         <Menu-item name="bannerList">banner管理</Menu-item>
+      </Submenu>
+      <Submenu name="study" class="-left-li">
+        <template slot="title">
+          <Icon type="ios-school" class="hk-menu-icon"></Icon>
+          <span>同步学习</span>
+        </template>
+        <Menu-item name="subject">学科管理</Menu-item>
+        <Menu-item name="teachingList">教材管理</Menu-item>
       </Submenu>
       <Submenu name="feedback" class="-left-li">
         <template slot="title">
