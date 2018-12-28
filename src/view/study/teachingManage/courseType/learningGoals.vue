@@ -100,6 +100,7 @@
         this.isShowEditor = true
       },
       closeModal() {
+        this.getLearnInfo()
         this.isShowEditor = false
       },
       getLearnInfo() {

@@ -3,6 +3,7 @@
     <div v-if="courseType != '1'" :style="styles">
       <div v-if="dataProp.operate == '1'" class="-i-wrap" :class="{'-i-wrap-small':directEntry}"
            :style="{ background: 'url(' + imgUrlInfo.learn.bgImgUrl + ') no-repeat'}">
+        <div class="-i-gif-img" v-if="imgUrlInfo.type == '1'"><img :src="imgUrlInfo.learn.tipcImgUrl"></div>
         <div class="-i-center" :class="{'-i-center-small': directEntry}">
           <img class="-i-gif" src="../assets/images/read-bg.png">
         </div>
@@ -73,7 +74,6 @@
         return this.dataProp
       },
       imgUrlInfo() {
-        console.log(this.dataProp, '传递')
         if (this.courseType != '1' && this.dataProp) {
           return this.dataProp
         } else {
@@ -111,6 +111,16 @@
       background-color: rgba(255, 250, 236, 1);
       background-size: 100% !important;
       height: 552px;
+
+      .-i-gif-img{
+        position: absolute;
+        top: 100px;
+        left: 25px;
+
+        img {
+          width: 110px;
+        }
+      }
 
       .-i-header {
         background-size: 100% !important;
@@ -210,6 +220,13 @@
 
     .-i-wrap-small {
       height: 482px !important;
+
+      .-i-gif-img{
+        top: 90px;
+        img{
+          width: 90px;
+        }
+      }
 
       .-i-content {
         bottom: 77px;

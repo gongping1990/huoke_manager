@@ -16,6 +16,12 @@
         </div>
       </Row>
       <div class="-t-btn-wrap">
+        <div v-if="type== '1'" class="-t-btn-radio">
+          <RadioGroup v-model="wordRadioType" type="button" @on-change="changeWordType">
+            <Radio label="1">讲解</Radio>
+            <Radio label="2">练习</Radio>
+          </RadioGroup>
+        </div>
         <div>
           <preview-pictures v-if="itemList.length" :dataProp="dataItem" :courseType="2" :style="styleInfo"
                             :directEntry="true"></preview-pictures>
@@ -23,10 +29,8 @@
           <div class="-t-btn-wrap">
             <div class="g-primary-btn -t-width" @click="toEdit(1)" v-if="type!='1'">{{dataItem ? '进入编辑' : '添加页面'}}
             </div>
-            <div v-if="type=='1' && itemList.length" class="g-flex-j-sa">
-              <div class="g-primary-btn -t-width -t-width-half" @click="toEdit(2)">编辑讲解</div>
-              <div class="g-primary-btn -t-width -t-width-half" @click="toEdit(3)">编辑练习</div>
-            </div>
+            <div class="g-primary-btn -t-width" @click="toEdit(2)" v-if="type=='1' && wordRadioType=='1'">编辑讲解</div>
+            <div class="g-primary-btn -t-width" @click="toEdit(3)" v-if="type=='1' && wordRadioType=='2'">编辑练习</div>
             <div class="g-primary-btn -t-width g-cursor" v-if="type=='1' && !itemList.length" @click="toEdit(0)">添加生字
             </div>
             <Button ghost type="primary" class="-t-width" v-if="itemList.length" @click="openPreviewModal">预览大图</Button>
@@ -107,6 +111,7 @@
         isOpenImgModal: false,
         isOpenWordModal: false,
         wordType: '',
+        wordRadioType: '1',
         dataItem: '',
         dataList: [],
         sortList: [],
@@ -141,6 +146,13 @@
       (this.type != '0' && this.type != '-1') && this.getList()
     },
     methods: {
+      changeWordType () {
+        let dataStorage = JSON.parse(JSON.stringify(this.dataItem))
+        console.log(dataStorage,'ceshi1')
+        this.dataItem = ''
+        this.dataItem = dataStorage
+        this.dataItem.operate = this.wordRadioType
+      },
       closeWord() {
         this.isOpenWordModal = false
         this.getList()
@@ -203,6 +215,10 @@
         this.dataList[index].isShowChild = !this.dataList[index].isShowChild
         this.dataList = Object.assign([], this.dataList)
         this.dataItem = data
+        if(this.type == '1') {
+          this.dataItem.operate = '1'
+          this.dataItem.type = '1'
+        }
         this.dataList.forEach(item => {
           if (data.id == item.id) {
             item.isActive = true
@@ -257,6 +273,10 @@
                 if (index == '0') {
                   item.isActive = true
                   this.dataItem = item
+                  if(this.type == '1') {
+                    this.dataItem.operate = '1'
+                    this.dataItem.type = '1'
+                  }
                 } else {
                   item.isActive = false
                 }
@@ -314,6 +334,11 @@
       display: flex;
       justify-content: center;
       margin-bottom: 20px;
+    }
+
+    .-t-btn-radio{
+      position: absolute;
+      left: 0;
     }
 
     .-t-width {
