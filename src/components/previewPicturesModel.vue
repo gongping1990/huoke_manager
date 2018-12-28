@@ -1,12 +1,13 @@
 <template>
   <Modal
+    class="p-max-pictures"
     v-model="isOpenModal"
     @on-cancel="closePreviewModel"
     :footer-hide="true"
     width="375"
     :styles="{'top': '20px'}"
     title="预览关卡">
-    <preview-pictures :dataProp="dataProp" :courseType="courseType"></preview-pictures>
+    <preview-pictures :dataProp="dataProp" :imgUrl="imgUrl" :courseType="courseType"></preview-pictures>
   </Modal>
 </template>
 
@@ -16,7 +17,7 @@
   export default {
     name: 'previewPicturesModel',
     components: {PreviewPictures},
-    props: ['dataProp', 'courseType'], //courseType : 1为学习目标 ， 2为其他
+    props: ['dataProp', 'courseType', 'imgUrl'], //courseType : 1为学习目标 ， 2为其他
     data() {
       return {
         isOpenModal: false
@@ -35,4 +36,7 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="less" scoped>
+  .p-max-pictures{
+    position: relative;
+  }
 </style>

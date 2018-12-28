@@ -2,7 +2,11 @@
   <div class="p-learn">
     <div class="-t-btn">
       <div v-if="!isShowEditor">
-        <preview-pictures v-if="optionList.length" :dataProp="optionList" :courseType="1" :style="styleInfo" :directEntry="true"></preview-pictures>
+        <preview-pictures v-if="optionList.length"
+                          :dataProp="optionList"
+                          :courseType="1"
+                          :style="styleInfo"
+                          :directEntry="true" :imgUrl="imgUrl"></preview-pictures>
         <div class="-t-btn-wrap">
           <div class="g-primary-btn -t-width" @click="toEditor">{{optionList.length ? '进入编辑' : '添加学习目标'}}</div>
           <Button ghost type="primary" class="-t-width" v-if="optionList.length" @click="openPreviewModal">预览大图</Button>
@@ -30,7 +34,7 @@
       </div>
     </div>
     <div v-if="isOpenImgModal">
-      <preview-pictures-model :dataProp="optionList" :courseType="1" @closePreviewFirst="closePreview"></preview-pictures-model>
+      <preview-pictures-model :dataProp="optionList" :imgUrl="imgUrl" :courseType="1" @closePreviewFirst="closePreview"></preview-pictures-model>
     </div>
   </div>
 </template>
@@ -48,6 +52,7 @@
         isFetching: false,
         isOpenImgModal: false,
         optionList: [],
+        imgUrl: '',
         addInfo: {
           id: this.$route.query.lessonId,
           learnTarget: []
@@ -106,6 +111,7 @@
             response => {
               if(response.data.resultData.learnTarget != null) {
                 this.optionList = JSON.parse(response.data.resultData.learnTarget)
+                this.imgUrl = response.data.resultData.coverImgUrl
               }
             })
           .finally(() => {
