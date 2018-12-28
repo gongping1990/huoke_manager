@@ -12,9 +12,7 @@
         <Input class="-s-width" v-model="addInfo.question" placeholder="请输入题干文案" style="width: 300px"/>
       </Form-item>
 
-      <Form-item :label="addInfo.operate == '2' ? '题干图片' : '动态图片'" class="-c-form-item -c-border"
-                 :class="{'ivu-form-item-required': addInfo.operate == '2'}"
-                 v-if="type=='1' || (type== '3' &&addInfo.operate == '2')">
+      <Form-item label="动态图片" class="-c-form-item -c-border" v-if="type=='1'">
         <Upload
           style="display: inline-block"
           :action="baseUrl"
@@ -31,6 +29,26 @@
             <img :src="addInfo.tipcImgUrl">
           </div>
           <Button class="g-cursor" type="text" v-if="addInfo.operate == '1'" @click="addInfo.tipcImgUrl= ''">删除</Button>
+        </div>
+      </Form-item>
+
+      <Form-item label="题干图片" class="-c-form-item -c-border ivu-form-item-required"
+                 v-if="addInfo.operate == '2'">
+        <Upload
+          style="display: inline-block"
+          :action="baseUrl"
+          :show-upload-list="false"
+          :max-size="500"
+          :on-success="handleSuccessQuestion"
+          :on-exceeded-size="handleSize"
+          :on-error="handleErr">
+          <Button ghost type="primary">上传图片</Button>
+        </Upload>
+        <span class="-c-tips">图片尺寸不低于285x432px 图片大小：100K以内</span>
+        <div class="-c-course-wrap" v-if="addInfo.questionImgUrl">
+          <div class="-c-course-item">
+            <img :src="addInfo.questionImgUrl">
+          </div>
         </div>
       </Form-item>
 
@@ -165,6 +183,7 @@
           singleAnswer: '', //选择类型
           answerItem: '', //选择题目
           tipcImgUrl: '', //动态图
+          questionImgUrl: '', //题干图
           bgImgUrl: '', //背景图
         }
       }
@@ -189,9 +208,12 @@
           this.singleAnswer = this.addInfo.singleAnswer ? 0 : 1
           this.anyAnswer = this.addInfo.anyAnswer ? 1 : 0
           this.addInfo.answerItem && (this.optionList = JSON.parse(this.addInfo.answerItem))
+          this.addInfo.audioUrl = this.addInfo.questionAudioUrl
+          this.addInfo.tipcImgUrl = this.addInfo.questionImgUrl
+          console.log(this.addInfo,1)
         }
         this.addInfo.id = this.dataObj.id
-        this.playAudioUrl = this.addInfo.audioPlayUrl
+        this.playAudioUrl = this.dataObj.operate == '1' ? this.addInfo.audioPlayUrl : this.addInfo.questionAudioPlayUrl
         this.addInfo.operate = this.dataObj.operate
       }
     },
@@ -209,6 +231,7 @@
               this.addInfo.audioUrl = ''
               this.addInfo.tipcImgUrl = ''
               this.addInfo.bgImgUrl = ''
+              this.addInfo.questionImgUrl = ''
             } else {
               this.optionList = []
             }
@@ -265,7 +288,7 @@
 
         if (!this.addInfo.operate) {
           return this.$Message.error('请选择模板样式')
-        } else if (this.addInfo.operate == '2' && !this.addInfo.tipcImgUrl) {
+        } else if (this.addInfo.operate == '2' && !this.addInfo.questionImgUrl) {
           return this.$Message.error('请上传题干图片')
         } else if (this.addInfo.operate == '1' && !this.addInfo.bgImgUrl) {
           return this.$Message.error('请上传背景图片')
@@ -339,6 +362,13 @@
           this.$Message.success('上传成功')
           this.addInfo.tipcImgUrl = res.resultData.url
           console.log(this.addInfo.tipcImgUrl, 'tipcImgUrl')
+        }
+      },
+      handleSuccessQuestion(res) {
+        if (res.code === 200) {
+          this.$Message.success('上传成功')
+          this.addInfo.questionImgUrl = res.resultData.url
+          console.log(this.addInfo.questionImgUrl, 'questionImgUrl')
         }
       },
       handleSuccessBack(res) {

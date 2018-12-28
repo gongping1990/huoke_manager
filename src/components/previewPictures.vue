@@ -22,7 +22,7 @@
           </div>
         </div>
         <div class="-i-banner">
-          <img class="-i-banner-img" :src="imgUrlInfo.question.tipcImgUrl"/>
+          <img class="-i-banner-img" :src="imgUrlInfo.question.questionImgUrl"/>
         </div>
         <div class="-i-content">
           <div class="-i-content-wrap">
