@@ -125,7 +125,7 @@
         this.pinyinInfo = pinyinUtil.getPinyin(this.addInfo.name)
       },
       openNextChildTwo(data, index) {
-        console.log(data, index)
+        this.storageList = []
         this.firstChild[index].isShowChild = !this.firstChild[index].isShowChild
         this.firstChild = Object.assign([], this.firstChild)
         localStorage.setItem('chapterId', data.id)
@@ -170,7 +170,7 @@
         this.isOpenModal = false
         this.pinyinInfo = ''
       },
-      getList() {
+      getList(num) {
         this.isFetching = true
         this.$api.book.treeList({
           courseId: this.paramsInfo.courseId,
@@ -182,11 +182,13 @@
             response => {
               this.firstChild = response.data.resultData;
               if (localStorage.chapterId) {
-                for (let data of this.firstChild) {
-                  if (data.id == localStorage.chapterId) {
-                    data.isShowChild = true
-                  } else {
-                    data.isShowChild = false
+                if(!num) {
+                  for (let data of this.firstChild) {
+                    if (data.id == localStorage.chapterId) {
+                      data.isShowChild = true
+                    } else {
+                      data.isShowChild = false
+                    }
                   }
                 }
 
@@ -258,7 +260,7 @@
             response => {
               if (response.data.code == '200') {
                 this.$Message.success('提交成功');
-                this.getList()
+                this.getList(1)
                 this.closeModal(name)
               }
             })
