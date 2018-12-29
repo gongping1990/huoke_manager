@@ -117,6 +117,7 @@
         wordType: '',
         wordRadioType: '1',
         dataItem: '',
+        storageItem: '',
         dataList: [],
         sortList: [],
         addInfo: {
@@ -137,6 +138,7 @@
           this.toBack()
         } else {
           this.dataItem = '';
+          this.storageItem = '';
           (this.type != '0' && this.type != '-1') && this.getList()
         }
       }
@@ -216,9 +218,10 @@
         })
       },
       toCheckBtn(data, index) {
-        this.dataList[index].isShowChild = !this.dataList[index].isShowChild
-        this.dataList = Object.assign([], this.dataList)
+        // this.dataList[index].isShowChild = !this.dataList[index].isShowChild
+        // this.dataList = Object.assign([], this.dataList)
         this.dataItem = data
+        this.storageItem = data
         if (this.type == '1') {
           this.dataItem.operate = '1'
           this.dataItem.type = '1'
@@ -275,15 +278,24 @@
             response => {
               this.dataList = response.data.resultData;
               this.dataList.forEach((item, index) => {
-                if (index == '0') {
+                if(this.storageItem && (this.storageItem.id == item.id)) {
                   item.isActive = true
                   this.dataItem = item
                   if (this.type == '1') {
-                    this.dataItem.operate = '1'
+                    this.dataItem.operate = this.wordRadioType
                     this.dataItem.type = '1'
                   }
                 } else {
-                  item.isActive = false
+                  if (index == '0' && !this.storageItem) {
+                    item.isActive = true
+                    this.dataItem = item
+                    if (this.type == '1') {
+                      this.dataItem.operate = this.wordRadioType
+                      this.dataItem.type = '1'
+                    }
+                  } else {
+                    item.isActive = false
+                  }
                 }
               })
               localStorage.setItem('typeId', this.type)
@@ -323,7 +335,7 @@
       },
       addCourse() {
         this.dataItem = ''
-        this.wordRadioType = '1'
+        // this.wordRadioType = '1'
         this.closeEdit()
         this.getList()
       }
