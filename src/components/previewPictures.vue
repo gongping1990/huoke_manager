@@ -46,6 +46,8 @@
       <div class="-s-img"><img src="../assets/images/study-bg.png"></div>
       <div class="-s-wrap" :class="{'small-img': directEntry}"
            :style="{backgroundImage:'url(' + imgUrl + ')', backgroundRepeat:'no-repeat',  backgroundSize: 'cover'}">
+      </div>
+      <div class="-s-wrap -s-text">
         <div class="-s-name">{{lessonName}}</div>
         <div class="-s-head">学习目标</div>
         <div v-for="(list, index) of textList" :key="index" class="-s-list">
@@ -280,6 +282,10 @@
       .-s-list {
         padding: 1px;
       }
+    }
+
+    .-s-text{
+      z-index: 10;
     }
     .small-img {
       height: 220px

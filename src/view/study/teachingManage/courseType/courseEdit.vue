@@ -132,10 +132,10 @@
       <Form-item label="翻页延时" prop="turnDelay" class="ivu-form-item-required -c-form-item"
                  v-if="addInfo.operate == '1'">
         <Radio-group v-model="addInfo.turnDelay">
-          <Radio :label=0>1秒</Radio>
-          <Radio :label=1>2秒</Radio>
-          <Radio :label=2>3秒</Radio>
-          <Radio :label=3>4秒</Radio>
+          <Radio :label=0>0秒</Radio>
+          <Radio :label=1>1秒</Radio>
+          <Radio :label=2>2秒</Radio>
+          <Radio :label=3>3秒</Radio>
         </Radio-group>
       </Form-item>
 
@@ -181,7 +181,7 @@
           question: '', //题干题目
           audioUrl: '', //音频路径
           anyAnswer: '', //答题类型
-          turnDelay: 0, //延时
+          turnDelay: 1, //延时
           singleAnswer: '', //选择类型
           answerItem: '', //选择题目
           tipcImgUrl: '', //动态图
