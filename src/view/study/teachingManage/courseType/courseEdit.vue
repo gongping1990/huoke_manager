@@ -12,7 +12,7 @@
         <Input class="-s-width" v-model="addInfo.question" placeholder="请输入题干文案" style="width: 300px"/>
       </Form-item>
 
-      <Form-item label="动态图片" class="-c-form-item -c-border" v-if="type=='1'">
+      <Form-item label="动态图片" class="-c-form-item -c-border" v-if="type=='1' &&  addInfo.operate == '1' ">
         <Upload
           style="display: inline-block"
           :action="baseUrl"
@@ -337,13 +337,7 @@
 
       },
       closeModal() {
-        this.$Modal.confirm({
-          title: '提示',
-          content: '返回关卡列表，当前模板编辑内容将被清空',
-          onOk: () => {
-            this.$emit('addCourseOk')
-          }
-        })
+        this.$emit('addCourseOk')
       },
       beforeUpload(file) {
         let fileType = file.type.split('/')

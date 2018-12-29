@@ -218,6 +218,7 @@
         if(this.type == '1') {
           this.dataItem.operate = '1'
           this.dataItem.type = '1'
+          this.wordRadioType = '1'
         }
         this.dataList.forEach(item => {
           if (data.id == item.id) {
