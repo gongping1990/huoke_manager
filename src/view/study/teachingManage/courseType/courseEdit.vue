@@ -202,6 +202,11 @@
           this.addInfo = {
             ...this.dataObj.learn
           }
+
+          // 针对生字词特殊情况
+          if(this.type == '1') {
+            this.addInfo.turnDelay = this.addInfo.turnDelay ? this.addInfo.turnDelay : 1
+          }
         } else {
           this.addInfo = {
             ...this.dataObj.question
