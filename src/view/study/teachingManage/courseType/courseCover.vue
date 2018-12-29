@@ -13,7 +13,7 @@
           :on-success="handleSuccess"
           :on-exceeded-size="handleSize"
           :on-error="handleErr">
-          <div class="g-primary-btn -t-width">{{addInfo.coverImgUrl ? '编辑图片' : '上传图片'}}</div>
+          <div class="g-primary-btn -t-width">{{addInfo.coverImgUrl ? '重新上传' : '上传图片'}}</div>
         </Upload>
         <span class="-c-tips">只能上传jpg/png文件，且不超过200kb，图片尺寸为960px*360px</span>
       </div>

@@ -18,7 +18,7 @@
             <img class="-i-title-img" src="../assets/images/questionTitle.png"/>
           </div>
           <div class="">
-            问答：{{imgUrlInfo.question.question}}
+            {{imgUrlInfo.question.question}}
           </div>
         </div>
         <div class="-i-banner">

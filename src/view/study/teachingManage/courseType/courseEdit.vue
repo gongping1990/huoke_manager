@@ -28,7 +28,7 @@
           <div class="-c-course-item">
             <img :src="addInfo.tipcImgUrl">
           </div>
-          <Button class="g-cursor" type="text" v-if="addInfo.operate == '1'" @click="addInfo.tipcImgUrl= ''">删除</Button>
+          <div class="-i-del" v-if="addInfo.operate == '1'" @click="addInfo.tipcImgUrl= ''">删除图片</div>
         </div>
       </Form-item>
 
@@ -49,6 +49,7 @@
           <div class="-c-course-item">
             <img :src="addInfo.questionImgUrl">
           </div>
+          <div class="-i-del" v-if="addInfo.operate == '2'" @click="addInfo.questionImgUrl= ''">删除图片</div>
         </div>
       </Form-item>
 
@@ -93,6 +94,7 @@
                    ref="media"
                    :src="playAudioUrl"
                    controls="controls" preload="auto"></audio>
+            <Icon v-if="this.addInfo.operate == '2'" type="md-close-circle" size="20" class="-item-icon-close g-cursor" @click="closeAudio"/>
           </div>
         </div>
       </Form-item>
@@ -100,8 +102,8 @@
       <Form-item label="选择类型" class="ivu-form-item-required -c-form-item"
                  v-if=" addInfo.operate == '2'">
         <Radio-group v-model="singleAnswer">
-          <Radio :label=1>多选</Radio>
           <Radio :label=0>单选</Radio>
+          <Radio :label=1>多选</Radio>
         </Radio-group>
       </Form-item>
 
@@ -130,10 +132,10 @@
       <Form-item label="翻页延时" prop="turnDelay" class="ivu-form-item-required -c-form-item"
                  v-if="addInfo.operate == '1'">
         <Radio-group v-model="addInfo.turnDelay">
-          <Radio :label=0>0秒</Radio>
-          <Radio :label=1>1秒</Radio>
-          <Radio :label=2>2秒</Radio>
-          <Radio :label=3>3秒</Radio>
+          <Radio :label=0>1秒</Radio>
+          <Radio :label=1>2秒</Radio>
+          <Radio :label=2>3秒</Radio>
+          <Radio :label=3>4秒</Radio>
         </Radio-group>
       </Form-item>
 
@@ -167,7 +169,7 @@
         baseUrl: `${getBaseUrl()}/common/uploadPublicFile`, // 公有 （图片）
         baseUrlVa: `${getBaseUrl()}/common/uploadPrivateFile`, //私有地址 （音视频）
         playAudioUrl: '',
-        singleAnswer: '',
+        singleAnswer: 0,
         anyAnswer: '',
         optionLetter: ['A', 'B', 'C', 'D', 'E'],
         optionList: [],
@@ -218,6 +220,10 @@
       }
     },
     methods: {
+      closeAudio () {
+        this.addInfo.audioUrl = ''
+        this.playAudioUrl = ''
+      },
       changeTemplate() {
         this.$Modal.confirm({
           title: '提示',
@@ -449,7 +455,10 @@
       }
 
       .-c-course-wrap {
+        position: relative;
+
         .-c-course-item {
+          position: relative;
           background-color: #EBEBEB;
           width: 200px;
           margin-top: 20px;
@@ -475,6 +484,12 @@
             color: #ffffff;
             background: rgba(255, 237, 116, 1);
           }
+
+          .-item-icon-close{
+            position: absolute;
+            right: -10px;
+            top: -10px;
+          }
         }
       }
     }
@@ -490,6 +505,18 @@
 
     .-c-border {
       border-bottom: 1px solid #EBEBEB;
+    }
+
+    .-i-del {
+      position: absolute;
+      top: 0;
+      left: 144px;
+      color: #ffff;
+      background-color: rgba(0, 0, 0, 0.4);
+      line-height: normal;
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 4px;
     }
   }
 </style>
