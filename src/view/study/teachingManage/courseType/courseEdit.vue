@@ -109,7 +109,7 @@
 
       <Form-item label="答案设置" class="ivu-form-item-required -c-form-item -c-border"
                  v-if=" addInfo.operate == '2'">
-        <Radio-group v-model="anyAnswer">
+        <Radio-group v-model="anyAnswer" @on-change="changeAnswer">
           <Radio :label=0>标准答案</Radio>
           <Radio :label=1>任意选择</Radio>
         </Radio-group>
@@ -220,6 +220,11 @@
       }
     },
     methods: {
+      changeAnswer () {
+        this.optionList.forEach(item=>{
+          item.isChecked = false
+        })
+      },
       closeAudio () {
         this.addInfo.audioUrl = ''
         this.playAudioUrl = ''
@@ -316,6 +321,7 @@
 
         if (this.addInfo.operate == '2') {
           this.addInfo.answerItem = JSON.stringify(this.optionList)
+          this.addInfo.questionAudioUrl = this.addInfo.audioUrl
         }
 
         this.addInfo.singleAnswer = this.singleAnswer == '0'

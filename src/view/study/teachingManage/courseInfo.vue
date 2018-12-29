@@ -25,6 +25,7 @@
 <script>
   import PathRecord from "@/components/tree/pathRecord";
   import CourseTitle from "./courseType/courseTitle";
+
   export default {
     name: 'courseInfo',
     components: {CourseTitle, PathRecord},
@@ -34,7 +35,7 @@
       }
     },
     computed: {
-      detailInfo () {
+      detailInfo() {
         let param = {
           ...this.$route.query
         }
@@ -42,7 +43,7 @@
       }
     },
     methods: {
-      changeType () {
+      changeType() {
         this.typeInfo = localStorage.typeId
       }
     }
@@ -50,8 +51,8 @@
 </script>
 
 <style lang="less">
-  .p-courseInfo{
-    .ivu-card-body{
+  .p-courseInfo {
+    .ivu-card-body {
       overflow: hidden;
       height: 100%;
     }
@@ -62,8 +63,8 @@
   .p-courseInfo {
     height: 100%;
 
-    .-t-header{
-      .-t-col{
+    .-t-header {
+      .-t-col {
         text-align: left;
       }
       margin-bottom: 20px;
