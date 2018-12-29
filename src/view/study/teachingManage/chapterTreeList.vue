@@ -8,7 +8,7 @@
       </Col>
       <Col :span="24" class="-t-item -t-flex -t-border">
         <Col :span="10" class="-t-child-padding">
-          <arrow-file :nodeData="{name:'根节点'}" :sort="1" @openChildData="openNextChild"></arrow-file>
+          <arrow-file :nodeData="{name:'根节点'}" :sort="1"></arrow-file>
         </Col>
         <Col :span="8"> &nbsp;</Col>
         <Col :span="6" class="g-t-left">
@@ -18,13 +18,14 @@
       <Col :span="24" v-for="(item1,index) of firstChild" :key="index"
            class="-t-item -t-border ">
         <Col :span="10" class="-t-child-padding">
-          <arrow-file :nodeData="item1" :sort="2" @openChildData="openNextChildTwo(item1,index)"></arrow-file>
+          <arrow-file :nodeData="item1" :sort="2" ref="arrowChild"
+                      @openChildData="openNextChildTwo(item1,index)"></arrow-file>
         </Col>
         <Col :span="8" class="-t-item-text -t-theme-color">
           {{item1.sortNum}}
         </Col>
         <Col :span="6" class="g-t-left">
-          <Button type="text" class="-t-theme-color" @click="openModal(item1,2)">添加子章节</Button>
+          <Button type="text" class="-t-theme-color" @click="openModal(item1,2,index)">添加子章节</Button>
           <Button type="text" class="-t-theme-color" @click="editModal('',item1,1)">编辑</Button>
           <Button type="text" class="-t-red-color" @click="delItem(item1.id,1)">删除</Button>
         </Col>
@@ -37,7 +38,8 @@
             <div class="-t-child-padding-two">{{item2.sortNum}}</div>
           </Col>
           <Col :span="6" class="g-t-left">
-            <Button type="text" class="-t-theme-color" @click="toDetail(item1,item2)">&nbsp;&nbsp;&nbsp;&nbsp;课程内容</Button>
+            <Button type="text" class="-t-theme-color" @click="toDetail(item1,item2)">&nbsp;&nbsp;&nbsp;&nbsp;课程内容
+            </Button>
             <Button type="text" class="-t-theme-color" @click="editModal(item1,item2,2)">编辑</Button>
             <Button type="text" class="-t-red-color" @click="delItem(item2.id,2)">删除</Button>
           </Col>
@@ -88,6 +90,7 @@
     data() {
       return {
         firstChild: [],
+        storageList: [],
         oldList: [],
         rootNode: '',
         isFetching: false,
@@ -106,7 +109,7 @@
       this.getList()
     },
     methods: {
-      toDetail (item1,item2) {
+      toDetail(item1, item2) {
         this.$router.push({
           name: 'courseInfo',
           query: {
@@ -121,17 +124,19 @@
       changePinYin() {
         this.pinyinInfo = pinyinUtil.getPinyin(this.addInfo.name)
       },
-      openNextChild(data) {
-        this.firstChild.forEach(item => {
-          item.isShowChild = false
-        })
-      },
       openNextChildTwo(data, index) {
+        console.log(data, index)
         this.firstChild[index].isShowChild = !this.firstChild[index].isShowChild
         this.firstChild = Object.assign([], this.firstChild)
-        localStorage.setItem('chapterId',data.id)
+        localStorage.setItem('chapterId', data.id)
+        this.firstChild.forEach(item => {
+          if (item.isShowChild) {
+            this.storageList.push(item)
+          }
+        })
       },
-      openModal(data, num) {
+      openModal(data, num, index) {
+        let _self = this
         this.isOpenModal = true
         this.addInfo = {
           name: '',
@@ -142,6 +147,12 @@
           id: data.id,
           name: data.name,
           num: num
+        }
+        if (num == '2' && !data.isShowChild) {
+          setTimeout(() => {
+            console.log(_self.$refs.arrowChild)
+            _self.$refs.arrowChild[index].openNextChild()
+          }, 0)
         }
       },
       editModal(first, data, num) {
@@ -172,16 +183,28 @@
               this.firstChild = response.data.resultData;
               if (localStorage.chapterId) {
                 for (let data of this.firstChild) {
-                  if(data.id == localStorage.chapterId) {
+                  if (data.id == localStorage.chapterId) {
                     data.isShowChild = true
                   } else {
                     data.isShowChild = false
                   }
                 }
+
+                for (let data of this.storageList) {
+                  for (let item of this.firstChild) {
+                    if (data.id == item.id) {
+                      item.isShowChild = true
+                    }
+                  }
+                }
               } else {
-                this.firstChild.forEach(item => {
-                  item.isShowChild = false
-                })
+                for (let data of this.storageList) {
+                  for (let item of this.firstChild) {
+                    if (data.id == item.id) {
+                      item.isShowChild = true
+                    }
+                  }
+                }
               }
             })
           .finally(() => {
@@ -284,7 +307,7 @@
       height: 18px
     }
 
-    .-t-item-text{
+    .-t-item-text {
       font-weight: bold;
     }
 
