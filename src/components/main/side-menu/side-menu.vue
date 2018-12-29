@@ -25,13 +25,13 @@
         <Menu-item name="active">新人礼包</Menu-item>
         <Menu-item name="coupon">优惠券</Menu-item>
       </Submenu>
-      <Submenu name="orderManager" class="-left-li">
-        <template slot="title">
-          <Icon type="ios-document" class="hk-menu-icon"/>
-          <span>订单管理</span>
-        </template>
-        <Menu-item name="orderList">订单列表</Menu-item>
-      </Submenu>
+      <!--<Submenu name="orderManager" class="-left-li">-->
+        <!--<template slot="title">-->
+          <!--<Icon type="ios-document" class="hk-menu-icon"/>-->
+          <!--<span>订单管理</span>-->
+        <!--</template>-->
+        <!--<Menu-item name="orderList">订单列表</Menu-item>-->
+      <!--</Submenu>-->
       <Submenu name="operate" class="-left-li">
         <template slot="title">
           <Icon type="md-trophy" class="hk-menu-icon"></Icon>
