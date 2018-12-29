@@ -8,7 +8,7 @@
         </Radio-group>
       </Form-item>
 
-      <Form-item label="题干文案" class="-c-form-item -c-border" v-if=" addInfo.operate == '2'">
+      <Form-item label="题干文案" class="-c-form-item -c-border ivu-form-item-required" v-if=" addInfo.operate == '2'">
         <Input class="-s-width" v-model="addInfo.question" placeholder="请输入题干文案" style="width: 300px"/>
       </Form-item>
 
@@ -32,19 +32,19 @@
         </div>
       </Form-item>
 
-      <Form-item label="题干图片" class="-c-form-item -c-border ivu-form-item-required"
+      <Form-item label="题干图片" class="-c-form-item -c-border"
                  v-if="addInfo.operate == '2'">
         <Upload
           style="display: inline-block"
           :action="baseUrl"
           :show-upload-list="false"
-          :max-size="500"
+          :max-size="200"
           :on-success="handleSuccessQuestion"
           :on-exceeded-size="handleSize"
           :on-error="handleErr">
           <Button ghost type="primary">上传图片</Button>
         </Upload>
-        <span class="-c-tips">图片尺寸不低于285x432px 图片大小：100K以内</span>
+        <span class="-c-tips">图片尺寸不低于640x238px 图片大小：200K以内</span>
         <div class="-c-course-wrap" v-if="addInfo.questionImgUrl">
           <div class="-c-course-item">
             <img :src="addInfo.questionImgUrl">
@@ -73,7 +73,7 @@
         </div>
       </Form-item>
 
-      <Form-item label="上传音频" prop="audioUrl" class="ivu-form-item-required -c-form-item -c-border">
+      <Form-item label="上传音频" prop="audioUrl" class="-c-form-item -c-border" :class="{'ivu-form-item-required': this.addInfo.operate == '1'}">
         <Upload
           :action="baseUrlVa"
           :show-upload-list="false"
@@ -209,7 +209,7 @@
           this.anyAnswer = this.addInfo.anyAnswer ? 1 : 0
           this.addInfo.answerItem && (this.optionList = JSON.parse(this.addInfo.answerItem))
           this.addInfo.audioUrl = this.addInfo.questionAudioUrl
-          this.addInfo.tipcImgUrl = this.addInfo.questionImgUrl
+          // this.addInfo.tipcImgUrl = this.addInfo.questionImgUrl
           console.log(this.addInfo,1)
         }
         this.addInfo.id = this.dataObj.id
@@ -288,11 +288,11 @@
 
         if (!this.addInfo.operate) {
           return this.$Message.error('请选择模板样式')
-        } else if (this.addInfo.operate == '2' && !this.addInfo.questionImgUrl) {
-          return this.$Message.error('请上传题干图片')
+        } else if (this.addInfo.operate == '2' && !this.addInfo.question) {
+          return this.$Message.error('请输入题干文案')
         } else if (this.addInfo.operate == '1' && !this.addInfo.bgImgUrl) {
           return this.$Message.error('请上传背景图片')
-        } else if (!this.addInfo.audioUrl) {
+        } else if (this.addInfo.operate == '1' && !this.addInfo.audioUrl) {
           return this.$Message.error('请上传音频内容')
         } else if (this.addInfo.operate == '2' && this.singleAnswer === '') {
           return this.$Message.error('请设置选择类型')
