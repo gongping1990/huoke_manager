@@ -378,9 +378,9 @@
         this.couponInfo.getStartTime = !this.couponInfo.releaseType ? new Date(this.getStartTime).getTime() : ''
         this.couponInfo.getEndTime = !this.couponInfo.releaseType ? new Date(this.getEndTime).getTime() : ''
 
-        this.couponInfo.denomination = this.couponInfo.denomination * 100
+        this.couponInfo.denomination = parseFloat((this.couponInfo.denomination * 100).toPrecision(12))
 
-        this.couponInfo.moneyOff = this.couponInfo.moneyOff != null ? this.couponInfo.moneyOff * 100 : null
+        this.couponInfo.moneyOff = this.couponInfo.moneyOff != null ? parseFloat((this.couponInfo.moneyOff * 100).toPrecision(12)) : null
         this.isSending = true
 
         this.$api.coupon.editCoupon(this.couponInfo)
