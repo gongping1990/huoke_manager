@@ -1,6 +1,6 @@
 <template>
   <Layout style="height: 100%" class="main">
-    <Sider class="left-sider" collapsible hide-trigger :width="256" :collapsed-width="64" :style="{overflow: 'hidden'}">
+    <Sider class="left-sider" collapsible hide-trigger :width="256" :collapsed-width="64" :style="{overflow: 'auto'}">
       <side-menu class="hk_menu" :openName='openName'></side-menu>
     </Sider>
     <Layout>

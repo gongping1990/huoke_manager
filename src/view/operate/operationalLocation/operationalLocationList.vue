@@ -5,7 +5,7 @@
         <Col :span="5">
           <div class="-search">
             <Select v-model="selectInfo" class="-search-select">
-              <Option value="1">banner名称</Option>
+              <Option value="1">运营位名称</Option>
             </Select>
             <span class="-search-center">|</span>
             <Input v-model="searchInfo.nickname" class="-search-input" placeholder="请输入关键字" icon="ios-search"
@@ -13,7 +13,7 @@
           </div>
         </Col>
         <Col :span="18" class="g-flex-a-j-center -date-search">
-          <Col span="2">反馈时间:</Col>
+          <Col span="2">创建日期:</Col>
           <Col span="14" class="g-flex-a-j-center">
             <div>
               <Date-picker class="date-time" type="datetime" placeholder="选择开始日期"
@@ -45,9 +45,9 @@
         v-model="isOpenModal"
         @on-cancel="closeModal('addInfo')"
         width="500"
-        :title="addInfo.id ? '编辑banner' : '创建banner'">
+        :title="addInfo.id ? '编辑运营位' : '创建运营位'">
         <Form ref="addInfo" :model="addInfo" :rules="ruleValidate" :label-width="90">
-          <Form-item label="banner图片" prop="imgResUrl" class="ivu-form-item-required">
+          <Form-item label="运营位图片" prop="imgResUrl" class="ivu-form-item-required">
             <Upload
               v-if="!addInfo.imgResUrl"
               :action="baseUrl"
@@ -59,7 +59,7 @@
               :on-error="handleErr">
               <div class="g-course-add-style">
                 <span>+</span>
-                <span>上传banner图片</span>
+                <span>上传图片</span>
               </div>
             </Upload>
             <div class="-c-course-wrap" v-if="addInfo.imgResUrl">
@@ -128,7 +128,7 @@
   import {getBaseUrl} from '@/libs/index'
 
   export default {
-    name: 'bannerList',
+    name: 'operationalLocation',
     data() {
       return {
         baseUrl: `${getBaseUrl()}/common/uploadPublicFile`,
@@ -352,7 +352,7 @@
       delItem(param) {
         this.$Modal.confirm({
           title: '提示',
-          content: '确认要删除banner图片吗？',
+          content: '确认要删除运营位图片吗？',
           onOk: () => {
             this.$api.banner.delBanner({
               id: param.id
@@ -368,7 +368,7 @@
       },
       submitInfo(name) {
         if (!this.addInfo.imgResUrl) {
-          return this.$Message.error('请上传banner图片')
+          return this.$Message.error('请上传运营位图片')
         } else if (this.addInfo.sortnum && (this.addInfo.sortnum < 1 || this.addInfo.sortnum > 99999)) {
           return this.$Message.error('排序值范围1-99999')
         } else if (!this.getStartTime) {

@@ -16,9 +16,7 @@
           <div class="g-flex-a-j-center">
             <div class="-search-select-text">关注公众号：</div>
             <Select v-model="searchInfo.subscripbe" @on-change="getList" class="-search-selectOne">
-              <Option label="全部" value="-1"></Option>
-              <Option label="是" value="1"></Option>
-              <Option label="否" value="2"></Option>
+              <Option v-for="item of wxList" :label="item.name" :value="item.appid" :key="item.appid"></Option>
             </Select>
           </div>
         </Col>
@@ -46,9 +44,11 @@
 
 <script>
   import dayjs from 'dayjs'
+  import Operation from "iview/src/components/transfer/operation";
 
   export default {
     name: 'userList',
+    components: {Operation},
     data() {
       return {
         switch1: '',
@@ -62,6 +62,7 @@
         },
         selectInfo: '1',
         dataList: [],
+        wxList: [],
         total: 0,
         isFetching: false,
         columns: [
@@ -157,11 +158,23 @@
     },
     mounted() {
       this.getList()
+      this.getWxList()
     },
     methods: {
       currentChange(val) {
         this.tab.page = val;
         this.getList();
+      },
+      getWxList() {
+        this.$api.user.getWxList()
+          .then(
+            response => {
+              this.wxList = response.data.resultData;
+              this.wxList.unshift({
+                appid: '-1',
+                name: '全部'
+              })
+            })
       },
       //分页查询
       getList() {
@@ -169,7 +182,8 @@
           current: this.tab.page,
           size: this.tab.pageSize,
           hasPhone: this.searchInfo.hasPhone != '-1' ? (this.searchInfo.hasPhone == '1') : '',
-          subscripbe: this.searchInfo.subscripbe != '-1' ? (this.searchInfo.subscripbe == '1') : '',
+          // subscripbe: this.searchInfo.subscripbe != '-1' ? (this.searchInfo.subscripbe == '1') : '',
+          appid: this.searchInfo.subscripbe != '-1' ? this.searchInfo.subscripbe : '',
         }
 
         if (this.selectInfo == '1' && this.searchInfo) {

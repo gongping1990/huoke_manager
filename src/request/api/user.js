@@ -29,6 +29,10 @@ const user = {
   // 更新虚拟用户
   uploadVirtualUser(params) {
     return axios.post("/user/updateVirtualUser", qs.stringify(params));
+  },
+  // 获取微信工作中号
+  getWxList(params) {
+    return axios.get("/user/listMpAppid");
   }
 };
 

@@ -13,6 +13,8 @@ import book from "./book";
 import slide from "./slide";
 import feedback from "./feedback";
 import mission from "./mission";
+import config from "./config";
+import trusteeship from "./trusteeship";
 
 
 export default {
@@ -30,5 +32,7 @@ export default {
   book,
   slide,
   feedback,
-  mission
+  mission,
+  config,
+  trusteeship
 }

@@ -113,13 +113,6 @@
             }
           },
           {
-            title: '有效期',
-            render: (h, params) => {
-              return h("span",
-                `${dayjs(params.row.useStartTime).format("YYYY-MM-DD")} -- ${dayjs(params.row.useEndTime).format("YYYY-MM-DD")}`);
-            }
-          },
-          {
             title: '发行方式',
             render: (h, params) => {
               return h('span', params.row.releaseType ? '主动推送' : '用户领取')
@@ -138,6 +131,22 @@
             render: (h, params) => {
               return h('span', params.row.total - params.row.surplusAmount)
             }
+          },
+          {
+            title: '领取时间',
+            render: (h, params) => {
+              return h("span",
+                `${dayjs(params.row.getStartTime).format("YYYY-MM-DD")} -- ${dayjs(params.row.getEndTime).format("YYYY-MM-DD")}`);
+            },
+            width:180
+          },
+          {
+            title: '有效期',
+            render: (h, params) => {
+              return h("span",
+                `${dayjs(params.row.useStartTime).format("YYYY-MM-DD")} -- ${dayjs(params.row.useEndTime).format("YYYY-MM-DD")}`);
+            },
+            width:180
           },
           {
             title: '状态',

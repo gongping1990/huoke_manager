@@ -1,5 +1,5 @@
 <template>
-  <div class="p-help">
+  <div class="p-order">
     <Card>
       <Row class="g-search">
         <Col :span="3" class="g-t-left">
@@ -55,22 +55,77 @@
       <Table class="-c-tab" :loading="isFetching" :columns="columns" :data="dataList"></Table>
 
       <Page class="g-text-right" :total="total" size="small" show-elevator :page-size="tab.pageSize"
-            :current="tab.page" @on-change="currentChange" ></Page>
+            :current="tab.page" @on-change="currentChange"></Page>
     </Card>
 
     <Modal
-      class="p-help"
+      class="p-order"
       v-model="isOpenModal"
-      @on-cancel="closeModal('addInfo')"
+      @on-cancel="isOpenModal = false"
       width="600"
-      title="编辑好友助力">
-      <Form ref="addInfo" :model="addInfo" :label-width="90">
-        <FormItem label="助力人数" prop="frendHelpCount" class="ivu-form-item-required">
-          <Input type="text" :disabled="isEdit" v-model="addInfo.frendHelpCount" placeholder="请输入助力人数"></Input>
-        </FormItem>
+      title="订单详情">
+      <div class="-title">订单信息</div>
+      <Form ref="orderInfo" :model="orderInfo" :label-width="90">
+        <div class="-p-o-flex">
+          <FormItem label="订单号" class="-p-o-width">{{orderInfo.orderId}}</FormItem>
+          <FormItem label="订单金额" class="-p-o-width">{{orderInfo.amount | moneyFormatter}} 元</FormItem>
+        </div>
+        <div class="-p-o-flex">
+          <FormItem label="订单类型" class="-p-o-width">{{orderInfo.mode=='1' ? "拼团购买" : "单独购买"}}</FormItem>
+          <FormItem label="优惠金额" class="-p-o-width">{{orderInfo.couponAmount | moneyFormatter}} 元</FormItem>
+        </div>
+        <div class="-p-o-flex">
+          <FormItem label="订单状态" class="-p-o-width">{{orderStatus[orderInfo.tradeState]}}</FormItem>
+          <FormItem label="实际支付" class="-p-o-width">{{orderInfo.actualAmount | moneyFormatter}} 元</FormItem>
+        </div>
+        <div class="-p-o-flex">
+          <FormItem label="用户昵称" class="-p-o-width -c-tips g-cursor"><span
+            @click="jumpUrl()">{{orderInfo.nickname}}</span></FormItem>
+          <FormItem label="三方交易号" class="-p-o-width">{{orderInfo.tradeNo}}</FormItem>
+        </div>
+        <div class="-p-o-flex">
+          <FormItem label="创建时间" class="-p-o-width">{{orderInfo.gmtCreate}}</FormItem>
+          <FormItem label="支付时间" class="-p-o-width">{{orderInfo.timeEnd}}</FormItem>
+        </div>
       </Form>
-      <div slot="footer" class="g-flex-j-sa">
-        <div @click="closeModal('addInfo')" class="g-primary-btn "> {{isSending ? '提交中...' : '确 认'}}</div>
+
+      <div class="-title" v-if="courseInfo">拼课信息</div>
+      <Form ref="courseInfo" v-if="courseInfo" :model="courseInfo" :label-width="90">
+        <div class="-p-o-flex">
+          <FormItem label="拼课单号" class="-p-o-width">{{courseInfo.orderId}}</FormItem>
+          <FormItem label="拼课人数" class="-p-o-width">{{courseInfo.groupNum}}人</FormItem>
+        </div>
+        <div class="-p-o-flex">
+          <FormItem label="其他拼课用户" class="-p-o-width">
+            <span style="margin-right: 20px"
+                  class="g-cursor"
+                  :class="{'-c-tips': !item.isVirtual}"
+                  @click="jumpUrl(item)"
+                  v-for="item of courseInfo.users">
+              {{item.name}}
+            </span>
+          </FormItem>
+          <FormItem label="拼课时限" class="-p-o-width">{{courseInfo.groupWaitTime}}</FormItem>
+        </div>
+        <div class="-p-o-flex">
+          <FormItem label="其他拼课单号" class="-p-o-width">
+            <span style="margin-right: 20px"
+                  class="g-cursor"
+                  :class="{'-c-tips': !item.isVirtual}"
+                  @click="jumpUrlOrder(item)"
+                  v-for="item of courseInfo.orders">
+              {{item.orderId}}
+            </span>
+          </FormItem>
+          <FormItem label="剩余时限" class="-p-o-width">{{courseInfo.surplusTime | timeFormatter}}</FormItem>
+        </div>
+        <div class="-p-o-flex">
+          <FormItem label="拼课价格" class="-p-o-width">{{courseInfo.price | moneyFormatter}} 元</FormItem>
+          <FormItem label="" class="-p-o-width"></FormItem>
+        </div>
+      </Form>
+      <div slot="footer" class="-p-o-footer">
+        <div @click="isOpenModal = false" class="g-primary-btn ">确 认</div>
       </div>
     </Modal>
   </div>
@@ -137,15 +192,13 @@
           }
         ],
         dataList: [],
-        courseList: [],
         total: 0,
         isFetching: false,
         isOpenModal: false,
-        isSending: false,
-        isEdit: false,
         getStartTime: '',
         getEndTime: '',
-        addInfo: {},
+        orderInfo: {},
+        courseInfo: {},
         columns: [
           {
             title: '课程名称',
@@ -171,7 +224,7 @@
           {
             title: '订单金额',
             render: (h, params) => {
-              return h('div', params.row.price / 100)
+              return h('div', params.row.amount / 100)
             },
             align: 'center'
           },
@@ -240,10 +293,29 @@
         ],
       };
     },
+    filters: {
+      moneyFormatter(value) {
+        return (value / 100.0).toFixed(2);
+      },
+      timeFormatter(value) {
+        return (dayjs(+value).format('YYYY-MM-DD HH:mm:ss'));
+      }
+    },
     mounted() {
       this.getList()
     },
     methods: {
+      jumpUrlOrder(item) {
+        if (item.isVirtual) return
+        this.getDetail(item.orderId)
+      },
+      jumpUrl(item) {
+        if (item && item.isVirtual) return
+        this.$router.push({
+          path: "/userInfo",
+          query: {id: item ? item.userId : this.orderInfo.userId}
+        });
+      },
       toExcel() {
         let params = {
           orderId: '',
@@ -266,29 +338,7 @@
       },
       openModal(data) {
         this.isOpenModal = true
-        if (data) {
-          let _self = this
-          this.isEdit = true
-          this.addInfo = JSON.parse(JSON.stringify(data))
-          this.addInfo.limit = this.addInfo.activityCount == '-1' ? 0 : 1
-          this.getStartTime = new Date(this.addInfo.startTime)
-          this.getEndTime = new Date(this.addInfo.endTime)
-          this.dateEndOption = {
-            disabledDate(date) {
-              return date && date.valueOf() < (_self.addInfo.endTime - 24 * 60 * 60 * 1000)
-            }
-          }
-        } else {
-          this.getStartTime = ''
-          this.getEndTime = ''
-          this.isEdit = false
-          this.addInfo = {
-            limit: 0
-          }
-        }
-      },
-      closeModal(name) {
-        this.isOpenModal = false
+        this.getDetail(data.id)
       },
       paramsInit() {
         let params = {
@@ -322,13 +372,35 @@
           .finally(() => {
             this.isFetching = false
           })
+      },
+      getDetail(id) {
+        this.$api.order.orderDetail(id)
+          .then(
+            response => {
+              this.orderInfo = response.data.resultData.orderSingleRespVO;
+              this.courseInfo = response.data.resultData.orderGroupRespVO;
+            })
       }
     }
   };
 </script>
 
 <style lang="less" scoped>
-  .p-help {
+  .p-order {
+    .-title {
+      color: #B3B5B8;
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    .-p-o-width {
+      width: 50%;
+    }
+
+    .-p-o-footer {
+      display: flex;
+      justify-content: flex-end;
+    }
     .-search-select-text {
       min-width: 70px;
     }
@@ -351,6 +423,15 @@
     }
     .-date-search {
       margin-left: 20px;
+    }
+
+    .-p-o-flex {
+      display: flex;
+      justify-content: space-around;
+    }
+
+    .-c-tips {
+      color: #39f
     }
 
   }

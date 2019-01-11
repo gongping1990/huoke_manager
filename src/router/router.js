@@ -79,11 +79,65 @@ export const otherRouter = {
       ],
       component: () => import('@/view/study/teachingManage/courseInfo')
     },
-
+    {
+      path: '/channelDetail',
+      name: 'channelDetail',
+      meta: [
+        {name: '运营管理'},
+        {name: '渠道管理', url: 'channelManagement'},
+        {name: '渠道详情'}
+      ],
+      component: () => import('@/view/operate/channelManagement/channelManagementDetail')
+    },
+    {
+      path: '/editCourse',
+      name: 'editCourse',
+      meta: [
+        {name: '课程管理'},
+        {name: '课程列表',url: 'courseList'},
+        {name: '编辑课程'}
+      ],
+      component: () => import('@/view/courseManagement/course/courseEdit')
+    }
   ]
 };
 // 作为main组件的子页面展示并且在左侧菜单显示的路由写在appRouter里
 export const appRouter = [
+  {
+    path: '/dataStatistics',
+    name: 'dataStatistics',
+    title: '数据统计',
+    component: Main,
+    children: [
+      {
+        path: '/userData',
+        name: 'userData',
+        meta: [
+          {name:'数据统计'},
+          {name:'用户数据'}
+        ],
+        component: () => import('@/view/dataStatistics/commodityData/commodityData')
+      },
+      {
+        path: '/transactionData',
+        name: 'transactionData',
+        meta: [
+          {name:'数据统计'},
+          {name:'交易数据'}
+        ],
+        component: () => import('@/view/dataStatistics/commodityData/commodityData')
+      },
+      {
+        path: '/commodityData',
+        name: 'commodityData',
+        meta: [
+          {name:'数据统计'},
+          {name:'商品数据'}
+        ],
+        component: () => import('@/view/dataStatistics/commodityData/commodityData')
+      }
+    ]
+  },
   {
     path: '/market',
     name: 'market',
@@ -128,6 +182,19 @@ export const appRouter = [
           }
         ],
         component: () => import('@/view/marketingMangement/friendHelp/friendHelpList')
+      },
+      {
+        path: '/limitedTimeSpikeList',
+        name: 'limitedTimeSpikeList',
+        meta: [
+          {
+            name: '营销管理'
+          },
+          {
+            name: '限时秒杀'
+          }
+        ],
+        component: () => import('@/view/marketingMangement/limitedTimeSpike/limitedTimeSpikeList')
       },
       {
         path: '/groupLesson',
@@ -188,6 +255,71 @@ export const appRouter = [
           }
         ],
         component: () => import('@/view/operate/banner/bannerList')
+      },
+      {
+        path: '/channelManagement',
+        name: 'channelManagement',
+        meta: [
+          {
+            name: '运营管理'
+          },
+          {
+            name: '渠道管理'
+          }
+        ],
+        component: () => import('@/view/operate/channelManagement/channelManagementList')
+      },
+      {
+        path: '/pushWindow',
+        name: 'pushWindow',
+        meta: [
+          {
+            name: '运营管理'
+          },
+          {
+            name: '活动推送'
+          }
+        ],
+        component: () => import('@/view/operate/pushWindow/pushWindowList')
+      },
+      {
+        path: '/operationalLocation',
+        name: 'operationalLocation',
+        meta: [
+          {
+            name: '运营管理'
+          },
+          {
+            name: '运营位管理'
+          }
+        ],
+        component: () => import('@/view/operate/operationalLocation/operationalLocationList')
+      },
+      {
+        path: '/homeRecommend',
+        name: 'homeRecommend',
+        meta: [
+          {
+            name: '运营管理'
+          },
+          {
+            name: '首页推荐'
+          }
+        ],
+        component: () => import('@/view/operate/homeRecommend/homeRecommendList')
+      },
+      {
+        path: '/trusteeship',
+        name: 'trusteeship',
+        meta: [
+          {
+            name: '运营管理'
+          },
+          {
+            name: '页面托管'
+          }
+        ],
+        component: () => import('@/view/operate/trusteeship/trusteeshipList')
       }
     ]
   },
@@ -213,6 +345,40 @@ export const appRouter = [
     ]
   },
   {
+    path: '/course',
+    name: 'course',
+    title: '课程管理',
+    component: Main,
+    children: [
+      {
+        path: '/courseType',
+        name: 'courseType',
+        meta: [
+          {
+            name: '课程管理'
+          },
+          {
+            name: '课程分类'
+          }
+        ],
+        component: () => import('@/view/courseManagement/courseType/courseType')
+      },
+      {
+        path: '/courseList',
+        name: 'courseList',
+        meta: [
+          {
+            name: '课程管理'
+          },
+          {
+            name: '课程列表'
+          }
+        ],
+        component: () => import('@/view/courseManagement/course/courseList')
+      }
+    ]
+  },
+  {
     path: '/feedback',
     name: 'feedback',
     title: '反馈管理',
@@ -230,6 +396,19 @@ export const appRouter = [
           }
         ],
         component: () => import('@/view/feedback/userFeedback/userFeedback')
+      },
+      {
+        path: '/messageManagement',
+        name: 'messageManagement',
+        meta: [
+          {
+            name: '反馈管理'
+          },
+          {
+            name: '留言审核'
+          }
+        ],
+        component: () => import('@/view/feedback/messageManagement/messageManagementList')
       },
       {
         path: '/customerService',
