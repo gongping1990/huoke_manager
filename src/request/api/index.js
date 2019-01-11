@@ -15,6 +15,8 @@ import feedback from "./feedback";
 import mission from "./mission";
 import config from "./config";
 import trusteeship from "./trusteeship";
+import operation from "./operation";
+import popManage from "./popManage";
 
 
 export default {
@@ -34,5 +36,7 @@ export default {
   feedback,
   mission,
   config,
-  trusteeship
+  trusteeship,
+  operation,
+  popManage
 }

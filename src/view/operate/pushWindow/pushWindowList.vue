@@ -1,5 +1,5 @@
 <template>
-  <div class="p-banner">
+  <div class="p-popManage">
     <Card>
       <Row class="g-search">
         <Col :span="5">
@@ -13,7 +13,7 @@
           </div>
         </Col>
         <Col :span="18" class="g-flex-a-j-center -date-search">
-          <Col span="2">创建日期:</Col>
+          <Col span="2">有效期:</Col>
           <Col span="14" class="g-flex-a-j-center">
             <div>
               <Date-picker class="date-time" type="datetime" placeholder="选择开始日期"
@@ -41,15 +41,15 @@
             @on-change="currentChange"></Page>
 
       <Modal
-        class="p-banner"
+        class="p-popManage"
         v-model="isOpenModal"
         @on-cancel="closeModal('addInfo')"
         width="500"
         :title="addInfo.id ? '编辑弹窗' : '创建弹窗'">
         <Form ref="addInfo" :model="addInfo" :rules="ruleValidate" :label-width="90">
-          <Form-item label="弹窗图片" prop="imgResUrl" class="ivu-form-item-required">
+          <Form-item label="弹窗图片" prop="url" class="ivu-form-item-required">
             <Upload
-              v-if="!addInfo.imgResUrl"
+              v-if="!addInfo.url"
               :action="baseUrl"
               :show-upload-list="false"
               :max-size="200"
@@ -62,9 +62,9 @@
                 <span>上传图片</span>
               </div>
             </Upload>
-            <div class="-c-course-wrap" v-if="addInfo.imgResUrl">
+            <div class="-c-course-wrap" v-if="addInfo.url">
               <div class="-c-course-item">
-                <img :src="addInfo.imgResUrl">
+                <img :src="addInfo.url">
                 <div class="-i-del" @click="delImg()">删除</div>
               </div>
             </div>
@@ -104,7 +104,7 @@
       </Modal>
 
       <Modal
-        class="p-banner"
+        class="p-popManage"
         v-model="isOpenModalSort"
         @on-cancel="isOpenModalSort = false"
         width="350"
@@ -183,10 +183,10 @@
               }, [
                 h('img', {
                   attrs: {
-                    src: params.row.imgResUrl
+                    src: params.row.url
                   },
                   style: {
-                    width: '200px',
+                    width: '100px',
                     margin: '10px'
                   }
                 })
@@ -281,7 +281,7 @@
     },
     methods: {
       delImg() {
-        this.addInfo.imgResUrl = ''
+        this.addInfo.url = ''
       },
       openModal(data) {
         this.isOpenModal = true
@@ -294,7 +294,7 @@
           this.getStartTime = ''
           this.getEndTime = ''
           this.addInfo = {
-            imgResUrl: ''
+            url: ''
           }
         }
       },
@@ -317,7 +317,7 @@
       },
       handleSuccess(res, file) {
         if (res.code === 200) {
-          this.addInfo.imgResUrl = res.resultData.url
+          this.addInfo.url = res.resultData.url
         }
       },
       handleSize() {
@@ -333,7 +333,7 @@
       //分页查询
       getList() {
         this.isFetching = true
-        this.$api.banner.bannerList({
+        this.$api.popManage.popManageList({
           current: this.tab.page,
           size: this.tab.pageSize,
           name: this.searchInfo.nickname,
@@ -354,7 +354,7 @@
           title: '提示',
           content: '确认要删除弹窗图片吗？',
           onOk: () => {
-            this.$api.banner.delBanner({
+            this.$api.popManage.delPopManage({
               id: param.id
             }).then(
               response => {
@@ -367,7 +367,7 @@
         })
       },
       submitInfo(name) {
-        if (!this.addInfo.imgResUrl) {
+        if (!this.addInfo.url) {
           return this.$Message.error('请上传弹窗图片')
         } else if (this.addInfo.sortnum && (this.addInfo.sortnum < 1 || this.addInfo.sortnum > 99999)) {
           return this.$Message.error('排序值范围1-99999')
@@ -380,11 +380,10 @@
         if (this.isSending) return
         this.addInfo.showTime = dayjs(this.getStartTime).format("YYYY/MM/DD HH:mm:ss")
         this.addInfo.hideTime = dayjs(this.getEndTime).format("YYYY/MM/DD HH:mm:ss")
-        this.addInfo.bannerUrl = this.addInfo.imgResUrl
         this.$refs[name].validate((valid) => {
           if (valid) {
             this.isSending = true
-            let promiseDate = this.addInfo.id ? this.$api.banner.updateBanner(this.addInfo) : this.$api.banner.addBanner(this.addInfo)
+            let promiseDate = this.addInfo.id ? this.$api.popManage.updatePopManage(this.addInfo) : this.$api.popManage.addPopManage(this.addInfo)
             promiseDate
               .then(
                 response => {
@@ -404,7 +403,7 @@
         if (!this.sortNum) {
           return this.$Message.error('请输入排序值')
         }
-        this.$api.banner.updateSortNum({
+        this.$api.popManage.updateSortNum({
           id: this.addInfo.id,
           sortnum: this.sortNum
         }).then(response => {
@@ -421,7 +420,7 @@
 
 
 <style lang="less" scoped>
-  .p-banner {
+  .p-popManage {
     .-c-tips {
       color: #39f
     }
