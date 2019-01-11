@@ -6,15 +6,15 @@
         <img src="../../../assets/images/share-logo.png"/>
         <div class="-version">1.0</div>
       </div>
-      <!--<Submenu name="dataStatistics" class="-left-li">-->
-        <!--<template slot="title">-->
-          <!--<Icon type="ios-stats" class="hk-menu-icon"/>-->
-          <!--<span>数据统计</span>-->
-        <!--</template>-->
-        <!--<Menu-item name="userData">用户数据</Menu-item>-->
-        <!--<Menu-item name="transactionData">交易数据</Menu-item>-->
-        <!--<Menu-item name="commodityData">商品数据</Menu-item>-->
-      <!--</Submenu>-->
+      <Submenu name="dataStatistics" class="-left-li">
+        <template slot="title">
+          <Icon type="ios-stats" class="hk-menu-icon"/>
+          <span>数据统计</span>
+        </template>
+        <Menu-item name="userData">用户数据</Menu-item>
+        <Menu-item name="transactionData">交易数据</Menu-item>
+        <Menu-item name="commodityData">商品数据</Menu-item>
+      </Submenu>
       <Submenu name="market" class="-left-li">
         <template slot="title">
           <Icon type="logo-usd" class="hk-menu-icon"></Icon>
@@ -23,25 +23,25 @@
         <Menu-item name="aloneBuy">单独购</Menu-item>
         <Menu-item name="groupLesson">拼课</Menu-item>
         <Menu-item name="friendHelp">好友助力</Menu-item>
-        <!--<Menu-item name="limitedTimeSpikeList">限时秒杀</Menu-item>-->
+        <Menu-item name="limitedTimeSpikeList">限时秒杀</Menu-item>
         <Menu-item name="active">新人礼包</Menu-item>
         <Menu-item name="coupon">优惠券</Menu-item>
       </Submenu>
-      <!--<Submenu name="orderManager" class="-left-li">-->
-        <!--<template slot="title">-->
-          <!--<Icon type="ios-document" class="hk-menu-icon"/>-->
-          <!--<span>订单管理</span>-->
-        <!--</template>-->
-        <!--<Menu-item name="orderList">订单列表</Menu-item>-->
-      <!--</Submenu>-->
-      <!--<Submenu name="course" class="-left-li">-->
-        <!--<template slot="title">-->
-          <!--<Icon type="ios-book" class="hk-menu-icon"/>-->
-          <!--<span>课程管理</span>-->
-        <!--</template>-->
-        <!--<Menu-item name="courseType">课程分类</Menu-item>-->
-        <!--<Menu-item name="courseList">课程列表</Menu-item>-->
-      <!--</Submenu>-->
+      <Submenu name="orderManager" class="-left-li">
+        <template slot="title">
+          <Icon type="ios-document" class="hk-menu-icon"/>
+          <span>订单管理</span>
+        </template>
+        <Menu-item name="orderList">订单列表</Menu-item>
+      </Submenu>
+      <Submenu name="course" class="-left-li">
+        <template slot="title">
+          <Icon type="ios-book" class="hk-menu-icon"/>
+          <span>课程管理</span>
+        </template>
+        <Menu-item name="courseType">课程分类</Menu-item>
+        <Menu-item name="courseList">课程列表</Menu-item>
+      </Submenu>
       <Submenu name="operate" class="-left-li">
         <template slot="title">
           <Icon type="md-trophy" class="hk-menu-icon"></Icon>
@@ -49,11 +49,11 @@
         </template>
         <Menu-item name="topBar">topBar管理</Menu-item>
         <Menu-item name="bannerList">banner管理</Menu-item>
-        <!--<Menu-item name="trusteeship">托管管理</Menu-item>-->
-        <!--<Menu-item name="channelManagement">渠道管理</Menu-item>-->
-        <!--<Menu-item name="operationalLocation">运营位管理</Menu-item>-->
-        <!--<Menu-item name="pushWindow">活动推送</Menu-item>-->
-        <!--<Menu-item name="homeRecommend">首页推荐</Menu-item>-->
+        <Menu-item name="trusteeship">托管管理</Menu-item>
+        <Menu-item name="channelManagement">渠道管理</Menu-item>
+        <Menu-item name="operationalLocation">运营位管理</Menu-item>
+        <Menu-item name="pushWindow">活动推送</Menu-item>
+        <Menu-item name="homeRecommend">首页推荐</Menu-item>
       </Submenu>
       <Submenu name="study" class="-left-li">
         <template slot="title">
@@ -77,7 +77,7 @@
           <span>用户反馈</span>
         </template>
         <Menu-item name="userFeedback">用户反馈</Menu-item>
-        <!--<Menu-item name="messageManagement">留言审核</Menu-item>-->
+        <Menu-item name="messageManagement">留言审核</Menu-item>
         <Menu-item name="customerService">客服管理</Menu-item>
       </Submenu>
       <!--<Submenu name="setting" class="-left-li">-->
