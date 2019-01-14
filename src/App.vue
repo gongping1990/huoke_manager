@@ -32,4 +32,12 @@
   .ivu-form .ivu-form-item-label {
     color: #B3B5B8;
   }
+
+  .ivu-input-number {
+    width: 100%;
+  }
+
+  input::-webkit-input-placeholder {
+    color: #c5c8ce;
+  }
 </style>

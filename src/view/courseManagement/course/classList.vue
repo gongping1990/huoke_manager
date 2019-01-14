@@ -1,45 +1,7 @@
 <template>
   <div class="p-course-list">
     <Card>
-      <Row class="g-search -c-tab">
-        <Col :span="3" class="g-t-left">
-          <div class="g-flex-a-j-center">
-            <div class="-search-select-text">课程分类：</div>
-            <Select v-model="searchInfo.categoryId" @on-change="changeSelect" class="-search-selectOne">
-              <Option v-for="(item,index) in dataTypeList" :label="item.name" :value="item.id" :key="index"></Option>
-            </Select>
-          </div>
-        </Col>
-        <Col :span="4">
-          <div class="-search">
-            <Select v-model="selectInfo" class="-search-select">
-              <Option value="1">课程名称</Option>
-            </Select>
-            <span class="-search-center">|</span>
-            <Input v-model="searchInfo.name" class="-search-input" placeholder="请输入关键字" icon="ios-search"
-                   @on-click="getList"></Input>
-          </div>
-        </Col>
-        <Col :span="15" class="g-flex-a-j-center -date-search">
-          <Col span="2">时间:</Col>
-          <Col span="14" class="g-flex-a-j-center">
-            <div>
-              <Date-picker class="date-time" type="datetime" placeholder="选择开始日期"
-                           v-model="searchInfo.startTime"></Date-picker>
-            </div>
-            <div>&nbsp;-&nbsp;</div>
-            <div>
-              <Date-picker class="date-time" type="datetime" placeholder="选择结束日期"
-                           v-model="searchInfo.endTime"></Date-picker>
-            </div>
-            <div class="-date-search">
-              <Button type="primary" class="-p-modal-btn" @click="getList">搜索</Button>
-            </div>
-          </Col>
-        </Col>
-      </Row>
-
-      <div class="g-add-btn -t-add-icon g-add-top" @click="openModal()">
+      <div class="g-add-btn" @click="openModal()">
         <Icon class="-btn-icon" color="#fff" type="ios-add" size="24"/>
       </div>
 
@@ -58,7 +20,7 @@
       title="编辑排序值">
       <Form :model="addInfo" :label-width="70" class="ivu-form-item-required">
         <FormItem label="排序值">
-          <InputNumber :max="99999" :min="1" v-model="sortNum" placeholder="请输入课程排序"></InputNumber>
+          <Input type="text" v-model="sortNum" placeholder="请输入排序值"></Input>
         </FormItem>
       </Form>
       <div slot="footer" class="g-flex-j-sa">
@@ -67,14 +29,34 @@
       </div>
     </Modal>
 
+    <Modal
+      class="p-course-list"
+      v-model="isOpenModalPlay"
+      @on-cancel="isOpenModalPlay = false"
+      width="350"
+      title="播放">
+      <audio v-if="addInfo.type == 1" ref="playAudio" :src="addInfo.resUrl" autoplay controls></audio>
+      <video v-if="addInfo.type == 2" ref="playVideo" :src="addInfo.resUrl" autoplay controls style="width: 100%"></video>
+      <div slot="footer" class="g-flex-j-sa">
+        <!--<Button @click="isOpenModalPlay = false" ghost type="primary" style="width: 100px;">取消</Button>-->
+        <div @click="closeModalPlay" class="g-primary-btn ">确认</div>
+      </div>
+    </Modal>
+
+    <div v-if="isOpenModal">
+      <class-edit :isOpen="isOpenModal" :dataInfo="addInfo" @closeEditModal="closeModal" @submitChildInfo="submitInfo"></class-edit>
+    </div>
+
   </div>
 </template>
 
 <script>
   import dayjs from 'dayjs'
+  import ClassEdit from "./classEdit";
 
   export default {
     name: 'courseList',
+    components: {ClassEdit},
     data() {
       return {
         tab: {
@@ -95,11 +77,12 @@
         isFetching: false,
         isOpenModal: false,
         isOpenModalSort: false,
+        isOpenModalPlay: false,
         isSending: false,
         addInfo: {
           content: ''
         },
-        sortNum: null,
+        sortNum: '',
         ruleValidate: {
           content: [
             {required: true, message: '请输入回复内容', trigger: 'blur'},
@@ -107,51 +90,43 @@
         },
         columns: [
           {
-            title: '名称',
+            title: '课时名称',
             key: 'name',
             align: 'center'
           },
           {
-            title: '图片',
+            title: '类型',
             render: (h, params) => {
               return h('div', {
                 style: {
-                  'display': 'flex',
-                  'align-items': 'center',
-                }
-              }, [
-                h('img', {
-                  attrs: {
-                    src: params.row.url
-                  },
-                  style: {
-                    width: '140px',
-                    height: '50px',
-                    margin: '10px'
+                  color: '#5444E4',
+                  cursor: 'pointer'
+                },
+                on: {
+                  click: () => {
+                    this.openModalPlay(params.row)
                   }
-                })
-              ])
+                }
+              }, params.row.type == '1' ? '播放音频' : '播放视频')
             },
-            width: 200,
             align: 'center'
           },
           {
-            title: '关键词',
-            render: (h,params)=>{
-              if(params.row.keywords.length) {
-                return h('div',params.row.keywords.map(function (item) {
-                  return h('Tag',item)
-                }))
-              } else {
-                return h('span','')
-              }
+            title: '是否试听',
+            render: (h, params) => {
+              return h('div', params.row.tryout ? '是' : '否')
             },
-            width: 180,
             align: 'center'
           },
           {
-            title: '课时数量',
-            key: 'lessionNum',
+            title: '启用/禁用',
+            render: (h, params) => {
+              return h('Tag', {
+                props: {
+                  color: params.row.disabled ? 'default' : 'success'
+                }
+              }, params.row.disabled ? '已禁用' : '已启用')
+            },
             align: 'center'
           },
           {
@@ -167,29 +142,58 @@
                     this.openModalSort(params.row)
                   }
                 }
-              }, params.row.sortnum)
+              }, params.row.sequence)
             },
             align: 'center'
           },
           {
             title: '创建时间',
             render: (h, params) => {
-              return h('div', dayjs(params.row.createTime).format("YYYY-MM-DD HH:mm:ss"))
+              return h('div', dayjs(params.row.gmtCreate).format("YYYY-MM-DD HH:mm:ss"))
             },
             align: 'center'
           },
           {
             title: '更新时间',
             render: (h, params) => {
-              return h('div', dayjs(params.row.modifyTime).format("YYYY-MM-DD HH:mm:ss"))
+              return h('div', dayjs(params.row.gmtModified).format("YYYY-MM-DD HH:mm:ss"))
             },
             align: 'center'
           },
           {
             title: '操作',
             align: 'center',
+            width: 220,
             render: (h, params) => {
               return h('div', [
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: '#5444E4'
+                  },
+                  on: {
+                    click: () => {
+                      this.changeTryOut(params.row)
+                    }
+                  }
+                }, !params.row.tryout ? '开启试听' : '关闭试听'),
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: '#5444E4'
+                  },
+                  on: {
+                    click: () => {
+                      this.changeStatus(params.row)
+                    }
+                  }
+                }, !params.row.disabled ? '禁用' : '启用'),
                 h('Button', {
                   props: {
                     type: 'text',
@@ -204,20 +208,6 @@
                     }
                   }
                 }, '编辑'),
-                h('Button', {
-                  props: {
-                    type: 'text',
-                    size: 'small'
-                  },
-                  style: {
-                    color: '#5444E4'
-                  },
-                  on: {
-                    click: () => {
-                      this.toClass(params.row)
-                    }
-                  }
-                }, '课时管理'),
                 h('Button', {
                   props: {
                     type: 'text',
@@ -240,45 +230,68 @@
     },
     mounted() {
       this.getList()
-      this.getTypeList()
     },
     methods: {
+      changeTryOut(data) {
+        this.$api.course.changeTryOut({
+          lessonId: data.id,
+          tryout: !data.tryout
+        })
+          .then(
+            response => {
+              if (response.data.code == '200') {
+                this.$Message.success('更改成功')
+                this.getList()
+              }
+            })
+
+      },
+      changeStatus(data) {
+        this.$api.course.changeDisabled({
+          lessonId: data.id,
+          disabled: !data.disabled
+        })
+          .then(
+            response => {
+              if (response.data.code == '200') {
+                this.$Message.success('更改成功')
+                this.getList()
+              }
+            })
+      },
       currentChange(val) {
         this.tab.page = val;
         this.getList();
       },
-      toClass (data) {
-        this.$router.push({
-          name: 'classList',
-          query:{
-            courseId: data.id
-          }
-        })
-      },
       openModal(data) {
+        this.isOpenModal = true
         if(data) {
-          this.$router.push({
-            name: 'editCourse',
-            query:{
-              id: data.id
-            }
-          })
+          this.addInfo = JSON.parse(JSON.stringify(data))
         } else {
-          this.$router.push({
-            name: 'editCourse',
-          })
+          this.addInfo = {}
         }
       },
       openModalSort(data) {
         this.isOpenModalSort = true
         this.addInfo = JSON.parse(JSON.stringify(data))
-        this.sortNum = +this.addInfo.sortnum
+        this.sortNum = this.addInfo.sequence
       },
-      closeModal(name) {
+      openModalPlay(data) {
+        this.isOpenModalPlay = true
+        this.addInfo = JSON.parse(JSON.stringify(data))
+      },
+      closeModal() {
         this.isOpenModal = false
-        this.$refs[name].resetFields()
       },
-      changeSelect (){
+      closeModalPlay() {
+        if(this.addInfo.type == '1') {
+          this.$refs.playAudio.pause()
+        } else {
+          this.$refs.playVideo.pause()
+        }
+        this.isOpenModalPlay = false
+      },
+      changeSelect() {
         this.tab.page = 1
         this.getList()
       },
@@ -287,7 +300,7 @@
           title: '提示',
           content: '确认要删除吗？',
           onOk: () => {
-            this.$api.course.delCourse({
+            this.$api.course.delClassHour({
               id: param.id
             }).then(
               response => {
@@ -302,17 +315,10 @@
       //分页查询
       getList() {
         this.isFetching = true
-        let startTime = ''
-        let endTime = ''
-        startTime = this.searchInfo.startTime ? dayjs(this.searchInfo.startTime).format("YYYY/MM/DD HH:mm:ss") : ''
-        endTime = this.searchInfo.endTime ? dayjs(this.searchInfo.endTime).format("YYYY/MM/DD HH:mm:ss") : ''
-        this.$api.course.courseList({
+        this.$api.course.classHourList({
           current: this.tab.page,
           size: this.tab.pageSize,
-          categoryId: this.searchInfo.categoryId,
-          name: this.searchInfo.name,
-          createBegin: startTime,
-          createEnd: endTime
+          id: this.$route.query.courseId
         })
           .then(
             response => {
@@ -323,40 +329,38 @@
             this.isFetching = false
           })
       },
-      getTypeList() {
-        this.$api.course.courseTypeList()
+      submitInfo(data) {
+        let paramUrl = ''
+        this.isSending = true
+        console.log(data,'data')
+        this.addInfo = JSON.parse(JSON.stringify(data))
+        this.addInfo.disabled =  this.addInfo.disabled == '1'
+        this.addInfo.tryout = this.addInfo.tryout == '1'
+        this.addInfo.courseId = this.$route.query.courseId
+
+        paramUrl = this.addInfo.id ? this.$api.course.updateClassHour : this.$api.course.addClassHour
+        paramUrl( this.addInfo)
           .then(
             response => {
-              this.dataTypeList = response.data.resultData.records;
+              if (response.data.code == '200') {
+                this.$Message.success('提交成功');
+                this.getList()
+                this.closeModal()
+              }
             })
-
-      },
-      submitInfo(name) {
-        this.$refs[name].validate((valid) => {
-          if (valid) {
-            this.isSending = true
-            this.$api.feedback.addReply(this.addInfo)
-              .then(
-                response => {
-                  if (response.data.code == '200') {
-                    this.$Message.success('提交成功');
-                    this.getList()
-                    this.closeModal(name)
-                  }
-                })
-              .finally(() => {
-                this.isSending = false
-              })
-          }
-        })
+          .finally(() => {
+            this.isSending = false
+          })
       },
       submitSort() {
         if (!this.sortNum) {
           return this.$Message.error('请输入排序值')
+        } else if (this.sortNum < 1 || this.sortNum > 99999) {
+          return this.$Message.error('排序值范围1-99999')
         }
-        this.$api.course.changeCourseSort({
+        this.$api.course.updateSortClassHour({
           id: this.addInfo.id,
-          sortnum: this.sortNum
+          sequence: this.sortNum
         }).then(response => {
           if (response.data.code == '200') {
             this.$Message.success('修改成功');
@@ -372,8 +376,8 @@
 
 <style lang="less" scoped>
   .p-course-list {
-    .-t-add-icon{
-      top:56px
+    .-t-add-icon {
+      top: 56px
     }
     .-search-select-text {
       min-width: 70px;
@@ -384,7 +388,6 @@
       border-radius: 4px;
       margin-right: 20px;
     }
-
 
     .date-time {
       width: 100%;

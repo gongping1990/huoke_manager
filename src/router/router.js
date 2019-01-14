@@ -98,6 +98,16 @@ export const otherRouter = {
         {name: '编辑课程'}
       ],
       component: () => import('@/view/courseManagement/course/courseEdit')
+    },
+    {
+      path: '/classList',
+      name: 'classList',
+      meta: [
+        {name: '课程管理'},
+        {name: '课程列表',url: 'courseList'},
+        {name: '课时列表'}
+      ],
+      component: () => import('@/view/courseManagement/course/classList')
     }
   ]
 };

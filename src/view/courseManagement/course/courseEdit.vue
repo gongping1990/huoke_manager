@@ -5,9 +5,11 @@
         <Form-item label="课程名称" class="-c-form-item" prop="name">
           <Input class="-s-width" v-model="addInfo.name" placeholder="请输入课程名称" style="width: 300px"/>
         </Form-item>
+
         <Form-item label="课程描述" class="-c-form-item" prop="description">
           <Input class="-s-width" v-model="addInfo.description" placeholder="请输入课程描述" style="width: 300px"/>
         </Form-item>
+
         <Form-item label="课程关键字" class="-c-form-item ">
           <div class="-p-c-flex" style="width: 300px">
             <Input type="text" v-model="keywordItem" class="-p-form-input" placeholder="请输入关键字"
@@ -22,21 +24,26 @@
             </Tag>
           </div>
         </Form-item>
+
         <Form-item label="课时总数" class="-c-form-item" prop="lessonNum">
-          <Input class="-s-width" v-model="addInfo.lessonNum" placeholder="请输入课时总数" style="width: 300px"/>
+          <InputNumber :max="999" :min="1" v-model="addInfo.lessonNum" placeholder="请输入课时总数"  style="width: 300px"></InputNumber>
         </Form-item>
+
         <Form-item label="课程排序" class="-c-form-item " prop="sortnum">
-          <Input class="-s-width" v-model="addInfo.sortnum" placeholder="请输入课程排序" style="width: 300px"/>
+          <InputNumber :max="99999" :min="1" v-model="addInfo.sortnum" placeholder="请输入课程排序"  style="width: 300px"></InputNumber>
         </Form-item>
+
         <Form-item label="课时分类" class="-c-form-item" prop="categoryId">
           <Select v-model="addInfo.categoryId" style="width: 300px">
             <Option v-for="(item,index) in dataTypeList" :label="item.name" :value="item.id" :key="index"></Option>
           </Select>
         </Form-item>
+
         <Form-item label="首播时间" class="-c-form-item ">
           <Date-picker class="date-time" type="date" placeholder="选择首播时间"
                        v-model="addInfo.firstpayTime"></Date-picker>
         </Form-item>
+
         <Form-item label="适合年龄" class="-c-form-item -c-border ivu-form-item-required">
           <Radio-group v-model="ageType">
             <Radio :label=1>年龄不限</Radio>
@@ -173,7 +180,6 @@
           </div>
         </Form-item>
 
-
         <FormItem>
           <div class="-c-flex">
             <Button @click="closeModal('addInfo')" ghost type="primary" class="-c-btn">返回</Button>
@@ -213,10 +219,10 @@
         addInfo: {
           name: '', //名称·
           description: '', //描述·
-          lessonNum: '', //课程课时数·
+          lessonNum: null, //课程课时数·
           categoryId: '', //课程分类id·
           firstpayTime: '', //首播·
-          sortnum: '', //排序值·
+          sortnum: null, //排序值·
           keywords: [], //关键字·
           ageHead: '', //年龄小·
           ageFoot: '', //年龄大·
@@ -237,12 +243,10 @@
             {type: 'string', max: 100, message: '课程描述最多100字', trigger: 'blur'}
           ],
           lessonNum: [
-            {required: true, message: '请输入课时总数', trigger: 'blur'},
-            {type: 'string', max: 999, min: 1, message: '课时总数最多1-999', trigger: 'blur'}
+            {required: true, type: 'number', message: '请输入课时总数', trigger: 'blur'},
           ],
           sortnum: [
-            {required: true, message: '请输入排序值', trigger: 'blur'},
-            {type: 'string', max: 99999, min: 1, message: '课时总数最多1-99999', trigger: 'blur'}
+            {required: true, type: 'number', message: '请输入排序值', trigger: 'blur'},
           ],
           categoryId: [
             {required: true, message: '请选择课程分类', trigger: 'change'},
@@ -423,8 +427,8 @@
                 let getPass = false
                 this.addInfo = response.data.resultData
                 this.playUrl = this.addInfo.playUrl
-                this.addInfo.sortnum = this.addInfo.sortnum.toString()
-                this.addInfo.lessonNum = this.addInfo.lessonNum.toString()
+                this.addInfo.sortnum = +this.addInfo.sortnum
+                this.addInfo.lessonNum = +this.addInfo.lessonNum
                 this.addInfo.firstpayTime = new Date(this.addInfo.firstpayTime)
                 if(this.addInfo.ageFoot == '99' && this.addInfo.ageHead=='0') {
                   this.ageType = 1

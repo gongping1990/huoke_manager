@@ -39,36 +39,68 @@ const course = {
   },
   // 课程类别列表禁用启用
   changeCourseTypeStatus(params) {
-    return axios.post('/course/category/setStatus',  qs.stringify(params))
+    return axios.post('/course/category/setStatus', qs.stringify(params))
   },
   // 课程类别列表禁用启用
   updateCourseType(params) {
-    return axios.post('/course/category/update',  qs.stringify(params))
+    return axios.post('/course/category/update', qs.stringify(params))
   },
   // 删除
   delCourseType(params) {
-    return axios.post('/course/category/removeById',  qs.stringify(params))
+    return axios.post('/course/category/removeById', qs.stringify(params))
   },
   // 课程排序值
   changeCourseSort(params) {
-    return axios.post('/course/updateSortNum',  qs.stringify(params))
+    return axios.post('/course/updateSortNum', qs.stringify(params))
   },
   // 删除课程
   delCourse(params) {
-    return axios.post('/course/removeById',  qs.stringify(params))
+    return axios.post('/course/removeById', qs.stringify(params))
   },
   // 更新课程
   updateCourse(params) {
-      return axios.post('/course/updateBaseCourse', params)
+    return axios.post('/course/updateBaseCourse', params)
   },
   // 新增课程
   addCourse(params) {
-      return axios.post('/course/saveBaseCourse', params)
+    return axios.post('/course/saveBaseCourse', params)
   },
   // 课程详情
   courseInfo(params) {
-      return axios.get(`/course/getBaseCourse/?id=${params}`)
-  }
+    return axios.get(`/course/getBaseCourse/?id=${params}`)
+  },
+  // 课时排序修改
+  updateSortClassHour(params) {
+    return axios.post(`/course/lesson/updateSequence`, qs.stringify(params))
+  },
+  // 是否视听
+  changeTryOut(params) {
+    return axios.post(`/course/lesson/updateStatus`, qs.stringify(params))
+  },
+  // 是否禁用
+  changeDisabled(params) {
+    return axios.post(`/course/lesson/updateDisabled`, qs.stringify(params))
+  },
+  // 删除课时
+  delClassHour(params) {
+    return axios.post(`/course/lesson/removeById`, qs.stringify(params))
+  },
+  // 获取课时列表
+  classHourList(params) {
+    return axios.get(`/course/lesson/queryPage`, {params: params})
+  },
+  // 获取课时详情
+  classHourInfo(params) {
+    return axios.get(`/course/lesson/getById`, {params: params})
+  },
+  // 新增
+  addClassHour(params) {
+    return axios.post(`/course/lesson/save`, qs.stringify(params))
+  },
+  // 修改
+  updateClassHour(params) {
+    return axios.post(`/course/lesson/update`, qs.stringify(params))
+  },
 }
 
 export default course

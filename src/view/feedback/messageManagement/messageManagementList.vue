@@ -10,6 +10,14 @@
       </Row>
 
       <Row class="g-search -c-tab">
+        <Col :span="3" class="g-t-left">
+          <div class="g-flex-a-j-center">
+            <div class="-search-select-text">展示课程：</div>
+            <Select v-model="searchInfo.goodsId" @on-change="selectChange" class="-search-selectOne" filterable>
+              <Option v-for="(item,index) in courseList" :label="item.name" :value="item.goodsId" :key="index"></Option>
+            </Select>
+          </div>
+        </Col>
         <Col :span="3" class="g-t-left" v-if="feedbackType=='1'">
           <div class="g-flex-a-j-center">
             <div class="-search-select-text">是否回复：</div>
@@ -32,8 +40,13 @@
           <Col span="2">留言时间:</Col>
           <Col span="7" class="g-flex-a-j-center">
             <div>
-              <Date-picker class="date-time" type="datetime" placeholder="选择留言时间"
+              <Date-picker class="date-time" type="datetime" placeholder="选择开始日期"
                            v-model="searchInfo.startTime"></Date-picker>
+            </div>
+            <div>&nbsp;-&nbsp;</div>
+            <div>
+              <Date-picker class="date-time" type="datetime" placeholder="选择结束日期"
+                           v-model="searchInfo.endTime"></Date-picker>
             </div>
             <div class="-date-search">
               <Button type="primary" class="-p-modal-btn" @click="getList">搜索</Button>
@@ -81,7 +94,8 @@
         },
         searchInfo: {
           nickname: '',
-          startTime: ''
+          startTime: '',
+          endTime: ''
         },
         statusList: [
           {
@@ -100,6 +114,7 @@
         selectInfo: '1',
         selectInfoOne: '-1',
         dataList: [],
+        courseList: [],
         total: 0,
         feedbackType: 0,
         isPass: 0,
@@ -331,8 +346,13 @@
     },
     mounted() {
       this.getList()
+      this.getCourseList()
     },
     methods: {
+      selectChange () {
+        this.tab.page = 1
+        this.getList()
+      },
       currentChange(val) {
         this.tab.page = val;
         this.getList();
@@ -365,6 +385,16 @@
           }
         })
       },
+      getCourseList() {
+        this.$api.goods.aloneList({
+          current: this.tab.page,
+          size: 100
+        })
+          .then(
+            response => {
+              this.courseList = response.data.resultData.records;
+            })
+      },
       //分页查询
       getList() {
         this.isFetching = true
@@ -372,10 +402,10 @@
         let endTime = ''
         startTime = this.searchInfo.startTime ? new Date(this.searchInfo.startTime).getTime() : ''
         endTime = this.searchInfo.endTime ? new Date(this.searchInfo.endTime).getTime() : ''
-        this.$api.feedback.feedbackList({
+        this.$api.feedback.messageManagementList({
           current: this.tab.page,
           size: this.tab.pageSize,
-          replyed: this.feedbackType,
+          approved: this.feedbackType,
           nickname: this.searchInfo.nickname,
           startDate: startTime,
           endDate: endTime
