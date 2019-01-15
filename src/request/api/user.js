@@ -33,6 +33,42 @@ const user = {
   // 获取微信工作中号
   getWxList(params) {
     return axios.get("/user/listMpAppid");
+  },
+  // 获取短信推送消息
+  getSmsList(params) {
+    return axios.get("/user/listSmsTemplate",{params: params});
+  },
+  // 获取短信推送记录
+  getSmsMessageList(params) {
+    return axios.get("/user/listSmsMessage",{params: params});
+  },
+  // 获取微信推送消息
+  getWxTemplateList(params) {
+    return axios.get("/user/listWxTemplate",{params: params});
+  },
+  // 获取微信发送记录
+  getWxMessageList(params) {
+    return axios.get("/user/queryWxTemplateMessagePage",{params: params});
+  },
+  // 获取自定义短信消息
+  getSmsSendList(params) {
+    return axios.get("/user/listSmsSendTask",{params: params});
+  },
+  // 撤销自定义消息
+  cancelSmsTask(params) {
+    return axios.post("/user/cancelSmsTask", qs.stringify(params));
+  },
+  // 创建自定义消息
+  addSmsTask(params) {
+    return axios.post("/user/sendSmsTask", params);
+  },
+  // 模板类型
+  getTemplateInfo(params) {
+    return axios.get("/user/getTemplateInfo", {params: params});
+  },
+  // 获取人数
+  getUserCount(params) {
+    return axios.get("/user/getUserCount", {params: params});
   }
 };
 

@@ -1,16 +1,24 @@
 <template>
-  <Modal top="6vh" @close="closeModal" :title="otherInfo.title" v-model="isAddOpenModal" width="40%">
+  <Modal top="6vh" @close="closeModal" :title="otherInfo.title" v-model="isAddOpenModal"
+         :width="otherInfo.type == '3' ? '600px':'800px'">
     <Row class="p-user">
       <Col :span="otherInfo.type != 3 ? 16 : 24">
         <Card class="-card-left">
-          <p v-if="otherInfo.type != 3" slot="title">接收用户</p>
+          <p v-if="otherInfo.type != 3" slot="title">
+            <span>接收用户（{{otherInfo.type==1 ? '仅可选择有电话号码的用户':'仅可选择已关注公众号的用户'}}）</span>
+          </p>
 
           <div class="-left-user">
             <div class="-user-left">
               <div>
-                <div style="margin-top: 10px">
-                  <Select v-model="search.keyType" size="small"
-                          style="width: 100px;margin-bottom: 10px">
+                <div>
+                  <RadioGroup v-model="radioType" @on-change="changeRadio" v-if="otherInfo.type!=3" type="button">
+                    <Radio label="1">列表选择</Radio>
+                    <Radio label="2">分群选择</Radio>
+                  </RadioGroup>
+                </div>
+                <div style="margin-top: 10px" v-if="radioType==1">
+                  <Select v-model="search.keyType" style="width: 100px;margin-bottom: 10px">
                     <Option label="用户昵称" value="1"></Option>
                     <Option label="用户电话" value="2"></Option>
                   </Select>
@@ -25,36 +33,61 @@
                   </div>
                 </div>
 
-                <div class="-c-l-check">
-                  <Checkbox v-model="checkAll" @on-change="checkAllUser">全选所有用户</Checkbox>
+                <div v-if="radioType == 1">
+                  <div class="-c-l-check">
+                    <Checkbox v-model="checkAll" @on-change="checkAllUser">全选所有用户</Checkbox>
+                  </div>
+                  <div class="-c-l-wrap" v-viewmore="loadMore">
+                    <Checkbox-group v-model="addStorage">
+                      <Checkbox :label="item.userId" v-for="(item,index) in userList"
+                                :key="index"
+                                :disabled="checkAll"
+                                class="-c-l-list">
+                        <div class="-list">
+                          <div class="-list-img">
+                            <img :src="item.headImgUrl">
+                          </div>
+                          <div class="-list-text">
+                            <div>{{item.nickname}}</div>
+                            <div>{{item.phone}}</div>
+                          </div>
+                        </div>
+                      </Checkbox>
+                    </Checkbox-group>
+                  </div>
                 </div>
-                <div class="-c-l-wrap" v-viewmore="loadMore">
-                  <Checkbox-group v-model="addStorage">
-                    <Checkbox :label="item.userId" v-for="(item,index) in userList"
-                              :key="index"
-                              :disabled="checkAll"
-                              class="-c-l-list">
-                      <div class="-list">
-                        <div class="-list-img">
-                          <img :src="item.headImgUrl">
-                        </div>
-                        <div class="-list-text">
-                          <div>{{item.nickname}}</div>
-                          <div>{{item.phone}}</div>
-                        </div>
-                      </div>
-                    </Checkbox>
-                  </Checkbox-group>
-                  <!--<div class="-c-btn">-->
-                    <!--<Button type="text" @click="loadMore()"-->
-                            <!--v-if="isShowLoadMore && !isShowSearch">点击加载更多-->
-                    <!--</Button>-->
-                  <!--</div>-->
+                <div v-else>
+                  <div style="margin: 20px 0" v-if="otherInfo.type==1">
+                    关注公众号：
+                    <Select v-model="search.public" placeholder="请选择"
+                            style="width: 100px" @on-change="getUserNum">
+                      <Option label="是" value="true"></Option>
+                      <Option label="否" value="false"></Option>
+                    </Select>
+                  </div>
+                  <div style="margin: 20px 0" v-else>
+                    电话号码：
+                    <Select v-model="search.userPhone" placeholder="请选择"
+                            style="width: 100px" @on-change="getUserNum">
+                      <Option label="全部" value="3"></Option>
+                      <Option label="有" value="true"></Option>
+                      <Option label="无" value="false"></Option>
+                    </Select>
+                  </div>
+                  <div style="margin: 20px 0">
+                    付费情况：
+                    <Select v-model="search.userType" placeholder="请选择"
+                            style="width: 100px" @on-change="getUserNum">
+                      <Option label="全部" value="3"></Option>
+                      <Option label="已付费" value="1"></Option>
+                      <Option label="未付费" value="2"></Option>
+                    </Select>
+                  </div>
                 </div>
               </div>
             </div>
             <div class="-user-right">
-              <div v-if="!checkAll" class="-u-right-text">已选用户{{addStorage.length}}人</div>
+              <div v-if="!checkAll" class="-u-right-text">已选用户{{addStorage.length||userNum}}人</div>
               <div v-else class="-u-right-text">已选择全部用户</div>
               <div class="-u-right-content">
                 <div v-for="item of selecedUser" class="-user-r-wrap">
@@ -78,23 +111,24 @@
           <div slot="title">
             <span>消息内容</span>
           </div>
-          <div v-if="type == 1">
+          <div v-if="otherInfo.type == 1">
             <Input type="textarea" :rows="5" placeholder="请输入内容"
                    v-model="userInfo.content"></Input>
           </div>
-          <div v-if="type == 2">
+          <div v-if="otherInfo.type == 2">
             <Form :model="userInfo" label-width="100px">
               <Form-item label="first" required>
                 <Input v-model="userInfo.first" placeholder="请输入first" size="small"></Input>
+                <ColorPicker size="small" v-model="userInfo.firstColor"></ColorPicker>
               </Form-item>
               <Form-item :label="item.name" :key="item.id" v-for="item of keywords">
                 <Input v-model="userInfo[item.key]" :placeholder='item.tips'
                        size="small"></Input>
+                <ColorPicker size="small" v-model="item.color"></ColorPicker>
               </Form-item>
               <Form-item label="remark" required>
                 <Input v-model="userInfo.remark" placeholder="请输入备注" size="small"></Input>
-
-
+                <ColorPicker size="small" v-model="userInfo.remarkColor"></ColorPicker>
               </Form-item>
               <Form-item label="链接地址">
                 <Input v-model="userInfo.url" placeholder="请输入链接地址" size="small"></Input>
@@ -103,15 +137,15 @@
           </div>
         </Card>
         <Card>
-          <div slot="header" class="clearfix">
+          <div>
             <span>发送时间</span>
           </div>
           <div>
             <div>
-              <Radio-group v-model="userInfo.sendType">
+              <RadioGroup v-model="userInfo.sendType">
                 <Radio :label="1">立即发送</Radio>
                 <Radio :label="2">定时发送</Radio>
-              </Radio-group>
+              </RadioGroup>
             </div>
 
             <div v-if="userInfo.sendType==2" class="-card-time">
@@ -123,7 +157,7 @@
         </Card>
       </Col>
     </Row>
-    <span slot="footer" class="dialog-footer">
+    <span slot="footer">
       <Button @click="closeModal">取 消</Button>
       <Button type="primary" @click="submitModal()">确 定</Button>
     </span>
@@ -133,16 +167,19 @@
 
 <script>
   import Loading from "./loading";
+  import dayjs from 'dayjs'
 
   export default {
     name: 'userSelection',
     components: {Loading},
-    props: ['title', 'type', 'templateId', 'userCheckList','otherInfo'],
+    props: ['userCheckList', 'otherInfo'], //type类别： 1为短信 2为微信  3为优惠券发送选人  4为第三方
     data() {
       return {
         search: {
-          userType: "3",
+          userType: "",
           keyType: "1",
+          public: '',
+          userPhone: '',
           phone: "",
           nickname: "",
           inputContent: ""
@@ -155,17 +192,19 @@
           pageSize: 10
         },
         checkAll: this.otherInfo.isCheckAllPeople, // 是否全选
-        isFetching: false, // 是否全选
+        isFetching: false,
         isAddOpenModal: false,
         isShowLoadMoreSearch: false,
         isShowLoadMore: false,
         isShowDelIcon: false,
+        radioType: '1',
         lists: {},
         userList: [],
         userLists: [],
         addStorage: [],
         keywords: [],
         keywordStorage: [],
+        userNum: 0
       }
     },
     watch: {
@@ -185,7 +224,7 @@
       }
     },
     mounted() {
-      if (this.userCheckList.length && !this.checkAll) {
+      if (this.userCheckList && this.userCheckList.length && !this.checkAll) {
         this.lists = this.$store.state.userStorageList
         this.addStorage = this.userCheckList
       }
@@ -203,7 +242,7 @@
         this.keywords = [];
         this.tabAddUser.page = 1;
         this.getUserList();
-        (this.type == 2) && this.getTemplateParamList(this.templateId)
+        (this.otherInfo.type == 2 || this.otherInfo.type == 4) && this.getTemplateParamList(this.otherInfo.templateId)
       },
       getSearch() {
         if (this.search.keyType == "1") {
@@ -229,6 +268,14 @@
         this.tabAddUser.page++;
         this.getUserList();
       },
+      changeRadio() {
+        this.checkAll = false
+        this.userNum = '0'
+        this.addStorage = [];
+        this.search.public = ''
+        this.search.userPhone = ''
+        this.search.userType = ''
+      },
       checkAllUser() {
         !this.checkAll && (this.userInfo.condition = "");
         this.addStorage = [];
@@ -239,9 +286,10 @@
         this.$api.user.userList({
           current: this.tabAddUser.page,
           size: this.tabAddUser.pageSize,
-          condition: this.search.userType,
           nickname: this.search.nickname,
-          phone: this.search.phone
+          phone: this.search.phone,
+          hasPhone: this.otherInfo.type == 1 ? true : '',
+          hasSubscripbe: this.otherInfo.type == 2 ? true : ''
         }).then(
           response => {
             if (this.userList.length) {
@@ -253,20 +301,16 @@
             }
 
             this.userLists = this.userLists.concat(response.data.resultData.records)
-            this.isShowLoadMore =
-              response.data.resultData.pages > this.tabAddUser.page;
+            this.isShowLoadMore = response.data.resultData.pages > this.tabAddUser.page;
           })
           .finally(() => {
             this.isFetching = false
           })
       },
       getTemplateParamList(wxId) {
-        this.$http
-          .get(this.$store.state.baseUrl + "/user/getTemplateInfo", {
-            params: {
-              id: wxId
-            }
-          })
+        this.$api.user.getTemplateInfo({
+          id: wxId
+        })
           .then(response => {
             this.keywordStorage = Object.entries(
               response.data.resultData.keywords
@@ -276,28 +320,36 @@
               this.keywords.push({
                 name: item[0],
                 key: item[1],
-                tips: `请输入${item[0]}`
+                tips: `请输入${item[0]}`,
+                color: ''
               });
               this.userInfo[item[1]] = "";
             }
           })
-          .catch(error => {
-            console.log(error, "错误");
-          });
+      },
+      getUserNum() {
+        this.$api.user.getUserCount({
+          hasPhone: (this.otherInfo.type == 2 && this.search.userPhone != 3) ? this.search.userPhone : '',
+          hasSubscripbe: this.otherInfo.type == 1 ? this.search.public : 'true',
+          payUser: this.search.userType
+        })
+          .then(response => {
+            this.userNum = response.data.resultData
+          })
       },
       submitModal() {
 
         this.userInfo.userIds = [];
 
-        if (this.checkAll) {
+        if (this.checkAll || this.radioType == '2') {
           this.userInfo.condition = 1;
         } else {
           this.userInfo.userIds = this.addStorage;
         }
 
-        if (this.type == 2) {
-          let obj = {};
 
+        if (this.otherInfo.type != '1') {
+          let obj = {};
           for (let item of this.keywordStorage) {
             for (let list of Object.entries(this.userInfo)) {
               if (item[1] == list[0]) {
@@ -306,15 +358,36 @@
             }
           }
 
-          this.userInfo.keywords = JSON.stringify(obj);
+          // 二次匹配颜色和循环出来键值对拼装配对
+          let objTwo = {}
+          for (let item2 of Object.entries(obj)) {
+            for (let list2 of this.keywords) {
+              if (list2.key == item2[0]) {
+                if (item2[1] != '') {
+                  objTwo[item2[0]] = `${item2[1]},${list2.color}`
+                }
+              }
+            }
+          }
+
+          this.userInfo.first = `${this.userInfo.first},${this.userInfo.firstColor ? this.userInfo.firstColor : ''}`
+          this.userInfo.remark = `${this.userInfo.remark},${this.userInfo.remarkColor ? this.userInfo.remarkColor : ''}`
+          this.userInfo.keywords = JSON.stringify(objTwo);
         }
 
         if (this.userInfo.sendTime == "" || this.userInfo.sendTime == null) {
           this.userInfo.sendTime = ''
         } else {
-          this.userInfo.sendTime = this.userInfo.sendTime
+          this.userInfo.sendTime = dayjs(this.userInfo.sendTime).format('YYYY/MM/DD HH:mm:ss');
         }
-        this.$store.commit('userStorageList',this.lists)
+
+        this.userInfo.userGroupQO = {
+          hasPhone: (this.otherInfo.type == 2 && this.search.userPhone != 3) ? this.search.userPhone : '',
+          hasSubscripbe: this.otherInfo.type == 1 ? this.search.public : 'true',
+          payUser: this.search.userType
+        }
+
+        this.$store.commit('userStorageList', this.lists)
         this.$emit('submitModal', this.userInfo)
       }
     }

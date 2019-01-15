@@ -25,6 +25,11 @@ const feedback = {
   // 删除
   delCourseMessage(params) {
     return axios.post('/feedback/course/remove',  qs.stringify(params))
+  },
+
+  // 置顶
+  updateTop(params) {
+    return axios.post('/feedback/course/updateTop',  qs.stringify(params))
   }
 }
 

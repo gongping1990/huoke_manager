@@ -55,6 +55,16 @@
         <Menu-item name="pushWindow">活动推送</Menu-item>
         <Menu-item name="homeRecommend">首页推荐</Menu-item>
       </Submenu>
+      <Submenu name="message" class="-left-li">
+        <template slot="title">
+          <Icon type="ios-chatbubbles" class="hk-menu-icon"></Icon>
+          <span>消息管理</span>
+        </template>
+        <Menu-item name="wechat_news">微信推送消息</Menu-item>
+        <Menu-item name="custom_wechat_news">自定义微信消息</Menu-item>
+        <Menu-item name="sms_news">短信推送消息</Menu-item>
+        <Menu-item name="custom_sms_news">自定义短信消息</Menu-item>
+      </Submenu>
       <Submenu name="study" class="-left-li">
         <template slot="title">
           <Icon type="ios-school" class="hk-menu-icon"></Icon>
