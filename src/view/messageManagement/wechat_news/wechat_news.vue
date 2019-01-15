@@ -17,78 +17,39 @@
 
       <Table class="-c-tab" :loading="isFetching" :columns="columns" :data="dataList"></Table>
 
-      <Page class="g-text-right" :total="wxListTotal" size="small" show-elevator
+      <Page class="g-text-right" :total="total" size="small" show-elevator
             :page-size="tab.pageSize"
             @on-change="currentChange"></Page>
     </Card>
-
-    <Modal title="发送记录" v-model="isOpenModal" width="900px" class="p-wx">
-
-      <Row>
-        <Col :span="5">发送状态：
-          <Select style="width: 100px;" v-model="form.state" placeholder="请选择"
-                  @on-change="getWxMessageList(1)">
-            <Option label="全部" value="3"></Option>
-            <Option label="发送成功" value="1"></Option>
-            <Option label="发送失败" value="0"></Option>
-          </Select>
-        </Col>
-        <Col :span="16" class="g-flex-a-j-center -date-search">
-          <Col span="3">发送时间：</Col>
-          <Col span="7" class="g-flex-a-j-center">
-            <div>
-              <Date-picker class="date-time" type="datetime" placeholder="选择开始日期"
-                           v-model="form.startTime"></Date-picker>
-            </div>
-            <div>&nbsp;-&nbsp;</div>
-            <div>
-              <Date-picker class="date-time" type="datetime" placeholder="选择结束日期"
-                           v-model="form.endTime"></Date-picker>
-            </div>
-            <div class="-date-search">
-              <Button type="primary" class="-p-modal-btn" @click="getWxMessageList(1)">搜索</Button>
-            </div>
-          </Col>
-        </Col>
-      </Row>
-
-      <Table class="-c-tab" :loading="isFetching" :columns="columnsRecord" :data="wxRecordList"></Table>
-
-      <Page class="g-text-right" :total="wxRecordListTotal" size="small" show-elevator
-            :page-size="tabRecord.pageSize"
-            :current.sync="tabRecord.currentPage"
-            @on-change="currentChangeRecord"></Page>
-    </Modal>
-
+    
+    <div v-if="isOpenModal">
+      <wx-record-template :isOpen="isOpenModal"
+                          :data="nowWxId"
+                          :type="1"
+                          @closeModal="closeModalRecord">
+      </wx-record-template>
+    </div>
   </div>
 </template>
 
 <script>
   import dayjs from 'dayjs'
+  import WxRecordTemplate from "../../../components/wxRecordTemplate";
 
   export default {
+    components: {WxRecordTemplate},
     data() {
       return {
         tab: {
           page: 1,
           pageSize: 10
         },
-        tabRecord: {
-          page: 1,
-          pageSize: 10,
-          currentPage: 1
-        },
         form: {
-          appId: '-1',
-          startTime: '',
-          endTime: '',
-          state: '3'
+          appId: '-1'
         },
         dataList: [],
-        wxRecordList: [],
         wxAccount: [],
-        wxListTotal: 0,
-        wxRecordListTotal: 0,
+        total: 0,
         isOpenModal: false,
         isFetching: false,
         nowWxId: '',
@@ -140,43 +101,7 @@
             },
             align: 'center'
           }
-        ],
-        columnsRecord: [
-          {
-            title: '用户昵称',
-            key: 'nickname',
-            align: 'center'
-          },
-          {
-            title: '用户电话',
-            key: 'phone',
-            align: 'center'
-          },
-          {
-            title: '发送内容',
-            render: (h, params) => {
-              return h('pre', params.row.content)
-            },
-            align: 'center'
-          },
-          {
-            title: '发送状态',
-            render: (h, params) => {
-              return h('div', params.row.status ? '发送成功' : '发送失败')
-            },
-            align: 'center'
-          },
-          {
-            title: '发送时间',
-            key: 'creatTime',
-            align: 'center'
-          },
-          {
-            title: '链接地址',
-            key: 'url',
-            align: 'center'
-          }
-        ],
+        ]
       };
     },
     mounted() {
@@ -184,6 +109,9 @@
       this.getWxAccountList()
     },
     methods: {
+      closeModalRecord() {
+        this.isOpenModal = false;
+      },
       selectChange() {
         this.tab.page = 1
         this.getWxList()
@@ -192,11 +120,6 @@
         this.tab.page = val;
         this.getWxList();
       },
-      currentChangeRecord(val) {
-        this.tabRecord.page = val;
-        this.getWxMessageList();
-      },
-
       //分页查询
       getWxList() {
         this.isFetching = true
@@ -207,7 +130,7 @@
         })
           .then(response => {
             this.dataList = response.data.resultData.records;
-            this.wxListTotal = response.data.resultData.total;
+            this.total = response.data.resultData.total;
           }).finally(() => {
           this.isFetching = false
         })
@@ -225,34 +148,6 @@
       openModal(wxId) {
         this.nowWxId = wxId
         this.isOpenModal = true
-        this.form = {
-          startTime: '',
-          endTime: '',
-          state: '3'
-        }
-        this.getWxMessageList()
-      },
-      getWxMessageList() {
-        this.isFetching = true
-        if (num) {
-          this.tabRecord.currentPage = 1
-        }
-
-        this.$api.user.getWxMessageList({
-          current: num ? num : this.tabRecord.page,
-          size: this.tabRecord.pageSize,
-          id: this.nowSmsId,
-          status: this.form.state,
-          sendTimeBegin: this.form.startTime ? dayjs(this.form.startTime).format('YYYY/MM/DD HH:mm:ss') : "",
-          sendTimeEnd: this.form.endTime ? dayjs(this.form.endTime).format('YYYY/MM/DD HH:mm:ss') : ""
-        })
-          .then(response => {
-            this.wxRecordList = response.data.resultData.records;
-            this.wxRecordListTotal = response.data.resultData.total;
-          })
-          .finally(() => {
-            this.isFetching = false
-          })
       }
     }
   };
@@ -267,35 +162,6 @@
       border: 1px solid #dcdee2;
       border-radius: 4px;
       margin-right: 20px;
-    }
-    .-p-tab {
-      font-size: 12px;
-    }
-    .-p-time {
-      display: inline-block;
-      width: 190px;
-      overflow: hidden;
-    }
-    .-p-span-text {
-      display: inline-block;
-      vertical-align: super;
-    }
-    .-p-modal-tab {
-      overflow-y: scroll;
-      height: 400px;
-    }
-    .-p-modal-btn {
-      vertical-align: bottom;
-    }
-    ::-webkit-scrollbar {
-      width: 10px;
-      height: 10px;
-      background-color: #F5F5F5;
-    }
-    ::-webkit-scrollbar-thumb {
-      border-radius: 10px;
-      -webkit-box-shadow: inset 0 0 4px rgba(234, 234, 234, .3);
-      background-color: #555;
     }
     .-c-tab {
       margin: 20px 0;

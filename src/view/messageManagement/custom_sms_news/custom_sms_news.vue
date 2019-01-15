@@ -18,7 +18,7 @@
           </div>
         </Col>
         <Col :span="18" class="g-flex-a-j-center -date-search">
-          <Col span="2">反馈时间:</Col>
+          <Col span="2">发送时间:</Col>
           <Col span="14" class="g-flex-a-j-center">
             <div>
               <Date-picker class="date-time" type="datetime" placeholder="选择开始日期"

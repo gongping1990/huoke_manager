@@ -54,9 +54,17 @@ const user = {
   getSmsSendList(params) {
     return axios.get("/user/listSmsSendTask",{params: params});
   },
-  // 撤销自定义消息
+  // 获取微信短信消息
+  getWxSendList(params) {
+    return axios.get("/user/listWxSendTask",{params: params});
+  },
+  // 撤销短信自定义消息
   cancelSmsTask(params) {
     return axios.post("/user/cancelSmsTask", qs.stringify(params));
+  },
+  // 撤销微信自定义消息
+  cancelWxTask(params) {
+    return axios.post("/user/cancelWxTask", qs.stringify(params));
   },
   // 创建自定义消息
   addSmsTask(params) {
