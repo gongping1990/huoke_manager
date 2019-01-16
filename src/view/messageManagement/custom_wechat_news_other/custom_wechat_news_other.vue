@@ -6,11 +6,20 @@
 
     <Card>
       <Row class="g-t-left">
-        <Radio-group v-model="radioType" type="button" @on-change="changeRadio">
-          <Radio label="1">任务列表</Radio>
-          <Radio label="2">模板列表</Radio>
-          <Radio label="3">黑名单</Radio>
-        </Radio-group>
+        <Col :span="6">
+          <Radio-group v-model="radioType" type="button" @on-change="changeRadio">
+            <Radio label="1">任务列表</Radio>
+            <Radio label="2">模板列表</Radio>
+            <Radio label="3">黑名单</Radio>
+          </Radio-group>
+        </Col>
+        <Col :span="8">
+          <Button @click="syncUserFn" type="primary" class="-p-modal-btn" :disabled="userSync.status == '2'">
+            {{syncStatus[userSync.status]}}
+          </Button>
+          上次同步时间： {{userSync.lastTime}}
+        </Col>
+
       </Row>
 
       <Row class="g-search -c-tab" v-show="radioType == 1">
@@ -18,7 +27,7 @@
           <div class="g-flex-a-j-center">
             <div class="-search-select-text">公众号：</div>
             <Select v-model="form.appId" @on-change="getCustomWxList(1)" class="-search-selectOne" filterable>
-              <Option v-for="(item,index) in wxAccount" :label="item.name" :value="item.appid" :key="index"></Option>
+              <Option v-for="(item,index) in wxAccount" :label="item.name" :value="item.appId" :key="index"></Option>
             </Select>
           </div>
         </Col>
@@ -64,18 +73,20 @@
             @on-change="currentChange"></Page>
 
       <div v-if="radioType == 2">
-        <wechat-template-list :type="1"></wechat-template-list>
+        <wechat-template-list :type="2" :appId="form.appId"></wechat-template-list>
       </div>
 
       <div v-if="radioType == 3">
-        <black-list :type="1"></black-list>
+        <black-list :type="2"></black-list>
       </div>
 
     </Card>
 
     <div v-if="isOpenModal">
+      <!--type: 1为微信发送 2为自定义微信发送  otherType: 区分第三方微信-->
       <wx-record-template :data="nowWxId"
                           :type="2"
+                          :otherType="true"
                           @closeModal="closeModalRecord">
       </wx-record-template>
     </div>
@@ -86,11 +97,11 @@
 <script>
   import dayjs from 'dayjs'
   import WxRecordTemplate from "../../../components/wxRecordTemplate";
-  import WechatTemplateList from "./wechat_template_list";
   import BlackList from "../../../components/blackList";
+  import WechatTemplateList from "../custom_wechat_news/wechat_template_list";
 
   export default {
-    components: {BlackList, WechatTemplateList, WxRecordTemplate},
+    components: {WechatTemplateList, BlackList, WxRecordTemplate},
     data() {
       return {
         tab: {
@@ -102,7 +113,7 @@
           startTime: '',
           endTime: '',
           state: '4',
-          appId: '-1'
+          appId: ''
         },
         radioType: '1',
         dataList: [],
@@ -111,6 +122,8 @@
         isOpenModal: false,
         isFetching: false,
         nowWxId: '',
+        userSync: '',
+        syncStatus: ['同步失败', '同步用户', '同步中...'],
         taskStatus: {
           // '0': '发送失败',
           '1': '已完成',
@@ -123,7 +136,6 @@
             render: (h, params) => {
               return h('pre', params.row.content)
             },
-            width: 300,
           },
           {
             title: '接收用户',
@@ -198,10 +210,23 @@
       };
     },
     mounted() {
-      this.getCustomWxList()
       this.getWxAccountList()
+      this.getUserSync()
     },
     methods: {
+      syncUserFn() {
+        this.userSync.status = '2'
+        this.$api.custom.pullFansUser()
+          .then(response => {
+            this.getUserSync()
+          })
+      },
+      getUserSync() {
+        this.$api.custom.getInfo()
+          .then(response => {
+            this.userSync = response.data.resultData
+          })
+      },
       closeModalRecord() {
         this.isOpenModal = false;
       },
@@ -210,13 +235,11 @@
         this.getCustomWxList();
       },
       getWxAccountList() {
-        this.$api.user.getWxList()
+        this.$api.custom.getAppList()
           .then(response => {
             this.wxAccount = response.data.resultData;
-            this.wxAccount.unshift({
-              name: '全部',
-              appid: '-1'
-            })
+            this.form.appId = this.wxAccount[0].appId
+            this.getCustomWxList()
           })
       },
       //分页查询
@@ -225,10 +248,10 @@
         if (num) {
           this.tab.currentPage = 1
         }
-        this.$api.user.getWxSendList({
+        this.$api.custom.getWxSendList({
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
-          appId: this.form.appId == '-1' ? '' : this.form.appId,
+          appId: this.form.appId,
           status: this.form.state,
           sendTimeBegin: this.form.startTime ? dayjs(this.form.startTime).format('YYYY/MM/DD HH:mm:ss') : "",
           sendTimeEnd: this.form.endTime ? dayjs(this.form.endTime).format('YYYY/MM/DD HH:mm:ss') : ""
@@ -253,7 +276,7 @@
           title: '提示',
           content: '确认要撤销吗？',
           onOk: () => {
-            this.$api.user.cancelWxTask({
+            this.$api.custom.cancelWxTask({
               taskId: param
             }).then(
               response => {

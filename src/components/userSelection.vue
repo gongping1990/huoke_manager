@@ -280,21 +280,25 @@
         this.addStorage = [];
         this.search.userPhone = ''
         this.search.userType = ''
+        this.radioType == '2' && this.getUserNum()
       },
       checkAllUser() {
         !this.checkAll && (this.userInfo.condition = "");
         this.addStorage = [];
       },
       getUserList() {
+        let paramUrl = ''
         if (this.isFetching) return
         this.isFetching = true
-        this.$api.user.userList({
+        paramUrl = this.otherInfo.isOther ? this.$api.custom.userList : this.$api.user.userList
+        paramUrl({
+          appId: this.otherInfo.appId,
           current: this.tabAddUser.page,
           size: this.tabAddUser.pageSize,
           nickname: this.search.nickname,
           phone: this.search.phone,
           hasPhone: this.otherInfo.type == 1 ? true : '',
-          hasSubscripbe: this.otherInfo.type == 2 ? true : ''
+          hasSubscripbe: this.otherInfo.isOther ? '' : (this.otherInfo.type == 2 ? true : '')
         }).then(
           response => {
             if (this.userList.length) {
@@ -313,7 +317,9 @@
           })
       },
       getTemplateParamList(wxId) {
-        this.$api.user.getTemplateInfo({
+        let paramUrl = ''
+        paramUrl = this.otherInfo.isOther ? this.$api.custom.getTemplateInfo : this.$api.user.getTemplateInfo
+        paramUrl({
           id: wxId
         })
           .then(response => {

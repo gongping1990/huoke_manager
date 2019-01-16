@@ -42,6 +42,7 @@
   export default {
     components: {UserSelection},
     name: 'blackList',
+    props: ['type'],
     data() {
       return {
         tab: {
@@ -124,11 +125,16 @@
       },
       //分页查询
       getList() {
+        let param = ''
         this.isFetching = true
-        this.$api.black.blackList({
+        param = {
           current: this.tab.page,
           size: this.tab.pageSize
-        })
+        }
+        if(this.type == '2') {
+          param.black = true
+        }
+        this.$api.black.blackList(param)
           .then(response => {
             this.dataList = response.data.resultData.records;
             this.total = response.data.resultData.total;

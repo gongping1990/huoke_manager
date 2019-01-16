@@ -19,6 +19,7 @@ import operation from "./operation";
 import popManage from "./popManage";
 import black from "./black";
 import seckill from "./seckill";
+import custom from "./custom";
 
 
 export default {
@@ -42,5 +43,6 @@ export default {
   operation,
   popManage,
   black,
-  seckill
+  seckill,
+  custom
 }

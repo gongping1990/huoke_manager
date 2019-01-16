@@ -379,6 +379,15 @@ export const appRouter = [
         component: () => import('@/view/messageManagement/custom_wechat_news/custom_wechat_news')
       },
       {
+        path: '/custom_wechat_news_other',
+        name: 'custom_wechat_news_other',
+        meta: [
+          {name:'消息管理'},
+          {name:'自定义微信消息(第三方)'}
+        ],
+        component: () => import('@/view/messageManagement/custom_wechat_news_other/custom_wechat_news_other')
+      },
+      {
         path: '/sms_news',
         name: 'sms_news',
         meta: [

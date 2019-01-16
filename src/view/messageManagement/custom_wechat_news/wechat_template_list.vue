@@ -31,6 +31,7 @@
   export default {
     components: {UserSelection},
     name: 'wechatTemplateList',
+    props:['type', 'appId'],
     data() {
       return {
         tab: {
@@ -60,7 +61,8 @@
           isCheckAllPeople: false,
           templateId: '',
           appId: '',
-          type: '2'
+          type: '2',
+          isOther: this.type == '2'
         },
         columns: [
           {
@@ -113,11 +115,18 @@
       },
       //分页查询
       getWxList() {
+        let paramUrl = ''
+        let param = ''
         this.isFetching = true
-        this.$api.user.getListCustomTemplate({
+        param = {
           current: this.tab.page,
           size: this.tab.pageSize
-        })
+        }
+        if(this.type == '2') {
+          param.appId = this.appId
+        }
+        paramUrl = this.type == '1' ? this.$api.user.getListCustomTemplate : this.$api.custom.getListCustomTemplate
+        paramUrl(param)
           .then(response => {
             this.dataList = response.data.resultData.records;
             this.total = response.data.resultData.total;
@@ -151,6 +160,7 @@
         this.isAddOpenModal = false;
       },
       submitMessage(param) {
+        let params = ''
 
         this.addInfo = Object.assign(this.addInfo, param)
 
@@ -170,9 +180,9 @@
           return this.$Message.error("请输入定时发送时间");
         }
 
-        // delete this.addInfo.radioType
+        params = this.type == '1' ? this.$api.user.addWxTask : this.$api.custom.addWxTask
 
-        this.$api.user.addWxTask({
+        params({
           id: this.otherInfo.templateId,
           ...this.addInfo
         })

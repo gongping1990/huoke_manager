@@ -62,6 +62,7 @@
         </template>
         <Menu-item name="wechat_news">微信推送消息</Menu-item>
         <Menu-item name="custom_wechat_news">自定义微信消息</Menu-item>
+        <Menu-item name="custom_wechat_news_other">自定义微信消息(第三方)</Menu-item>
         <Menu-item name="sms_news">短信推送消息</Menu-item>
         <Menu-item name="custom_sms_news">自定义短信消息</Menu-item>
       </Submenu>

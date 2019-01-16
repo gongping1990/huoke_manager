@@ -46,7 +46,7 @@
 
   export default {
     name: 'wxRecordTemplate',
-    props: ['isOpen', 'data', 'type'],
+    props: ['data', 'type', 'otherType'],
     data() {
       return {
         form: {
@@ -98,7 +98,7 @@
       }
     },
     mounted() {
-      this.isOpenModal = this.isOpen
+      this.isOpenModal = true
       this.getWxMessageList()
     },
     methods: {
@@ -108,6 +108,7 @@
       },
 
       getWxMessageList(num) {
+        let paramUrl = ''
         this.isFetching = true
         if (num) {
           this.tab.currentPage = 1
@@ -126,7 +127,8 @@
           param.taskId = this.data
         }
 
-        this.$api.user.getWxMessageList(param)
+        paramUrl = this.otherType ? this.$api.custom.getWxMessageList : this.$api.user.getWxMessageList
+        paramUrl(param)
           .then(response => {
             this.dataList = response.data.resultData.records;
             this.total = response.data.resultData.total;
