@@ -257,7 +257,7 @@
                       this.changeTop(params.row)
                     }
                   }
-                }, params.row.topone ? '已置顶' : '置顶'),
+                }, params.row.topone ? '取消置顶' : '置顶'),
                 h('Poptip', {
                   props: {
                     confirm: true,
@@ -382,7 +382,7 @@
         })
           .then(res => {
             if (res.data.code == '200') {
-              this.$Message.success('置顶成功')
+              this.$Message.success('操作成功')
               this.getList()
             }
           })
