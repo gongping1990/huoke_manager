@@ -1,6 +1,6 @@
 <template>
   <Modal top="6vh" @close="closeModal" :title="otherInfo.title" v-model="isAddOpenModal"
-         :width="otherInfo.type == '3' ? '600px':'800px'">
+         :width="otherInfo.type == '3' ? '600px':'900px'">
     <Row class="p-user">
       <Col :span="otherInfo.type != 3 ? 16 : 24">
         <Card class="-card-left">
@@ -116,19 +116,25 @@
                    v-model="userInfo.content"></Input>
           </div>
           <div v-if="otherInfo.type == 2">
-            <Form :model="userInfo" label-width="100px">
+            <Form :model="userInfo" :label-width="80">
               <Form-item label="first" required>
-                <Input v-model="userInfo.first" placeholder="请输入first" size="small"></Input>
-                <ColorPicker size="small" v-model="userInfo.firstColor"></ColorPicker>
+                <div class="g-flex-a-j-center">
+                  <Input v-model="userInfo.first" placeholder="请输入first" size="small"></Input>
+                  <ColorPicker class="-p-u-color" size="small" v-model="userInfo.firstColor"/>
+                </div>
               </Form-item>
               <Form-item :label="item.name" :key="item.id" v-for="item of keywords">
-                <Input v-model="userInfo[item.key]" :placeholder='item.tips'
-                       size="small"></Input>
-                <ColorPicker size="small" v-model="item.color"></ColorPicker>
+                <div class="g-flex-a-j-center">
+                  <Input v-model="userInfo[item.key]" :placeholder='item.tips'
+                         size="small"></Input>
+                  <ColorPicker class="-p-u-color" size="small" v-model="item.color"/>
+                </div>
               </Form-item>
               <Form-item label="remark" required>
-                <Input v-model="userInfo.remark" placeholder="请输入备注" size="small"></Input>
-                <ColorPicker size="small" v-model="userInfo.remarkColor"></ColorPicker>
+                <div class="g-flex-a-j-center">
+                  <Input v-model="userInfo.remark" placeholder="请输入备注" size="small"></Input>
+                  <ColorPicker class="-p-u-color" size="small" v-model="userInfo.remarkColor"/>
+                </div>
               </Form-item>
               <Form-item label="链接地址">
                 <Input v-model="userInfo.url" placeholder="请输入链接地址" size="small"></Input>
@@ -136,8 +142,9 @@
             </Form>
           </div>
         </Card>
-        <Card>
-          <div>
+
+        <Card class="-card-right-top">
+          <div slot="title">
             <span>发送时间</span>
           </div>
           <div>
@@ -185,7 +192,13 @@
           inputContent: ""
         },
         userInfo: {
-          sendTime: ''
+          content: '',
+          first: '',
+          remark: '',
+          url: '',
+          sendTime: '',
+          firstColor: '',
+          remarkColor: ''
         },
         tabAddUser: {
           page: 1,
@@ -242,7 +255,9 @@
         this.keywords = [];
         this.tabAddUser.page = 1;
         this.getUserList();
-        (this.otherInfo.type == 2 || this.otherInfo.type == 4) && this.getTemplateParamList(this.otherInfo.templateId)
+        if (this.otherInfo.type == 2 || this.otherInfo.type == 4) {
+          this.getTemplateParamList(this.otherInfo.templateId)
+        }
       },
       getSearch() {
         if (this.search.keyType == "1") {
@@ -370,8 +385,8 @@
             }
           }
 
-          this.userInfo.first = `${this.userInfo.first},${this.userInfo.firstColor ? this.userInfo.firstColor : ''}`
-          this.userInfo.remark = `${this.userInfo.remark},${this.userInfo.remarkColor ? this.userInfo.remarkColor : ''}`
+          this.userInfo.first = this.userInfo.first ? `${this.userInfo.first}${this.userInfo.firstColor ? `,${this.userInfo.firstColor}` : ''}` : ''
+          this.userInfo.remark = this.userInfo.remark ? `${this.userInfo.remark}${this.userInfo.remarkColor ? `,${this.userInfo.remarkColor}` : ''}` : ''
           this.userInfo.keywords = JSON.stringify(objTwo);
         }
 
@@ -500,6 +515,12 @@
       margin-top: 10px;
       height: 372px;
       overflow-y: scroll;
+    }
+
+    .-p-u-color {
+      overflow: hidden;
+      display: flex;
+      margin-left: 2px;
     }
   }
 </style>

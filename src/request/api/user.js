@@ -66,9 +66,13 @@ const user = {
   cancelWxTask(params) {
     return axios.post("/user/cancelWxTask", qs.stringify(params));
   },
-  // 创建自定义消息
+  // 创建短信自定义消息
   addSmsTask(params) {
     return axios.post("/user/sendSmsTask", params);
+  },
+  // 创建微信自定义消息
+  addWxTask(params) {
+    return axios.post("/user/sendWxTask", params);
   },
   // 模板类型
   getTemplateInfo(params) {
@@ -77,6 +81,10 @@ const user = {
   // 获取人数
   getUserCount(params) {
     return axios.get("/user/getUserCount", {params: params});
+  },
+  // 获取微信模板列表
+  getListCustomTemplate(params) {
+    return axios.get("/user/listCustomTemplate", {params: params});
   }
 };
 

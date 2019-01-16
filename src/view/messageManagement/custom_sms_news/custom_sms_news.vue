@@ -256,7 +256,7 @@
       },
       submitMessage(param) {
         this.addInfo = Object.assign(this.addInfo, param)
-
+        console.log(this.addInfo, 1)
         if (this.addInfo.content === "") {
           return this.$Message.error("请输入消息内容");
         } else if (this.addInfo.sendType == "") {
@@ -268,7 +268,12 @@
         }
 
         delete this.addInfo.radioType
-        console.log(this.addInfo, 1)
+        delete this.addInfo.first
+        delete this.addInfo.firstColor
+        delete this.addInfo.remark
+        delete this.addInfo.remarkColor
+        delete this.addInfo.url
+
         this.$api.user.addSmsTask(this.addInfo)
           .then(response => {
             if (response.data.code == "200") {

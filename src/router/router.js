@@ -369,15 +369,15 @@ export const appRouter = [
         ],
         component: () => import('@/view/messageManagement/wechat_news/wechat_news')
       },
-      // {
-      //   path: '/custom_wechat_news',
-      //   name: 'custom_wechat_news',
-      //   meta: [
-      //     {name:'消息管理'},
-      //     {name:'自定义微信消息'}
-      //   ],
-      //   component: () => import('@/view/messageManagement/custom_wechat_news/custom_wechat_news')
-      // },
+      {
+        path: '/custom_wechat_news',
+        name: 'custom_wechat_news',
+        meta: [
+          {name:'消息管理'},
+          {name:'自定义微信消息'}
+        ],
+        component: () => import('@/view/messageManagement/custom_wechat_news/custom_wechat_news')
+      },
       {
         path: '/sms_news',
         name: 'sms_news',

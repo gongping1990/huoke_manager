@@ -17,6 +17,7 @@ import config from "./config";
 import trusteeship from "./trusteeship";
 import operation from "./operation";
 import popManage from "./popManage";
+import black from "./black";
 
 
 export default {
@@ -38,5 +39,6 @@ export default {
   config,
   trusteeship,
   operation,
-  popManage
+  popManage,
+  black
 }
