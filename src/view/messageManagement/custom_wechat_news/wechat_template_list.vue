@@ -59,6 +59,7 @@
           title: '添加自定义微信',
           isCheckAllPeople: false,
           templateId: '',
+          appId: '',
           type: '2'
         },
         columns: [
@@ -136,6 +137,7 @@
           appId: data.appId
         };
         this.otherInfo.templateId = data.id;
+        this.otherInfo.appId = data.appId;
 
         this.keywords = [];
 

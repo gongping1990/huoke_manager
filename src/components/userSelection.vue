@@ -57,15 +57,7 @@
                   </div>
                 </div>
                 <div v-else>
-                  <div style="margin: 20px 0" v-if="otherInfo.type==1">
-                    关注公众号：
-                    <Select v-model="search.public" placeholder="请选择"
-                            style="width: 100px" @on-change="getUserNum">
-                      <Option label="是" value="true"></Option>
-                      <Option label="否" value="false"></Option>
-                    </Select>
-                  </div>
-                  <div style="margin: 20px 0" v-else>
+                  <div style="margin: 20px 0" v-if="otherInfo.type!=1">
                     电话号码：
                     <Select v-model="search.userPhone" placeholder="请选择"
                             style="width: 100px" @on-change="getUserNum">
@@ -185,7 +177,6 @@
         search: {
           userType: "",
           keyType: "1",
-          public: '',
           userPhone: '',
           phone: "",
           nickname: "",
@@ -287,7 +278,6 @@
         this.checkAll = false
         this.userNum = '0'
         this.addStorage = [];
-        this.search.public = ''
         this.search.userPhone = ''
         this.search.userType = ''
       },
@@ -343,11 +333,14 @@
           })
       },
       getUserNum() {
-        this.$api.user.getUserCount({
+        let param = {
           hasPhone: (this.otherInfo.type == 2 && this.search.userPhone != 3) ? this.search.userPhone : '',
-          hasSubscripbe: this.otherInfo.type == 1 ? this.search.public : 'true',
           payUser: this.search.userType
-        })
+        }
+        if(this.otherInfo.type == '2' || this.otherInfo.type == '4') {
+          param.addId = this.otherInfo.appId
+        }
+        this.$api.user.getUserCount(param)
           .then(response => {
             this.userNum = response.data.resultData
           })
@@ -398,7 +391,6 @@
 
         this.userInfo.userGroupQO = {
           hasPhone: (this.otherInfo.type == 2 && this.search.userPhone != 3) ? this.search.userPhone : '',
-          hasSubscripbe: this.otherInfo.type == 1 ? this.search.public : 'true',
           payUser: this.search.userType
         }
 

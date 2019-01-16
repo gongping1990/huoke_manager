@@ -18,6 +18,7 @@ import trusteeship from "./trusteeship";
 import operation from "./operation";
 import popManage from "./popManage";
 import black from "./black";
+import seckill from "./seckill";
 
 
 export default {
@@ -40,5 +41,6 @@ export default {
   trusteeship,
   operation,
   popManage,
-  black
+  black,
+  seckill
 }
