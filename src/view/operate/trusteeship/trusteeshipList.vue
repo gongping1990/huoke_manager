@@ -88,6 +88,9 @@
         <FormItem label="链接" prop="link" v-if="radioType == '2'">
           <Input :rows="5" v-model="addInfo.link" placeholder="请输入链接"></Input>
         </FormItem>
+        <FormItem label="主题色" prop="color" v-if="radioType == '1'">
+          <ColorPicker v-model="addInfo.color" />
+        </FormItem>
       </Form>
       <div slot="footer" class="g-flex-j-sa">
         <Button @click="closeModal('addInfo')" ghost type="primary" style="width: 100px;">取消</Button>
@@ -126,12 +129,16 @@
         isSending: false,
         addInfo: {
           content: '',
-          name: ''
+          name: '',
+          color: ''
         },
         ruleValidate: {
           name : [
             {required: true, message: '请输入名称', trigger: 'blur'}
-          ]
+          ],
+          color : [
+            {required: true, message: '请选择主题色', trigger: 'change'}
+          ],
         },
         columns: [
           {
@@ -160,6 +167,20 @@
             align: 'center'
           },
           {
+            title: '主题色',
+            render: (h, params) => {
+              return h('div', {
+                style: {
+                  width: '20px',
+                  height: '20px',
+                  backgroundColor: params.row.color,
+                  margin: '0 auto'
+                }
+              })
+            },
+            align: 'center'
+          },
+          {
             title: '创建时间',
             render: (h, params) => {
               return h('div', dayjs(+params.row.gmtCreate).format("YYYY-MM-DD HH:mm:ss"))
@@ -178,20 +199,20 @@
             align: 'center',
             render: (h, params) => {
               return h('div', [
-                h('Button', {
-                  props: {
-                    type: 'text',
-                    size: 'small'
-                  },
-                  style: {
-                    color: '#5444E4'
-                  },
-                  on: {
-                    click: () => {
-                      this.openModal(params.row)
-                    }
-                  }
-                }, '预览'),
+                // h('Button', {
+                //   props: {
+                //     type: 'text',
+                //     size: 'small'
+                //   },
+                //   style: {
+                //     color: '#5444E4'
+                //   },
+                //   on: {
+                //     click: () => {
+                //       this.openModal(params.row)
+                //     }
+                //   }
+                // }, '预览'),
                 h('Button', {
                   props: {
                     type: 'text',
@@ -212,7 +233,7 @@
                     size: 'small'
                   },
                   style: {
-                    color: '#5444E4'
+                    color: 'rgb(218, 55, 75)',
                   },
                   on: {
                     click: () => {
@@ -319,7 +340,8 @@
         } else {
           this.addInfo = {
             content: '',
-            name: ''
+            name: '',
+            color:""
           }
           setTimeout(()=>{
             this.$refs.editorWang.clearHtml()

@@ -218,7 +218,7 @@
             title: '操作',
             align: 'center',
             render: (h, params) => {
-              if (params.row.status == 0 || params.row.status == 10) {
+              if (params.row.status == 0 || params.row.status == 1) {
                 return h('div', [
                   h('Button', {
                     props: {
@@ -362,7 +362,7 @@
           return this.$Message.error('请选择关联课程')
         } else if (this.addInfo.limit && !this.addInfo.maxStock) {
           return this.$Message.error('请输入限制人数')
-        } else if (!this.addInfo.price) {
+        } else if (this.addInfo.price == null) {
           return this.$Message.error('请输入秒杀价格')
         } else if (!this.getStartTime) {
           return this.$Message.error('请输入开始时间')
