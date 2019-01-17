@@ -50,6 +50,20 @@ const custom = {
   // 获取第三方模板
   getTemplateInfo(params) {
     return axios.get("/custom/getTemplateInfo",{params: params});
+  },
+  // 获取列表
+  blackList(params) {
+    return axios.get('/custom/queryUserPage', {params: params})
+  },
+
+  // 删除
+  delBlack(params) {
+    return axios.post('/custom/deleteList',  params)
+  },
+
+  // 新增
+  addBlack(params) {
+    return axios.post('/custom/saveList',  params)
   }
 }
 

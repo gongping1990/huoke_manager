@@ -290,6 +290,7 @@
         let paramUrl = ''
         if (this.isFetching) return
         this.isFetching = true
+        console.log(this.otherInfo)
         paramUrl = this.otherInfo.isOther ? this.$api.custom.userList : this.$api.user.userList
         paramUrl({
           appId: this.otherInfo.appId,

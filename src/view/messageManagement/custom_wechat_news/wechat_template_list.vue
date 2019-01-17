@@ -4,6 +4,17 @@
 <template>
   <div class="p-wx">
 
+    <Row class="g-search -c-tab">
+      <Col :span="8" class="g-t-left">
+        <div class="g-flex-a-j-center">
+          <div class="-search-select-text">公众号：</div>
+          <Select v-model="form.appId" @on-change="getWxList(1)" class="-search-selectOne" filterable>
+            <Option v-for="(item,index) in wxAccount" :label="item.name" :value="item.appid" :key="index"></Option>
+          </Select>
+        </div>
+      </Col>
+    </Row>
+
     <Table class="-c-tab" :loading="isFetching" :columns="columns" :data="dataList"></Table>
 
     <Page class="g-text-right"
@@ -19,7 +30,7 @@
                       @close="closeModal"
                       @submitModal="submitMessage"
                       :otherInfo="otherInfo"
-                      ></user-selection>
+      ></user-selection>
     </div>
   </div>
 </template>
@@ -31,7 +42,7 @@
   export default {
     components: {UserSelection},
     name: 'wechatTemplateList',
-    props:['type', 'appId'],
+    props: ['type', 'appId'],
     data() {
       return {
         tab: {
@@ -39,8 +50,7 @@
           pageSize: 10
         },
         form: {
-          startTime: "",
-          endTime: "",
+          appId: "",
           state: "3"
         },
         addInfo: {
@@ -52,6 +62,7 @@
           remark: ""
         },
         dataList: [],
+        wxAccount: [],
         total: 0,
         isAddOpenModal: false,
         isFetching: false,
@@ -106,9 +117,25 @@
       };
     },
     mounted() {
-      this.getWxList();
+      this.getWxAccountList();
     },
     methods: {
+      getWxAccountList() {
+        let paramUrl = ''
+        paramUrl = this.type == '1' ? this.$api.user.getWxList : this.$api.custom.getAppList
+        paramUrl()
+          .then(response => {
+            this.wxAccount = response.data.resultData;
+            if (this.type == '2') {
+              this.wxAccount.forEach(item => {
+                item.appid = item.appId
+              })
+            }
+
+            this.form.appId = this.wxAccount[0].appid
+            this.getWxList();
+          })
+      },
       currentChange(val) {
         this.tab.page = val;
         this.getWxList();
@@ -116,17 +143,14 @@
       //分页查询
       getWxList() {
         let paramUrl = ''
-        let param = ''
         this.isFetching = true
-        param = {
-          current: this.tab.page,
-          size: this.tab.pageSize
-        }
-        if(this.type == '2') {
-          param.appId = this.appId
-        }
+
         paramUrl = this.type == '1' ? this.$api.user.getListCustomTemplate : this.$api.custom.getListCustomTemplate
-        paramUrl(param)
+        paramUrl({
+          current: this.tab.page,
+          size: this.tab.pageSize,
+          appId: this.form.appId
+        })
           .then(response => {
             this.dataList = response.data.resultData.records;
             this.total = response.data.resultData.total;
@@ -207,6 +231,13 @@
 </script>
 <style lang="less" scoped>
   .p-wx {
+    .-search-selectOne {
+      width: 100px;
+      border: 1px solid #dcdee2;
+      border-radius: 4px;
+      margin-right: 20px;
+    }
+
     .-c-tab {
       margin: 20px 0;
     }

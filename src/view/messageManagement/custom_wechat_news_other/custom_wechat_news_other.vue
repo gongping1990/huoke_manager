@@ -73,7 +73,7 @@
             @on-change="currentChange"></Page>
 
       <div v-if="radioType == 2">
-        <wechat-template-list :type="2" :appId="form.appId"></wechat-template-list>
+        <wechat-template-list :type="2"></wechat-template-list>
       </div>
 
       <div v-if="radioType == 3">

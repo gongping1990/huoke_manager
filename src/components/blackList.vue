@@ -57,7 +57,8 @@
         otherInfo: {
           title: '黑名单',
           isCheckAllPeople: false,
-          type: '3'
+          type: '3',
+          isOther: this.type == '2'
         },
         columns: [
           {
@@ -125,16 +126,18 @@
       },
       //分页查询
       getList() {
+        let paramUrl = ''
         let param = ''
-        this.isFetching = true
+        paramUrl = this.type == '1' ? this.$api.black.blackList : this.$api.custom.blackList
         param = {
           current: this.tab.page,
           size: this.tab.pageSize
         }
+        this.isFetching = true
         if(this.type == '2') {
           param.black = true
         }
-        this.$api.black.blackList(param)
+        paramUrl(param)
           .then(response => {
             this.dataList = response.data.resultData.records;
             this.total = response.data.resultData.total;
@@ -149,7 +152,9 @@
         if(!this.userIds.length) {
           return this.$Message.error('请选择需要移除的用户')
         }
-        this.$api.black.delBlack(this.userIds)
+        let paramUrl = ''
+        paramUrl = this.type == '1' ? this.$api.black.delBlack : this.$api.custom.delBlack
+        paramUrl(this.userIds)
           .then(response => {
             if (response.data.code == '200') {
               this.$Message.success('操作成功')
@@ -169,7 +174,9 @@
         this.isAddOpenModal = false;
       },
       submitMessage(param) {
-        this.$api.black.addBlack(param.userIds)
+        let paramUrl = ''
+        paramUrl = this.type == '1' ? this.$api.black.addBlack : this.$api.custom.addBlack
+        paramUrl(param.userIds)
           .then(response => {
             if (response.data.code == "200") {
               this.$Message.success("发送成功");

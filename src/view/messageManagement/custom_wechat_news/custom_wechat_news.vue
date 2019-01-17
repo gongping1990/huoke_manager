@@ -284,12 +284,12 @@
     .-search-select-text {
       min-width: 70px;
     }
-    .-search-selectOne {
-      width: 100px;
-      border: 1px solid #dcdee2;
-      border-radius: 4px;
-      margin-right: 20px;
-    }
+      .-search-selectOne {
+        width: 100px;
+        border: 1px solid #dcdee2;
+        border-radius: 4px;
+        margin-right: 20px;
+      }
 
     .-c-tab {
       margin: 20px 0;
