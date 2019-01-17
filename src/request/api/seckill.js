@@ -9,17 +9,17 @@ const seckill = {
 
   // 删除
   closeSecKill(params) {
-    return axios.post('/seckill/updateClose',  params)
+    return axios.post('/seckill/updateClose',  qs.stringify(params))
   },
 
   // 新增
   addSecKill(params) {
-    return axios.post('/seckill/add',  params)
+    return axios.post('/seckill/add',  qs.stringify(params))
   },
 
   // 修改
   upadteSecKill(params) {
-    return axios.post('/seckill/edit',  params)
+    return axios.post('/seckill/edit',  qs.stringify(params))
   }
 }
 

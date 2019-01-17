@@ -20,6 +20,8 @@ import popManage from "./popManage";
 import black from "./black";
 import seckill from "./seckill";
 import custom from "./custom";
+import channel from "./channel";
+import dataCenter from "./dataCenter";
 
 
 export default {
@@ -44,5 +46,7 @@ export default {
   popManage,
   black,
   seckill,
-  custom
+  custom,
+  channel,
+  dataCenter
 }

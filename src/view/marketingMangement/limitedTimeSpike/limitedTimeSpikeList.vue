@@ -58,8 +58,8 @@
             </div>
           </div>
         </FormItem>
-        <FormItem label="秒杀价格" prop="frendHelpCount" class="ivu-form-item-required">
-          <Input type="text" :disabled="isEdit" v-model="addInfo.frendHelpCount" placeholder="请输入秒杀价格"></Input>
+        <FormItem label="秒杀价格" prop="price" class="ivu-form-item-required">
+          <InputNumber :disabled="isEdit" :min="0" v-model="addInfo.price" placeholder="请输入秒杀价格"></InputNumber>
         </FormItem>
         <FormItem label="最大限制" class="ivu-form-item-required">
           <Radio-group v-model="addInfo.limit">
@@ -67,8 +67,8 @@
             <Radio :label=1 :disabled="isEdit">启用</Radio>
           </Radio-group>
         </FormItem>
-        <FormItem label="限制人数" prop="activityCount" v-if="addInfo.limit" class="ivu-form-item-required">
-          <Input type="text" v-model="addInfo.activityCount" placeholder="请输入限制人数" :disabled="isEdit"></Input>
+        <FormItem label="限制人数" prop="maxStock" v-if="addInfo.limit" class="ivu-form-item-required">
+          <InputNumber v-model="addInfo.maxStock" placeholder="请输入限制人数" :disabled="isEdit"></InputNumber>
         </FormItem>
         <FormItem label="有效期" class="ivu-form-item-required">
           <Row>
@@ -122,13 +122,13 @@
             id: '0'
           }, {
             name: '进行中',
-            id: '10'
+            id: '1'
           }, {
             name: '已过期',
-            id: '20'
+            id: '3'
           }, {
             name: '已结束',
-            id: '30'
+            id: '2'
           },
         ],
         dataList: [],
@@ -165,7 +165,7 @@
             render: (h, params) => {
               return h('img', {
                 attrs: {
-                  src: params.row.courseCover
+                  src: params.row.courseImage
                 },
                 style: {
                   width: '100px',
@@ -178,19 +178,19 @@
           },
           {
             title: '秒杀价格',
-            key: 'frendHelpCount',
+            key: 'price',
             align: 'center'
           },
           {
-            title: '最大限制',
+            title: '最大限制(人数)',
             render: (h, params) => {
-              return h('div', params.row.activityCount == '-1' ? '无限制' : params.row.activityCount)
+              return h('div', params.row.maxStock == '-1' ? '无限制' : params.row.maxStock)
             },
             align: 'center'
           },
           {
             title: '秒杀销量',
-            key: 'successCount',
+            key: 'killAmount',
             align: 'center'
           },
           {
@@ -203,14 +203,14 @@
           {
             title: '有效期开始',
             render: (h, params) => {
-              return h('div', dayjs(params.row.startTime).format("YYYY-MM-DD HH:mm:ss"))
+              return h('div', dayjs(+params.row.startTime).format("YYYY-MM-DD HH:mm:ss"))
             },
             align: 'center'
           },
           {
             title: '有效期结束',
             render: (h, params) => {
-              return h('div', dayjs(params.row.endTime).format("YYYY-MM-DD HH:mm:ss"))
+              return h('div', dayjs(+params.row.endTime).format("YYYY-MM-DD HH:mm:ss"))
             },
             align: 'center'
           },
@@ -294,16 +294,18 @@
           let _self = this
           this.isEdit = true
           this.addInfo = JSON.parse(JSON.stringify(data))
-          this.addInfo.limit = this.addInfo.activityCount == '-1' ? 0 : 1
-          this.getStartTime = new Date(this.addInfo.startTime)
-          this.getEndTime = new Date(this.addInfo.endTime)
+          this.addInfo.limit = this.addInfo.maxStock == '0' ? 0 : 1
+          this.addInfo.price = +this.addInfo.price
+          this.addInfo.maxStock = +this.addInfo.maxStock
+          this.getStartTime = new Date(+this.addInfo.startTime)
+          this.getEndTime = new Date(+this.addInfo.endTime)
           this.courseList.push({
-            courseImgUrl: this.addInfo.courseCover,
+            courseImgUrl: this.addInfo.courseImage,
             courseName: this.addInfo.courseName
           })
           this.dateEndOption = {
             disabledDate(date) {
-              return date && date.valueOf() < (_self.addInfo.endTime - 24 * 60 * 60 * 1000)
+              return date && date.valueOf() < (_self.addInfo.endTime)
             }
           }
         } else {
@@ -311,7 +313,9 @@
           this.getEndTime = ''
           this.isEdit = false
           this.addInfo = {
-            limit: 0
+            limit: 0,
+            price: null,
+            maxStock: null
           }
         }
       },
@@ -321,11 +325,11 @@
       //分页查询
       getList() {
         this.isFetching = true
-        this.$api.goods.friendHelpList({
+        this.$api.seckill.getList({
           current: this.tab.page,
           size: this.tab.pageSize,
-          name: this.searchInfo,
-          status: this.selectInfoOne,
+          courseName: this.searchInfo,
+          status: this.selectInfoOne == '-1' ? '' : this.selectInfoOne,
         })
           .then(
             response => {
@@ -341,7 +345,7 @@
           title: '提示',
           content: '确认结束限时秒杀吗？',
           onOk: () => {
-            this.$api.goods.closeFrendHelp({
+            this.$api.seckill.closeSecKill({
               id: param.id
             }).then(
               response => {
@@ -356,10 +360,10 @@
       submitInfo(name) {
         if (!this.addInfo.goodsId) {
           return this.$Message.error('请选择关联课程')
-        } else if (this.addInfo.limit && !this.addInfo.activityCount) {
+        } else if (this.addInfo.limit && !this.addInfo.maxStock) {
           return this.$Message.error('请输入限制人数')
-        } else if (!this.addInfo.frendHelpCount) {
-          return this.$Message.error('请输入助力人数')
+        } else if (!this.addInfo.price) {
+          return this.$Message.error('请输入秒杀价格')
         } else if (!this.getStartTime) {
           return this.$Message.error('请输入开始时间')
         } else if (!this.getEndTime) {
@@ -368,8 +372,10 @@
         this.isSending = true
         this.addInfo.startTime = new Date(this.getStartTime).getTime()
         this.addInfo.endTime = new Date(this.getEndTime).getTime()
-        this.addInfo.activityCount = this.addInfo.limit ? this.addInfo.activityCount : '-1'
-        this.$api.goods.editFriendHelp(this.addInfo)
+        this.addInfo.maxStock = this.addInfo.limit ? this.addInfo.maxStock : '0'
+        let paramUrl = ''
+        paramUrl = !this.addInfo.id ?  this.$api.seckill.addSecKill :  this.$api.seckill.upadteSecKill
+        paramUrl(this.addInfo)
           .then(
             response => {
               if (response.data.code == '200') {
@@ -448,7 +454,7 @@
         .-i-del {
           position: absolute;
           top: 0;
-          left: 84px;
+          right: 0;
           color: #ffff;
           background-color: rgba(0, 0, 0, 0.4);
           line-height: normal;
