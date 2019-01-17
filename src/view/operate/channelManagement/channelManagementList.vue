@@ -56,13 +56,6 @@
           <div @click="submitInfo('addInfo')" class="g-primary-btn "> {{isSending ? '提交中...' : '确 认'}}</div>
         </div>
       </Modal>
-
-      <div v-if="isShowCourseModal">
-        <check-course :isShowModal="isShowCourseModal" :checkCourseList="courseList"
-                      :isRadioModal="true"
-                      @cancleCourseModal="isShowCourseModal = false"
-                      @closeCourseModal="checkCourse"></check-course>
-      </div>
     </Card>
   </div>
 </template>
@@ -70,11 +63,9 @@
 <script>
   import dayjs from 'dayjs'
   import {getBaseUrl} from '@/libs/index'
-  import CheckCourse from "../../../components/checkCourse";
 
   export default {
     name: 'channelManagement',
-    components: {CheckCourse},
     data() {
       return {
         baseUrl: `${getBaseUrl()}/common/uploadPublicFile`,
@@ -83,13 +74,11 @@
           pageSize: 10
         },
         dataList: [],
-        courseList: [],
         selectInfo: '1',
         searchInfo: {},
         total: 0,
         isFetching: false,
         isOpenModal: false,
-        isShowCourseModal: false,
         isSending: false,
         addInfo: {},
         ruleValidate: {
@@ -105,24 +94,19 @@
             align: 'center'
           },
           {
-            title: '推广课程',
-            key: 'href',
-            align: 'center'
-          },
-          {
             title: '累计销量',
-            key: 'href',
+            key: 'saleNum',
             align: 'center'
           },
           {
             title: '累计销售额',
-            key: 'href',
+            key: 'saleAmount',
             align: 'center'
           },
           {
             title: '创建时间',
             render: (h, params) => {
-              return h('span', `${params.row.showTime}`)
+              return h('span', `${params.row.gmtCreate}`)
             },
             width: 300,
             align: 'center'
@@ -162,22 +146,7 @@
                       this.toDetail(params.row)
                     }
                   }
-                }, '详情'),
-                h('Button', {
-                  props: {
-                    type: 'text',
-                    size: 'small'
-                  },
-                  style: {
-                    color: '#5444E4',
-                    marginRight: '5px'
-                  },
-                  on: {
-                    click: () => {
-                      this.openCourseModal(params.row)
-                    }
-                  }
-                }, '生成推广链接')
+                }, '详情')
               ])
             }
           }
@@ -188,11 +157,11 @@
       this.getList()
     },
     methods: {
-      toDetail () {
+      toDetail (data) {
         this.$router.push({
           name: 'channelDetail',
           query:{
-            id: '1'
+            id: data.id
           }
         })
       },
@@ -202,13 +171,9 @@
           this.addInfo = JSON.parse(JSON.stringify(data))
         } else {
           this.addInfo = {
-            imgResUrl: ''
+            name: ''
           }
         }
-      },
-      openCourseModal(data) {
-        this.isShowCourseModal = true
-        this.addInfo = JSON.parse(JSON.stringify(data))
       },
       closeModal(name) {
         this.isOpenModal = false
@@ -221,12 +186,12 @@
       //分页查询
       getList() {
         this.isFetching = true
-        this.$api.banner.bannerList({
+        this.$api.channel.getList({
           current: this.tab.page,
           size: this.tab.pageSize,
           name: this.searchInfo.nickname,
-          fromDate: this.searchInfo.fromDate ? dayjs(this.searchInfo.fromDate).format("YYYY/MM/DD HH:mm:ss") : '',
-          toDate:  this.searchInfo.toDate  ? dayjs(this.searchInfo.toDate).format("YYYY/MM/DD HH:mm:ss") : ''
+          begin: this.searchInfo.fromDate ? dayjs(this.searchInfo.fromDate).format("YYYY/MM/DD HH:mm:ss") : '',
+          end:  this.searchInfo.toDate  ? dayjs(this.searchInfo.toDate).format("YYYY/MM/DD HH:mm:ss") : ''
         })
           .then(
             response => {
@@ -237,15 +202,12 @@
             this.isFetching = false
           })
       },
-      checkCourse () {
-
-      },
       submitInfo(name) {
         if (this.isSending) return
         this.$refs[name].validate((valid) => {
           if (valid) {
             this.isSending = true
-            let promiseDate = this.addInfo.id ? this.$api.banner.updateBanner(this.addInfo) : this.$api.banner.addBanner(this.addInfo)
+            let promiseDate = this.addInfo.id ? this.$api.channel.upadteChannel(this.addInfo) : this.$api.channel.addChannel(this.addInfo)
             promiseDate
               .then(
                 response => {
@@ -270,40 +232,6 @@
   .p-channel {
     .-c-tips {
       color: #39f
-    }
-
-    .-c-course-wrap {
-      display: inline-block;
-      .-c-course-item {
-        position: relative;
-        display: inline-block;
-        /*height: 70px;*/
-        overflow: hidden;
-
-        img {
-          width: 140px;
-          height: 70px;
-        }
-
-        .-i-text {
-          display: -webkit-box;
-          -webkit-box-orient: vertical;
-          /*-webkit-line-clamp: 1;*/
-          line-height: normal;
-        }
-
-        .-i-del {
-          position: absolute;
-          top: 0;
-          right: 0;
-          color: #ffff;
-          background-color: rgba(0, 0, 0, 0.4);
-          line-height: normal;
-          cursor: pointer;
-          padding: 4px;
-          border-radius: 4px;
-        }
-      }
     }
 
     .-p-b-flex {

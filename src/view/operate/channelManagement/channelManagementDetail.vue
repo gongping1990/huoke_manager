@@ -10,12 +10,12 @@
               <Option value="1">课程名称</Option>
             </Select>
             <span class="-search-center">|</span>
-            <Input v-model="searchInfo.nickname" class="-search-input" placeholder="请输入关键字" icon="ios-search"
+            <Input v-model="searchInfo.name" class="-search-input" placeholder="请输入关键字" icon="ios-search"
                    @on-click="getList"></Input>
           </div>
         </Col>
         <Col :span="19" class="g-text-right">
-          <Button type="primary" class="-p-modal-btn" @click="getList">数据导出</Button>
+          <Button type="primary" ghost class="-p-modal-btn" @click="toExcel()">数据导出</Button>
         </Col>
       </Row>
 
@@ -28,7 +28,7 @@
 </template>
 
 <script>
-  import {copyUrl} from  "@/libs/index"
+  import {copyUrl,getBaseUrl} from  "@/libs/index"
 
   export default {
     name: 'channelManagementDetail',
@@ -40,16 +40,16 @@
         },
         dataList: [],
         selectInfo: '1',
-        searchInfo: {},
+        searchInfo: {
+          name: ''
+        },
         total: 0,
         copy_url: '',
         isFetching: false,
-        isSending: false,
-        addInfo: {},
         columns: [
           {
             title: '课程名称',
-            key: 'name',
+            key: 'courseName',
             align: 'center'
           },
           {
@@ -57,7 +57,7 @@
             render: (h, params) => {
               return h('img', {
                 attrs: {
-                  src: params.row.courseCover
+                  src: params.row.courseImg
                 },
                 style: {
                   width: '100px',
@@ -70,27 +70,27 @@
           },
           {
             title: '访问量',
-            key: 'href',
+            key: 'visitCount',
             align: 'center'
           },
           {
             title: '访问用户',
-            key: 'href',
+            key: 'visitUserCount',
             align: 'center'
           },
           {
             title: '付费用户',
-            key: 'href',
+            key: 'payUserCount',
             align: 'center'
           },
           {
             title: '付款金额',
-            key: 'href',
+            key: 'payMoney',
             align: 'center'
           },
           {
             title: '付费转化率',
-            key: 'href',
+            key: 'paymentRate',
             align: 'center'
           },
           {
@@ -124,6 +124,10 @@
       this.getList()
     },
     methods: {
+      toExcel() {
+        let downUrl = `${getBaseUrl()}/channel/download?channelId=${this.$route.query.id}&name=${this.searchInfo.name}`
+        window.open(downUrl, '_blank');
+      },
       currentChange(val) {
         this.tab.page = val;
         this.getList();
@@ -131,10 +135,11 @@
       //分页查询
       getList() {
         this.isFetching = true
-        this.$api.banner.bannerList({
+        this.$api.channel.getInfoList({
           current: this.tab.page,
           size: this.tab.pageSize,
-          name: this.searchInfo.nickname
+          channelId: this.$route.query.id,
+          name: this.searchInfo.name
         })
           .then(
             response => {
@@ -146,8 +151,7 @@
           })
       },
       copyUrlFn(row) {
-        let url = `${copyUrl()}?goodsId=${row.goodsId}&type=0`;
-        this.copy_url = url;
+        this.copy_url = row.channeHref;
         setTimeout(() => {
           this.$refs.copyInput.select();
           document.execCommand("copy");
