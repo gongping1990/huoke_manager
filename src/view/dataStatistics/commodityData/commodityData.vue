@@ -154,7 +154,7 @@
         this.getList()
       },
       toExcel() {
-        let downUrl = `${getBaseUrl()}/dataCenter/exportData?sort=${this.sortInfo ? this.sortInfo.order : ''}&sortStr=${this.sortInfo ? this.sortInfo.keyNew : ''}`
+        let downUrl = `${getBaseUrl()}/dataCenter/exportData?sort=${this.sortInfo ? (this.sortInfo.order == 'normal' ? '' : this.sortInfo.order) : ''}&sortStr=${this.sortInfo ? (this.sortInfo.order == 'normal' ? '' : this.sortInfo.keyNew) : ''}`
         window.open(downUrl, '_blank');
       },
       closeModal() {
@@ -173,8 +173,8 @@
         this.isFetching = true
         this.$api.dataCenter.getGoodsList({
           current: this.tab.page,
-          sort: this.sortInfo ? this.sortInfo.order : '',
-          sortStr: this.sortInfo ? this.sortInfo.keyNew : '',
+          sort: this.sortInfo ? (this.sortInfo.order == 'normal' ? '' : this.sortInfo.order) : '',
+          sortStr: this.sortInfo ? (this.sortInfo.order == 'normal' ? '' : this.sortInfo.keyNew) : '',
           size: this.tab.pageSize
         })
           .then(
