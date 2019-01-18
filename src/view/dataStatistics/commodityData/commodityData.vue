@@ -2,41 +2,32 @@
   <div class="p-commodity">
     <Card>
       <Row class="g-search">
-        <Col :span="18" class="g-flex-a-j-center">
-          <Col span="2">查询时间:</Col>
-          <Col span="14" class="g-flex-a-j-center">
-            <div>
-              <Date-picker class="date-time" type="datetime" placeholder="选择开始日期"
-                           v-model="searchInfo.fromDate"></Date-picker>
-            </div>
-            <div>&nbsp;-&nbsp;</div>
-            <div>
-              <Date-picker class="date-time" type="datetime" placeholder="选择结束日期"
-                           v-model="searchInfo.toDate"></Date-picker>
-            </div>
-            <div class="-date-search">
-              <Button type="primary" class="-p-modal-btn" @click="getList">搜索</Button>
-            </div>
-          </Col>
-        </Col>
-        <Col :span="6" class="g-text-right">
-          <Button type="primary" class="-p-modal-btn" @click="getList">数据导出</Button>
+        <Col :span="24" class="g-text-right">
+          <Button type="primary" class="-p-modal-btn" ghost @click="toExcel">数据导出</Button>
         </Col>
       </Row>
 
-      <Table class="-c-tab" :loading="isFetching" :columns="columns" :data="dataList"></Table>
+      <Table class="-c-tab" :loading="isFetching" :columns="columns" :data="dataList"
+             @on-sort-change="changeSort"></Table>
 
       <Page class="-p-text-right" :total="total" size="small" show-elevator :page-size="tab.pageSize"
             @on-change="currentChange"></Page>
     </Card>
+
+    <div v-if="isOpenModal">
+      <goods-list-template :id="goodsId" :list="dataList" @closeModal="closeModal"></goods-list-template>
+    </div>
   </div>
 </template>
 
 <script>
   import dayjs from 'dayjs'
+  import {getBaseUrl} from "@/libs/index"
+  import GoodsListTemplate from "../../../components/goodsListTemplate";
 
   export default {
     name: 'bannerList',
+    components: {GoodsListTemplate},
     data() {
       return {
         tab: {
@@ -46,13 +37,21 @@
         dataList: [],
         searchInfo: {},
         total: 0,
+        goodsId: '',
         isFetching: false,
-        getStartTime: '',
-        getEndTime: '',
+        isOpenModal: false,
+        sortInfo: '',
         columns: [
           {
+            type: 'index',
+            title: '排名',
+            align: 'center'
+          },
+          {
             title: '名称',
-            key: 'name'
+            key: 'courseName',
+            width: 200,
+            align: 'center'
           },
           {
             title: '图片',
@@ -65,10 +64,10 @@
               }, [
                 h('img', {
                   attrs: {
-                    src: params.row.imgResUrl
+                    src: params.row.courseCover
                   },
                   style: {
-                    width: '200px',
+                    width: '100px',
                     margin: '10px'
                   }
                 })
@@ -78,23 +77,56 @@
             align: 'center'
           },
           {
-            title: '访问量',
-            key: 'sortnum',
+            title: '付款金额',
+            key: 'payAmount',
             align: 'center'
           },
           {
+            title: '访问量',
+            key: 'pvCount',
+            align: 'center',
+            sortable: 'custom'
+          },
+          {
             title: '访问用户',
-            key: 'href'
+            key: 'uvCount',
+            align: 'center',
+            sortable: 'custom'
           },
           {
             title: '付费用户',
-            key: 'href'
-          },{
-            title: '付款金额',
-            key: 'href'
-          },{
+            key: 'payUser',
+            align: 'center',
+            sortable: 'custom'
+          },
+          {
             title: '付费转化率',
-            key: 'href'
+            key: 'percentConversion',
+            align: 'center',
+            sortable: 'custom'
+          },
+          {
+            title: '操作',
+            align: 'center',
+            render: (h, params) => {
+              return h('div', [
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: '#5444E4',
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.openModal(params.row)
+                    }
+                  }
+                }, '查看详情')
+              ])
+            }
           }
         ],
       };
@@ -103,21 +135,47 @@
       this.getList()
     },
     methods: {
-
-
+      changeSort(data) {
+        switch (data.key) {
+          case 'pvCount':
+            data.keyNew = 'pv_count'
+            break
+          case 'uvCount':
+            data.keyNew = 'uv_count'
+            break
+          case 'payUser':
+            data.keyNew = 'pay_user'
+            break
+          case 'percentConversion':
+            data.keyNew = 'percent_conversion'
+            break
+        }
+        this.sortInfo = data
+        this.getList()
+      },
+      toExcel() {
+        let downUrl = `${getBaseUrl()}/dataCenter/exportData?sort=${this.sortInfo ? this.sortInfo.order : ''}&sortStr=${this.sortInfo ? this.sortInfo.keyNew : ''}`
+        window.open(downUrl, '_blank');
+      },
+      closeModal() {
+        this.isOpenModal = false
+      },
       currentChange(val) {
         this.tab.page = val;
         this.getList();
       },
+      openModal(data) {
+        this.goodsId = data.goodsId
+        this.isOpenModal = true
+      },
       //分页查询
       getList() {
         this.isFetching = true
-        this.$api.banner.bannerList({
+        this.$api.dataCenter.getGoodsList({
           current: this.tab.page,
-          size: this.tab.pageSize,
-          name: this.searchInfo.nickname,
-          fromDate: this.searchInfo.fromDate ? dayjs(this.searchInfo.fromDate).format("YYYY/MM/DD HH:mm:ss") : '',
-          toDate:  this.searchInfo.toDate  ? dayjs(this.searchInfo.toDate).format("YYYY/MM/DD HH:mm:ss") : ''
+          sort: this.sortInfo ? this.sortInfo.order : '',
+          sortStr: this.sortInfo ? this.sortInfo.keyNew : '',
+          size: this.tab.pageSize
         })
           .then(
             response => {
