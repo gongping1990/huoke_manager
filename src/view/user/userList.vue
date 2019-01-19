@@ -5,7 +5,7 @@
         <Col :span="3" class="g-t-left">
           <div class="g-flex-a-j-center">
             <div class="-search-select-text">电话号码：</div>
-            <Select v-model="searchInfo.hasPhone" @on-change="getList" class="-search-selectOne">
+            <Select v-model="searchInfo.hasPhone" @on-change="getList(1)" class="-search-selectOne">
               <Option label="全部" value="-1"></Option>
               <Option label="有" value="1"></Option>
               <Option label="无" value="2"></Option>
@@ -15,7 +15,7 @@
         <Col :span="3" class="g-t-left">
           <div class="g-flex-a-j-center">
             <div class="-search-select-text">关注公众号：</div>
-            <Select v-model="searchInfo.subscripbe" @on-change="getList" class="-search-selectOne">
+            <Select v-model="searchInfo.subscripbe" @on-change="getList(1)" class="-search-selectOne">
               <Option v-for="item of wxList" :label="item.name" :value="item.appid" :key="item.appid"></Option>
             </Select>
           </div>
@@ -28,7 +28,7 @@
             </Select>
             <span class="-search-center">|</span>
             <Input v-model="searchInfo.manner" class="-search-input" placeholder="请输入关键字" icon="ios-search"
-                   @on-click="getList"></Input>
+                   @on-click="getList(1)"></Input>
           </div>
         </Col>
       </Row>
@@ -36,6 +36,7 @@
       <Table class="-c-tab" :loading="isFetching" :columns="columns" :data="dataList"></Table>
 
       <Page class="-p-text-right" :total="total" size="small" show-elevator :page-size="tab.pageSize"
+            :current.sync="tab.currentPage"
             @on-change="currentChange"></Page>
 
     </Card>
@@ -54,7 +55,8 @@
         switch1: '',
         tab: {
           page: 1,
-          pageSize: 10
+          pageSize: 10,
+          currentPage: 1
         },
         searchInfo: {
           hasPhone: '-1',
@@ -120,7 +122,7 @@
             width: 190,
             align: 'center',
             render: (h, params) => {
-              return h('div',[
+              return h('div', [
                 h('Button', {
                   props: {
                     type: 'text',
@@ -177,9 +179,12 @@
             })
       },
       //分页查询
-      getList() {
+      getList(num) {
+        if (num) {
+          this.tab.currentPage = 1
+        }
         let params = {
-          current: this.tab.page,
+          current: num ? num : this.tab.page,
           size: this.tab.pageSize,
           hasPhone: this.searchInfo.hasPhone != '-1' ? (this.searchInfo.hasPhone == '1') : '',
           // subscripbe: this.searchInfo.subscripbe != '-1' ? (this.searchInfo.subscripbe == '1') : '',
