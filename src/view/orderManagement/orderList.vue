@@ -33,7 +33,7 @@
       </Row>
       <Row class="g-search -c-tab">
         <Col :span="18" class="g-flex-a-j-center">
-          <div class="-search-select-text">反馈时间：</div>
+          <div class="-search-select-text">创建时间：</div>
           <Col span="14" class="g-flex-a-j-center">
             <div>
               <Date-picker class="date-time" type="datetime" placeholder="选择开始日期"
@@ -41,11 +41,10 @@
             </div>
             <div>&nbsp;-&nbsp;</div>
             <div>
-              <Date-picker class="date-time" type="datetime" placeholder="选择结束日期"
+              <Date-picker class="date-time" type="datetime" placeholder="选择结束日期" @on-open-change="changeDate"
                            v-model="getEndTime"></Date-picker>
             </div>
             <div class="-date-search g-flex-j-sa">
-              <Button type="primary" class="-p-modal-btn" @click="getList">搜索</Button>
               <Button type="primary" ghost class="-p-modal-btn -date-search" @click="toExcel">导出表格</Button>
             </div>
           </Col>
@@ -305,6 +304,11 @@
       this.getList()
     },
     methods: {
+      changeDate (bool) {
+        if(!bool) {
+          this.selectChange()
+        }
+      },
       jumpUrlOrder(item) {
         if (item.isVirtual) return
         this.getDetail(item.orderId)
