@@ -137,7 +137,7 @@
                 icon: 'circle'
               }
             ],
-            right: '6%'
+            right: '5%'
           },
           xAxis: {
             boundaryGap: false,
@@ -149,9 +149,11 @@
           grid: {
             left: '6%',
             top:'13%',
-            right: '6%'
+            right: '5%'
           },
-          yAxis: {},
+          yAxis: {
+            name: '单位（人）'
+          },
           series: this.optionSeriesLine,
           color: ['#49a9ee', '#98d87d', '#ffd86e'],
           dataZoom: [
