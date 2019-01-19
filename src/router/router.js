@@ -126,7 +126,7 @@ export const appRouter = [
           {name:'数据统计'},
           {name:'用户数据'}
         ],
-        component: () => import('@/view/dataStatistics/commodityData/commodityData')
+        component: () => import('@/view/dataStatistics/userData/userData')
       },
       {
         path: '/transactionData',

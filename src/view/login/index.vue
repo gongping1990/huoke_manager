@@ -85,7 +85,7 @@
             this.$api.admin.loginAdmin(this.form)
               .then(res => {
                 if (res.data.code == 200) {
-                  this.$router.push("/home");
+                  this.$router.push("/userData");
                   this.$Message.success('登录成功');
                   localStorage.isLoginSuccess = true
                 }

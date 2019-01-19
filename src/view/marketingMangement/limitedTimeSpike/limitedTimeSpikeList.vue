@@ -58,8 +58,8 @@
             </div>
           </div>
         </FormItem>
-        <FormItem label="秒杀价格" prop="price" class="ivu-form-item-required">
-          <InputNumber :disabled="isEdit" :min="0" v-model="addInfo.price" placeholder="请输入秒杀价格"></InputNumber>
+        <FormItem label="秒杀价格" prop="priceYuan" class="ivu-form-item-required">
+          <InputNumber :disabled="isEdit" :min="0" v-model="addInfo.priceYuan" placeholder="请输入秒杀价格"></InputNumber>
         </FormItem>
         <FormItem label="最大限制" class="ivu-form-item-required">
           <Radio-group v-model="addInfo.limit">
@@ -178,7 +178,7 @@
           },
           {
             title: '秒杀价格',
-            key: 'price',
+            key: 'priceYuan',
             align: 'center'
           },
           {
@@ -295,7 +295,7 @@
           this.isEdit = true
           this.addInfo = JSON.parse(JSON.stringify(data))
           this.addInfo.limit = this.addInfo.maxStock == '0' ? 0 : 1
-          this.addInfo.price = +this.addInfo.price
+          this.addInfo.priceYuan = +this.addInfo.priceYuan
           this.addInfo.maxStock = +this.addInfo.maxStock
           this.getStartTime = new Date(+this.addInfo.startTime)
           this.getEndTime = new Date(+this.addInfo.endTime)
@@ -314,7 +314,7 @@
           this.isEdit = false
           this.addInfo = {
             limit: 0,
-            price: null,
+            priceYuan: null,
             maxStock: null
           }
         }
@@ -362,7 +362,7 @@
           return this.$Message.error('请选择关联课程')
         } else if (this.addInfo.limit && !this.addInfo.maxStock) {
           return this.$Message.error('请输入限制人数')
-        } else if (this.addInfo.price == null) {
+        } else if (this.addInfo.priceYuan == null) {
           return this.$Message.error('请输入秒杀价格')
         } else if (!this.getStartTime) {
           return this.$Message.error('请输入开始时间')
