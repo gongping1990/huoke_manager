@@ -17,8 +17,8 @@
       </FormItem>
       <FormItem label="是否启用" prop="disabled" class="ivu-form-item-required">
         <Radio-group v-model="addInfo.disabled">
-          <Radio :label=1>禁用</Radio>
           <Radio :label=0>启用</Radio>
+          <Radio :label=1>禁用</Radio>
         </Radio-group>
       </FormItem>
       <FormItem label="是否试听" prop="tryout" class="ivu-form-item-required">
@@ -122,7 +122,7 @@
           name: '',
           sequence: null,
           tryout: 1,
-          disabled: 1,
+          disabled: 0,
           type: 1,
           initReadNum: null,
         }
