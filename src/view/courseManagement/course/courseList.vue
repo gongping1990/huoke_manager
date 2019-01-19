@@ -77,6 +77,7 @@
       return {
         tab: {
           page: 1,
+          currentPage: 1,
           pageSize: 10
         },
         searchInfo: {

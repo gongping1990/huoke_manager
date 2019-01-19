@@ -2,7 +2,7 @@
   <div class="p-message-manager">
     <Card>
       <Row class="g-t-left">
-        <Radio-group v-model="feedbackType" type="button" @on-change="getList">
+        <Radio-group v-model="feedbackType" type="button" @on-change="getList(1)">
           <Radio :label=1>待审核</Radio>
           <Radio :label=2>未通过</Radio>
           <Radio :label=3>已通过</Radio>
@@ -13,7 +13,7 @@
         <Col :span="3" class="g-t-left">
           <div class="g-flex-a-j-center">
             <div class="-search-select-text">展示课程：</div>
-            <Select v-model="searchInfo.goodsId" @on-change="selectChange" class="-search-selectOne" filterable>
+            <Select v-model="searchInfo.goodsId" @on-change="getList(1)" class="-search-selectOne" filterable>
               <Option v-for="(item,index) in courseList" :label="item.name" :value="item.goodsId" :key="index"></Option>
             </Select>
           </div>
@@ -21,7 +21,7 @@
         <Col :span="3" class="g-t-left" v-if="feedbackType=='3'">
           <div class="g-flex-a-j-center">
             <div class="-search-select-text">是否回复：</div>
-            <Select v-model="searchInfo.replyed" @on-change="getList" class="-search-selectOne">
+            <Select v-model="searchInfo.replyed" @on-change="getList(1)" class="-search-selectOne">
               <Option v-for="(item,index) in statusList" :label="item.name" :value="item.id" :key="index"></Option>
             </Select>
           </div>
@@ -33,7 +33,7 @@
             </Select>
             <span class="-search-center">|</span>
             <Input v-model="searchInfo.keyword" class="-search-input" placeholder="请输入关键字" icon="ios-search"
-                   @on-click="getList"></Input>
+                   @on-click="getList(1)"></Input>
           </div>
         </Col>
         <Col :span="12" class="g-flex-a-j-center -date-search">
@@ -45,11 +45,8 @@
             </div>
             <div>&nbsp;-&nbsp;</div>
             <div>
-              <Date-picker class="date-time" type="datetime" placeholder="选择结束日期"
+              <Date-picker class="date-time" type="datetime" placeholder="选择结束日期"  @on-open-change="changeDate"
                            v-model="searchInfo.endTime"></Date-picker>
-            </div>
-            <div class="-date-search">
-              <Button type="primary" class="-p-modal-btn" @click="getList">搜索</Button>
             </div>
           </Col>
         </Col>
@@ -59,6 +56,7 @@
              :data="dataList"></Table>
 
       <Page class="g-text-right" :total="total" size="small" show-elevator :page-size="tab.pageSize"
+            :current.sync="tab.currentPage"
             @on-change="currentChange"></Page>
     </Card>
 
@@ -90,6 +88,7 @@
       return {
         tab: {
           page: 1,
+          currentPage: 1,
           pageSize: 10
         },
         searchInfo: {
@@ -171,10 +170,10 @@
                   },
                   on: {
                     'on-ok': () => {
-                      this.changeExamine(params.row,1)
+                      this.changeExamine(params.row, 1)
                     },
                     'on-cancel': () => {
-                      this.changeExamine(params.row,0)
+                      this.changeExamine(params.row, 0)
                     }
                   }
                 }, '审核')
@@ -271,7 +270,7 @@
                   },
                   on: {
                     'on-ok': () => {
-                      this.changeExamine(params.row,0)
+                      this.changeExamine(params.row, 0)
                     }
                   }
                 }, '不通过')
@@ -318,7 +317,7 @@
                   },
                   on: {
                     'on-ok': () => {
-                      this.changeExamine(params.row,1)
+                      this.changeExamine(params.row, 1)
                     }
                   }
                 }, '通过'),
@@ -358,11 +357,16 @@
       this.getCourseList()
     },
     methods: {
-      changeExamine(data,bool) {
+      changeDate(bool) {
+        if (!bool) {
+          this.getList(1)
+        }
+      },
+      changeExamine(data, bool) {
         let param = {
           sourceId: data.id
         }
-        if(bool == '2') {
+        if (bool == '2') {
           param.content = this.addInfo.content
         } else {
           param.approved = bool ? true : false
@@ -386,10 +390,6 @@
               this.getList()
             }
           })
-      },
-      selectChange() {
-        this.tab.page = 1
-        this.getList()
       },
       currentChange(val) {
         this.tab.page = val;
@@ -438,14 +438,17 @@
             })
       },
       //分页查询
-      getList() {
+      getList(num) {
         this.isFetching = true
         let startTime = ''
         let endTime = ''
         startTime = this.searchInfo.startTime ? new Date(this.searchInfo.startTime).getTime() : ''
         endTime = this.searchInfo.endTime ? new Date(this.searchInfo.endTime).getTime() : ''
+        if (num) {
+          this.tab.currentPage = 1
+        }
         this.$api.feedback.messageManagementList({
-          current: this.tab.page,
+          current: num ? num : this.tab.page,
           size: this.tab.pageSize,
           approved: this.feedbackType,
           goodsId: this.searchInfo.goodsId == '-1' ? '' : this.searchInfo.goodsId,
@@ -467,8 +470,8 @@
       submitInfo(name) {
         this.$refs[name].validate((valid) => {
           if (valid) {
-            console.log(this.addInfo,1)
-            this.changeExamine(this.addInfo,2)
+            console.log(this.addInfo, 1)
+            this.changeExamine(this.addInfo, 2)
           }
         })
       }

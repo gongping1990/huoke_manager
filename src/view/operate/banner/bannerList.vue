@@ -9,7 +9,7 @@
             </Select>
             <span class="-search-center">|</span>
             <Input v-model="searchInfo.nickname" class="-search-input" placeholder="请输入关键字" icon="ios-search"
-                   @on-click="getList"></Input>
+                   @on-click="getList(1)"></Input>
           </div>
         </Col>
         <Col :span="18" class="g-flex-a-j-center -date-search">
@@ -21,11 +21,8 @@
             </div>
             <div>&nbsp;-&nbsp;</div>
             <div>
-              <Date-picker class="date-time" type="datetime" placeholder="选择结束日期"
+              <Date-picker class="date-time" type="datetime" placeholder="选择结束日期" @on-open-change="changeDate"
                            v-model="searchInfo.toDate"></Date-picker>
-            </div>
-            <div class="-date-search">
-              <Button type="primary" class="-p-modal-btn" @click="getList">搜索</Button>
             </div>
           </Col>
         </Col>
@@ -38,6 +35,7 @@
       <Table class="-c-tab" :loading="isFetching" :columns="columns" :data="dataList"></Table>
 
       <Page class="-p-text-right" :total="total" size="small" show-elevator :page-size="tab.pageSize"
+            :current.sync="tab.currentPage"
             @on-change="currentChange"></Page>
 
       <Modal
@@ -134,6 +132,7 @@
         baseUrl: `${getBaseUrl()}/common/uploadPublicFile`,
         tab: {
           page: 1,
+          currentPage: 1,
           pageSize: 10
         },
         dataList: [],
@@ -280,6 +279,11 @@
       this.getList()
     },
     methods: {
+      changeDate (bool) {
+        if(!bool) {
+          this.getList(1)
+        }
+      },
       delImg() {
         this.addInfo.imgResUrl = ''
       },
@@ -331,10 +335,13 @@
         this.getList();
       },
       //分页查询
-      getList() {
+      getList(num) {
         this.isFetching = true
+        if(num) {
+          this.tab.currentPage = 1
+        }
         this.$api.banner.bannerList({
-          current: this.tab.page,
+          current: num ? num : this.tab.page,
           size: this.tab.pageSize,
           name: this.searchInfo.nickname,
           fromDate: this.searchInfo.fromDate ? dayjs(this.searchInfo.fromDate).format("YYYY/MM/DD HH:mm:ss") : '',

@@ -5,7 +5,7 @@
         <Col :span="3" class="g-t-left">
           <div class="g-flex-a-j-center">
             <div class="-search-select-text">助力状态：</div>
-            <Select v-model="selectInfoOne" @on-change="getList" class="-search-selectOne">
+            <Select v-model="selectInfoOne" @on-change="getList(1)" class="-search-selectOne">
               <Option v-for="(item,index) in statusList" :label="item.name" :value="item.id" :key="index"></Option>
             </Select>
           </div>
@@ -17,7 +17,7 @@
             </Select>
             <span class="-search-center">|</span>
             <Input v-model="searchInfo" class="-search-input" placeholder="请输入关键字" icon="ios-search"
-                   @on-click="getList"></Input>
+                   @on-click="getList(1)"></Input>
           </div>
         </Col>
       </Row>
@@ -29,6 +29,7 @@
       <Table class="-c-tab" :loading="isFetching" :columns="columns" :data="dataList"></Table>
 
       <Page class="g-text-right" :total="total" size="small" show-elevator :page-size="tab.pageSize"
+            :current.sync="tab.currentPage"
             @on-change="currentChange"></Page>
     </Card>
 
@@ -89,10 +90,10 @@
           <span class="-c-tips">* 添加助力后，有效期开始时间不能更改，结束时间只能增加，不能减少</span>
         </FormItem>
         <!--<FormItem label="反馈形式" prop="helpType">-->
-          <!--<Radio-group v-model="addInfo.helpType">-->
-            <!--<Radio :label=0 :disabled="isEdit">课程详情弹窗</Radio>-->
-            <!--<Radio :label=1 :disabled="isEdit">独立页面</Radio>-->
-          <!--</Radio-group>-->
+        <!--<Radio-group v-model="addInfo.helpType">-->
+        <!--<Radio :label=0 :disabled="isEdit">课程详情弹窗</Radio>-->
+        <!--<Radio :label=1 :disabled="isEdit">独立页面</Radio>-->
+        <!--</Radio-group>-->
         <!--</FormItem>-->
         <FormItem label="分享摘要" prop="helpAbstract">
           <Input type="textarea" :disabled="isEdit" :rows="4" v-model="addInfo.helpAbstract"
@@ -119,6 +120,7 @@
       return {
         tab: {
           page: 1,
+          currentPage: 1,
           pageSize: 10
         },
         searchInfo: '',
@@ -269,7 +271,7 @@
     },
     watch: {
       'getStartTime'(_new, _old) {
-        if(!this.isEdit) {
+        if (!this.isEdit) {
           this.dateEndOption = {
             disabledDate(date) {
               return date && date.valueOf() < new Date(_new).getTime();
@@ -330,10 +332,13 @@
         this.isOpenModal = false
       },
       //分页查询
-      getList() {
+      getList(num) {
         this.isFetching = true
+        if (num) {
+          this.tab.currentPage = 1
+        }
         this.$api.goods.friendHelpList({
-          current: this.tab.page,
+          current: num ? num : this.tab.page,
           size: this.tab.pageSize,
           name: this.searchInfo,
           status: this.selectInfoOne,

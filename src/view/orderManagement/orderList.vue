@@ -27,7 +27,7 @@
             </Select>
             <span class="-search-center">|</span>
             <Input v-model="searchInfo.antistop" class="-search-input" placeholder="请输入关键字" icon="ios-search"
-                   @on-click="getList"></Input>
+                   @on-click="selectChange"></Input>
           </div>
         </Col>
       </Row>
@@ -338,6 +338,7 @@
       },
       selectChange() {
         this.tab.page = 1
+        this.tab.currentPage = 1
         this.getList();
       },
       openModal(data) {

@@ -16,7 +16,7 @@
             </Select>
             <span class="-search-center">|</span>
             <Input v-model="searchInfo.nickname" class="-search-input" placeholder="请输入关键字" icon="ios-search"
-                   @on-click="getList"></Input>
+                   @on-click="getList(1)"></Input>
           </div>
         </Col>
         <Col :span="18" class="g-flex-a-j-center -date-search">
@@ -28,11 +28,8 @@
             </div>
             <div>&nbsp;-&nbsp;</div>
             <div>
-              <Date-picker class="date-time" type="datetime" placeholder="选择结束日期"
+              <Date-picker class="date-time" type="datetime" placeholder="选择结束日期" @on-open-change="changeDate"
                            v-model="searchInfo.endTime"></Date-picker>
-            </div>
-            <div class="-date-search">
-              <Button type="primary" class="-p-modal-btn" @click="getList">搜索</Button>
             </div>
           </Col>
         </Col>
@@ -46,6 +43,7 @@
              :data="dataList"></Table>
 
       <Page class="g-text-right" :total="total" size="small" show-elevator :page-size="tab.pageSize"
+            :current="tab.currentPage"
             @on-change="currentChange"></Page>
     </Card>
 
@@ -113,6 +111,7 @@
         baseUrl: `${getBaseUrl()}/common/uploadPublicFile`,
         tab: {
           page: 1,
+          currentPage: 1,
           pageSize: 10
         },
         searchInfo: {
@@ -329,6 +328,11 @@
       this.getList()
     },
     methods: {
+      changeDate(bool) {
+        if (!bool) {
+          this.getList(1)
+        }
+      },
       currentChange(val) {
         this.tab.page = val;
         this.getList();
@@ -392,14 +396,17 @@
         this.$Message.error('上传失败，请重新上传')
       },
       //分页查询
-      getList() {
+      getList(num) {
         this.isFetching = true
         let startTime = ''
         let endTime = ''
         startTime = this.searchInfo.startTime ? new Date(this.searchInfo.startTime).getTime() : ''
         endTime = this.searchInfo.endTime ? new Date(this.searchInfo.endTime).getTime() : ''
+        if(num) {
+          this.tab.currentPage = 1
+        }
         this.$api.trusteeship.getList({
-          current: this.tab.page,
+          current: num ? num : this.tab.page,
           size: this.tab.pageSize,
           type: this.radioType,
           name: this.searchInfo.nickname,

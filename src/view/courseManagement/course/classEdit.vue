@@ -121,7 +121,7 @@
           id: '',
           name: '',
           sequence: null,
-          tryout: 1,
+          tryout: 0,
           disabled: 0,
           type: 1,
           initReadNum: null,

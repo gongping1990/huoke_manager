@@ -2,34 +2,11 @@
   <div class="p-coupon">
     <input type="text" v-model="copy_url" class="copy-input" ref="copyInput">
     <Card>
-      <!--<Row class="-c-flex-center">-->
-        <!--<Col :span="6">-->
-          <!--优惠券名称：-->
-          <!--<Input style="width: 50%" v-model="form.name" placeholder="输入关键词"></Input>-->
-        <!--</Col>-->
-        <!--<Col :span="14" class="-c-flex-center">优惠券状态：-->
-          <!--<Select style="width: 100px;" v-model="form.state" placeholder="请选择">-->
-            <!--<Option label="全部" value="-1"></Option>-->
-            <!--<Option label="未开始" value="0"></Option>-->
-            <!--<Option label="领取中" value="1"></Option>-->
-            <!--<Option label="已结束" value="2"></Option>-->
-          <!--</Select>-->
-
-          <!--<div class="-t-search">-->
-            <!--<Button type="primary" class="-p-modal-btn" @click="getList">搜索</Button>-->
-            <!--<Button type="primary" class="-p-modal-btn" @click="resetSearch">重置</Button>-->
-          <!--</div>-->
-        <!--</Col>-->
-        <!--<Col :span="4" class="-p-text-right">-->
-          <!--<Button type="primary" class="-p-modal-btn" @click="toJump">添加优惠券</Button>-->
-        <!--</Col>-->
-      <!--</Row>-->
-
       <Row class="g-search">
         <Col :span="3" class="g-t-left">
           <div class="g-flex-a-j-center">
             <div class="-search-select-text">优惠券状态：</div>
-            <Select v-model="form.state" @on-change="getList" class="-search-selectOne">
+            <Select v-model="form.state" @on-change="getList(1)" class="-search-selectOne">
               <Option v-for="(item,index) in statusList" :label="item.name" :value="item.id" :key="index"></Option>
             </Select>
           </div>
@@ -41,7 +18,7 @@
             </Select>
             <span class="-search-center">|</span>
             <Input v-model="form.name" class="-search-input" placeholder="请输入关键字" icon="ios-search"
-                   @on-click="getList"></Input>
+                   @on-click="getList(1)"></Input>
           </div>
         </Col>
       </Row>
@@ -52,6 +29,7 @@
       <Table class="-c-tab" :columns="columns" :data="dataList"></Table>
 
       <Page class="-p-text-right" :total="total" size="small" show-elevator :page-size="tab.pageSize"
+            :current.sync="tab.currentPage"
             @on-change="currentChange"></Page>
 
       <loading v-if="isFetching"></loading>
@@ -70,6 +48,7 @@
       return {
         tab: {
           page: 1,
+          currentPage: 1,
           pageSize: 10
         },
         form: {
@@ -97,7 +76,7 @@
             id: '2'
           }
         ],
-        statusArray: ['未开始','领取中','已结束'],
+        statusArray: ['未开始', '领取中', '已结束'],
         columns: [
           {
             title: '名称',
@@ -107,7 +86,7 @@
             title: '面额',
             render: (h, params) => {
               return h("div", [
-                h("div", params.row.denomination/100),
+                h("div", params.row.denomination / 100),
                 h("div", params.row.useScope ? `指定课程可用` : '全部课程通用')
               ]);
             }
@@ -138,7 +117,7 @@
               return h("span",
                 `${dayjs(params.row.getStartTime).format("YYYY-MM-DD")} -- ${dayjs(params.row.getEndTime).format("YYYY-MM-DD")}`);
             },
-            width:180
+            width: 180
           },
           {
             title: '有效期',
@@ -146,7 +125,7 @@
               return h("span",
                 `${dayjs(params.row.useStartTime).format("YYYY-MM-DD")} -- ${dayjs(params.row.useEndTime).format("YYYY-MM-DD")}`);
             },
-            width:180
+            width: 180
           },
           {
             title: '状态',
@@ -235,27 +214,23 @@
       toJump(param) {
         this.$router.push({
           name: 'couponEdit',
-          query:{
+          query: {
             id: param.id
           }
         })
-      },
-      resetSearch() {
-        this.form = {
-          name: "",
-          state: "0"
-        }
-        this.getList()
       },
       currentChange(val) {
         this.tab.page = val;
         this.getList();
       },
       //分页查询
-      getList() {
+      getList(num) {
         this.isFetching = true
+        if (num) {
+          this.tab.currentPage = 1
+        }
         this.$api.coupon.couponList({
-          current: this.tab.page,
+          current: num ? num : this.tab.page,
           size: this.tab.pageSize,
           status: this.form.state,
           name: this.form.name
@@ -313,7 +288,7 @@
       top: 36px;
     }
 
-    .copy-input{
+    .copy-input {
       position: absolute;
       opacity: 0;
     }
