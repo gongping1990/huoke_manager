@@ -5,7 +5,7 @@
         <Col :span="3" class="g-t-left">
           <div class="g-flex-a-j-center">
             <div class="-search-select-text">课程分类：</div>
-            <Select v-model="searchInfo.categoryId" @on-change="changeSelect" class="-search-selectOne">
+            <Select v-model="searchInfo.categoryId" @on-change="getList(1)" class="-search-selectOne">
               <Option v-for="(item,index) in dataTypeList" :label="item.name" :value="item.id" :key="index"></Option>
             </Select>
           </div>
@@ -17,7 +17,7 @@
             </Select>
             <span class="-search-center">|</span>
             <Input v-model="searchInfo.name" class="-search-input" placeholder="请输入关键字" icon="ios-search"
-                   @on-click="getList"></Input>
+                   @on-click="getList(1)"></Input>
           </div>
         </Col>
         <Col :span="15" class="g-flex-a-j-center -date-search">
@@ -29,11 +29,8 @@
             </div>
             <div>&nbsp;-&nbsp;</div>
             <div>
-              <Date-picker class="date-time" type="datetime" placeholder="选择结束日期"
+              <Date-picker class="date-time" type="datetime" placeholder="选择结束日期" @on-open-change="changeDate"
                            v-model="searchInfo.endTime"></Date-picker>
-            </div>
-            <div class="-date-search">
-              <Button type="primary" class="-p-modal-btn" @click="getList">搜索</Button>
             </div>
           </Col>
         </Col>
@@ -47,6 +44,7 @@
              :data="dataList"></Table>
 
       <Page class="g-text-right" :total="total" size="small" show-elevator :page-size="tab.pageSize"
+            :current.sync="tab.currentPage"
             @on-change="currentChange"></Page>
     </Card>
 
@@ -243,6 +241,11 @@
       this.getTypeList()
     },
     methods: {
+      changeDate (bool) {
+        if(!bool) {
+          this.getList(1)
+        }
+      },
       currentChange(val) {
         this.tab.page = val;
         this.getList();
@@ -278,10 +281,6 @@
         this.isOpenModal = false
         this.$refs[name].resetFields()
       },
-      changeSelect (){
-        this.tab.page = 1
-        this.getList()
-      },
       delItem(param) {
         this.$Modal.confirm({
           title: '提示',
@@ -300,14 +299,17 @@
         })
       },
       //分页查询
-      getList() {
+      getList(num) {
         this.isFetching = true
         let startTime = ''
         let endTime = ''
         startTime = this.searchInfo.startTime ? dayjs(this.searchInfo.startTime).format("YYYY/MM/DD HH:mm:ss") : ''
         endTime = this.searchInfo.endTime ? dayjs(this.searchInfo.endTime).format("YYYY/MM/DD HH:mm:ss") : ''
+        if(num) {
+          this.tab.currentPage = 1
+        }
         this.$api.course.courseList({
-          current: this.tab.page,
+          current: num ? num : this.tab.page,
           size: this.tab.pageSize,
           categoryId: this.searchInfo.categoryId,
           name: this.searchInfo.name,

@@ -429,7 +429,7 @@
                 this.playUrl = this.addInfo.playUrl
                 this.addInfo.sortnum = +this.addInfo.sortnum
                 this.addInfo.lessonNum = +this.addInfo.lessonNum
-                this.addInfo.firstpayTime = new Date(this.addInfo.firstpayTime)
+                this.addInfo.firstpayTime = this.addInfo.firstpayTime && new Date(this.addInfo.firstpayTime)
                 if(this.addInfo.ageFoot == '99' && this.addInfo.ageHead=='0') {
                   this.ageType = 1
                 } else {
