@@ -160,6 +160,7 @@
         if (res.code === 200) {
           this.isFetching = false
           this.addInfo.resUrl = res.resultData.url
+          this.addInfo.duration = res.resultData.duration
           this.getAvUrl(this.addInfo.resUrl)
         }
       },

@@ -12,9 +12,9 @@
             </Select>
           </div>
         </Col>
-        <Col :span="3" class="g-t-left">
+        <Col :span="4" class="g-t-left">
           <div class="g-flex-a-j-center">
-            <div class="-search-select-text">关注公众号：</div>
+            <div class="-search-select-text-two">公众号：</div>
             <Select v-model="searchInfo.subscripbe" @on-change="getList(1)" class="-search-selectOne">
               <Option v-for="item of wxList" :label="item.name" :value="item.appid" :key="item.appid"></Option>
             </Select>
@@ -239,8 +239,11 @@
     .-search-select-text {
       min-width: 85px;
     }
+    .-search-select-text-two {
+      min-width: 65px;
+    }
     .-search-selectOne {
-      width: 100px;
+      /*width: 100px;*/
       border: 1px solid #dcdee2;
       border-radius: 4px;
       margin-right: 20px;

@@ -172,6 +172,9 @@
             trigger: 'axis',
             axisPointer: {
               type: 'line'
+            },
+            textStyle:{
+              align:'left'
             }
           },
           legend: {
@@ -235,6 +238,9 @@
             trigger: 'axis',
             axisPointer: {
               type: 'line'
+            },
+            textStyle:{
+              align:'left'
             }
           },
           legend: {
@@ -365,6 +371,7 @@
     }
 
     .-p-d-col {
+      min-width: 280px;
       width: 100%;
 
       .-col-num {

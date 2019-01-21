@@ -120,6 +120,9 @@
             trigger: 'axis',
             axisPointer: {
               type: 'line'
+            },
+            textStyle:{
+              align:'left'
             }
           },
           legend: {
