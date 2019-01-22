@@ -1,9 +1,12 @@
 <template>
   <div class="p-subject">
     <Card>
-      <!--<div class="g-add-btn" @click="openModal">-->
-        <!--<Icon class="-btn-icon" color="#fff" type="ios-add" size="24"/>-->
-      <!--</div>-->
+      <Row class="g-search">
+        <Col :span="24" class="g-text-right">
+          <Button type="primary" class="-p-modal-btn" ghost @click="toExcel">数据导出</Button>
+          <div>(用户运营数据导出)</div>
+        </Col>
+      </Row>
       <Table class="-c-tab" :loading="isFetching" :columns="columns" :data="dataList"></Table>
     </Card>
 
@@ -27,6 +30,8 @@
 </template>
 
 <script>
+  import {getBaseUrl} from "@/libs/index"
+
   export default {
     name: 'userList',
     data() {
@@ -102,6 +107,10 @@
       this.getList()
     },
     methods: {
+      toExcel() {
+        let downUrl = `http://prep.prod.k12.vip/statistics/exportUserKeepData`
+        window.open(downUrl, '_blank');
+      },
       currentChange(val) {
         this.tab.page = val;
         this.getList();
