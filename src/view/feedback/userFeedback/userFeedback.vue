@@ -20,18 +20,7 @@
           </div>
         </Col>
         <Col :span="18" class="g-flex-a-j-center -date-search">
-          <Col span="2">反馈时间:</Col>
-          <Col span="14" class="g-flex-a-j-center">
-            <div>
-              <Date-picker class="date-time" type="datetime" placeholder="选择开始日期"
-                           v-model="searchInfo.startTime"></Date-picker>
-            </div>
-            <div>&nbsp;-&nbsp;</div>
-            <div>
-              <Date-picker class="date-time" type="datetime" placeholder="选择结束日期" @on-open-change="changeDate"
-                           v-model="searchInfo.endTime"></Date-picker>
-            </div>
-          </Col>
+          <date-picker-template :dataInfo="dateOption" @changeDate="changeDate"></date-picker-template>
         </Col>
       </Row>
 
@@ -64,9 +53,11 @@
 
 <script>
   import dayjs from 'dayjs'
+  import DatePickerTemplate from "../../../components/datePickerTemplate";
 
   export default {
     name: 'aloneBuy',
+    components: {DatePickerTemplate},
     data() {
       return {
         tab: {
@@ -78,6 +69,10 @@
           nickname: '',
           startTime: '',
           endTime: ''
+        },
+        dateOption: {
+          name: '反馈时间',
+          type: 'datetime'
         },
         selectInfo: '1',
         dataList: [],
@@ -186,10 +181,10 @@
       this.getList()
     },
     methods: {
-      changeDate(bool) {
-        if (!bool) {
-          this.getList(1)
-        }
+      changeDate(data) {
+        this.searchInfo.startTime = data.startTime
+        this.searchInfo.endTime = data.endTime
+        this.getList(1)
       },
       currentChange(val) {
         this.tab.page = val;

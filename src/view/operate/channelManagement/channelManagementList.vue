@@ -13,18 +13,7 @@
           </div>
         </Col>
         <Col :span="18" class="g-flex-a-j-center -date-search">
-          <Col span="2">创建日期:</Col>
-          <Col span="14" class="g-flex-a-j-center">
-            <div>
-              <Date-picker class="date-time" type="datetime" placeholder="选择开始日期"
-                           v-model="searchInfo.fromDate"></Date-picker>
-            </div>
-            <div>&nbsp;-&nbsp;</div>
-            <div>
-              <Date-picker class="date-time" type="datetime" placeholder="选择结束日期" @on-open-change="changeDate"
-                           v-model="searchInfo.toDate"></Date-picker>
-            </div>
-          </Col>
+          <date-picker-template :dataInfo="dateOption" @changeDate="changeDate"></date-picker-template>
         </Col>
       </Row>
 
@@ -61,9 +50,11 @@
 <script>
   import dayjs from 'dayjs'
   import {getBaseUrl} from '@/libs/index'
+  import DatePickerTemplate from "../../../components/datePickerTemplate";
 
   export default {
     name: 'channelManagement',
+    components: {DatePickerTemplate},
     data() {
       return {
         baseUrl: `${getBaseUrl()}/common/uploadPublicFile`,
@@ -72,9 +63,16 @@
           currentPage: 1,
           pageSize: 10
         },
+        dateOption: {
+          name: '创建时间',
+          type: 'datetime'
+        },
         dataList: [],
         selectInfo: '1',
-        searchInfo: {},
+        searchInfo: {
+          fromDate:'',
+          toDate:''
+        },
         total: 0,
         isFetching: false,
         isOpenModal: false,
@@ -156,11 +154,11 @@
       this.getList()
     },
     methods: {
-      changeDate (bool) {
-        if(!bool) {
+        changeDate (data) {
+          this.searchInfo.fromDate = data.startTime
+          this.searchInfo.toDate = data.endTime
           this.getList(1)
-        }
-      },
+        },
       toDetail(data) {
         this.$router.push({
           name: 'channelDetail',

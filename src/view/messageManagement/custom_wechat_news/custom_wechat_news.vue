@@ -17,7 +17,7 @@
         <Col :span="3" class="g-t-left">
           <div class="g-flex-a-j-center">
             <div class="-search-select-text">公众号：</div>
-            <Select v-model="form.appId" @on-change="getCustomWxList(1)" class="-search-selectOne" filterable>
+            <Select v-model="form.appId" @on-change="getList(1)" class="-search-selectOne" filterable>
               <Option v-for="(item,index) in wxAccount" :label="item.name" :value="item.appid" :key="index"></Option>
             </Select>
           </div>
@@ -26,7 +26,7 @@
           <div class="g-flex-a-j-center">
             <div class="-search-select-text">任务状态：</div>
             <Select v-model="form.state" placeholder="请选择" class="-search-selectOne"
-                    @on-change="getCustomWxList(1)">
+                    @on-change="getList(1)">
               <Option label="全部" value="4"></Option>
               <Option label="已完成" value="1"></Option>
               <Option label="未发送" value="3"></Option>
@@ -34,22 +34,8 @@
             </Select>
           </div>
         </Col>
-        <Col :span="15" class="g-flex-a-j-center -date-search">
-          <Col span="2">发送时间:</Col>
-          <Col span="14" class="g-flex-a-j-center">
-            <div>
-              <Date-picker class="date-time" type="datetime" placeholder="选择开始日期"
-                           v-model="form.startTime"></Date-picker>
-            </div>
-            <div>&nbsp;-&nbsp;</div>
-            <div>
-              <Date-picker class="date-time" type="datetime" placeholder="选择结束日期"
-                           v-model="form.endTime"></Date-picker>
-            </div>
-            <div class="-date-search">
-              <Button type="primary" class="-p-modal-btn" @click="getCustomWxList(1)">搜索</Button>
-            </div>
-          </Col>
+        <Col :span="15" class="g-flex-a-j-center">
+          <date-picker-template :dataInfo="dateOption" @changeDate="changeDate"></date-picker-template>
         </Col>
       </Row>
 
@@ -88,9 +74,10 @@
   import WxRecordTemplate from "../../../components/wxRecordTemplate";
   import WechatTemplateList from "./wechat_template_list";
   import BlackList from "../../../components/blackList";
+  import DatePickerTemplate from "../../../components/datePickerTemplate";
 
   export default {
-    components: {BlackList, WechatTemplateList, WxRecordTemplate},
+    components: {DatePickerTemplate, BlackList, WechatTemplateList, WxRecordTemplate},
     data() {
       return {
         tab: {
@@ -103,6 +90,10 @@
           endTime: '',
           state: '4',
           appId: '-1'
+        },
+        dateOption: {
+          name: '发送时间',
+          type: 'datetime'
         },
         radioType: '1',
         dataList: [],
@@ -198,16 +189,21 @@
       };
     },
     mounted() {
-      this.getCustomWxList()
+      this.getList()
       this.getWxAccountList()
     },
     methods: {
+      changeDate(data) {
+        this.form.startTime = data.startTime
+        this.form.endTime = data.endTime
+        this.getList(1)
+      },
       closeModalRecord() {
         this.isOpenModal = false;
       },
       currentChange(val) {
         this.tab.page = val;
-        this.getCustomWxList();
+        this.getList();
       },
       getWxAccountList() {
         this.$api.user.getWxList()
@@ -220,7 +216,7 @@
           })
       },
       //分页查询
-      getCustomWxList(num) {
+      getList(num) {
         this.isFetching = true
         if (num) {
           this.tab.currentPage = 1
@@ -246,7 +242,7 @@
         this.isOpenModal = true
       },
       changeRadio() {
-        this.radioType == 1 && this.getCustomWxList()
+        this.radioType == 1 && this.getList()
       },
       delItem(param) {
         this.$Modal.confirm({
@@ -259,7 +255,7 @@
               response => {
                 if (response.data.code == "200") {
                   this.$Message.success("操作成功");
-                  this.getCustomWxList();
+                  this.getList();
                 }
               })
           }
@@ -284,12 +280,12 @@
     .-search-select-text {
       min-width: 70px;
     }
-      .-search-selectOne {
-        width: 100px;
-        border: 1px solid #dcdee2;
-        border-radius: 4px;
-        margin-right: 20px;
-      }
+    .-search-selectOne {
+      width: 100px;
+      border: 1px solid #dcdee2;
+      border-radius: 4px;
+      margin-right: 20px;
+    }
 
     .-c-tab {
       margin: 20px 0;

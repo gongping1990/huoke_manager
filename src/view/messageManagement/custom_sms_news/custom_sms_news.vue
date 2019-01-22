@@ -9,7 +9,7 @@
           <div class="g-flex-a-j-center">
             <div class="-search-select-text">任务状态：</div>
             <Select v-model="form.state" placeholder="请选择" class="-search-selectOne"
-                    @on-change="getSmsList(1)">
+                    @on-change="getList(1)">
               <Option label="全部" value="4"></Option>
               <Option label="已完成" value="1"></Option>
               <Option label="未发送" value="3"></Option>
@@ -18,21 +18,7 @@
           </div>
         </Col>
         <Col :span="18" class="g-flex-a-j-center -date-search">
-          <Col span="2">发送时间:</Col>
-          <Col span="14" class="g-flex-a-j-center">
-            <div>
-              <Date-picker class="date-time" type="datetime" placeholder="选择开始日期"
-                           v-model="form.startTime"></Date-picker>
-            </div>
-            <div>&nbsp;-&nbsp;</div>
-            <div>
-              <Date-picker class="date-time" type="datetime" placeholder="选择结束日期"
-                           v-model="form.endTime"></Date-picker>
-            </div>
-            <div class="-date-search">
-              <Button type="primary" class="-p-modal-btn" @click="getSmsList(1)">搜索</Button>
-            </div>
-          </Col>
+          <date-picker-template :dataInfo="dateOption" @changeDate="changeDate"></date-picker-template>
         </Col>
       </Row>
 
@@ -73,9 +59,10 @@
   import dayjs from "dayjs";
   import UserSelection from "@/components/userSelection";
   import SmsRecordTemplate from "../../../components/smsRecordTemplate";
+  import DatePickerTemplate from "../../../components/datePickerTemplate";
 
   export default {
-    components: {SmsRecordTemplate, UserSelection},
+    components: {DatePickerTemplate, SmsRecordTemplate, UserSelection},
     data() {
       return {
         tab: {
@@ -98,6 +85,10 @@
           title: '添加自定义短信',
           isCheckAllPeople: false,
           type: '1'
+        },
+        dateOption: {
+          name: '发送时间',
+          type: 'datetime'
         },
         checkAll: "", // 是否全选
         dataList: [],
@@ -194,9 +185,14 @@
       };
     },
     mounted() {
-      this.getSmsList()
+      this.getList()
     },
     methods: {
+      changeDate(data) {
+        this.form.startTime = data.startTime
+        this.form.endTime = data.endTime
+        this.getList(1)
+      },
       closeModal() {
         this.isAddOpenModal = false;
       },
@@ -205,10 +201,10 @@
       },
       currentChange(val) {
         this.tab.page = val;
-        this.getSmsList();
+        this.getList();
       },
       //分页查询
-      getSmsList(num) {
+      getList(num) {
         this.isFetching = true
         if (num) {
           this.tab.currentPage = 1
@@ -248,7 +244,7 @@
               response => {
                 if (response.data.code == "200") {
                   this.$Message.success("操作成功");
-                  this.getSmsList();
+                  this.getList();
                 }
               })
           }
@@ -285,7 +281,7 @@
                 sendType: ""
               };
               this.isAddOpenModal = false;
-              this.getSmsList();
+              this.getList();
             }
           })
       }

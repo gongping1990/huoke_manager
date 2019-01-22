@@ -36,19 +36,8 @@
                    @on-click="getList(1)"></Input>
           </div>
         </Col>
-        <Col :span="12" class="g-flex-a-j-center -date-search">
-          <Col span="3">留言时间：</Col>
-          <Col span="7" class="g-flex-a-j-center">
-            <div>
-              <Date-picker class="date-time" type="datetime" placeholder="选择开始日期"
-                           v-model="searchInfo.startTime"></Date-picker>
-            </div>
-            <div>&nbsp;-&nbsp;</div>
-            <div>
-              <Date-picker class="date-time" type="datetime" placeholder="选择结束日期"  @on-open-change="changeDate"
-                           v-model="searchInfo.endTime"></Date-picker>
-            </div>
-          </Col>
+        <Col :span="12" class="g-flex-a-j-center">
+          <date-picker-template :dataInfo="dateOption" @changeDate="changeDate"></date-picker-template>
         </Col>
       </Row>
 
@@ -81,9 +70,11 @@
 
 <script>
   import dayjs from 'dayjs'
+  import DatePickerTemplate from "../../../components/datePickerTemplate";
 
   export default {
     name: 'messageManagement',
+    components: {DatePickerTemplate},
     data() {
       return {
         tab: {
@@ -112,6 +103,10 @@
             name: '是'
           }
         ],
+        dateOption: {
+          name: '留言时间',
+          type: 'datetime'
+        },
         selectInfo: '1',
         selectInfoOne: '-1',
         dataList: [],
@@ -357,10 +352,10 @@
       this.getCourseList()
     },
     methods: {
-      changeDate(bool) {
-        if (!bool) {
-          this.getList(1)
-        }
+      changeDate(data) {
+        this.searchInfo.startTime = data.startTime
+        this.searchInfo.endTime = data.endTime
+        this.getList(1)
       },
       changeExamine(data, bool) {
         let param = {

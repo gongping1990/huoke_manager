@@ -12,19 +12,8 @@
                    @on-click="getList(1)"></Input>
           </div>
         </Col>
-        <Col :span="18" class="g-flex-a-j-center -date-search">
-          <Col span="2">反馈时间:</Col>
-          <Col span="14" class="g-flex-a-j-center">
-            <div>
-              <Date-picker class="date-time" type="datetime" placeholder="选择开始日期"
-                           v-model="searchInfo.fromDate"></Date-picker>
-            </div>
-            <div>&nbsp;-&nbsp;</div>
-            <div>
-              <Date-picker class="date-time" type="datetime" placeholder="选择结束日期" @on-open-change="changeDate"
-                           v-model="searchInfo.toDate"></Date-picker>
-            </div>
-          </Col>
+        <Col :span="18" class="g-flex-a-j-center">
+          <date-picker-template :dataInfo="dateOption" @changeDate="changeDate"></date-picker-template>
         </Col>
       </Row>
 
@@ -124,9 +113,11 @@
 <script>
   import dayjs from 'dayjs'
   import {getBaseUrl} from '@/libs/index'
+  import DatePickerTemplate from "../../../components/datePickerTemplate";
 
   export default {
     name: 'bannerList',
+    components: {DatePickerTemplate},
     data() {
       return {
         baseUrl: `${getBaseUrl()}/common/uploadPublicFile`,
@@ -134,6 +125,10 @@
           page: 1,
           currentPage: 1,
           pageSize: 10
+        },
+        dateOption: {
+          name: '有效时间',
+          type: 'datetime'
         },
         dataList: [],
         selectInfo: '1',
@@ -279,10 +274,10 @@
       this.getList()
     },
     methods: {
-      changeDate (bool) {
-        if(!bool) {
-          this.getList(1)
-        }
+      changeDate (data) {
+        this.getStartTime = data.startTime
+        this.getEndTime = data.endTime
+        this.getList(1)
       },
       delImg() {
         this.addInfo.imgResUrl = ''

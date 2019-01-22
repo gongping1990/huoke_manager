@@ -14,7 +14,7 @@
           </Radio-group>
         </Col>
         <Col :span="8">
-          <Button @click="syncUserFn" type="primary" class="-p-modal-btn" :disabled="userSync.status == '2'">
+          <Button @click="syncUserFn" ghost type="primary" class="-p-modal-btn" :disabled="userSync.status == '2'">
             {{syncStatus[userSync.status]}}
           </Button>
           上次同步时间： {{userSync.lastTime}}
@@ -26,7 +26,7 @@
         <Col :span="3" class="g-t-left">
           <div class="g-flex-a-j-center">
             <div class="-search-select-text">公众号：</div>
-            <Select v-model="form.appId" @on-change="getCustomWxList(1)" class="-search-selectOne" filterable>
+            <Select v-model="form.appId" @on-change="getList(1)" class="-search-selectOne" filterable>
               <Option v-for="(item,index) in wxAccount" :label="item.name" :value="item.appId" :key="index"></Option>
             </Select>
           </div>
@@ -35,7 +35,7 @@
           <div class="g-flex-a-j-center">
             <div class="-search-select-text">任务状态：</div>
             <Select v-model="form.state" placeholder="请选择" class="-search-selectOne"
-                    @on-change="getCustomWxList(1)">
+                    @on-change="getList(1)">
               <Option label="全部" value="4"></Option>
               <Option label="已完成" value="1"></Option>
               <Option label="未发送" value="3"></Option>
@@ -44,21 +44,7 @@
           </div>
         </Col>
         <Col :span="15" class="g-flex-a-j-center -date-search">
-          <Col span="2">发送时间:</Col>
-          <Col span="14" class="g-flex-a-j-center">
-            <div>
-              <Date-picker class="date-time" type="datetime" placeholder="选择开始日期"
-                           v-model="form.startTime"></Date-picker>
-            </div>
-            <div>&nbsp;-&nbsp;</div>
-            <div>
-              <Date-picker class="date-time" type="datetime" placeholder="选择结束日期"
-                           v-model="form.endTime"></Date-picker>
-            </div>
-            <div class="-date-search">
-              <Button type="primary" class="-p-modal-btn" @click="getCustomWxList(1)">搜索</Button>
-            </div>
-          </Col>
+          <date-picker-template :dataInfo="dateOption" @changeDate="changeDate"></date-picker-template>
         </Col>
       </Row>
 
@@ -99,9 +85,10 @@
   import WxRecordTemplate from "../../../components/wxRecordTemplate";
   import BlackList from "../../../components/blackList";
   import WechatTemplateList from "../custom_wechat_news/wechat_template_list";
+  import DatePickerTemplate from "../../../components/datePickerTemplate";
 
   export default {
-    components: {WechatTemplateList, BlackList, WxRecordTemplate},
+    components: {DatePickerTemplate, WechatTemplateList, BlackList, WxRecordTemplate},
     data() {
       return {
         tab: {
@@ -114,6 +101,10 @@
           endTime: '',
           state: '4',
           appId: ''
+        },
+        dateOption: {
+          name: '发送时间',
+          type: 'datetime'
         },
         radioType: '1',
         dataList: [],
@@ -214,6 +205,11 @@
       this.getUserSync()
     },
     methods: {
+      changeDate(data) {
+        this.form.startTime = data.startTime
+        this.form.endTime = data.endTime
+        this.getList(1)
+      },
       syncUserFn() {
         this.userSync.status = '2'
         this.$api.custom.pullFansUser()
@@ -232,18 +228,18 @@
       },
       currentChange(val) {
         this.tab.page = val;
-        this.getCustomWxList();
+        this.getList();
       },
       getWxAccountList() {
         this.$api.custom.getAppList()
           .then(response => {
             this.wxAccount = response.data.resultData;
             this.form.appId = this.wxAccount[0].appId
-            this.getCustomWxList()
+            this.getList()
           })
       },
       //分页查询
-      getCustomWxList(num) {
+      getList(num) {
         this.isFetching = true
         if (num) {
           this.tab.currentPage = 1
@@ -269,7 +265,7 @@
         this.isOpenModal = true
       },
       changeRadio() {
-        this.radioType == 1 && this.getCustomWxList()
+        this.radioType == 1 && this.getList()
       },
       delItem(param) {
         this.$Modal.confirm({
@@ -282,7 +278,7 @@
               response => {
                 if (response.data.code == "200") {
                   this.$Message.success("操作成功");
-                  this.getCustomWxList();
+                  this.getList();
                 }
               })
           }

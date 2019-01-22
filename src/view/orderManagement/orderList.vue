@@ -33,22 +33,11 @@
       </Row>
       <Row class="g-search -c-tab">
         <Col :span="18" class="g-flex-a-j-center">
-          <div class="-search-select-text">创建时间：</div>
-          <Col span="14" class="g-flex-a-j-center">
-            <div>
-              <Date-picker class="date-time" type="datetime" placeholder="选择开始日期"
-                           v-model="getStartTime"></Date-picker>
-            </div>
-            <div>&nbsp;-&nbsp;</div>
-            <div>
-              <Date-picker class="date-time" type="datetime" placeholder="选择结束日期" @on-open-change="changeDate"
-                           v-model="getEndTime"></Date-picker>
-            </div>
-            <div class="-date-search g-flex-j-sa">
-              <Button type="primary" ghost class="-p-modal-btn -date-search" @click="toExcel">导出表格</Button>
-            </div>
-          </Col>
+          <date-picker-template :dataInfo="dateOption" @changeDate="changeDate"></date-picker-template>
         </Col>
+        <div class="g-text-right">
+          <Button type="primary" ghost class="-p-modal-btn -date-search" @click="toExcel">导出表格</Button>
+        </div>
       </Row>
 
       <Table class="-c-tab" :loading="isFetching" :columns="columns" :data="dataList"></Table>
@@ -70,7 +59,7 @@
           <FormItem label="订单金额" class="-p-o-width">{{orderInfo.amount | moneyFormatter}} 元</FormItem>
         </div>
         <div class="-p-o-flex">
-          <FormItem label="订单类型" class="-p-o-width">{{orderInfo.mode=='1' ? "拼团购买" : "单独购买"}}</FormItem>
+          <FormItem label="订单类型" class="-p-o-width">{{orderType[orderInfo.mode]}}</FormItem>
           <FormItem label="优惠金额" class="-p-o-width">{{orderInfo.couponAmount | moneyFormatter}} 元</FormItem>
         </div>
         <div class="-p-o-flex">
@@ -133,9 +122,11 @@
 <script>
   import dayjs from 'dayjs'
   import {getBaseUrl} from "@/libs/index";
+  import DatePickerTemplate from "../../components/datePickerTemplate";
 
   export default {
     name: 'orderList',
+    components: {DatePickerTemplate},
     data() {
       return {
         tab: {
@@ -195,6 +186,11 @@
           }
         ],
         dataList: [],
+        dateOption: {
+          name: '创建时间',
+          type: 'datetime',
+          row: '2'
+        },
         total: 0,
         isFetching: false,
         isOpenModal: false,
@@ -308,10 +304,10 @@
       this.getList()
     },
     methods: {
-      changeDate (bool) {
-        if(!bool) {
-          this.selectChange()
-        }
+      changeDate (data) {
+        this.getStartTime = data.startTime
+        this.getEndTime = data.endTime
+        this.selectChange()
       },
       jumpUrlOrder(item) {
         if (item.isVirtual) return

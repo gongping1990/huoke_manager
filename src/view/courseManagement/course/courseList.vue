@@ -20,19 +20,8 @@
                    @on-click="getList(1)"></Input>
           </div>
         </Col>
-        <Col :span="15" class="g-flex-a-j-center -date-search">
-          <Col span="2">时间:</Col>
-          <Col span="14" class="g-flex-a-j-center">
-            <div>
-              <Date-picker class="date-time" type="datetime" placeholder="选择开始日期"
-                           v-model="searchInfo.startTime"></Date-picker>
-            </div>
-            <div>&nbsp;-&nbsp;</div>
-            <div>
-              <Date-picker class="date-time" type="datetime" placeholder="选择结束日期" @on-open-change="changeDate"
-                           v-model="searchInfo.endTime"></Date-picker>
-            </div>
-          </Col>
+        <Col :span="15">
+          <date-picker-template :dataInfo="dateOption" @changeDate="changeDate"></date-picker-template>
         </Col>
       </Row>
 
@@ -70,9 +59,11 @@
 
 <script>
   import dayjs from 'dayjs'
+  import DatePickerTemplate from "../../../components/datePickerTemplate";
 
   export default {
     name: 'courseList',
+    components: {DatePickerTemplate},
     data() {
       return {
         tab: {
@@ -85,6 +76,10 @@
           categoryId: '',
           startTime: '',
           endTime: ''
+        },
+        dateOption: {
+          name: '创建时间',
+          type: 'datetime'
         },
         selectInfo: '1',
         dataList: [],
@@ -136,13 +131,13 @@
           },
           {
             title: '关键词',
-            render: (h,params)=>{
-              if(params.row.keywords.length) {
-                return h('div',params.row.keywords.map(function (item) {
-                  return h('Tag',item)
+            render: (h, params) => {
+              if (params.row.keywords.length) {
+                return h('div', params.row.keywords.map(function (item) {
+                  return h('Tag', item)
                 }))
               } else {
-                return h('span','')
+                return h('span', '')
               }
             },
             width: 180,
@@ -242,28 +237,28 @@
       this.getTypeList()
     },
     methods: {
-      changeDate (bool) {
-        if(!bool) {
-          this.getList(1)
-        }
+      changeDate(data) {
+        this.searchInfo.startTime = data.startTime
+        this.searchInfo.endTime = data.endTime
+        this.getList(1)
       },
       currentChange(val) {
         this.tab.page = val;
         this.getList();
       },
-      toClass (data) {
+      toClass(data) {
         this.$router.push({
           name: 'classList',
-          query:{
+          query: {
             courseId: data.id
           }
         })
       },
       openModal(data) {
-        if(data) {
+        if (data) {
           this.$router.push({
             name: 'editCourse',
-            query:{
+            query: {
               id: data.id
             }
           })
@@ -306,7 +301,7 @@
         let endTime = ''
         startTime = this.searchInfo.startTime ? dayjs(this.searchInfo.startTime).format("YYYY/MM/DD HH:mm:ss") : ''
         endTime = this.searchInfo.endTime ? dayjs(this.searchInfo.endTime).format("YYYY/MM/DD HH:mm:ss") : ''
-        if(num) {
+        if (num) {
           this.tab.currentPage = 1
         }
         this.$api.course.courseList({
@@ -375,8 +370,8 @@
 
 <style lang="less" scoped>
   .p-course-list {
-    .-t-add-icon{
-      top:56px
+    .-t-add-icon {
+      top: 56px
     }
     .-search-select-text {
       min-width: 70px;
@@ -387,19 +382,6 @@
       border-radius: 4px;
       margin-right: 20px;
     }
-
-
-    .date-time {
-      width: 100%;
-      border: 1px solid #dcdee2;
-      border-radius: 4px;
-      min-width: 155px;
-    }
-
-    .-date-search {
-      margin-left: 20px;
-    }
-
     .-c-tab {
       margin: 20px 0;
     }
