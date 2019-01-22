@@ -107,7 +107,7 @@
             <Input type="textarea" :rows="5" placeholder="请输入内容"
                    v-model="userInfo.content"></Input>
           </div>
-          <div v-if="otherInfo.type == 2">
+          <div v-if="otherInfo.type == 2 || otherInfo.type == 4">
             <Form :model="userInfo" :label-width="80">
               <Form-item label="first" required>
                 <div class="g-flex-a-j-center">
