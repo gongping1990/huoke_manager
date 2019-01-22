@@ -20,7 +20,7 @@
                 <div style="margin-top: 10px" v-if="radioType==1">
                   <Select v-model="search.keyType" style="width: 100px;margin-bottom: 10px">
                     <Option label="用户昵称" value="1"></Option>
-                    <Option label="用户电话" value="2"></Option>
+                    <Option label="用户电话" value="2" v-if="otherInfo.type!='4'"></Option>
                   </Select>
                   <div style="display: flex;margin-bottom: 10px">
                     <Input v-model="search.inputContent" placeholder="请输入内容" size="small"
@@ -57,7 +57,7 @@
                   </div>
                 </div>
                 <div v-else>
-                  <div style="margin: 20px 0" v-if="otherInfo.type!=1">
+                  <div style="margin: 20px 0" v-if="otherInfo.type!=1 && otherInfo.type!=4">
                     电话号码：
                     <Select v-model="search.userPhone" placeholder="请选择"
                             style="width: 100px" @on-change="getUserNum">
@@ -175,9 +175,9 @@
     data() {
       return {
         search: {
-          userType: "",
+          userType: "3",
           keyType: "1",
-          userPhone: '',
+          userPhone: '3',
           phone: "",
           nickname: "",
           inputContent: ""
@@ -278,8 +278,8 @@
         this.checkAll = false
         this.userNum = '0'
         this.addStorage = [];
-        this.search.userPhone = ''
-        this.search.userType = ''
+        this.search.userPhone = this.radioType == '1' ? '' : '3'
+        this.search.userType = this.radioType == '1' ? '' : '3'
         this.radioType == '2' && this.getUserNum()
       },
       checkAllUser() {

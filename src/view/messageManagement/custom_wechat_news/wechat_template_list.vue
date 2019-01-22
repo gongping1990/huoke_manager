@@ -72,7 +72,7 @@
           isCheckAllPeople: false,
           templateId: '',
           appId: '',
-          type: '2',
+          type: this.type == '2' ? '4' : '2',
           isOther: this.type == '2'
         },
         columns: [
