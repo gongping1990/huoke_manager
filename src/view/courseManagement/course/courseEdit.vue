@@ -96,7 +96,7 @@
         </Form-item>
 
         <Form-item label="课程简介" class="-c-form-item -c-border">
-          <editor v-model="addInfo.introduction" style="width: 900px"></editor>
+          <editor v-model="addInfo.introduction" :uploadImgServer="baseUrl" style="width: 900px"></editor>
         </Form-item>
 
         <Form-item label="分享海报" prop="poster" class="-c-form-item ivu-form-item-required">
