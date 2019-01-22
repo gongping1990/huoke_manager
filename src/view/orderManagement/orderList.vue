@@ -116,7 +116,7 @@
               {{item.orderId}}
             </span>
           </FormItem>
-          <FormItem label="剩余时限" class="-p-o-width">{{courseInfo.surplusTime | timeFormatter}}</FormItem>
+          <FormItem label="结束时间" class="-p-o-width">{{courseInfo.surplusTime | timeFormatter}}</FormItem>
         </div>
         <div class="-p-o-flex">
           <FormItem label="拼课价格" class="-p-o-width">{{courseInfo.price | moneyFormatter}} 元</FormItem>
@@ -171,7 +171,7 @@
             id: 'REVOKED'
           }
         ],
-        orderType: ['单独购买', '团体拼课', '好友助力'],
+        orderType: ['单独购买', '团体拼课', '好友助力','秒杀订单'],
         orderTypeList: [
           {
             name: '全部',
@@ -188,6 +188,10 @@
           {
             name: '好友助力',
             id: '2'
+          },
+          {
+            name: '秒杀订单',
+            id: '3'
           }
         ],
         dataList: [],
