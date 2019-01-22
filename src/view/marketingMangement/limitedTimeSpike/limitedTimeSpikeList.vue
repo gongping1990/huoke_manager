@@ -186,7 +186,7 @@
           {
             title: '最大限制(人数)',
             render: (h, params) => {
-              return h('div', params.row.maxStock == '-1' ? '无限制' : params.row.maxStock)
+              return h('div', params.row.maxStock == '0' ? '无限制' : params.row.maxStock)
             },
             align: 'center'
           },
