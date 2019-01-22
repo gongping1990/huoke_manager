@@ -86,7 +86,7 @@
             :on-error="handleErr">
             <Button ghost type="primary">上传图片</Button>
           </Upload>
-          <span class="-c-tips">图片尺寸不低于960px*360px 图片大小：5200K以内</span>
+          <span class="-c-tips">图片尺寸不低于960px*360px 图片大小：500K以内</span>
           <div class="-c-course-wrap" v-if="atlasImgUrl">
             <div class="-c-course-item" v-for="(item, index) of atlasImgUrl" :key="index">
               <img :src="item">
@@ -104,14 +104,14 @@
             style="display: inline-block"
             :action="baseUrl"
             :show-upload-list="false"
-            :max-size="500"
+            :max-size="1024"
             :on-success="handleSuccessShare"
             :on-exceeded-size="handleSize"
             :on-error="handleErr">
             <Button ghost type="primary">上传图片</Button>
           </Upload>
 
-          <span class="-c-tips">图片尺寸不低于640x1008px 图片大小：500K以内</span>
+          <span class="-c-tips">图片尺寸不低于640x1008px 图片大小：1M以内</span>
           <div class="-c-course-wrap" v-if="addInfo.sharedimgUrl">
             <div class="-c-course-item">
               <img :src="addInfo.sharedimgUrl">
