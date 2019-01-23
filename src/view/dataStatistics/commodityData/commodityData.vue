@@ -102,6 +102,9 @@
           {
             title: '付费转化率',
             key: 'percentConversion',
+            render: (h, params) => {
+              return h('span', `${params.row.percentConversion/10}%`)
+            },
             align: 'center',
             sortable: 'custom'
           },
