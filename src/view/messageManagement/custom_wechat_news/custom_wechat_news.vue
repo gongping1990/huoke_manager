@@ -3,7 +3,6 @@
 <-->
 <template>
   <div class="p-wx">
-
     <Card>
       <Row class="g-t-left">
         <Radio-group v-model="radioType" type="button" @on-change="changeRadio">
@@ -13,16 +12,16 @@
         </Radio-group>
       </Row>
 
-      <Row class="g-search -c-tab" v-show="radioType == 1">
-        <Col :span="3" class="g-t-left">
+      <Row class="g-search " :class="{'-c-tab': radioType!='3'}">
+        <Col :span="5" class="g-t-left" v-if="radioType!='3'">
           <div class="g-flex-a-j-center">
             <div class="-search-select-text">公众号：</div>
-            <Select v-model="form.appId" @on-change="getList(1)" class="-search-selectOne" filterable>
+            <Select v-model="form.appId" @on-change="changeWxAccount" class="-search-selectOne" filterable>
               <Option v-for="(item,index) in wxAccount" :label="item.name" :value="item.appid" :key="index"></Option>
             </Select>
           </div>
         </Col>
-        <Col :span="3" class="g-t-left">
+        <Col :span="4" class="g-t-left" v-show="radioType == 1">
           <div class="g-flex-a-j-center">
             <div class="-search-select-text">任务状态：</div>
             <Select v-model="form.state" placeholder="请选择" class="-search-selectOne"
@@ -34,7 +33,7 @@
             </Select>
           </div>
         </Col>
-        <Col :span="15" class="g-flex-a-j-center">
+        <Col :span="15" class="g-flex-a-j-center" v-show="radioType == 1">
           <date-picker-template :dataInfo="dateOption" @changeDate="changeDate"></date-picker-template>
         </Col>
       </Row>
@@ -50,13 +49,12 @@
             @on-change="currentChange"></Page>
 
       <div v-if="radioType == 2">
-        <wechat-template-list :type="1"></wechat-template-list>
+        <wechat-template-list ref="childTemplate" :type="1" :appId="form.appId"></wechat-template-list>
       </div>
 
       <div v-if="radioType == 3">
         <black-list :type="1"></black-list>
       </div>
-
     </Card>
 
     <div v-if="isOpenModal">
@@ -189,10 +187,18 @@
       };
     },
     mounted() {
-      this.getList()
       this.getWxAccountList()
     },
     methods: {
+      changeWxAccount() {
+        if (this.radioType == '1') {
+          this.getList(1)
+        } else {
+          setTimeout(() => {
+            this.$refs.childTemplate.getWxList(1)
+          }, 0)
+        }
+      },
       changeDate(data) {
         this.form.startTime = data.startTime
         this.form.endTime = data.endTime
@@ -209,10 +215,8 @@
         this.$api.user.getWxList()
           .then(response => {
             this.wxAccount = response.data.resultData;
-            this.wxAccount.unshift({
-              name: '全部',
-              appid: '-1'
-            })
+            this.form.appId = this.wxAccount[0].appid
+            this.getList()
           })
       },
       //分页查询
@@ -281,7 +285,7 @@
       min-width: 70px;
     }
     .-search-selectOne {
-      width: 100px;
+      width: 150px;
       border: 1px solid #dcdee2;
       border-radius: 4px;
       margin-right: 20px;

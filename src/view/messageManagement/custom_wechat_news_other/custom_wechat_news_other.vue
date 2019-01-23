@@ -22,16 +22,16 @@
 
       </Row>
 
-      <Row class="g-search -c-tab" v-show="radioType == 1">
-        <Col :span="3" class="g-t-left">
+      <Row class="g-search" :class="{'-c-tab': radioType!='3'}">
+        <Col :span="5" class="g-t-left" v-if="radioType!='3'">
           <div class="g-flex-a-j-center">
             <div class="-search-select-text">公众号：</div>
-            <Select v-model="form.appId" @on-change="getList(1)" class="-search-selectOne" filterable>
-              <Option v-for="(item,index) in wxAccount" :label="item.name" :value="item.appId" :key="index"></Option>
+            <Select v-model="form.appId" @on-change="changeWxAccount" class="-search-selectOne" filterable>
+              <Option v-for="(item,index) in wxAccount" :label="item.name" :value="item.appid" :key="index"></Option>
             </Select>
           </div>
         </Col>
-        <Col :span="3" class="g-t-left">
+        <Col :span="3" class="g-t-left" v-show="radioType == 1">
           <div class="g-flex-a-j-center">
             <div class="-search-select-text">任务状态：</div>
             <Select v-model="form.state" placeholder="请选择" class="-search-selectOne"
@@ -43,7 +43,7 @@
             </Select>
           </div>
         </Col>
-        <Col :span="15" class="g-flex-a-j-center -date-search">
+        <Col :span="15" class="g-flex-a-j-center -date-search" v-show="radioType == 1">
           <date-picker-template :dataInfo="dateOption" @changeDate="changeDate"></date-picker-template>
         </Col>
       </Row>
@@ -59,13 +59,12 @@
             @on-change="currentChange"></Page>
 
       <div v-if="radioType == 2">
-        <wechat-template-list :type="2"></wechat-template-list>
+        <wechat-template-list ref="childTemplate" :type="2" :appId="form.appId"></wechat-template-list>
       </div>
 
       <div v-if="radioType == 3">
         <black-list :type="2"></black-list>
       </div>
-
     </Card>
 
     <div v-if="isOpenModal">
@@ -205,6 +204,15 @@
       this.getUserSync()
     },
     methods: {
+      changeWxAccount() {
+        if (this.radioType == '1') {
+          this.getList(1)
+        } else {
+          setTimeout(()=>{
+            this.$refs.childTemplate.getWxList(1)
+          },0)
+        }
+      },
       changeDate(data) {
         this.form.startTime = data.startTime
         this.form.endTime = data.endTime
@@ -234,7 +242,7 @@
         this.$api.custom.getAppList()
           .then(response => {
             this.wxAccount = response.data.resultData;
-            this.form.appId = this.wxAccount[0].appId
+            this.form.appId = this.wxAccount[0].appid
             this.getList()
           })
       },
@@ -304,7 +312,7 @@
       min-width: 70px;
     }
     .-search-selectOne {
-      width: 100px;
+      width: 150px;
       border: 1px solid #dcdee2;
       border-radius: 4px;
       margin-right: 20px;

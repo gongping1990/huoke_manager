@@ -4,17 +4,6 @@
 <template>
   <div class="p-wx">
 
-    <Row class="g-search -c-tab">
-      <Col :span="8" class="g-t-left">
-        <div class="g-flex-a-j-center">
-          <div class="-search-select-text">公众号：</div>
-          <Select v-model="form.appId" @on-change="getWxList(1)" class="-search-selectOne" filterable>
-            <Option v-for="(item,index) in wxAccount" :label="item.name" :value="item.appid" :key="index"></Option>
-          </Select>
-        </div>
-      </Col>
-    </Row>
-
     <Table class="-c-tab" :loading="isFetching" :columns="columns" :data="dataList"></Table>
 
     <Page class="g-text-right"
@@ -49,10 +38,6 @@
           page: 1,
           pageSize: 10
         },
-        form: {
-          appId: "",
-          state: "3"
-        },
         addInfo: {
           condition: "",
           userIds: [],
@@ -62,7 +47,6 @@
           remark: ""
         },
         dataList: [],
-        wxAccount: [],
         total: 0,
         isAddOpenModal: false,
         isFetching: false,
@@ -117,25 +101,9 @@
       };
     },
     mounted() {
-      this.getWxAccountList();
+      this.getWxList();
     },
     methods: {
-      getWxAccountList() {
-        let paramUrl = ''
-        paramUrl = this.type == '1' ? this.$api.user.getWxList : this.$api.custom.getAppList
-        paramUrl()
-          .then(response => {
-            this.wxAccount = response.data.resultData;
-            if (this.type == '2') {
-              this.wxAccount.forEach(item => {
-                item.appid = item.appId
-              })
-            }
-
-            this.form.appId = this.wxAccount[0].appid
-            this.getWxList();
-          })
-      },
       currentChange(val) {
         this.tab.page = val;
         this.getWxList();
@@ -149,7 +117,7 @@
         paramUrl({
           current: this.tab.page,
           size: this.tab.pageSize,
-          appId: this.form.appId
+          appId: this.appId
         })
           .then(response => {
             this.dataList = response.data.resultData.records;
