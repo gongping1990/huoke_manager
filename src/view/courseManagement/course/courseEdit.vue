@@ -330,7 +330,9 @@
           delete this.addInfo.playUrl
           delete this.addInfo.sharedtext
         }
-        console.log(this.addInfo, 1)
+
+        this.addInfo.introduction = this.addInfo.introduction ? (this.addInfo.introduction == '<p><br></p>' ? '' : this.addInfo.introduction) : ''
+
         this.$refs[name].validate((valid) => {
           if (valid) {
             paramUrl = this.addInfo.id ? this.$api.course.updateCourse(this.addInfo) : this.$api.course.addCourse(this.addInfo)

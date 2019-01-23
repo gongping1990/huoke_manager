@@ -337,6 +337,7 @@
         this.addInfo.disabled =  this.addInfo.disabled == '1'
         this.addInfo.tryout = this.addInfo.tryout == '1'
         this.addInfo.courseId = this.$route.query.courseId
+        this.addInfo.document = this.addInfo.document ? (this.addInfo.document == '<p><br></p>' ? '' : this.addInfo.document) : ''
 
         paramUrl = this.addInfo.id ? this.$api.course.updateClassHour : this.$api.course.addClassHour
         paramUrl( this.addInfo)
