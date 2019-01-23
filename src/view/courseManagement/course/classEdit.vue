@@ -67,7 +67,7 @@
         </div>
       </Form-item>
       <Form-item label="课时文稿" class="-c-form-item -c-border">
-        <editor v-model="addInfo.document" style="width: 580px"></editor>
+        <editor v-model="addInfo.document" :uploadImgServer="baseUrl" style="width: 580px"></editor>
       </Form-item>
     </Form>
     <div slot="footer" class="-p-s-footer">
