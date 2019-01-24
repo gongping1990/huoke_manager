@@ -2,7 +2,7 @@
   <div class="p-trusteeship">
     <Card>
       <Row class="g-t-left">
-        <Radio-group v-model="radioType" type="button" @on-change="getList">
+        <Radio-group v-model="radioType" type="button" @on-change="getList()">
           <Radio :label=1>页面托管</Radio>
           <Radio :label=2>图片托管</Radio>
         </Radio-group>
@@ -72,9 +72,9 @@
         <Form-item label="页面代码" prop="content" class="ivu-form-item-required" v-else>
           <editor v-model="addInfo.content" ref="editorWang"></editor>
         </Form-item>
-        <FormItem label="链接" prop="link" v-if="radioType == '2'">
-          <Input :rows="5" v-model="addInfo.link" placeholder="请输入链接"></Input>
-        </FormItem>
+        <!--<FormItem label="链接" prop="link" v-if="radioType == '2'">-->
+          <!--<Input :rows="5" v-model="addInfo.link" placeholder="请输入链接"></Input>-->
+        <!--</FormItem>-->
         <FormItem label="主题色" prop="color" v-if="radioType == '1'">
           <ColorPicker v-model="addInfo.color" />
         </FormItem>
@@ -262,7 +262,7 @@
           },
           {
             title: '链接',
-            key: 'link',
+            key: 'content',
             align: 'center'
           },
           {
