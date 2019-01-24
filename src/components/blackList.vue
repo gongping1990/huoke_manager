@@ -4,12 +4,6 @@
 <template>
   <div class="p-wx">
 
-    <Row class="g-search -c-tab">
-      <Col :span="3" class="g-t-left">
-        <Button type="primary" @click="removeBlack()">移除黑名单</Button>
-      </Col>
-    </Row>
-
     <div class="g-add-btn g-add-top -p-w-top" @click="addOpenModal()">
       <Icon class="-btn-icon" color="#fff" type="ios-add" size="24"/>
     </div>
@@ -17,13 +11,22 @@
     <Table class="-c-tab" :loading="isFetching" :columns="columns" :data="dataList"
            @on-selection-change="changeSelect"></Table>
 
-    <Page class="g-text-right"
-          :total="total"
-          size="small"
-          show-elevator
-          :page-size="tab.pageSize"
-          :current.sync="tab.currentPage"
-          @on-change="currentChange"></Page>
+
+
+    <Row class="g-search -c-tab">
+      <Col :span="3" class="g-t-left">
+        <Button ghost type="primary" @click="removeBlack()">移除黑名单</Button>
+      </Col>
+      <Col :span="21">
+        <Page class="g-text-right"
+              :total="total"
+              size="small"
+              show-elevator
+              :page-size="tab.pageSize"
+              :current.sync="tab.currentPage"
+              @on-change="currentChange"></Page>
+      </Col>
+    </Row>
 
     <div v-if="isAddOpenModal">
       <user-selection ref="childMethod"
@@ -42,7 +45,7 @@
   export default {
     components: {UserSelection},
     name: 'blackList',
-    props: ['type'],
+    props: ['type', 'appId'],
     data() {
       return {
         tab: {
@@ -58,7 +61,8 @@
           title: '黑名单',
           isCheckAllPeople: false,
           type: '3',
-          isOther: this.type == '2'
+          isOther: this.type == '2',
+          appId: this.type == '2' ? this.appId : ''
         },
         columns: [
           {
@@ -136,6 +140,7 @@
         this.isFetching = true
         if(this.type == '2') {
           param.black = true
+          param.appId = this.appId
         }
         paramUrl(param)
           .then(response => {

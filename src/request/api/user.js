@@ -34,6 +34,10 @@ const user = {
   getWxList(params) {
     return axios.get("/user/listMpAppid");
   },
+  // 获取微信工作中号(消息管理用的)
+  getMessageWxList(params) {
+    return axios.get("/user/app/list");
+  },
   // 获取短信推送消息
   getSmsList(params) {
     return axios.get("/user/listSmsTemplate",{params: params});

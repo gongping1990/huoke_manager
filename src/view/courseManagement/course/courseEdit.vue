@@ -239,7 +239,6 @@
             {type: 'string', max: 80, message: '课程名称最多80字', trigger: 'blur'}
           ],
           description: [
-            {required: true, message: '请输入课程描述', trigger: 'blur'},
             {type: 'string', max: 100, message: '课程描述最多100字', trigger: 'blur'}
           ],
           lessonNum: [

@@ -212,7 +212,7 @@
         this.getList();
       },
       getWxAccountList() {
-        this.$api.user.getWxList()
+        this.$api.user.getMessageWxList()
           .then(response => {
             this.wxAccount = response.data.resultData;
             this.form.appId = this.wxAccount[0].appid

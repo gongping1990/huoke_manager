@@ -22,8 +22,8 @@
 
       </Row>
 
-      <Row class="g-search" :class="{'-c-tab': radioType!='3'}">
-        <Col :span="5" class="g-t-left" v-if="radioType!='3'">
+      <Row class="g-search -c-tab">
+        <Col :span="5" class="g-t-left">
           <div class="g-flex-a-j-center">
             <div class="-search-select-text">公众号：</div>
             <Select v-model="form.appId" @on-change="changeWxAccount" class="-search-selectOne" filterable>
@@ -63,7 +63,7 @@
       </div>
 
       <div v-if="radioType == 3">
-        <black-list :type="2"></black-list>
+        <black-list :type="2" :appId="form.appId"></black-list>
       </div>
     </Card>
 
