@@ -51,7 +51,7 @@
             v-if="!addInfo.content"
             :action="baseUrl"
             :show-upload-list="false"
-            :max-size="200"
+            :max-size="1024"
             :before-upload="beforeUpload"
             :on-success="handleSuccess"
             :on-exceeded-size="handleSize"
@@ -67,7 +67,7 @@
               <div class="-i-del" @click="delImg()">删除</div>
             </div>
           </div>
-          <span class="-c-tips" v-else>只能上传jpg/png文件，且不超过200kb，图片尺寸为960px*360px</span>
+          <span class="-c-tips" v-else>只能上传jpg/png文件，且不超过1M，图片尺寸为960px*360px</span>
         </Form-item>
         <Form-item label="页面代码" prop="content" class="ivu-form-item-required" v-else>
           <editor v-model="addInfo.content" ref="editorWang"></editor>
