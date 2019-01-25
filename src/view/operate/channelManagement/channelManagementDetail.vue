@@ -72,12 +72,12 @@
           },
           {
             title: '访问量',
-            key: 'visitCount',
+            key: 'pv',
             align: 'center'
           },
           {
             title: '访问用户',
-            key: 'visitUserCount',
+            key: 'uv',
             align: 'center'
           },
           {
