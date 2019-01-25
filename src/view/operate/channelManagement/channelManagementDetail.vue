@@ -88,11 +88,17 @@
           {
             title: '付款金额',
             key: 'payMoney',
+            render: (h,params)=>{
+              return h('div',params.row.payMoney/100)
+            },
             align: 'center'
           },
           {
             title: '付费转化率',
             key: 'paymentRate',
+            render: (h,params)=>{
+              return h('div',`${params.row.paymentRate/100}%`)
+            },
             align: 'center'
           },
           {
