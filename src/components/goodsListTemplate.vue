@@ -61,7 +61,9 @@
           },
           {
             title: '付款金额',
-            key: 'payAmount',
+            render: (h,params)=>{
+              return h('div',params.row.payAmount/100)
+            },
             align: 'center'
           },
           {
