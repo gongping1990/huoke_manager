@@ -205,7 +205,7 @@
     },
     methods: {
       copyUrlFn(row) {
-        let url = `${copyUrl()}?goodsId=${row.goodsId}&type=0`;
+        let url = `${copyUrl()}/${row.goodsId}?type=0`;
         this.copy_url = url;
         setTimeout(() => {
           this.$refs.copyInput.select();
