@@ -98,6 +98,9 @@
           {
             title: '累计销售额',
             key: 'saleAmount',
+            render: (h,params)=>{
+              return h('div',params.row.saleAmount/100)
+            },
             align: 'center'
           },
           {
