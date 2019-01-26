@@ -96,7 +96,7 @@
           {
             title: '付费转化率',
             render: (h,params)=>{
-              return h('div',`${params.row.uv ? (params.row.payUserCount/params.row.uv)*100 : 0}%`)
+              return h('div',`${params.row.uv ? ((params.row.payUserCount/params.row.uv).toFixed(4))*100 : 0}%`)
             },
             align: 'center'
           },
