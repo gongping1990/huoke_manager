@@ -96,7 +96,7 @@
         audioType: ['mp3', 'wma', 'arm'],
         videoType: ['mp4', 'wmv', 'rmvb', 'avi'],
         baseUrl: `${getBaseUrl()}/common/uploadPublicFile`, // 公有 （图片）
-        baseUrlVa: `${getBaseUrl()}/common/uploadPrivateFile`, //私有地址 （音视频）
+        baseUrlVa: `http://hkupload.prod.k12.vip/common/uploadPrivateFile`, //私有地址 （音视频）
         ruleValidate: {
           name: [
             {required: true, message: '请输入课时名称', trigger: 'blur'},
