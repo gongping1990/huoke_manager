@@ -22,6 +22,7 @@
 
         </Date-picker>
       </div>
+      <Button style="margin-left: 10px" @click="resetDate">重置</Button>
     </Col>
   </div>
 </template>
@@ -55,13 +56,18 @@
       }
     },
     methods: {
+      resetDate() {
+        this.dateTime.startTime = ''
+        this.dateTime.endTime = ''
+        this.$emit('changeDate', this.dateTime)
+      },
       changeStartClick(date) {
         let s = new Date(date).getTime()
         let e = new Date(this.dateTime.endTime).getTime()
         if (s > e) {
           this.dateTime.endTime = ''
         }
-        if(this.dateTime.endTime) {
+        if (this.dateTime.endTime) {
           this.changeDate(false)
         }
       },
@@ -97,7 +103,7 @@
     }
   }
 
-  .p-date-left{
+  .p-date-left {
     margin-left: 20px;
   }
 
