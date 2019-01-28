@@ -116,6 +116,16 @@
             align: 'center'
           },
           {
+            title: '启用/禁用',
+            render: (h, params) => {
+              return h('Tag', {
+                props: {
+                  color: !params.row.disabled ? 'default' : 'success'
+                }
+              }, !params.row.disabled ? '已禁用' : '已启用')
+            }
+          },
+          {
             title: '操作',
             width: 190,
             align: 'center',
