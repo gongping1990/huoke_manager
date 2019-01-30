@@ -49,13 +49,13 @@
       <Form class="-c-form" ref="couponInfo" :model="couponInfo" :label-width="100">
         <Form-item label="课程类型" prop="useScope">
           <Radio-group v-model="couponInfo.useScope" @on-change="changeUseScope">
-            <Radio :label=0>全部课程通用</Radio>
-            <Radio :label=1>指定课程可用</Radio>
+            <Radio :label=0 :disabled="isEdit">全部课程通用</Radio>
+            <Radio :label=1 :disabled="isEdit">指定课程可用</Radio>
           </Radio-group>
           <div class="-c-tips">* 添加优惠券后，使用范围只能增加，不能减少</div>
         </Form-item>
         <Form-item label="选择课程" v-if="couponInfo.useScope">
-          <div class="g-course-add-style" @click="isShowCourseModal=true">
+          <div class="g-course-add-style" @click="isShowCourseModal=true" v-if="!isEdit">
             <span>+</span>
             <span>选择课程</span>
           </div>
