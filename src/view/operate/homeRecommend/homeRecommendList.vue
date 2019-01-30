@@ -1,7 +1,17 @@
 <template>
   <div class="p-homeRecommend">
     <Card>
-      <div class="g-add-btn" @click="openModal()">
+      <Row class="g-search">
+        <Col :span="5" class="g-t-left">
+          <span>是否显示价格：</span>
+          <i-switch v-model="priceBtn" @on-change="changePriceBtn" size="large">
+            <span slot="open">开启</span>
+            <span slot="close">关闭</span>
+          </i-switch>
+        </Col>
+      </Row>
+
+      <div class="g-add-btn g-add-top" @click="openModal()">
         <Icon class="-btn-icon" color="#fff" type="ios-add" size="24"/>
       </div>
 
@@ -77,6 +87,7 @@
           page: 1,
           pageSize: 10
         },
+        priceBtn: '',
         dataList: [],
         courseList: [],
         total: 0,
@@ -197,8 +208,22 @@
     },
     mounted() {
       this.getList()
+      this.getPriceBtn()
     },
     methods: {
+      changePriceBtn () {
+        this.isFetching = true
+        this.$api.common.updatePriceBtn()
+          .then(
+            response => {
+              if(response.data.code == '200') {
+                this.$Message.success('操作成功')
+              }
+            })
+          .finally(() => {
+            this.isFetching = false
+          })
+      },
       delCourse(item, index) {
         this.courseList.splice(index, 1)
       },
@@ -250,6 +275,13 @@
           .finally(() => {
             this.isFetching = false
           })
+      },
+      getPriceBtn() {
+        this.$api.common.getPriceBtn()
+          .then(
+            response => {
+             this.priceBtn = response.data.resultData
+            })
       },
       delItem(param) {
         this.$Modal.confirm({

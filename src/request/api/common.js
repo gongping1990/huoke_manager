@@ -17,6 +17,14 @@ const common = {
   // 获取客服信息
   getService(param) {
     return axios.get('/common/sysConfig', param)
+  },
+  //  获取按钮状态
+  getPriceBtn(param) {
+    return axios.get('/common/showprice')
+  },
+  // 更改按钮状态
+  updatePriceBtn(param) {
+    return axios.post('/common/optShowMaPrice')
   }
 }
 
