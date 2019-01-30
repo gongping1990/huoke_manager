@@ -141,17 +141,17 @@
           {
             name: '累计付费金额',
             type: 'line',
-            data: dataList.allPayAmount
+            data: dataList.allPayAmount/100
           },
           {
             name: '付费金额',
             type: 'line',
-            data: dataList.payAmount
+            data: dataList.payAmount/100
           },
           {
             name: '客单价',
             type: 'line',
-            data: dataList.averagePayAmount
+            data: dataList.averagePayAmount/100
           }
         ]
         return optionSeriesLineTwo
