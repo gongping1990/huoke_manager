@@ -313,25 +313,25 @@
         this.titleListOne = [
           {
             name: '系统访问用户',
-            num: thousandFormatter(this.dataInfo.systemAccessUser),
+            num: this.dataInfo.systemAccessUser,
             dayRatio: this.dataInfo.systemAccessUserChainDay,
             weekRatio: this.dataInfo.systemAccessUserBasisWeek
           },
           {
             name: '商品访问用户',
-            num: thousandFormatter(this.dataInfo.goodsAccessUser),
+            num: this.dataInfo.goodsAccessUser,
             dayRatio: this.dataInfo.goodsAccessUserChainDay,
             weekRatio: this.dataInfo.goodsAccessUserBasisWeek
           },
           {
             name: '下单用户',
-            num: thousandFormatter(this.dataInfo.orderUser),
+            num: this.dataInfo.orderUser,
             dayRatio: this.dataInfo.orderUserChainDay,
             weekRatio: this.dataInfo.orderUserBasisWeek
           },
           {
             name: '付费用户',
-            num: thousandFormatter(this.dataInfo.payUser),
+            num: this.dataInfo.payUser,
             dayRatio: this.dataInfo.payUserChainDay,
             weekRatio: this.dataInfo.payUserBasisWeek
           }
@@ -339,19 +339,19 @@
         this.titleListTwo = [
           {
             name: '累计付费金额',
-            num: thousandFormatter(this.dataInfo.allPayAmount),
+            num: thousandFormatter(this.dataInfo.allPayAmount/100),
             dayRatio: this.dataInfo.allPayAmountChainDay,
             weekRatio: this.dataInfo.allPayAmountBasisWeek
           },
           {
             name: '付费金额',
-            num: thousandFormatter(this.dataInfo.payAmount),
+            num: thousandFormatter(this.dataInfo.payAmount/100),
             dayRatio: this.dataInfo.payAmountChainDay,
             weekRatio: this.dataInfo.payAmountBasisWeek
           },
           {
             name: '客单价',
-            num: thousandFormatter(this.dataInfo.averagePayAmount),
+            num: thousandFormatter(this.dataInfo.averagePayAmount/100),
             dayRatio: this.dataInfo.averagePayAmountChainDay,
             weekRatio: this.dataInfo.averagePayAmountBasisWeek
           }

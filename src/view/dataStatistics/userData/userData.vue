@@ -199,19 +199,19 @@
           this.titleList = [
             {
               name: '累计用户',
-              num: thousandFormatter(this.dataInfo.allUser),
+              num: this.dataInfo.allUser,
               dayRatio: this.dataInfo.allUserChainDay,
               weekRatio: this.dataInfo.allUserBasisWeek
             },
             {
               name: '新增用户',
-              num: thousandFormatter(this.dataInfo.newUser),
+              num: this.dataInfo.newUser,
               dayRatio: this.dataInfo.newUserChainDay,
               weekRatio: this.dataInfo.newUserBasisWeek
             },
             {
               name: '活跃用户',
-              num: thousandFormatter(this.dataInfo.activeUser),
+              num: this.dataInfo.activeUser,
               dayRatio: this.dataInfo.activeUserChainDay,
               weekRatio: this.dataInfo.activeUserBasisWeek
             }
@@ -221,19 +221,19 @@
           this.titleList = [
             {
               name: '累计付费用户',
-              num: thousandFormatter(this.dataInfo.allPayUser),
+              num: this.dataInfo.allPayUser,
               dayRatio: this.dataInfo.allPayUserChainDay,
               weekRatio: this.dataInfo.allPayUserBasisWeek
             },
             {
               name: '付费用户',
-              num: thousandFormatter(this.dataInfo.payUser),
+              num: this.dataInfo.payUser,
               dayRatio: this.dataInfo.payUserChainDay,
               weekRatio: this.dataInfo.payUserBasisWeek
             },
             {
               name: '活跃付费用户',
-              num: thousandFormatter(this.dataInfo.activePayUser),
+              num: this.dataInfo.activePayUser,
               dayRatio: this.dataInfo.activePayUserChainDay,
               weekRatio: this.dataInfo.activePayUserBasisWeek
             }
