@@ -91,15 +91,15 @@
         <Menu-item name="messageManagement">留言审核</Menu-item>
         <Menu-item name="customerService">客服管理</Menu-item>
       </Submenu>
-      <!--<Submenu name="setting" class="-left-li">-->
-      <!--<template slot="title">-->
-      <!--<Icon type="md-settings" class="hk-menu-icon"></Icon>-->
-      <!--<span>设置</span>-->
-      <!--</template>-->
-      <!--<Menu-item name="user-setting">用户管理</Menu-item>-->
-      <!--<Menu-item name="user-role">角色管理</Menu-item>-->
-      <!--<Menu-item name="user-info">个人资料</Menu-item>-->
-      <!--</Submenu>-->
+      <Submenu name="setting" class="-left-li">
+        <template slot="title">
+          <Icon type="md-settings" class="hk-menu-icon"></Icon>
+          <span>设置</span>
+        </template>
+        <Menu-item name="user-setting">用户管理</Menu-item>
+        <Menu-item name="user-role">角色管理</Menu-item>
+        <Menu-item name="user-info">个人资料</Menu-item>
+      </Submenu>
     </Menu>
   </div>
 </template>
