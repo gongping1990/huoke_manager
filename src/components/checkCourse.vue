@@ -7,8 +7,8 @@
             <Option value="1">课程名称</Option>
           </Select>
           <span class="-search-center">|</span>
-          <Input v-model="searchInfo" class="-search-input" placeholder="请输入关键字" icon="ios-search"
-                 @on-click="getCourseList"></Input>
+          <Input v-model="searchInfo" class="-search-input" placeholder="请输入关键字"
+                 @on-change="changeIndex"></Input>
         </div>
       </Col>
     </Row>
@@ -59,12 +59,12 @@
         radioCourseId: '',
         size: 10000,
         checkCourseIds: [],
+        storageList: [],
         checkCourseArray: []
       }
     },
     mounted() {
       if (this.checkCourseList.length && !this.isRadio) {
-        console.log(this.checkCourseList)
         this.isEdit = true
         for (let item of this.checkCourseList) {
           this.checkCourseIds.push(item.id)
@@ -75,6 +75,20 @@
       this.getCourseList()
     },
     methods: {
+      changeIndex(params) {
+        let array = []
+        this.courseList = []
+        if (params.data) {
+          for (let item of this.storageList) {
+            if (item.courseName.indexOf(params.data) > -1) {
+              array.push(item)
+            }
+          }
+          this.courseList = array
+        } else {
+          this.courseList = this.storageList
+        }
+      },
       getCourseList() {
         if (this.isFetching) return
         let routeUrl = ''
@@ -106,6 +120,7 @@
                 }
               }
             }
+            this.storageList = this.courseList
           })
           .finally(() => {
             this.isFetching = false
@@ -121,16 +136,17 @@
           }
         } else {
           for (let item of this.checkCourseIds) {
-            for (let data of this.courseList) {
+            for (let data of this.storageList) {
               if (item == data.id) {
                 this.checkCourseArray.push(data)
               }
             }
           }
         }
+        console.log(this.courseList, this.checkCourseArray)
         this.$emit('closeCourseModal', this.checkCourseArray)
       },
-      cancleCourseModal () {
+      cancleCourseModal() {
         this.$emit('cancleCourseModal')
       }
     }

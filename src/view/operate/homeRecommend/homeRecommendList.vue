@@ -58,11 +58,13 @@
                           @closeCourseModal="checkCourse"></check-course>
           </div>
           <div class="-c-course-wrap" v-if="courseList.length">
-            <div class="-c-course-item" v-for="(item, index) of courseList" :key="index">
-              <img :src="item.courseImgUrl">
-              <div class="-i-text">{{item.courseName}}</div>
-              <div class="-i-del" @click="delCourse(item,index)">删除</div>
-            </div>
+            <draggable v-model="courseList">
+              <div class="-c-course-item" v-for="(item, index) of courseList" :key="index">
+                <img :src="item.courseImgUrl">
+                <div class="-i-text">{{item.courseName}}</div>
+                <div class="-i-del" @click="delCourse(item,index)">删除</div>
+              </div>
+            </draggable>
           </div>
         </FormItem>
       </Form>
@@ -75,12 +77,13 @@
 </template>
 
 <script>
+  import draggable from 'vuedraggable'
   import CheckCourse from "../../../components/checkCourse";
   import dayjs from 'dayjs'
 
   export default {
     name: 'friendHelp',
-    components: {CheckCourse},
+    components: {CheckCourse, draggable},
     data() {
       return {
         tab: {
