@@ -133,25 +133,25 @@
           averagePayAmount: []
         }
         for (let item of this.dataInfo.data) {
-          dataList.allPayAmount.push(item.allPayAmount)
-          dataList.payAmount.push(item.payAmount)
-          dataList.averagePayAmount.push(item.averagePayAmount)
+          dataList.allPayAmount.push(item.allPayAmount/100)
+          dataList.payAmount.push(item.payAmount/100)
+          dataList.averagePayAmount.push(item.averagePayAmount/100)
         }
         let optionSeriesLineTwo = [
           {
             name: '累计付费金额',
             type: 'line',
-            data: dataList.allPayAmount/100
+            data: dataList.allPayAmount
           },
           {
             name: '付费金额',
             type: 'line',
-            data: dataList.payAmount/100
+            data: dataList.payAmount
           },
           {
             name: '客单价',
             type: 'line',
-            data: dataList.averagePayAmount/100
+            data: dataList.averagePayAmount
           }
         ]
         return optionSeriesLineTwo
