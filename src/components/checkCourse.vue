@@ -75,12 +75,12 @@
       this.getCourseList()
     },
     methods: {
-      changeIndex(params) {
+      changeIndex() {
         let array = []
         this.courseList = []
-        if (params.data) {
+        if (this.searchInfo) {
           for (let item of this.storageList) {
-            if (item.courseName.indexOf(params.data) > -1) {
+            if (item.courseName.indexOf(this.searchInfo) > -1) {
               array.push(item)
             }
           }
