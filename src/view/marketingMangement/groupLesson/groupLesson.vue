@@ -369,7 +369,7 @@
           content: '确认结束该拼课吗？',
           onOk: () => {
             this.$api.goods.closeGroup({
-              goodsId: param.id
+              groupBuyId: param.groupBuyId
             }).then(
               response => {
                 if (response.data.code == "200") {
@@ -414,7 +414,7 @@
         this.addInfo.endTime = dayjs(this.getEndTime).format("YYYY/MM/DD HH:mm:ss")
         this.addInfo.groupFirstPriceYuan = this.addInfo.limit ? this.addInfo.groupFirstPriceYuan : ''
 
-        let promiseDate = this.addInfo.id ? this.$api.goods.updateGroup(this.addInfo) : this.$api.goods.addGroup(this.addInfo)
+        let promiseDate = this.addInfo.groupBuyId ? this.$api.goods.updateGroup(this.addInfo) : this.$api.goods.addGroup(this.addInfo)
         promiseDate
           .then(
             response => {
