@@ -6,7 +6,8 @@ const store = {
   errorList: [],
   hasReadErrorPage: false,
   userStorageList:[],
-  isChangeBaseUrl: false
+  isChangeBaseUrl: false,
+  nowAdminType: localStorage.nowSystem || '1'
 }
 
 export default store

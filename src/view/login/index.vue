@@ -87,6 +87,7 @@
                 if (res.data.code == 200) {
                   this.$router.push("/userData");
                   this.$Message.success('登录成功');
+                  localStorage.nowSystem = '1'
                   localStorage.isLoginSuccess = true
                 }
               })

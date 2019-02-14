@@ -4,6 +4,9 @@ const mutations = {
   },
   changeBaseUrl (state,payload) {
     state.isChangeBaseUrl = !state.isChangeBaseUrl
+  },
+  changeSystem (state,payload) {
+    state.nowAdminType = payload
   }
 }
 
