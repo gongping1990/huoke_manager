@@ -81,7 +81,7 @@
       align-items: center;
       border: 1px solid #eeeeee;
       border-bottom: none;
-      margin-left: 13%;
+      margin-left: 12%;
     }
 
     .expand-row:last-child{
@@ -89,7 +89,7 @@
     }
 
     .-p-left {
-      padding-left: 2%;
+      padding-left: 4%;
     }
 
     .-p-span {
