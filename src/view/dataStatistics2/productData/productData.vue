@@ -86,10 +86,14 @@
           {
             type: 'expand',
             width: 50,
+            className: 'aaaa',
             render: (h, params) => {
               return h(expandRow, {
                 props: {
                   row: params.row.lessons
+                },
+                style: {
+                  'overflow': 'hidden',
                 }
               })
             }
@@ -97,31 +101,24 @@
           {
             title: '单元',
             key: 'name',
-            align: 'center'
           },
           {
             title: '章节',
-            align: 'center'
           },
           {
             title: '打开人数',
-            align: 'center'
           },
           {
             title: '通关人数',
-            align: 'center'
           },
           {
-            title: '平均通关时长',
-            align: 'center'
+            title: '平均通关时长'
           },
           {
-            title: '通关率',
-            align: 'center'
+            title: '通关率'
           },
           {
-            title: '操作',
-            align: 'center'
+            title: '操作'
           }
         ],
       };

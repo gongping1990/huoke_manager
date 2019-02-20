@@ -1,30 +1,30 @@
 <template>
   <div class="p-product-table">
     <Row class="expand-row" v-for="(item,index) of dataList" :key="index">
-      <Col span="4" class="-p-left">
+      <Col span="5" class="-p-left">
         <span>{{item.name}}</span>
       </Col>
-      <Col span="4" class="-p-left">
+      <Col span="4">
         <div>生字：<span class="-p-span">{{item.openNum[0]||0}}</span></div>
         <div>朗读：<span class="-p-span">{{item.openNum[1]||0}}</span></div>
         <div>精读：<span class="-p-span">{{item.openNum[2]||0}}</span></div>
       </Col>
-      <Col span="4" class="-p-left">
+      <Col span="4">
         <div>生字：<span class="-p-span">{{item.finishNum[0]||0}}</span></div>
         <div>朗读：<span class="-p-span">{{item.finishNum[1]||0}}</span></div>
         <div>精读：<span class="-p-span">{{item.finishNum[2]||0}}</span></div>
       </Col>
-      <Col span="4" class="-p-left">
+      <Col span="4">
         <div>生字：<span class="-p-span">{{item.avgTime[0]||0}}s</span></div>
         <div>朗读：<span class="-p-span">{{item.avgTime[1]||0}}s</span></div>
         <div>精读：<span class="-p-span">{{item.avgTime[2]||0}}s</span></div>
       </Col>
-      <Col span="4" class="-p-left">
+      <Col span="4">
         <div>生字：<span class="-p-span">{{item.finishRate[0]||0}}%</span></div>
         <div>朗读：<span class="-p-span">{{item.finishRate[1]||0}}%</span></div>
         <div>精读：<span class="-p-span">{{item.finishRate[2]||0}}%</span></div>
       </Col>
-      <Col span="4" class="-p-left">
+      <Col span="3">
         <Button type="text" size="small" class="-p-btn" @click="openModal(item.id)">查看详情</Button>
       </Col>
     </Row>
@@ -81,7 +81,7 @@
       align-items: center;
       border: 1px solid #eeeeee;
       border-bottom: none;
-      margin-left: 250px;
+      margin-left: 13%;
     }
 
     .expand-row:last-child{
@@ -89,8 +89,7 @@
     }
 
     .-p-left {
-      text-align: center;
-      /*margin-left: 2%;*/
+      padding-left: 2%;
     }
 
     .-p-span {
