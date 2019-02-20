@@ -5,7 +5,7 @@
         <Col :span="5" class="g-t-left">
           <div class="g-flex-a-j-center">
             <div class="-search-select-text-two">是否关注获课网：</div>
-            <Select v-model="searchInfo.subscripbe" @on-change="getList(1)" class="-search-selectOne">
+            <Select v-model="searchInfo.subscribe" @on-change="getList(1)" class="-search-selectOne">
               <Option value="-1" >全部</Option>
               <Option value="1" >是</Option>
               <Option value="2" >否</Option>
@@ -51,7 +51,7 @@
           currentPage: 1
         },
         searchInfo: {
-          subscripbe: '-1'
+          subscribe: '-1'
         },
         selectInfo: '1',
         dataList: [],
@@ -128,7 +128,7 @@
         let params = {
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
-          subscripbe: this.searchInfo.subscripbe != '-1' ? (this.searchInfo.subscripbe == '1') : ''
+          subscribe: this.searchInfo.subscribe != '-1' ? (this.searchInfo.subscribe == '1') : ''
         }
 
         if (this.selectInfo == '1' && this.searchInfo) {

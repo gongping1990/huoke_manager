@@ -134,7 +134,7 @@
           numCard: [],
           todayPv: []
         }
-        for (let item of this.dataInfo.monthData) {
+        for (let item of this.dataInfo.monthDataIncr) {
           dataList.numUser.push(item.numUser)
           dataList.numTask.push(item.numTask)
           dataList.numNotice.push(item.numNotice)
