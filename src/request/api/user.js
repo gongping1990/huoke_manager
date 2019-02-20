@@ -89,6 +89,10 @@ const user = {
   // 获取微信模板列表
   getListCustomTemplate(params) {
     return axios.get("/user/listCustomTemplate", {params: params});
+  },
+  // 获取语文用户列表
+  getPrepUserList(params) {
+    return axios.get("/prep/preuser/queryUserPage", {params: params});
   }
 };
 

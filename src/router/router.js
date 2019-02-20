@@ -129,6 +129,15 @@ export const appRouter = [
         component: () => import('@/view/dataStatistics/userData/userData')
       },
       {
+        path: '/userData2',
+        name: 'userData2',
+        meta: [
+          {name:'数据统计'},
+          {name:'用户数据'}
+        ],
+        component: () => import('@/view/dataStatistics2/userData2/userData2')
+      },
+      {
         path: '/transactionData',
         name: 'transactionData',
         meta: [
@@ -145,6 +154,15 @@ export const appRouter = [
           {name:'商品数据'}
         ],
         component: () => import('@/view/dataStatistics/commodityData/commodityData')
+      },
+      {
+        path: '/productData',
+        name: 'productData',
+        meta: [
+          {name:'数据统计'},
+          {name:'产品数据'}
+        ],
+        component: () => import('@/view/dataStatistics2/productData/productData')
       }
     ]
   },
@@ -461,6 +479,19 @@ export const appRouter = [
         component: () => import('@/view/feedback/userFeedback/userFeedback')
       },
       {
+        path: '/userFeedback2',
+        name: 'userFeedback2',
+        meta: [
+          {
+            name: '留言管理'
+          },
+          {
+            name: '用户反馈'
+          }
+        ],
+        component: () => import('@/view/feedback/userFeedback/userFeedback')
+      },
+      {
         path: '/messageManagement',
         name: 'messageManagement',
         meta: [
@@ -502,6 +533,15 @@ export const appRouter = [
           {name: '用户列表'}
         ],
         component: () => import('@/view/user/userList')
+      },
+      {
+        path: '/userList2',
+        name: 'userList2',
+        meta: [
+          {name: '用户管理'},
+          {name: '用户列表'}
+        ],
+        component: () => import('@/view/user-2/userList')
       },
       {
         path: '/virtualUser',
