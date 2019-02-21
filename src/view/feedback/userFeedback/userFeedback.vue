@@ -214,6 +214,7 @@
         this.$api.feedback.feedbackList({
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
+          system: this.$store.state.nowAdminType,
           replyed: this.feedbackType,
           nickname: this.searchInfo.nickname,
           startDate: startTime,
