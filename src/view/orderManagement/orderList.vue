@@ -106,7 +106,7 @@
             </span>
           </FormItem>
           <FormItem label="结束时间" class="-p-o-width" v-if="courseInfo.surplusTime">{{courseInfo.surplusTime | timeFormatter}}</FormItem>
-          <FormItem label="结束时间" class="-p-o-width" v-else>暂无</FormItem>
+          <FormItem label="结束时间" class="-p-o-width -c-red" v-else>拼课中...</FormItem>
         </div>
         <div class="-p-o-flex">
           <FormItem label="拼课价格" class="-p-o-width">{{courseInfo.price | moneyFormatter}} 元</FormItem>
@@ -438,6 +438,10 @@
 
     .-c-tips {
       color: #39f
+    }
+
+    .-c-red{
+      color: rgb(218, 55, 75);
     }
 
   }
