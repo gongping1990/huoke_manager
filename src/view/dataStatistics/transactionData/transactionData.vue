@@ -1,6 +1,6 @@
 <template>
   <div class="p-data" id="dataCenter">
-    <Row class="g-flex-a-j-center -c-tab" :gutter="10" style="width:70%">
+    <Row class="g-flex-a-j-center -c-tab" :gutter="10" style="width:80%">
       <Col v-for="(item,index) of titleListOne" :key="index" class="-p-d-col">
         <Card class="g-t-left">
           <div>{{item.name}}</div>
@@ -27,7 +27,7 @@
       </div>
     </Card>
 
-    <Row class="g-flex-a-j-center -c-tab" :gutter="10" style="width:70%">
+    <Row class="g-flex-a-j-center -c-tab" :gutter="10" style="width:80%">
       <Col v-for="(item,index) of titleListTwo" :key="index" class="-p-d-col">
         <Card class="g-t-left">
           <div>{{item.name}}</div>

@@ -165,8 +165,12 @@
         return this.$store.state.nowAdminType
       },
       systemName() {
-        this.$router.push('/')
         return this.adminType[this.$store.state.nowAdminType]
+      }
+    },
+    watch: {
+      '$store.state.nowAdminType' (_n,_d) {
+        this.$router.push('/')
       }
     },
     mounted() {
