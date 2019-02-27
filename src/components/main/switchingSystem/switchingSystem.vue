@@ -7,12 +7,11 @@
     title="切换系统">
     <Form ref="changePswForm" :label-width="70">
       <FormItem label="当前系统" prop="password">
-        {{adminType[systemType]}}
+        {{systemName}}
       </FormItem>
       <FormItem label="切换系统" prop="password">
         <Radio-group v-model="radioType" type="button">
-          <Radio label= '1'>获课学堂</Radio>
-          <Radio label= '2'>获课语文</Radio>
+          <Radio v-for="(item,index) of adminType" :key="index" :label= item.id>{{item.name}}</Radio>
         </Radio-group>
       </FormItem>
     </Form>
@@ -30,26 +29,30 @@
     data() {
       return {
         isOpenModal: false,
-        systemType: localStorage.nowSystem,
+        systemName: '',
         radioType: localStorage.nowSystem,
-        adminType: {
-          '1': '获课学堂',
-          '2': '获课语文'
-        },
+        adminType: ''
       }
     },
     mounted() {
+      this.getAdminList()
       this.isOpenModal = true
     },
     methods: {
       closeModal() {
         this.$emit('closePwdModal')
       },
+      getAdminList () {
+        let nowId = localStorage.nowSystem
+        this.$axios.get("../static/adminList.json").then(response => {
+          this.adminType = response.data.resultData
+          this.systemName = this.adminType[nowId-1].name
+        });
+      },
       submitPwd() {
         this.$store.commit('changeSystem', this.radioType)
         localStorage.nowSystem = this.radioType
         this.closeModal()
-        console.log(this.$store.state.nowAdminType,localStorage.nowSystem,'改变')
       }
     }
   }

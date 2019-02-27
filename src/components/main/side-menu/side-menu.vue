@@ -151,10 +151,8 @@
       return {
         openNowName: this.openName,
         isOpenModal: false,
-        adminType: {
-          '1': '获课学堂',
-          '2': '获课语文'
-        }
+        adminType: [],
+        systemName: ''
       }
     },
     computed: {
@@ -164,16 +162,16 @@
       roleType() {
         return this.$store.state.nowAdminType
       },
-      systemName() {
-        return this.adminType[this.$store.state.nowAdminType]
-      }
+
     },
     watch: {
       '$store.state.nowAdminType' (_n,_d) {
+        this.systemName = this.adminType[_n-1].name
         this.$router.push('/')
       }
     },
     mounted() {
+      this.getAdminList()
       this.$nextTick(() => {
         if (this.$refs.sideMenu) {
           this.$refs.sideMenu.updateOpened();
@@ -181,6 +179,13 @@
       });
     },
     methods: {
+      getAdminList () {
+        let nowId = this.$store.state.nowAdminType
+        this.$axios.get("../static/adminList.json").then(response => {
+          this.adminType = response.data.resultData
+          this.systemName = this.adminType[nowId-1].name
+        });
+      },
       closeModal() {
         this.isOpenModal = !this.isOpenModal
       },
