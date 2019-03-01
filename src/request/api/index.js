@@ -22,6 +22,7 @@ import seckill from "./seckill";
 import custom from "./custom";
 import channel from "./channel";
 import dataCenter from "./dataCenter";
+import materia from "./materia";
 
 
 export default {
@@ -48,5 +49,6 @@ export default {
   seckill,
   custom,
   channel,
-  dataCenter
+  dataCenter,
+  materia
 }

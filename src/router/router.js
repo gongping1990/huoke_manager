@@ -108,6 +108,27 @@ export const otherRouter = {
         {name: '课时列表'}
       ],
       component: () => import('@/view/courseManagement/course/classList')
+    },
+    {
+      path: '/column',
+      name: 'column',
+      meta: [
+        {name: '内容管理'},
+        {name: '年级列表',url: 'grade'},
+        {name: '栏目管理'}
+      ],
+      component: () => import('@/view/zlk/content/columnList')
+    },
+    {
+      path: '/dataManagerList',
+      name: 'dataManagerList',
+      meta: [
+        {name: '内容管理'},
+        {name: '年级列表',url: 'grade'},
+        {name: '栏目管理',url: 'column'},
+        {name: '资料管理'}
+      ],
+      component: () => import('@/view/zlk/content/dataManagerList')
     }
   ]
 };
@@ -163,6 +184,15 @@ export const appRouter = [
           {name:'产品数据'}
         ],
         component: () => import('@/view/dataStatistics2/productData/productData')
+      },
+      {
+        path: '/columnData',
+        name: 'columnData',
+        meta: [
+          {name:'数据统计'},
+          {name:'栏目数据'}
+        ],
+        component: () => import('@/view/zlk/dataStatistics/columnData/columnData')
       }
     ]
   },
@@ -283,6 +313,19 @@ export const appRouter = [
           }
         ],
         component: () => import('@/view/operate/banner/bannerList')
+      },
+      {
+        path: '/zlkBannerList',
+        name: 'zlkBannerList',
+        meta: [
+          {
+            name: '运营管理'
+          },
+          {
+            name: 'banner管理'
+          }
+        ],
+        component: () => import('@/view/zlk/operate/banner/bannerList')
       },
       {
         path: '/channelManagement',
@@ -612,6 +655,23 @@ export const appRouter = [
           {name:'角色管理'}
         ],
         component: () => import('@/view/setting/role')
+      }
+    ]
+  },
+  {
+    path: 'content',
+    name: 'content',
+    title: '内容管理',
+    component: Main,
+    children: [
+      {
+        path: '/grade',
+        name: 'grade',
+        meta: [
+          {name:'内容管理'},
+          {name:'年级列表'}
+        ],
+        component: () => import('@/view/zlk/content/gardeList')
       }
     ]
   }

@@ -133,6 +133,36 @@
           <Menu-item name="userFeedback2">用户反馈</Menu-item>
         </Submenu>
       </div>
+      <div v-if="roleType == '3'" >
+        <Submenu name="dataStatistics" class="-left-li">
+          <template slot="title">
+            <Icon type="ios-stats" class="hk-menu-icon"/>
+            <span>数据统计</span>
+          </template>
+          <Menu-item name="columnData">栏目数据</Menu-item>
+        </Submenu>
+        <Submenu name="content" class="-left-li">
+          <template slot="title">
+            <Icon type="ios-school" class="hk-menu-icon"></Icon>
+            <span>内容管理</span>
+          </template>
+          <Menu-item name="grade">年级列表</Menu-item>
+        </Submenu>
+        <Submenu name="user" class="-left-li">
+          <template slot="title">
+            <Icon type="ios-contacts" class="hk-menu-icon"/>
+            <span>用户管理</span>
+          </template>
+          <Menu-item name="userList2">用户列表</Menu-item>
+        </Submenu>
+        <Submenu name="operate" class="-left-li">
+          <template slot="title">
+            <Icon type="ios-help-circle" class="hk-menu-icon"></Icon>
+            <span>运营管理</span>
+          </template>
+          <Menu-item name="zlkBannerList">banner管理</Menu-item>
+        </Submenu>
+      </div>
     </Menu>
     <div v-if="isOpenModal">
       <switching-system @closePwdModal="closeModal"></switching-system>
