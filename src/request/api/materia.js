@@ -30,11 +30,11 @@ const materia = {
 
   // 创建资料
   addMaterial(params) {
-    return axios.post('/material/material/add', params)
+    return axios.post('/material/material/add', qs.stringify(params))
   },
   // 修改资料
   updateMaterial(params) {
-    return axios.post('/material/material/edit', params)
+    return axios.post('/material/material/edit', qs.stringify(params))
   },
   // 删除资料
   delMaterial(params) {
@@ -51,6 +51,14 @@ const materia = {
   // 改变栏目状态
   updateSortNum(params) {
     return axios.post('/material/material/updateSortNum', qs.stringify(params))
+  },
+  // 栏目统计
+  columnDataList(params) {
+    return axios.get('/material/material/catalog/listCatalogPUV', {params: params})
+  },
+  // 教材版本
+  editionList(params) {
+    return axios.get('/material/material/edition/list', {params: params})
   }
 }
 

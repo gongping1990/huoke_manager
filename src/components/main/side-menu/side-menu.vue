@@ -153,7 +153,7 @@
             <Icon type="ios-contacts" class="hk-menu-icon"/>
             <span>用户管理</span>
           </template>
-          <Menu-item name="userList2">用户列表</Menu-item>
+          <Menu-item name="zlkUserList">用户列表</Menu-item>
         </Submenu>
         <Submenu name="operate" class="-left-li">
           <template slot="title">

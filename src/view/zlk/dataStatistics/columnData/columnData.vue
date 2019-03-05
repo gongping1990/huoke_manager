@@ -16,8 +16,6 @@
             <Select v-model="searchInfo.subject" placeholder="请选择" class="-search-selectOne"
                     @on-change="getList(1)">
               <Option v-for="(item, index) of subjectList" :key="index" :label=item.name :value=item.id></Option>
-              <Option label="数学" value="2"></Option>
-              <Option label="英语" value="3"></Option>
             </Select>
           </div>
         </Col>
@@ -72,7 +70,7 @@
         ],
         searchInfo: {
           grade: '1',
-          subject: '1',
+          subject: 1,
         },
         goodsId: '',
         isFetching: false,
@@ -85,11 +83,11 @@
           },
           {
             title: '访问量',
-            key: 'name'
+            key: 'pv'
           },
           {
             title: '访问用户',
-            key: 'name'
+            key: 'uv'
           }
         ]
       };
@@ -110,10 +108,10 @@
       //分页查询
       getList() {
         this.isFetching = true
-        this.$api.materia.columnList({
+        this.$api.materia.columnDataList({
           current: this.tab.page,
           size: this.tab.pageSize,
-          grade: this.$route.query.grade,
+          grade: this.searchInfo.grade,
           subject : this.searchInfo.subject
         })
           .then(

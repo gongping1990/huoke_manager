@@ -2,6 +2,24 @@
   <div class="p-materia">
     <Card>
       <Row class="g-search">
+        <Col :span="4" class="g-t-left">
+          <div class="g-flex-a-j-center">
+            <div class="-search-select-text">选择学期：</div>
+            <Select v-model="searchInfo.semester" @on-change="getList(1)" class="-search-selectOne" filterable>
+              <Option value="1">上学期</Option>
+              <Option value="2">下学期</Option>
+            </Select>
+          </div>
+        </Col>
+        <Col :span="4" class="g-t-left">
+          <div class="g-flex-a-j-center">
+            <div class="-search-select-text">教材版本：</div>
+            <Select v-model="searchInfo.edition" placeholder="请选择" class="-search-selectOne"
+                    @on-change="getList(1)">
+              <Option v-for="(item, index) of textbookList" :key="index" :label=item.name :value=item.id></Option>
+            </Select>
+          </div>
+        </Col>
         <Col :span="5">
           <div class="-search">
             <Select v-model="selectInfo" class="-search-select">
@@ -44,6 +62,17 @@
           <FormItem label="购买金额" prop="priceYuan">
             <InputNumber :max="999" :min="1" :step="1" v-model="addInfo.priceYuan" placeholder="请输入购买金额"></InputNumber>
           </FormItem>
+          <FormItem label="所属学期" prop="semester">
+            <Select v-model="addInfo.semester" placeholder="请选择">
+              <Option value="1">上学期</Option>
+              <Option value="2">下学期</Option>
+            </Select>
+          </FormItem>
+          <FormItem label="教材版本" prop="edition">
+            <Select v-model="addInfo.edition" placeholder="请选择">
+              <Option v-for="(item, index) of textbookList" :key="index" :label=item.name :value=item.id></Option>
+            </Select>
+          </FormItem>
           <Form-item label="上传文件" class="-c-form-item ivu-form-item-required">
             <Upload
               style="display: inline-block"
@@ -79,15 +108,15 @@
                 <span>上传图片</span>
               </div>
             </Upload>
-            <div class="-c-course-wrap" v-if="addInfo.previewImgUrl.length">
-              <draggable v-model="addInfo.previewImgUrl">
-                <div class="-c-course-item" v-for="(item, index) of addInfo.previewImgUrl" :key="index">
+            <div class="-c-course-wrap" v-if="imgUrl.length">
+              <draggable v-model="imgUrl">
+                <div class="-c-course-item" v-for="(item, index) of imgUrl" :key="index">
                   <img :src="item">
                   <div class="-i-del" @click="delImg(1,index)">删除</div>
                 </div>
               </draggable>
             </div>
-            <span class="-c-tips">只能上传jpg/png文件，且不超过100kb，支持多张上传</span>
+            <div class="-c-tips">只能上传jpg/png文件，且不超过100kb，支持多张上传</div>
           </Form-item>
         </Form>
         <div slot="footer" class="-p-b-flex">
@@ -136,14 +165,19 @@
           pageSize: 10
         },
         dataList: [],
+        textbookList: [],
         selectInfo: '1',
-        searchInfo: {},
+        searchInfo: {
+          semester: '1',
+          edition: 1
+        },
         total: 0,
         isFetching: false,
         isUploading: false,
         isOpenModal: false,
         isOpenModalSort: false,
         isSending: false,
+        imgUrl: [],
         addInfo: {
           previewImgUrl: []
         },
@@ -161,6 +195,12 @@
           ],
           currency: [
             {required: true, type: 'number', message: '请输入下载币', trigger: 'blur'},
+          ],
+          semester: [
+            {required: true, message: '请选择所属学期', trigger: 'change'},
+          ],
+          edition: [
+            {required: true, type: 'number', message: '请选择教材版本', trigger: 'change'},
           ]
         },
         columns: [
@@ -293,15 +333,16 @@
     },
     mounted() {
       this.getList()
+      this.getEditionList()
     },
     methods: {
-      download (data) {
-        window.open(data.authorFileDownUrl,'_blank')
+      download(data) {
+        window.open(data.authorFileDownUrl, '_blank')
       },
       delImg(num, index) {
         switch (+num) {
           case 1:
-            this.addInfo.previewImgUrl.splice(index, 1)
+            this.imgUrl.splice(index, 1)
             break
           case 2:
             this.addInfo.fileDownUrl = ''
@@ -318,9 +359,11 @@
           this.addInfo.sortnum = dataItem.sortnum
           this.addInfo.currency = dataItem.currency
           this.addInfo.priceYuan = dataItem.priceYuan
-          this.addInfo.previewImgUrl = dataItem.previewImgUrl
           this.addInfo.fileDownUrl = dataItem.fileDownUrl
+          this.addInfo.semester = dataItem.semester.toString()
+          this.addInfo.edition = dataItem.edition
           this.addInfo.name = dataItem.name
+          this.imgUrl = JSON.parse(dataItem.previewImgUrl)
         } else {
           this.addInfo = {
             catalogId: this.$route.query.columnId,
@@ -328,7 +371,9 @@
             currency: null,
             priceYuan: null,
             previewImgUrl: [],
-            fileDownUrl: ''
+            fileDownUrl: '',
+            semester: '',
+            edition: ''
           }
         }
       },
@@ -357,7 +402,7 @@
       handleSuccess(res) {
         if (res.code === 200) {
           this.isUploading = false
-          this.addInfo.previewImgUrl.push(res.resultData.url)
+          this.imgUrl.push(res.resultData.url)
         }
       },
       handleSuccessFile(res) {
@@ -367,6 +412,7 @@
         }
       },
       handleSize() {
+        this.isUploading = false
         this.$Message.info('文件超过限制')
       },
       handleErr() {
@@ -399,16 +445,25 @@
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
           catalogId: this.$route.query.columnId,
-          name: this.searchInfo.nickname
+          name: this.searchInfo.nickname,
+          semester: this.searchInfo.semester,
+          edition: this.searchInfo.edition
         })
           .then(
             response => {
-              this.dataList = response.data.resultData;
+              this.dataList = response.data.resultData.records;
               this.total = response.data.resultData.total;
             })
           .finally(() => {
             this.isFetching = false
           })
+      },
+      getEditionList(num) {
+        this.$api.materia.editionList()
+          .then(
+            response => {
+              this.textbookList = response.data.resultData;
+            })
       },
       delItem(param) {
         this.$Modal.confirm({
@@ -428,7 +483,8 @@
         })
       },
       submitInfo(name) {
-        if (!this.addInfo.previewImgUrl.length) {
+
+        if (!this.imgUrl.length) {
           return this.$Message.error('请上传预览图片')
         } else if (!this.addInfo.fileDownUrl) {
           return this.$Message.error('请上传文件')
@@ -441,6 +497,7 @@
         this.$refs[name].validate((valid) => {
           if (valid) {
             this.isSending = true
+            this.addInfo.previewImgUrl = JSON.stringify(this.imgUrl)
             let promiseDate = this.addInfo.id ? this.$api.materia.updateMaterial(this.addInfo) : this.$api.materia.addMaterial(this.addInfo)
             promiseDate
               .then(
@@ -535,6 +592,16 @@
 
     .-c-tab {
       margin: 20px 0;
+    }
+
+    .-search-select-text {
+      min-width: 80px;
+    }
+    .-search-selectOne {
+      width: 150px;
+      border: 1px solid #dcdee2;
+      border-radius: 4px;
+      margin-right: 20px;
     }
 
   }

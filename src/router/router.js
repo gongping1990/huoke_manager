@@ -587,6 +587,15 @@ export const appRouter = [
         component: () => import('@/view/user-2/userList')
       },
       {
+        path: '/zlkUserList',
+        name: 'zlkUserList',
+        meta: [
+          {name: '用户管理'},
+          {name: '用户列表'}
+        ],
+        component: () => import('@/view/zlk/user/userList')
+      },
+      {
         path: '/virtualUser',
         name: 'virtualUser',
         meta: [
