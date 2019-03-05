@@ -93,7 +93,7 @@
               }, [
                 h('img', {
                   attrs: {
-                    src: params.row.headImgUrl
+                    src: params.row.headimgurl
                   },
                   style: {
                     width: '36px',
@@ -108,7 +108,7 @@
           },
           {
             title: '身份',
-            key: 'phone'
+            key: 'type'
           },
           {
             title: '电话',
@@ -116,7 +116,7 @@
           },
           {
             title: '创建时间',
-            key: 'phone'
+            key: 'creatTime'
           }
         ],
       };
@@ -137,7 +137,7 @@
         let params = {
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
-          subscribe: this.searchInfo.subscribe != '-1' ? (this.searchInfo.subscribe == '1') : ''
+          // subscribe: this.searchInfo.subscribe != '-1' ? (this.searchInfo.subscribe == '1') : ''
         }
 
         if (this.selectInfo == '1' && this.searchInfo) {
@@ -147,7 +147,7 @@
         }
 
         this.isFetching = true
-        this.$api.user.getPrepUserList(params)
+        this.$api.materia.materialUserList(params)
           .then(
             response => {
               this.dataList = response.data.resultData.records;

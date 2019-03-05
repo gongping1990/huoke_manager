@@ -59,6 +59,10 @@ const materia = {
   // 教材版本
   editionList(params) {
     return axios.get('/material/material/edition/list', {params: params})
+  },
+  // 人员
+  materialUserList(params) {
+    return axios.get('/material/user/listUserByPage', {params: params})
   }
 }
 

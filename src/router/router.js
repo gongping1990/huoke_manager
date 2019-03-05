@@ -114,7 +114,7 @@ export const otherRouter = {
       name: 'column',
       meta: [
         {name: '内容管理'},
-        {name: '年级列表',url: 'grade'},
+        {name: '年级管理',url: 'grade'},
         {name: '栏目管理'}
       ],
       component: () => import('@/view/zlk/content/columnList')
@@ -124,7 +124,7 @@ export const otherRouter = {
       name: 'dataManagerList',
       meta: [
         {name: '内容管理'},
-        {name: '年级列表',url: 'grade'},
+        {name: '年级管理',url: 'grade'},
         {name: '栏目管理',url: 'column'},
         {name: '资料管理'}
       ],
@@ -678,7 +678,7 @@ export const appRouter = [
         name: 'grade',
         meta: [
           {name:'内容管理'},
-          {name:'年级列表'}
+          {name:'年级管理'}
         ],
         component: () => import('@/view/zlk/content/gardeList')
       }

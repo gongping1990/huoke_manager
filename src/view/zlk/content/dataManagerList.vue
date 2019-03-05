@@ -6,6 +6,7 @@
           <div class="g-flex-a-j-center">
             <div class="-search-select-text">选择学期：</div>
             <Select v-model="searchInfo.semester" @on-change="getList(1)" class="-search-selectOne" filterable>
+              <Option value="-1">全部</Option>
               <Option value="1">上学期</Option>
               <Option value="2">下学期</Option>
             </Select>
@@ -151,10 +152,11 @@
   import draggable from 'vuedraggable'
   import {getBaseUrl} from '@/libs/index'
   import Loading from "../../../components/loading";
+  import Operation from "iview/src/components/transfer/operation";
 
   export default {
     name: 'dataManagerList',
-    components: {Loading, draggable},
+    components: {Operation, Loading, draggable},
     data() {
       return {
         baseUrl: `${getBaseUrl()}/common/uploadPublicFile`, // 公有 （图片）
@@ -168,8 +170,8 @@
         textbookList: [],
         selectInfo: '1',
         searchInfo: {
-          semester: '1',
-          edition: 1
+          semester: '-1',
+          edition: '-1'
         },
         total: 0,
         isFetching: false,
@@ -446,8 +448,8 @@
           size: this.tab.pageSize,
           catalogId: this.$route.query.columnId,
           name: this.searchInfo.nickname,
-          semester: this.searchInfo.semester,
-          edition: this.searchInfo.edition
+          semester: this.searchInfo.semester == '-1' ? '' : this.searchInfo.semester,
+          edition: this.searchInfo.edition == '-1' ? '' : this.searchInfo.edition
         })
           .then(
             response => {
@@ -463,6 +465,10 @@
           .then(
             response => {
               this.textbookList = response.data.resultData;
+              this.textbookList.unshift({
+                name: '全部',
+                id: '-1'
+              })
             })
       },
       delItem(param) {
