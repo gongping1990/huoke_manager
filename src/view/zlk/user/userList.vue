@@ -2,14 +2,14 @@
   <div class="p-user">
     <Card>
       <Row class="g-search">
-        <Col :span="5" class="g-t-left">
-          <div class="g-flex-a-j-center">
-            <div class="-search-select-text-two">用户类别：</div>
-            <Select v-model="searchInfo.subscribe" @on-change="getList(1)" class="-search-selectOne">
-              <Option v-for="item of userTypeList" :label=item.name :value=item.id :key="item.id" ></Option>
-            </Select>
-          </div>
-        </Col>
+        <!--<Col :span="5" class="g-t-left">-->
+          <!--<div class="g-flex-a-j-center">-->
+            <!--<div class="-search-select-text-two">用户类别：</div>-->
+            <!--<Select v-model="searchInfo.subscribe" @on-change="getList(1)" class="-search-selectOne">-->
+              <!--<Option v-for="item of userTypeList" :label=item.name :value=item.id :key="item.id" ></Option>-->
+            <!--</Select>-->
+          <!--</div>-->
+        <!--</Col>-->
         <Col :span="6">
           <div class="-search">
             <Select v-model="selectInfo" class="-search-select">
@@ -116,7 +116,7 @@
           },
           {
             title: '创建时间',
-            key: 'creatTime'
+            key: 'createTime'
           }
         ],
       };
