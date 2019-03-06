@@ -71,6 +71,7 @@
               <Col span="11">
                 <Form-item prop="getStartTime">
                   <Date-picker style="width: 100%" type="datetime" placeholder="选择开始日期"
+                               @on-change="changeStartClick"
                                v-model="getStartTime" :options="dateStartOption"></Date-picker>
                 </Form-item>
               </Col>
@@ -274,6 +275,13 @@
       this.getList()
     },
     methods: {
+      changeStartClick (date) {
+        let s = new Date(date).getTime()
+        let e = new Date(this.getEndTime).getTime()
+        if (s > e) {
+          this.getEndTime = ''
+        }
+      },
       changeDate (data) {
         this.searchInfo.fromDate = data.startTime
         this.searchInfo.toDate = data.endTime

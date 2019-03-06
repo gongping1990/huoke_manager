@@ -71,7 +71,7 @@
           </FormItem>
           <FormItem label="教材版本" prop="edition">
             <Select v-model="addInfo.edition" placeholder="请选择">
-              <Option v-for="(item, index) of textbookList" :key="index" :label=item.name :value=item.id></Option>
+              <Option v-for="(item, index) of textbookList" :key="index" :label=item.name :value=item.id :disabled="item.id == '-1'"></Option>
             </Select>
           </FormItem>
           <Form-item label="上传文件" class="-c-form-item ivu-form-item-required">
