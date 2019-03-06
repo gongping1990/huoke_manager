@@ -377,6 +377,7 @@
             semester: '',
             edition: ''
           }
+          this.imgUrl = []
         }
       },
       openModalSort(data) {
