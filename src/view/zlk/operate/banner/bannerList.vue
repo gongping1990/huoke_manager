@@ -413,7 +413,7 @@
         if (!this.sortNum) {
           return this.$Message.error('请输入排序值')
         }
-        this.$api.banner.updateSortNum({
+        this.$api.materia.updateSortNum({
           id: this.addInfo.id,
           sortnum: this.sortNum
         }).then(response => {

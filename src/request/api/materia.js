@@ -50,7 +50,7 @@ const materia = {
   },
   // 改变栏目状态
   updateSortNum(params) {
-    return axios.post('/material/material/updateSortNum', qs.stringify(params))
+    return axios.post('/material/banner/updateSortNum', qs.stringify(params))
   },
   // 栏目统计
   columnDataList(params) {
