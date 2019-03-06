@@ -411,7 +411,7 @@
       handleSuccessFile(res) {
         if (res.code === 200) {
           this.isUploading = false
-          this.getAvUrl(res.resultData.url)
+          this.addInfo.fileDownUrl = res.resultData.url
         }
       },
       handleSize() {
@@ -425,18 +425,6 @@
       currentChange(val) {
         this.tab.page = val;
         this.getList();
-      },
-      getAvUrl(data) {
-        this.$api.common.getAVUrl({
-          key: data
-        })
-          .then(
-            response => {
-              if (response.data.code == '200') {
-                this.$Message.success('上传成功')
-                this.addInfo.fileDownUrl = response.data.resultData
-              }
-            })
       },
       //分页查询
       getList(num) {
