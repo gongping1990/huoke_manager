@@ -48,8 +48,12 @@ const materia = {
   changeColumn(params) {
     return axios.post('/material/material/catalog/enable', qs.stringify(params))
   },
-  // 改变栏目状态
-  updateSortNum(params) {
+  // 改变资料排序
+  updateSortNumMaterial(params) {
+    return axios.post('/material/material/updateSortNum', qs.stringify(params))
+  },
+  // 改变banner排序
+  updateSortNumBanner(params) {
     return axios.post('/material/banner/updateSortNum', qs.stringify(params))
   },
   // 栏目统计

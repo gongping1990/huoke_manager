@@ -525,7 +525,7 @@
         if (!this.sortNum) {
           return this.$Message.error('请输入排序值')
         }
-        this.$api.materia.updateSortNum({
+        this.$api.materia.updateSortNumMaterial({
           id: this.addInfo.id,
           sortnum: this.sortNum
         }).then(response => {
