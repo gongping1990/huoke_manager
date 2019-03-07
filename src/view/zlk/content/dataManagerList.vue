@@ -57,11 +57,11 @@
             <InputNumber :max="999" :min="1" v-model="addInfo.sortnum" placeholder="请输入排序值"></InputNumber>
           </FormItem>
           <FormItem label="下载币" prop="currency">
-            <InputNumber :max="999" :min="1" v-model="addInfo.currency" :step="1"
+            <InputNumber :max="999" :min="0" v-model="addInfo.currency" :step="1"
                          placeholder="请输入兑换所需下载币数量"></InputNumber>
           </FormItem>
           <FormItem label="购买金额" prop="priceYuan">
-            <InputNumber :max="999" :min="1" :step="1" v-model="addInfo.priceYuan" placeholder="请输入购买金额"></InputNumber>
+            <InputNumber :max="999" :min="0" :step="1" v-model="addInfo.priceYuan" placeholder="请输入购买金额"></InputNumber>
           </FormItem>
           <FormItem label="所属学期" prop="semester">
             <Select v-model="addInfo.semester" placeholder="请选择">
