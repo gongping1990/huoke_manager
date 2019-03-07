@@ -99,7 +99,7 @@
               :action="baseUrl"
               :multiple="true"
               :show-upload-list="false"
-              :max-size="100"
+              :max-size="500"
               :before-upload="beforeUpload"
               :on-success="handleSuccess"
               :on-exceeded-size="handleSize"
@@ -117,7 +117,7 @@
                 </div>
               </draggable>
             </div>
-            <div class="-c-tips">只能上传jpg/png文件，且不超过100kb，支持多张上传</div>
+            <div class="-c-tips">只能上传jpg/png文件，且不超过500kb，支持多张上传</div>
           </Form-item>
         </Form>
         <div slot="footer" class="-p-b-flex">
