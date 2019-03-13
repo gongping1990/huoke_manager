@@ -258,7 +258,7 @@
           {
             title: '收藏',
             width: 100,
-            key: 'keep'
+            key: 'collect'
           },
           {
             title: '分享人/次',
