@@ -197,12 +197,6 @@
           ],
           currency: [
             {required: true, type: 'number', message: '请输入下载币', trigger: 'blur'},
-          ],
-          semester: [
-            {required: true, message: '请选择所属学期', trigger: 'change'},
-          ],
-          edition: [
-            {required: true, type: 'number', message: '请选择教材版本', trigger: 'change'},
           ]
         },
         columns: [
