@@ -57,20 +57,20 @@
             name: '全部用户'
           },
           {
+            id: '0',
+            text: '其他',
+          },
+          {
             id: '1',
-            name: '老师'
+            text: '家长',
           },
           {
             id: '2',
-            name: '学生'
+            text: '老师',
           },
           {
             id: '3',
-            name: '家长'
-          },
-          {
-            id: '4',
-            name: '其他'
+            text: '学生',
           },
           {
             id: '5',
@@ -108,7 +108,7 @@
           },
           {
             title: '身份',
-            key: 'type'
+            key: 'typeName'
           },
           {
             title: '电话',
