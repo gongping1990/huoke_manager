@@ -54,14 +54,16 @@
             <Input type="text" v-model="addInfo.name" placeholder="请输入标题"></Input>
           </FormItem>
           <FormItem label="排序值" prop="sortnum">
-            <InputNumber :max="999" :min="1" v-model="addInfo.sortnum" placeholder="请输入排序值"></InputNumber>
+            <InputNumber :max="999" :min="1" v-model="addInfo.sortnum" placeholder="请输入排序值"
+                         class="-p-inputNum"></InputNumber>
           </FormItem>
           <FormItem label="下载币" prop="currency">
-            <InputNumber :max="999" :min="0" v-model="addInfo.currency" :step="1"
+            <InputNumber :max="999" :min="0" v-model="addInfo.currency" :step="1" class="-p-inputNum"
                          placeholder="请输入兑换所需下载币数量"></InputNumber>
           </FormItem>
           <FormItem label="购买金额" prop="priceYuan">
-            <InputNumber :max="999" :min="0" :step="1" v-model="addInfo.priceYuan" placeholder="请输入购买金额"></InputNumber>
+            <InputNumber :max="999" :min="0" :step="1" v-model="addInfo.priceYuan" placeholder="请输入购买金额"
+                         class="-p-inputNum"></InputNumber>
           </FormItem>
           <FormItem label="所属学期" prop="semester">
             <Select v-model="addInfo.semester" placeholder="请选择">
@@ -71,7 +73,8 @@
           </FormItem>
           <FormItem label="教材版本" prop="edition">
             <Select v-model="addInfo.edition" placeholder="请选择">
-              <Option v-for="(item, index) of textbookList" :key="index" :label=item.name :value=item.id :disabled="item.id == '-1'"></Option>
+              <Option v-for="(item, index) of textbookList" :key="index" :label=item.name :value=item.id
+                      :disabled="item.id == '-1'"></Option>
             </Select>
           </FormItem>
           <Form-item label="上传文件" class="-c-form-item ivu-form-item-required">
@@ -368,8 +371,8 @@
             priceYuan: null,
             previewImgUrl: [],
             fileDownUrl: '',
-            semester: '',
-            edition: ''
+            semester: '0',
+            edition: '0'
           }
           this.imgUrl = []
         }
@@ -528,7 +531,9 @@
     .-c-tips {
       color: #39f
     }
-
+    .-p-inputNum {
+      width: 100% !important;
+    }
     .-c-course-wrap-file {
       display: flex;
       justify-content: space-between;
