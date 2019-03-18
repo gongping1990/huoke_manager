@@ -1,13 +1,19 @@
 <template>
   <div class="p-column">
     <Card>
-      <Row class="g-t-left">
+      <Row class="g-t-left -p-bottom">
+        <Radio-group v-model="gradeType" type="button" @on-change="getList(1)">
+          <Radio v-for="(item,index) of gradeList" :label=item.id :key="index">{{item.name}}</Radio>
+        </Radio-group>
+      </Row>
+
+      <Row class="g-t-left ">
         <Radio-group v-model="radioType" type="button" @on-change="getList(1)">
           <Radio v-for="(item,index) of subjectList" :label=item.id :key="index">{{item.name}}</Radio>
         </Radio-group>
       </Row>
 
-      <div class="g-add-btn g-add-top" @click="openModal()">
+      <div class="g-add-btn g-add-top -p-top" @click="openModal()">
         <Icon class="-btn-icon" color="#fff" type="ios-add" size="24"/>
       </div>
 
@@ -50,7 +56,9 @@
         },
         dataList: [],
         subjectList: [],
+        gradeList: [],
         radioType: 1,
+        gradeType: 1,
         total: 0,
         isFetching: false,
         isOpenModal: false,
@@ -169,6 +177,7 @@
     mounted() {
       this.getList()
       this.getSubjectList()
+      this.getGradeList()
     },
     methods: {
       toJump(data) {
@@ -206,12 +215,24 @@
         this.getList();
       },
       //分页查询
+      getGradeList() {
+        this.isFetching = true
+        this.$api.materia.gradeList()
+          .then(
+            response => {
+              this.gradeList = response.data.resultData;
+            })
+          .finally(() => {
+            this.isFetching = false
+          })
+      },
+      //分页查询
       getList() {
         this.isFetching = true
         this.$api.materia.columnList({
           current: this.tab.page,
           size: this.tab.pageSize,
-          grade: this.$route.query.grade,
+          grade: this.gradeType,
           subject: this.radioType
         })
           .then(
@@ -298,6 +319,14 @@
   .p-column {
     .-c-tips {
       color: #39f
+    }
+
+    .-p-bottom {
+      margin-bottom: 16px;
+    }
+
+    .-p-top{
+      top: 84px;
     }
 
     .-c-course-wrap {

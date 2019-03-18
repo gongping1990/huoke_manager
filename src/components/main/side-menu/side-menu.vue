@@ -146,7 +146,7 @@
             <Icon type="ios-school" class="hk-menu-icon"></Icon>
             <span>内容管理</span>
           </template>
-          <Menu-item name="grade">年级管理</Menu-item>
+          <Menu-item name="column">栏目管理</Menu-item>
         </Submenu>
         <Submenu name="user" class="-left-li">
           <template slot="title">

@@ -110,21 +110,10 @@ export const otherRouter = {
       component: () => import('@/view/courseManagement/course/classList')
     },
     {
-      path: '/column',
-      name: 'column',
-      meta: [
-        {name: '内容管理'},
-        {name: '年级管理',url: 'grade'},
-        {name: '栏目管理'}
-      ],
-      component: () => import('@/view/zlk/content/columnList')
-    },
-    {
       path: '/dataManagerList',
       name: 'dataManagerList',
       meta: [
         {name: '内容管理'},
-        {name: '年级管理',url: 'grade'},
         {name: '栏目管理',url: 'column'},
         {name: '资料管理'}
       ],
@@ -674,13 +663,13 @@ export const appRouter = [
     component: Main,
     children: [
       {
-        path: '/grade',
-        name: 'grade',
+        path: '/column',
+        name: 'column',
         meta: [
-          {name:'内容管理'},
-          {name:'年级管理'}
+          {name: '内容管理'},
+          {name: '栏目管理'}
         ],
-        component: () => import('@/view/zlk/content/gardeList')
+        component: () => import('@/view/zlk/content/columnList')
       }
     ]
   }
