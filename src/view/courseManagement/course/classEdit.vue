@@ -10,10 +10,10 @@
         <Input type="text" v-model="addInfo.name" placeholder="请输入课时名称"></Input>
       </FormItem>
       <FormItem label="排序值" prop="sequence">
-        <InputNumber :max="999" :min="1" v-model="addInfo.sequence" placeholder="请输入排序值"></InputNumber>
+        <InputNumber :max="999" :min="1" v-model="addInfo.sequence" placeholder="请输入排序值" class="g-width"></InputNumber>
       </FormItem>
       <FormItem label="初始播放量" prop="initReadNum">
-        <InputNumber :max="99999" :min="1" v-model="addInfo.initReadNum" placeholder="请输入初始播放量"></InputNumber>
+        <InputNumber :max="99999" :min="1" v-model="addInfo.initReadNum" placeholder="请输入初始播放量" class="g-width"></InputNumber>
       </FormItem>
       <FormItem label="是否启用" prop="disabled" class="ivu-form-item-required">
         <Radio-group v-model="addInfo.disabled">

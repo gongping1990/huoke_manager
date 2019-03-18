@@ -115,3 +115,7 @@
 .g-error{
   color: rgba(218, 55, 75, 1)
 }
+
+.g-width {
+  width: 100%;
+}

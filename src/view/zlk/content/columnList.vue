@@ -33,7 +33,7 @@
             <Input type="text" v-model="addInfo.name" placeholder="请输入栏目名称"></Input>
           </FormItem>
           <FormItem label="排序值" prop="sortnum">
-            <InputNumber type="text" v-model="addInfo.sortnum" placeholder="请输入排序值"></InputNumber>
+            <InputNumber type="text" v-model="addInfo.sortnum" placeholder="请输入排序值" class="g-width"></InputNumber>
           </FormItem>
         </Form>
         <div slot="footer" class="-p-b-flex">
