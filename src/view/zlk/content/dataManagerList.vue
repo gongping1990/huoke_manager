@@ -202,7 +202,7 @@
         columns: [
           {
             title: '标题',
-            width: 100,
+            width: 200,
             key: 'name'
           },
           {
@@ -246,27 +246,27 @@
           },
           {
             title: '点赞',
-            width: 100,
+            width: 120,
             key: 'zan'
           },
           {
             title: '收藏',
-            width: 100,
+            width: 120,
             key: 'collect'
           },
           {
             title: '分享人/次',
-            width: 100,
+            width: 120,
             key: 'shared'
           },
           {
             title: '免费兑换',
-            width: 100,
+            width: 120,
             key: 'convert'
           },
           {
             title: '购买',
-            width: 100,
+            width: 120,
             key: 'buyed'
           },
           {
