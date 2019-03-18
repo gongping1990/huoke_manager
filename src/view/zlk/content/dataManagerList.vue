@@ -187,7 +187,7 @@
         ruleValidate: {
           name: [
             {required: true, message: '请输入标题', trigger: 'blur'},
-            {type: 'string', max: 20, message: '标题长度为20字', trigger: 'blur'}
+            {type: 'string', max: 50, message: '标题长度为50字', trigger: 'blur'}
           ],
           sortnum: [
             {required: true, type: 'number', message: '请输入排序值', trigger: 'blur'},
