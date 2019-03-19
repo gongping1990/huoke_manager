@@ -27,10 +27,10 @@
         v-model="isOpenModal"
         @on-cancel="closeModal('addInfo')"
         width="500"
-        :title="addInfo.id ? '编辑栏目' : '创建栏目'">
+        :title="addInfo.id ? '编辑课文' : '创建课文'">
         <Form ref="addInfo" :model="addInfo" :rules="ruleValidate" :label-width="90">
-          <FormItem label="栏目名称" prop="name">
-            <Input type="text" v-model="addInfo.name" placeholder="请输入栏目名称"></Input>
+          <FormItem label="课文名称" prop="name">
+            <Input type="text" v-model="addInfo.name" placeholder="请输入课文名称"></Input>
           </FormItem>
           <FormItem label="排序值" prop="sortnum">
             <InputNumber type="text" v-model="addInfo.sortnum" placeholder="请输入排序值" class="g-width"></InputNumber>
@@ -42,12 +42,18 @@
         </div>
       </Modal>
     </Card>
+
+    <div v-if="isOpenModalContent">
+      <text-edit :isOpen="isOpenModalContent" @closeEditModal="closeModalContent"></text-edit>
+    </div>
   </div>
 </template>
 
 <script>
+  import TextEdit from "./textEdit";
   export default {
-    name: 'columnList',
+    name: 'teachingList',
+    components: {TextEdit},
     data() {
       return {
         tab: {
@@ -71,11 +77,12 @@
         total: 0,
         isFetching: false,
         isOpenModal: false,
+        isOpenModalContent: false,
         isSending: false,
         addInfo: {},
         ruleValidate: {
           name: [
-            {required: true, message: '请输入栏目名称', trigger: 'blur'},
+            {required: true, message: '请输入课文名称', trigger: 'blur'},
           ],
           sortnum: [
             {required: true, type: 'number', message: '请输入排序值', trigger: 'blur'},
@@ -200,13 +207,10 @@
     },
     methods: {
       toJump(data) {
-        this.$router.push({
-          name: 'dataManagerList',
-          query: {
-            columnId: data.id,
-            grade: this.$route.query.grade
-          }
-        })
+        this.isOpenModalContent = true
+      },
+      closeModalContent () {
+        this.isOpenModalContent = false
       },
       delImg() {
         this.addInfo.url = ''
@@ -219,7 +223,7 @@
         } else {
           this.addInfo = {
             sortnum: null,
-            grade: this.$route.query.grade,
+            grade: this.gradeType,
             subject: this.radioType
           }
         }

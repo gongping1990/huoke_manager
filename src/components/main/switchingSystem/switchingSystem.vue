@@ -3,7 +3,7 @@
     class="p-switchingSystem"
     v-model="isOpenModal"
     @on-cancel="closeModal()"
-    width="350"
+    width="500"
     title="切换系统">
     <Form ref="changePswForm" :label-width="70">
       <FormItem label="当前系统" prop="password">
