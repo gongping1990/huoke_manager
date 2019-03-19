@@ -9,7 +9,7 @@
 
       <Row class="g-t-left ">
         <Radio-group v-model="radioType" type="button" @on-change="getList(1)">
-          <Radio v-for="(item,index) of subjectList" :label=item.id :key="index">{{item.name}}</Radio>
+          <Radio v-for="(item,index) of semesterList" :label=item.id :key="index">{{item.name}}</Radio>
         </Radio-group>
       </Row>
 
@@ -55,7 +55,16 @@
           pageSize: 10
         },
         dataList: [],
-        subjectList: [],
+        semesterList: [
+          {
+            id: 1,
+            name: '上学期'
+          },
+          {
+            id: 2,
+            name: '下学期'
+          }
+        ],
         gradeList: [],
         radioType: 1,
         gradeType: 1,
@@ -74,11 +83,21 @@
         },
         columns: [
           {
-            title: '栏目名称',
+            title: '课文名称',
             key: 'name'
           },
           {
             title: '排序值',
+            key: 'sortnum',
+            align: 'center'
+          },
+          {
+            title: '范读人数（完成率）',
+            key: 'sortnum',
+            align: 'center'
+          },
+          {
+            title: '朗读人数（完成率）',
             key: 'sortnum',
             align: 'center'
           },
@@ -167,7 +186,7 @@
                       this.toJump(params.row)
                     }
                   }
-                }, '资料管理'),
+                }, '课文内容'),
               ])
             }
           }
@@ -185,7 +204,7 @@
           name: 'dataManagerList',
           query: {
             columnId: data.id,
-            grade: this.gradeType
+            grade: this.$route.query.grade
           }
         })
       },
@@ -200,7 +219,7 @@
         } else {
           this.addInfo = {
             sortnum: null,
-            grade: this.gradeType,
+            grade: this.$route.query.grade,
             subject: this.radioType
           }
         }

@@ -380,6 +380,19 @@ export const appRouter = [
           }
         ],
         component: () => import('@/view/operate/trusteeship/trusteeshipList')
+      },
+      {
+        path: '/contentOperation',
+        name: 'contentOperation',
+        meta: [
+          {
+            name: '运营管理'
+          },
+          {
+            name: '内容运营'
+          }
+        ],
+        component: () => import('@/view/ld/contentOperation/contentOperation')
       }
     ]
   },
@@ -585,6 +598,15 @@ export const appRouter = [
         component: () => import('@/view/zlk/user/userList')
       },
       {
+        path: '/ldUserList',
+        name: 'ldUserList',
+        meta: [
+          {name: '用户管理'},
+          {name: '用户列表'}
+        ],
+        component: () => import('@/view/ld/user/userList')
+      },
+      {
         path: '/virtualUser',
         name: 'virtualUser',
         meta: [
@@ -670,6 +692,15 @@ export const appRouter = [
           {name: '栏目管理'}
         ],
         component: () => import('@/view/zlk/content/columnList')
+      },
+      {
+        path: '/teaching',
+        name: 'teaching',
+        meta: [
+          {name: '内容管理'},
+          {name: '教材列表'}
+        ],
+        component: () => import('@/view/ld/content/teachingList')
       }
     ]
   }
