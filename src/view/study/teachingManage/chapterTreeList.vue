@@ -3,7 +3,8 @@
     <Row class="-t-wrap">
       <Col :span="24" class="-t-top -t-border">
         <Col :span="10">章节结构</Col>
-        <Col :span="8">排序值</Col>
+        <Col :span="5">排序值</Col>
+        <Col :span="3">状态</Col>
         <Col :span="6">操作</Col>
       </Col>
       <Col :span="24" class="-t-item -t-flex -t-border">
@@ -21,9 +22,10 @@
           <arrow-file :nodeData="item1" :sort="2" ref="arrowChild"
                       @openChildData="openNextChildTwo(item1,index)"></arrow-file>
         </Col>
-        <Col :span="8" class="-t-item-text -t-theme-color">
+        <Col :span="5" class="-t-item-text -t-theme-color">
           {{item1.sortNum}}
         </Col>
+        <Col :span="3" class="-t-item-text -t-theme-color">&nbsp;</Col>
         <Col :span="6" class="g-t-left">
           <Button type="text" class="-t-theme-color" @click="openModal(item1,2,index)">添加子章节</Button>
           <Button type="text" class="-t-theme-color" @click="editModal('',item1,1)">编辑</Button>
@@ -34,14 +36,18 @@
           <Col :span="10" class="-t-child-padding-two">
             <arrow-file :nodeData="item2" :nodePinyin="item2.pinyin" :sort="3"></arrow-file>
           </Col>
-          <Col :span="8">
+          <Col :span="5">
             <div class="-t-child-padding-two">{{item2.sortNum}}</div>
+          </Col>
+          <Col :span="3">
+            <Tag :color="item2.disabled ? 'default' : 'success'">{{item2.disabled ? '已禁用' : '已启用'}}</Tag>
           </Col>
           <Col :span="6" class="g-t-left">
             <Button type="text" class="-t-theme-color" @click="toDetail(item1,item2)">&nbsp;&nbsp;&nbsp;&nbsp;课程内容
             </Button>
             <Button type="text" class="-t-theme-color" @click="editModal(item1,item2,2)">编辑</Button>
             <Button type="text" class="-t-red-color" @click="delItem(item2.id,2)">删除</Button>
+            <Button type="text" class="-t-theme-color" @click="changeLessonStatus(item2)">{{item2.disabled ? '启用' : '禁用'}}</Button>
           </Col>
         </Col>
         <Col class="-t-border" :span="24" v-if="!item1.lessons.length && item1.isShowChild">暂无课时内容</Col>
@@ -109,6 +115,16 @@
       this.getList()
     },
     methods: {
+      changeLessonStatus (item) {
+        this.$api.book.changeStatus({
+          id: item.id
+        }).then((response)=>{
+          if (response.data.code == "200") {
+            this.$Message.success("操作成功");
+            this.getList();
+          }
+        })
+      },
       toDetail(item1, item2) {
         this.$router.push({
           name: 'courseInfo',
