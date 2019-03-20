@@ -8,7 +8,7 @@ const materia = {
   },
   // 获取栏目列表（资料库）
   columnList(params) {
-    return axios.get('/material/material/catalog/list',{params: params})
+    return axios.get('/material/material/catalog/listAll',{params: params})
   },
   // 资料列表（资料库）
   materialList(params) {
