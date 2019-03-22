@@ -4,7 +4,7 @@
       <Row class="g-t-left">
         <Radio-group v-model="radioType" type="button" @on-change="getList()">
           <Radio :label=1>全部内容</Radio>
-          <Radio :label=2>朗读之星</Radio>
+          <Radio :label=2>人气之星</Radio>
         </Radio-group>
       </Row>
 
@@ -13,6 +13,14 @@
           <div class="g-flex-a-j-center">
             <div class="-search-select-text">推荐：</div>
             <Select v-model="searchInfo.categoryId" @on-change="getList(1)" class="-search-selectOne">
+              <Option v-for="(item,index) in dataTypeList" :label="item.name" :value="item.id" :key="index"></Option>
+            </Select>
+          </div>
+        </Col>
+        <Col :span="3" class="g-t-left" v-if="radioType == 2">
+          <div class="g-flex-a-j-center">
+            <div class="-search-select-text">举报：</div>
+            <Select v-model="searchInfo.report" @on-change="getList(1)" class="-search-selectOne">
               <Option v-for="(item,index) in dataTypeList" :label="item.name" :value="item.id" :key="index"></Option>
             </Select>
           </div>
@@ -28,8 +36,17 @@
                    @on-click="getList(1)"></Input>
           </div>
         </Col>
-        <Col :span="16" class="g-flex-a-j-center">
+        <Col :span="16" class="g-flex-a-j-center" v-if="radioType == 1">
           <date-picker-template :dataInfo="dateOption" @changeDate="changeDate"></date-picker-template>
+        </Col>
+        <Col :span="13" class="g-flex-a-j-center" v-if="radioType == 2">
+          <span class="-p-time">创建时间：</span>
+          <DatePicker type="daterange"
+                      placement="bottom-end"
+                      placeholder="选择日期"
+                      class="-search-selectOne"
+                      style="width: 200px;"
+                      @on-change="changeDateTwo"></DatePicker>
         </Col>
       </Row>
 
@@ -100,6 +117,7 @@
         searchInfo: {
           nickname: '',
           categoryId: '-1',
+          report: '-1',
           startTime: '',
           endTime: ''
         },
@@ -263,6 +281,11 @@
         this.searchInfo.endTime = data.endTime
         this.getList(1)
       },
+      changeDateTwo (data) {
+        this.searchInfo.startTime = data[1]
+        this.searchInfo.endTime = data[2]
+        this.getList(1)
+      },
       currentChange(val) {
         this.tab.page = val;
         this.getList();
@@ -339,11 +362,8 @@
     .-p-t-add-btn{
       top: 90px;
     }
-    .date-time {
-      width: 100%;
-      border: 1px solid #dcdee2;
-      border-radius: 4px;
-      min-width: 155px;
+    .-p-time {
+     margin-left: 10px;
     }
 
     .-date-search {

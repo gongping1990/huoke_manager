@@ -182,6 +182,15 @@ export const appRouter = [
           {name:'栏目数据'}
         ],
         component: () => import('@/view/zlk/dataStatistics/columnData/columnData')
+      },
+      {
+        path: '/shareData',
+        name: 'shareData',
+        meta: [
+          {name:'数据统计'},
+          {name:'分享数据'}
+        ],
+        component: () => import('@/view/ld/dataStatistics/userData/userData')
       }
     ]
   },
@@ -701,6 +710,15 @@ export const appRouter = [
           {name: '教材列表'}
         ],
         component: () => import('@/view/ld/content/teachingList')
+      },
+      {
+        path: '/teacher',
+        name: 'teacher',
+        meta: [
+          {name: '内容管理'},
+          {name: '教师列表'}
+        ],
+        component: () => import('@/view/ld/content/teacherList')
       }
     ]
   }

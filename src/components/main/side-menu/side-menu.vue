@@ -169,7 +169,7 @@
             <Icon type="ios-stats" class="hk-menu-icon"/>
             <span>数据统计</span>
           </template>
-          <Menu-item name="columnData">栏目数据</Menu-item>
+          <Menu-item name="shareData">分享数据</Menu-item>
         </Submenu>
         <Submenu name="content" class="-left-li">
           <template slot="title">
@@ -177,6 +177,7 @@
             <span>内容管理</span>
           </template>
           <Menu-item name="teaching">教材列表</Menu-item>
+          <Menu-item name="teacher">教师列表</Menu-item>
         </Submenu>
         <Submenu name="user" class="-left-li">
           <template slot="title">

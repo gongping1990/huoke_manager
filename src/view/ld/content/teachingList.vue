@@ -32,8 +32,27 @@
           <FormItem label="课文名称" prop="name">
             <Input type="text" v-model="addInfo.name" placeholder="请输入课文名称"></Input>
           </FormItem>
+          <FormItem label="课文内容" prop="introduction">
+            <Input type="textarea" v-model="addInfo.introduction" :rows="4" placeholder="请输入课文内容"></Input>
+          </FormItem>
           <FormItem label="排序值" prop="sortnum">
             <InputNumber type="text" v-model="addInfo.sortnum" placeholder="请输入排序值" class="g-width"></InputNumber>
+          </FormItem>
+          <FormItem label="所属学期" prop="semester">
+            <Select v-model="addInfo.semester" placeholder="请选择">
+              <Option value="1">上学期</Option>
+              <Option value="2">下学期</Option>
+            </Select>
+          </FormItem>
+          <FormItem label="所属年级" prop="grade">
+            <Select v-model="addInfo.grade" placeholder="请选择">
+              <Option v-for="(item, index) of gradeList" :key="index" :label=item.name :value=item.id></Option>
+            </Select>
+          </FormItem>
+          <FormItem label="所属教师" prop="teacherId">
+            <Select v-model="addInfo.teacherId" placeholder="请选择">
+              <Option v-for="(item, index) of teacherTypeList" :key="index" :label=item.name :value=item.id></Option>
+            </Select>
           </FormItem>
         </Form>
         <div slot="footer" class="-p-b-flex">
@@ -52,7 +71,7 @@
 <script>
   import TextEdit from "./textEdit";
   export default {
-    name: 'teachingList',
+    name: 'teacherList',
     components: {TextEdit},
     data() {
       return {
@@ -72,6 +91,7 @@
           }
         ],
         gradeList: [],
+        teacherTypeList: [],
         radioType: 1,
         gradeType: 1,
         total: 0,
@@ -84,8 +104,20 @@
           name: [
             {required: true, message: '请输入课文名称', trigger: 'blur'},
           ],
+          introduction: [
+            {required: true, message: '请输入课文内容', trigger: 'blur'},
+          ],
           sortnum: [
             {required: true, type: 'number', message: '请输入排序值', trigger: 'blur'},
+          ],
+          semester: [
+            {required: true, message: '请选择学期', trigger: 'change'},
+          ],
+          grade: [
+            {required: true, message: '请选择年级', trigger: 'change'},
+          ],
+          teacherId: [
+            {required: true, message: '请选择教师', trigger: 'change'},
           ]
         },
         columns: [
@@ -100,12 +132,16 @@
           },
           {
             title: '范读人数（完成率）',
-            key: 'sortnum',
+            render: (h,params)=>{
+              return h('div',`${params.row.normReading} ( ${params.row.normReadingComplRate} )`)
+            },
             align: 'center'
           },
           {
             title: '朗读人数（完成率）',
-            key: 'sortnum',
+            render: (h,params)=>{
+              return h('div',`${params.row.aloudReading} ( ${params.row.aloudReadingComplRate} )`)
+            },
             align: 'center'
           },
           {
@@ -113,9 +149,9 @@
             render: (h, params) => {
               return h('Tag', {
                 props: {
-                  color: params.row.disabled ? 'default' : 'success'
+                  color: params.row.isdisabled ? 'default' : 'success'
                 }
-              }, params.row.disabled ? '已禁用' : '已启用')
+              }, params.row.isdisabled ? '已禁用' : '已启用')
             },
             align: 'center'
           },
@@ -139,7 +175,7 @@
                       this.changeStatus(params.row)
                     }
                   }
-                }, params.row.disabled ? '启用' : '禁用'),
+                }, params.row.isdisabled ? '启用' : '禁用'),
                 h('Button', {
                   props: {
                     type: 'text',
@@ -202,8 +238,8 @@
     },
     mounted() {
       this.getList()
-      this.getSubjectList()
       this.getGradeList()
+      this.getTeacherList()
     },
     methods: {
       toJump(data) {
@@ -223,8 +259,11 @@
         } else {
           this.addInfo = {
             sortnum: null,
-            grade: this.gradeType,
-            subject: this.radioType
+            grade: '',
+            teacherId: '',
+            semester: '',
+            introduction: '',
+            name: ''
           }
         }
       },
@@ -249,42 +288,42 @@
             this.isFetching = false
           })
       },
+      getTeacherList() {
+        this.isFetching = true
+        this.$api.teacher.teacherList()
+          .then(
+            response => {
+              // this.teacherTypeList = response.data.resultData;
+            })
+          .finally(() => {
+            this.isFetching = false
+          })
+      },
       //分页查询
       getList() {
         this.isFetching = true
-        this.$api.materia.columnList({
+        this.$api.course.ldCourseList({
           current: this.tab.page,
           size: this.tab.pageSize,
           grade: this.gradeType,
-          subject: this.radioType
+          semester : this.radioType
         })
           .then(
             response => {
-              this.dataList = response.data.resultData;
+              this.dataList = response.data.resultData.records;
               this.total = response.data.resultData.total;
             })
           .finally(() => {
             this.isFetching = false
           })
       },
-      //分页查询学科
-      getSubjectList() {
-        this.isFetching = true
-        this.$api.materia.subjectList()
-          .then(
-            response => {
-              this.subjectList = response.data.resultData;
-            })
-          .finally(() => {
-            this.isFetching = false
-          })
-      },
+
       delItem(param) {
         this.$Modal.confirm({
           title: '提示',
           content: '确认要删除吗？',
           onOk: () => {
-            this.$api.materia.delColumn({
+            this.$api.course.ldDelList({
               id: param.id
             }).then(
               response => {
@@ -297,8 +336,9 @@
         })
       },
       changeStatus(data) {
-        this.$api.materia.changeColumn({
-          id: data.id
+        this.$api.course.ldChangeStatus({
+          id: data.id,
+          disable: data.isdisabled == 0 ? 1 : 0
         }).then(
           response => {
             if (response.data.code == "200") {

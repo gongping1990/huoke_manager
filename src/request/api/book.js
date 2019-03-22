@@ -66,6 +66,10 @@ const book = {
   updateCover(params) {
     return axios.post('/prep/book/lesson/cover', qs.stringify(params))
   },
+  //禁用、启用
+  changeStatus(params) {
+    return axios.post('/prep/book/lesson/enabled', qs.stringify(params))
+  },
 
 }
 

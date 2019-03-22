@@ -23,6 +23,8 @@ import custom from "./custom";
 import channel from "./channel";
 import dataCenter from "./dataCenter";
 import materia from "./materia";
+import work from "./work";
+import teacher from "./teacher";
 
 
 export default {
@@ -50,5 +52,7 @@ export default {
   custom,
   channel,
   dataCenter,
-  materia
+  materia,
+  work,
+  teacher
 }
