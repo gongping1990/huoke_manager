@@ -182,15 +182,6 @@ export const appRouter = [
           {name:'栏目数据'}
         ],
         component: () => import('@/view/zlk/dataStatistics/columnData/columnData')
-      },
-      {
-        path: '/shareData',
-        name: 'shareData',
-        meta: [
-          {name:'数据统计'},
-          {name:'分享数据'}
-        ],
-        component: () => import('@/view/ld/dataStatistics/userData/userData')
       }
     ]
   },
@@ -311,6 +302,19 @@ export const appRouter = [
           }
         ],
         component: () => import('@/view/operate/banner/bannerList')
+      },
+      {
+        path: '/ldBannerList',
+        name: 'ldBannerList',
+        meta: [
+          {
+            name: '运营管理'
+          },
+          {
+            name: 'banner管理'
+          }
+        ],
+        component: () => import('@/view/ld/banner/bannerList')
       },
       {
         path: '/zlkBannerList',

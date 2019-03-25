@@ -12,7 +12,7 @@
         <Col :span="3" class="g-t-left">
           <div class="g-flex-a-j-center">
             <div class="-search-select-text">推荐：</div>
-            <Select v-model="searchInfo.categoryId" @on-change="getList(1)" class="-search-selectOne">
+            <Select v-model="searchInfo.recommend" @on-change="getList(1)" class="-search-selectOne">
               <Option v-for="(item,index) in dataTypeList" :label="item.name" :value="item.id" :key="index"></Option>
             </Select>
           </div>
@@ -324,10 +324,10 @@
         if(num) {
           this.tab.currentPage = 1
         }
-        this.$api.trusteeship.getList({
+        this.$api.work.workList({
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
-          type: this.radioType,
+          mode: this.radioType,
           name: this.searchInfo.nickname,
           startDate: startTime,
           endDate: endTime

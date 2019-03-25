@@ -5,7 +5,7 @@
         <Col :span="5" class="g-t-left">
           <div class="g-flex-a-j-center">
             <div class="-search-select-text-two">电话号码：</div>
-            <Select v-model="searchInfo.subscribe" @on-change="getList(1)" class="-search-selectOne">
+            <Select v-model="searchInfo.hasPhone" @on-change="getList(1)" class="-search-selectOne">
               <Option v-for="item of phoneList" :label=item.name :value=item.id :key="item.id" ></Option>
             </Select>
           </div>
@@ -42,14 +42,13 @@
     components: {Operation},
     data() {
       return {
-        switch1: '',
         tab: {
           page: 1,
           pageSize: 10,
           currentPage: 1
         },
         searchInfo: {
-          subscribe: '-1'
+          hasPhone: '-1'
         },
         phoneList: [
           {
@@ -81,7 +80,7 @@
               }, [
                 h('img', {
                   attrs: {
-                    src: params.row.headimgurl
+                    src: params.row.headImgUrl
                   },
                   style: {
                     width: '36px',
@@ -100,7 +99,7 @@
           },
           {
             title: '创建时间',
-            key: 'createTime'
+            key: 'creatTime'
           },
           {
             title: '操作',
@@ -144,7 +143,7 @@
         let params = {
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
-          // subscribe: this.searchInfo.subscribe != '-1' ? (this.searchInfo.subscribe == '1') : ''
+          hasPhone: this.searchInfo.hasPhone != '-1' ? (this.searchInfo.hasPhone == '1') : ''
         }
 
         if (this.selectInfo == '1' && this.searchInfo) {
@@ -154,7 +153,7 @@
         }
 
         this.isFetching = true
-        this.$api.materia.materialUserList(params)
+        this.$api.user.getLdUserList(params)
           .then(
             response => {
               this.dataList = response.data.resultData.records;

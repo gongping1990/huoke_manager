@@ -164,13 +164,6 @@
         </Submenu>
       </div>
       <div v-if="roleType == '4'" >
-        <Submenu name="dataStatistics" class="-left-li">
-          <template slot="title">
-            <Icon type="ios-stats" class="hk-menu-icon"/>
-            <span>数据统计</span>
-          </template>
-          <Menu-item name="shareData">分享数据</Menu-item>
-        </Submenu>
         <Submenu name="content" class="-left-li">
           <template slot="title">
             <Icon type="ios-school" class="hk-menu-icon"></Icon>
@@ -191,7 +184,7 @@
             <Icon type="ios-help-circle" class="hk-menu-icon"></Icon>
             <span>运营管理</span>
           </template>
-          <Menu-item name="zlkBannerList">banner管理</Menu-item>
+          <Menu-item name="ldBannerList">banner管理</Menu-item>
           <Menu-item name="contentOperation">内容运营</Menu-item>
         </Submenu>
       </div>

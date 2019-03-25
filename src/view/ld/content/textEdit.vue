@@ -2,10 +2,10 @@
   <Modal
     class="p-teaching-edit"
     v-model="isOpenModal"
-    @on-cancel="closeModal('addInfo')"
+    @on-cancel="closeModal()"
     width="500"
-    title="编辑课时">
-    <Form ref="addInfo" :model="addInfo" :rules="ruleValidate" :label-width="90">
+    title="编辑课程">
+    <Form ref="addInfo" :model="addInfo"  :label-width="90">
       <FormItem label="课文类别">
         <Radio-group v-model="addInfo.contentType">
           <Radio :label=1>课文</Radio>
@@ -13,8 +13,8 @@
           <Radio :label=3>成就</Radio>
         </Radio-group>
       </FormItem>
-      <Form-item label="课程名称" class="-c-form-item" prop="name" v-if="addInfo.contentType==1">
-        <Input class="-s-width" type="textarea" :rows="6" v-model="addInfo.name"
+      <Form-item label="课文内容" class="-c-form-item" prop="name" v-if="addInfo.contentType==1">
+        <Input class="-s-width" type="textarea" :rows="6" v-model="addInfo.introduction"
                placeholder="请输入课文内容(换行请以“/n”隔开！例如：枯藤老树昏鸦/n小桥流水人家)"/>
       </Form-item>
       <Form-item label="上传音频" class="-c-form-item" v-if="addInfo.contentType==2">
@@ -29,10 +29,8 @@
           :on-error="handleErr">
           <Button ghost type="primary">上传音频</Button>
         </Upload>
-
         <div class="-c-tips">音频格式：mp3、wma、arm 音频大小：150M以内</div>
-
-        <div class="-c-course-wrap" v-if="addInfo.resUrl">
+        <div class="-c-course-wrap" v-if="addInfo.vrAudio">
           <div class="-c-course-item -item-audio">
             <Icon class="-item-icon" type="md-volume-up" size="30"/>
             <audio style="margin-left: 20px;display: flex"
@@ -42,7 +40,6 @@
           </div>
         </div>
       </Form-item>
-
       <Form-item label="彩色图" class="-c-form-item ivu-form-item-required" v-if="addInfo.contentType==3">
         <Upload
           style="display: inline-block"
@@ -55,10 +52,10 @@
           <Button ghost type="primary">上传图片</Button>
         </Upload>
         <div class="-c-tips">图片尺寸不低于960px*360px 图片大小：500K以内</div>
-        <div class="-c-course-wrap" v-if="coverImgUrl">
+        <div class="-c-course-wrap" v-if="addInfo.impAchievement">
           <div class="-c-course-item">
-            <img :src="coverImgUrl">
-            <div class="-i-del" @click="coverImgUrl= ''">删除</div>
+            <img :src="addInfo.impAchievement">
+            <div class="-i-del" @click="addInfo.impAchievement= ''">删除</div>
           </div>
         </div>
       </Form-item>
@@ -74,17 +71,17 @@
           <Button ghost type="primary">上传图片</Button>
         </Upload>
         <div class="-c-tips">图片尺寸不低于960px*360px 图片大小：500K以内</div>
-        <div class="-c-course-wrap" v-if="coverImgUrl">
+        <div class="-c-course-wrap" v-if="addInfo.comAchievement">
           <div class="-c-course-item">
-            <img :src="coverImgUrl">
-            <div class="-i-del" @click="coverImgUrl= ''">删除</div>
+            <img :src="addInfo.comAchievement">
+            <div class="-i-del" @click="addInfo.comAchievement= ''">删除</div>
           </div>
         </div>
       </Form-item>
     </Form>
     <div slot="footer" class="-p-s-footer">
-      <Button @click="closeModal('addInfo')" ghost type="primary" style="width: 100px;">取 消</Button>
-      <div @click="submitPwd('addInfo')" class="g-primary-btn ">确 认</div>
+      <Button @click="closeModal()" ghost type="primary" style="width: 100px;">取 消</Button>
+      <div @click="submitPwd()" class="g-primary-btn ">确 认</div>
     </div>
     <loading v-if="isFetching"></loading>
   </Modal>
@@ -97,7 +94,7 @@
   export default {
     name: 'textEdit',
     components: {Loading},
-    props: ['isOpen', 'dataInfo'],
+    props: ['isOpen', 'info'],
     data() {
       return {
         isOpenModal: false,
@@ -108,25 +105,23 @@
         audioType: ['mp3', 'wma', 'arm'],
         baseUrl: `${getBaseUrl()}/common/uploadPublicFile`, // 公有 （图片）
         baseUrlVa: `http://hkupload.prod.k12.vip/common/uploadPrivateFile`, //私有地址 （音视频）
-        ruleValidate: {
-          name: [
-            {required: true, message: '请输入课时名称', trigger: 'blur'},
-            {type: 'string', max: 40, message: '课程名称最多40字', trigger: 'blur'}
-          ],
-          sequence: [
-            {required: true, type: 'number', message: '请输入排序值', trigger: 'blur'}
-          ],
-          initReadNum: [
-            {required: true, type: 'number', message: '请输入初始播放量', trigger: 'blur'}
-          ]
-        },
+      }
+    },
+    computed: {
+      dataInfo() {
+        return this.info
       }
     },
     mounted() {
       this.isOpenModal = this.isOpen
-      console.log(this.dataInfo)
+      this.playUrl = this.dataInfo.authorVrAudio
       this.addInfo = {
-        contentType: 1
+        contentType: 1,
+        impAchievement: this.dataInfo.impAchievement,
+        comAchievement: this.dataInfo.comAchievement,
+        vrAudio: this.dataInfo.vrAudio,
+        introduction: this.dataInfo.introduction,
+        id: this.dataInfo.id
       }
     },
     methods: {
@@ -154,21 +149,21 @@
       handleSuccessColour(res) {
         if (res.code === 200) {
           this.$Message.success('上传成功')
-          this.coverImgUrl = res.resultData.url
+          this.addInfo.impAchievement = res.resultData.url
         }
       },
       handleSuccessBlock(res) {
         if (res.code === 200) {
           this.$Message.success('上传成功')
-          this.coverImgUrl = res.resultData.url
+          this.addInfo.comAchievement = res.resultData.url
         }
       },
       handleSuccessAudio(res) {
         if (res.code === 200) {
           this.isFetching = false
-          this.addInfo.resUrl = res.resultData.url
+          this.addInfo.vrAudio = res.resultData.url
           this.addInfo.duration = res.resultData.duration
-          this.getAvUrl(this.addInfo.resUrl)
+          this.getAvUrl(this.addInfo.vrAudio)
         }
       },
       getAvUrl(data) {
@@ -188,39 +183,62 @@
             this.isFetching = false
           });
       },
-      getInfo(data) {
-        this.$api.course.classHourInfo({
-          id: this.dataInfo.id
-        })
-          .then(
-            response => {
-              if (response.data.code == '200') {
-                this.addInfo = response.data.resultData
-                this.addInfo.initReadNum = +this.addInfo.initReadNum
-                this.addInfo.sequence = +this.addInfo.sequence
-                this.addInfo.disabled = this.addInfo.disabled ? 1 : 0
-                this.addInfo.tryout = this.addInfo.tryout ? 1 : 0
-                this.playUrl = this.addInfo.playUrl
-              }
-            });
-      },
-      changePlayType() {
-        this.addInfo.resUrl = ''
-        this.playUrl = ''
-      },
       closeModal(name) {
         this.$emit('closeEditModal')
-        this.$refs[name].resetFields();
       },
       submitPwd(name) {
-        this.$refs[name].validate((valid) => {
-          if (valid) {
-            if (!this.addInfo.resUrl) {
-              return this.$Message.error('请上传音频文件')
+        switch (+this.addInfo.contentType) {
+          case 1:
+            if(!this.addInfo.introduction) {
+              return this.$Message.error('请输入课程内容')
             }
-            this.$emit('submitChildInfo', this.addInfo)
-          }
-        })
+            break
+          case 2:
+            if(!this.addInfo.vrAudio) {
+              return this.$Message.error('请上传音频')
+            }
+            break
+          case 3:
+            if(!this.addInfo.impAchievement && !this.addInfo.comAchievement ) {
+              return this.$Message.error('请上传图片')
+            }
+            break
+        }
+
+        if (this.addInfo.contentType == 1 && this.addInfo.introduction) {
+          this.$api.course.ldUpdateContentCourse({
+            id: this.addInfo.id,
+            introduction: this.addInfo.introduction
+          }).then(res=>{
+            if(res.data.code == '200') {
+              this.$Message.success('课程内容更新成功')
+              this.$emit('closeEditModal')
+            }
+          })
+
+        } else if (this.addInfo.contentType == 2 && this.addInfo.vrAudio) {
+          this.$api.course.ldUpdateAudioCourse({
+            id: this.addInfo.id,
+            vrAudio: this.addInfo.vrAudio
+          }).then(res=>{
+            if(res.data.code == '200') {
+              this.$Message.success('音频更新成功')
+              this.$emit('closeEditModal')
+            }
+          })
+        } else if (this.addInfo.contentType == 3 && this.addInfo.impAchievement && this.addInfo.comAchievement) {
+          this.$api.course.ldUpdateAchievementCourse({
+            id: this.addInfo.id,
+            comAchievement: this.addInfo.comAchievement,
+            impAchievement: this.addInfo.impAchievement
+          }).then(res=>{
+            if(res.data.code == '200') {
+              this.$Message.success('图片更新成功')
+              this.$emit('closeEditModal')
+            }
+          })
+        }
+
       }
     }
   }

@@ -32,9 +32,6 @@
           <FormItem label="课文名称" prop="name">
             <Input type="text" v-model="addInfo.name" placeholder="请输入课文名称"></Input>
           </FormItem>
-          <FormItem label="课文内容" prop="introduction">
-            <Input type="textarea" v-model="addInfo.introduction" :rows="4" placeholder="请输入课文内容"></Input>
-          </FormItem>
           <FormItem label="排序值" prop="sortnum">
             <InputNumber type="text" v-model="addInfo.sortnum" placeholder="请输入排序值" class="g-width"></InputNumber>
           </FormItem>
@@ -51,7 +48,7 @@
           </FormItem>
           <FormItem label="所属教师" prop="teacherId">
             <Select v-model="addInfo.teacherId" placeholder="请选择">
-              <Option v-for="(item, index) of teacherTypeList" :key="index" :label=item.name :value=item.id></Option>
+              <Option v-for="(item, index) of teacherTypeList" :key="index" :label=item.teacherName :value=item.id></Option>
             </Select>
           </FormItem>
         </Form>
@@ -63,7 +60,7 @@
     </Card>
 
     <div v-if="isOpenModalContent">
-      <text-edit :isOpen="isOpenModalContent" @closeEditModal="closeModalContent"></text-edit>
+      <text-edit :isOpen="isOpenModalContent" :info="dataItem" @closeEditModal="closeModalContent"></text-edit>
     </div>
   </div>
 </template>
@@ -95,6 +92,7 @@
         radioType: 1,
         gradeType: 1,
         total: 0,
+        dataItem: '',
         isFetching: false,
         isOpenModal: false,
         isOpenModalContent: false,
@@ -104,9 +102,6 @@
           name: [
             {required: true, message: '请输入课文名称', trigger: 'blur'},
           ],
-          introduction: [
-            {required: true, message: '请输入课文内容', trigger: 'blur'},
-          ],
           sortnum: [
             {required: true, type: 'number', message: '请输入排序值', trigger: 'blur'},
           ],
@@ -114,7 +109,7 @@
             {required: true, message: '请选择学期', trigger: 'change'},
           ],
           grade: [
-            {required: true, message: '请选择年级', trigger: 'change'},
+            {required: true, type: 'number', message: '请选择年级', trigger: 'change'},
           ],
           teacherId: [
             {required: true, message: '请选择教师', trigger: 'change'},
@@ -128,6 +123,11 @@
           {
             title: '排序值',
             key: 'sortnum',
+            align: 'center'
+          },
+          {
+            title: '教师',
+            key: 'teacherName',
             align: 'center'
           },
           {
@@ -243,10 +243,12 @@
     },
     methods: {
       toJump(data) {
+        this.dataItem = data
         this.isOpenModalContent = true
       },
       closeModalContent () {
         this.isOpenModalContent = false
+        this.getList(1)
       },
       delImg() {
         this.addInfo.url = ''
@@ -256,13 +258,13 @@
         if (data) {
           this.addInfo = JSON.parse(JSON.stringify(data))
           this.addInfo.sortnum = +this.addInfo.sortnum
+          this.addInfo.semester = this.addInfo.semester.toString()
         } else {
           this.addInfo = {
             sortnum: null,
             grade: '',
             teacherId: '',
             semester: '',
-            introduction: '',
             name: ''
           }
         }
@@ -293,7 +295,7 @@
         this.$api.teacher.teacherList()
           .then(
             response => {
-              // this.teacherTypeList = response.data.resultData;
+              this.teacherTypeList = response.data.resultData.records;
             })
           .finally(() => {
             this.isFetching = false
@@ -357,7 +359,7 @@
         this.$refs[name].validate((valid) => {
           if (valid) {
             this.isSending = true
-            let promiseDate = this.addInfo.id ? this.$api.materia.updateColumn(this.addInfo) : this.$api.materia.addColumn(this.addInfo)
+            let promiseDate = this.addInfo.id ? this.$api.course.ldUpdateList(this.addInfo) : this.$api.course.ldAddCourse(this.addInfo)
             promiseDate
               .then(
                 response => {

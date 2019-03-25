@@ -93,6 +93,10 @@ const user = {
   // 获取语文用户列表
   getPrepUserList(params) {
     return axios.get("/prep/preuser/queryUserPage", {params: params});
+  },
+  // 获取朗读用户列表
+  getLdUserList(params) {
+    return axios.get("/declaim/user/listUserByPage", {params: params});
   }
 };
 

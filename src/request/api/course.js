@@ -113,11 +113,15 @@ const course = {
   ldAddCourse(params) {
     return axios.post(`/declaim/course/save`, qs.stringify(params))
   },
+  // 朗读-删除
+  ldDelList(params) {
+    return axios.post(`/declaim/course/removeById`, qs.stringify(params))
+  },
   // 朗读-修改
   ldUpdateList(params) {
     return axios.post(`/declaim/course/update`, qs.stringify(params))
   },
-  // 朗读-修改
+  // 朗读-排序
   ldUpdateSortNum(params) {
     return axios.post(`/declaim/course/updateSortNum`, qs.stringify(params))
   },
