@@ -13,7 +13,7 @@ const work = {
 
   // 推荐
   workRecommend(params) {
-    return axios.get('/declaim/work/recommend', qs.stringify(params))
+    return axios.post('/declaim/work/recommend', qs.stringify(params))
   },
 
   // 删除

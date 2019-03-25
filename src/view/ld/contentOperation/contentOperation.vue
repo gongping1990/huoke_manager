@@ -3,8 +3,8 @@
     <Card>
       <Row class="g-t-left">
         <Radio-group v-model="radioType" type="button" @on-change="getList()">
-          <Radio :label=1>全部内容</Radio>
-          <Radio :label=2>人气之星</Radio>
+          <Radio :label=0>全部内容</Radio>
+          <Radio :label=1>人气之星</Radio>
         </Radio-group>
       </Row>
 
@@ -17,7 +17,7 @@
             </Select>
           </div>
         </Col>
-        <Col :span="3" class="g-t-left" v-if="radioType == 2">
+        <Col :span="3" class="g-t-left" v-if="radioType == 1">
           <div class="g-flex-a-j-center">
             <div class="-search-select-text">举报：</div>
             <Select v-model="searchInfo.report" @on-change="getList(1)" class="-search-selectOne">
@@ -32,14 +32,14 @@
               <Option value="2">用户昵称</Option>
             </Select>
             <span class="-search-center">|</span>
-            <Input v-model="searchInfo.nickname" class="-search-input" placeholder="请输入关键字" icon="ios-search"
+            <Input v-model="searchInfo.manner" class="-search-input" placeholder="请输入关键字" icon="ios-search"
                    @on-click="getList(1)"></Input>
           </div>
         </Col>
-        <Col :span="16" class="g-flex-a-j-center" v-if="radioType == 1">
+        <Col :span="16" class="g-flex-a-j-center" v-if="radioType == 0">
           <date-picker-template :dataInfo="dateOption" @changeDate="changeDate"></date-picker-template>
         </Col>
-        <Col :span="13" class="g-flex-a-j-center" v-if="radioType == 2">
+        <Col :span="13" class="g-flex-a-j-center" v-if="radioType == 1">
           <span class="-p-time">创建时间：</span>
           <DatePicker type="daterange"
                       placement="bottom-end"
@@ -64,7 +64,7 @@
       footer-hide
       width="350"
       title="播放">
-      <audio ref="playAudio" :src="addInfo.resUrl" autoplay controls></audio>
+      <audio ref="playAudio" :src="addInfo.voiceUrl" autoplay controls></audio>
     </Modal>
 
     <Modal
@@ -115,8 +115,8 @@
           pageSize: 10
         },
         searchInfo: {
-          nickname: '',
-          categoryId: '-1',
+          manner: '',
+          recommend: '0',
           report: '-1',
           startTime: '',
           endTime: ''
@@ -128,22 +128,26 @@
         addInfo: {},
         selectInfo: '1',
         dataList: [],
+        semesterList: {
+          '1': '上学期',
+          '2': '下学期'
+        },
         dataTypeList: [
           {
             name: '全部',
-            id:'-1'
+            id: '0'
           },
           {
             name: '是',
-            id:'1'
+            id: '1'
           },
           {
             name: '否',
-            id:'0'
+            id: '2'
           }
         ],
         total: 0,
-        radioType: 1,
+        radioType: 0,
         isFetching: false,
         isOpenModalPlay: false,
         isOpenModalSort: false,
@@ -151,56 +155,50 @@
         columns: [
           {
             title: '课文名称',
-            key: 'name',
+            key: 'coursename',
             align: 'center'
           },
           {
             title: '用户名称',
-            key: 'pvCount',
+            key: 'nickname',
             align: 'center'
           },
           {
             title: '年级（学期）',
-            key: 'link',
+            render: (h, params) => {
+              return h('div', this.semesterList[params.row.semester])
+            },
             align: 'center'
           },
           {
             title: '创建时间',
-            render: (h, params) => {
-              return h('div', dayjs(+params.row.gmtCreate).format("YYYY-MM-DD HH:mm:ss"))
-            },
+            key: 'gmtCreate',
             align: 'center'
           },
           {
             title: '赞（次）',
-            key: 'uvCount',
+            key: 'likes',
             align: 'center'
           },
           {
             title: '分享（次）',
-            key: 'remainUserCount',
+            key: 'sharenum',
             align: 'center'
           },
           {
             title: '被举报',
-            render: (h, params) => {
-              return h('div', {
-                style: {
-                  color: '#5444E4',
-                  cursor: 'pointer'
-                },
-                on: {
-                  click: () => {
-                    this.openModalSort(params.row)
-                  }
-                }
-              }, params.row.remainUserCount)
-            },
+            key: 'report',
             align: 'center'
           },
           {
             title: '是否推荐',
-            key: 'remainUserCount',
+            render: (h, params) => {
+              return h('Tag', {
+                props: {
+                  color: !params.row.recommend ? 'default' : 'success'
+                }
+              }, !params.row.recommend ? '否' : '是')
+            },
             align: 'center'
           },
           {
@@ -208,9 +206,9 @@
             render: (h, params) => {
               return h('Tag', {
                 props: {
-                  color: params.row.disabled ? 'default' : 'success'
+                  color: params.row.status ? 'default' : 'success'
                 }
-              }, params.row.disabled ? '已禁用' : '已启用')
+              }, params.row.status ? '已禁用' : '已启用')
             },
             align: 'center'
           },
@@ -248,7 +246,7 @@
                       this.changeStatus(params.row)
                     }
                   }
-                }, params.row.disabled ? '启用' : '禁用'),
+                }, params.row.status ? '启用' : '禁用'),
                 h('Button', {
                   props: {
                     type: 'text',
@@ -259,10 +257,10 @@
                   },
                   on: {
                     click: () => {
-                      this.delItem(params.row)
+                      this.toRecommend(params.row)
                     }
                   }
-                }, params.row.disabled ? '推荐' : '取消推荐'),
+                }, !params.row.recommend ? '推荐' : '取消推荐'),
               ])
             }
           }
@@ -276,12 +274,12 @@
       openModalSort(data) {
         this.isOpenModalSort = true
       },
-      changeDate (data) {
+      changeDate(data) {
         this.searchInfo.startTime = data.startTime
         this.searchInfo.endTime = data.endTime
         this.getList(1)
       },
-      changeDateTwo (data) {
+      changeDateTwo(data) {
         this.searchInfo.startTime = data[1]
         this.searchInfo.endTime = data[2]
         this.getList(1)
@@ -291,7 +289,33 @@
         this.getList();
       },
       openModal(data) {
+        this.addInfo = data
         this.isOpenModalPlay = true
+        console.log(data)
+      },
+      changeStatus (data) {
+        this.$api.work.changeWorkChange({
+          id: data.id,
+          disabled: data.status ? '0' : '1'
+        }).then(
+          response => {
+            if (response.data.code == "200") {
+              this.$Message.success("操作成功");
+              this.getList();
+            }
+          })
+      },
+      toRecommend (data) {
+        this.$api.work.workRecommend({
+          id: data.id,
+          recommend: data.recommend ? '0' : '1'
+        }).then(
+          response => {
+            if (response.data.code == "200") {
+              this.$Message.success("操作成功");
+              this.getList();
+            }
+          })
       },
       delItem(param) {
         this.$Modal.confirm({
@@ -321,16 +345,20 @@
         let endTime = ''
         startTime = this.searchInfo.startTime ? new Date(this.searchInfo.startTime).getTime() : ''
         endTime = this.searchInfo.endTime ? new Date(this.searchInfo.endTime).getTime() : ''
-        if(num) {
+
+        if (num) {
           this.tab.currentPage = 1
         }
+
         this.$api.work.workList({
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
-          mode: this.radioType,
-          name: this.searchInfo.nickname,
+          workListMode: this.radioType,
+          recommend: this.searchInfo.recommend,
           startDate: startTime,
-          endDate: endTime
+          endDate: endTime,
+          username: this.selectInfo == '2' ? this.searchInfo.manner : '',
+          coursename: this.selectInfo == '1' ? this.searchInfo.manner : ''
         })
           .then(
             response => {
@@ -359,11 +387,11 @@
       margin-right: 20px;
     }
 
-    .-p-t-add-btn{
+    .-p-t-add-btn {
       top: 90px;
     }
     .-p-time {
-     margin-left: 10px;
+      margin-left: 10px;
     }
 
     .-date-search {
