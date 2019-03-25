@@ -14,6 +14,10 @@ const user = {
   changeUserStatus(params) {
     return axios.post("/user/updateUserDisabledStatusById",qs.stringify(params));
   },
+  // 禁用启用用户-朗读
+  ldChangeUserStatus(params) {
+    return axios.post("/declaim/user/updateUserDisabledStatusById",qs.stringify(params));
+  },
   // 获取用户详情
   getUserInfo(params) {
     return axios.get("/user/queryUserInfoById",{params});

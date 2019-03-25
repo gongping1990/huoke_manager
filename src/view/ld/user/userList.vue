@@ -117,7 +117,7 @@
                   },
                   on: {
                     click: () => {
-                      this.changeStatus(params.row)
+                      this.toChangeStatus(params.row)
                     }
                   }
                 }, params.row.disabled ? '启用' : '禁用')
@@ -131,6 +131,19 @@
       this.getList()
     },
     methods: {
+      toChangeStatus(params) {
+
+        this.$api.user.ldChangeUserStatus({
+          userId: params.userId,
+          disabled: !params.disabled
+        }).then(
+          response => {
+            if (response.data.code == '200') {
+              this.$Message.success('操作成功')
+              this.getList()
+            }
+          })
+      },
       currentChange(val) {
         this.tab.page = val;
         this.getList();

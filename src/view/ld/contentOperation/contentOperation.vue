@@ -317,27 +317,6 @@
             }
           })
       },
-      delItem(param) {
-        this.$Modal.confirm({
-          title: '提示',
-          content: '启用后将清除举报历史，确认启用？',
-          onOk: () => {
-            this.$api.trusteeship.delTrusteeship({
-              id: param.id
-            }).then(
-              response => {
-                if (response.data.code == "200") {
-                  this.$Message.success("操作成功");
-                  this.getList();
-                }
-              })
-          }
-        })
-      },
-      closeModal(name) {
-        this.isOpenModalPlay = false
-        this.$refs[name].resetFields()
-      },
       //分页查询
       getList(num) {
         this.isFetching = true
