@@ -17,7 +17,7 @@
             </Select>
           </div>
         </Col>
-        <Col :span="3" class="g-t-left" v-if="radioType == 1">
+        <Col :span="3" class="g-t-left">
           <div class="g-flex-a-j-center">
             <div class="-search-select-text">举报：</div>
             <Select v-model="searchInfo.report" @on-change="getList(1)" class="-search-selectOne">
@@ -36,12 +36,12 @@
                    @on-click="getList(1)"></Input>
           </div>
         </Col>
-        <Col :span="16" class="g-flex-a-j-center" v-if="radioType == 0">
+        <Col :span="13" class="g-flex-a-j-center" v-if="radioType == 0">
           <date-picker-template :dataInfo="dateOption" @changeDate="changeDate"></date-picker-template>
         </Col>
         <Col :span="13" class="g-flex-a-j-center" v-if="radioType == 1">
-          <span class="-p-time">创建时间：</span>
-          <DatePicker type="daterange"
+          <span class="-p-time">选择时间：</span>
+          <DatePicker type="date"
                       placement="bottom-end"
                       placeholder="选择日期"
                       class="-search-selectOne"
@@ -117,7 +117,7 @@
         searchInfo: {
           manner: '',
           recommend: '0',
-          report: '-1',
+          report: '0',
           startTime: '',
           endTime: ''
         },
@@ -280,9 +280,7 @@
         this.getList(1)
       },
       changeDateTwo(data) {
-        this.searchInfo.startTime = data[1]
-        this.searchInfo.endTime = data[2]
-        this.getList(1)
+        this.weekFormat(data)
       },
       currentChange(val) {
         this.tab.page = val;
@@ -334,6 +332,7 @@
           size: this.tab.pageSize,
           workListMode: this.radioType,
           recommend: this.searchInfo.recommend,
+          report: this.searchInfo.report,
           startDate: startTime,
           endDate: endTime,
           username: this.selectInfo == '2' ? this.searchInfo.manner : '',
@@ -347,6 +346,23 @@
           .finally(() => {
             this.isFetching = false
           })
+      },
+      weekFormat (date) {
+        var now = new Date(date);
+        var nowTime = now.getTime() ;
+        var day = now.getDay();
+        var oneDayLong = 24*60*60*1000 ;
+
+
+        var MondayTime = nowTime - (day-1)*oneDayLong  ;
+        var SundayTime =  nowTime + (7-day)*oneDayLong ;
+
+
+        var monday = new Date(MondayTime);
+        var sunday = new Date(SundayTime);
+        this.searchInfo.startTime = new Date(monday).getTime()
+        this.searchInfo.endTime = new Date(sunday).getTime()
+        this.getList(1)
       }
     }
   };
