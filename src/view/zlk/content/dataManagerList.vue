@@ -90,7 +90,7 @@
               <Button ghost type="primary">上传文件</Button>
             </Upload>
 
-            <div class="-c-tips">文件大小且不超过200M</div>
+            <div class="-c-tips">只能上传一个文件，且文件大小不超过200M，如资料包含多个文件，请打包压缩后再上传</div>
 
             <div class="-c-course-wrap-file" v-if="addInfo.fileDownUrl">
               <Icon size="30" type="ios-folder-outline"/>
