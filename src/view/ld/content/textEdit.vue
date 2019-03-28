@@ -187,60 +187,18 @@
         this.$emit('closeEditModal')
       },
       submitPwd(name) {
-        switch (+this.addInfo.contentType) {
-          case 1:
-            if(!this.addInfo.introduction) {
-              return this.$Message.error('请输入课程内容')
-            }
-            break
-          case 2:
-            if(!this.addInfo.vrAudio) {
-              return this.$Message.error('请上传音频')
-            }
-            break
-          case 3:
-            if(!this.addInfo.impAchievement && !this.addInfo.comAchievement ) {
-              return this.$Message.error('请上传图片')
-            }
-            break
-        }
-
-        if (this.addInfo.introduction) {
-          this.$api.course.ldUpdateContentCourse({
-            id: this.addInfo.id,
-            introduction: this.addInfo.introduction
-          }).then(res=>{
-            if(res.data.code == '200') {
-              this.$Message.success('课程内容更新成功')
-              this.$emit('closeEditModal')
-            }
-          })
-        }
-
-        if (this.addInfo.vrAudio) {
-          this.$api.course.ldUpdateAudioCourse({
-            id: this.addInfo.id,
-            vrAudio: this.addInfo.vrAudio
-          }).then(res => {
-            if (res.data.code == '200') {
-              this.$Message.success('音频更新成功')
-              this.$emit('closeEditModal')
-            }
-          })
-        }
-
-        if (this.addInfo.impAchievement || this.addInfo.comAchievement) {
-          this.$api.course.ldUpdateAchievementCourse({
-            id: this.addInfo.id,
-            comAchievement: this.addInfo.comAchievement,
-            impAchievement: this.addInfo.impAchievement
-          }).then(res=>{
-            if(res.data.code == '200') {
-              this.$Message.success('图片更新成功')
-              this.$emit('closeEditModal')
-            }
-          })
-        }
+        this.$api.course.ldUpdateContentCourse({
+          id: this.addInfo.id,
+          introduction: this.addInfo.introduction,
+          vrAudio: this.addInfo.vrAudio,
+          comAchievement: this.addInfo.comAchievement,
+          impAchievement: this.addInfo.impAchievement
+        }).then(res=>{
+          if(res.data.code == '200') {
+            this.$Message.success('课程更新成功')
+            this.$emit('closeEditModal')
+          }
+        })
       }
     }
   }
