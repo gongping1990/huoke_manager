@@ -205,7 +205,7 @@
             break
         }
 
-        if (this.addInfo.contentType == 1 && this.addInfo.introduction) {
+        if (this.addInfo.introduction) {
           this.$api.course.ldUpdateContentCourse({
             id: this.addInfo.id,
             introduction: this.addInfo.introduction
@@ -215,18 +215,21 @@
               this.$emit('closeEditModal')
             }
           })
+        }
 
-        } else if (this.addInfo.contentType == 2 && this.addInfo.vrAudio) {
+        if (this.addInfo.vrAudio) {
           this.$api.course.ldUpdateAudioCourse({
             id: this.addInfo.id,
             vrAudio: this.addInfo.vrAudio
-          }).then(res=>{
-            if(res.data.code == '200') {
+          }).then(res => {
+            if (res.data.code == '200') {
               this.$Message.success('音频更新成功')
               this.$emit('closeEditModal')
             }
           })
-        } else if (this.addInfo.contentType == 3 && this.addInfo.impAchievement && this.addInfo.comAchievement) {
+        }
+
+        if (this.addInfo.impAchievement || this.addInfo.comAchievement) {
           this.$api.course.ldUpdateAchievementCourse({
             id: this.addInfo.id,
             comAchievement: this.addInfo.comAchievement,
@@ -238,7 +241,6 @@
             }
           })
         }
-
       }
     }
   }
