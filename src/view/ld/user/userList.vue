@@ -102,6 +102,17 @@
             key: 'creatTime'
           },
           {
+            title: '启用/禁用',
+            render: (h, params) => {
+              return h('Tag', {
+                props: {
+                  color: params.row.disabled ? 'default' : 'success'
+                }
+              }, params.row.disabled ? '已禁用' : '已启用')
+            },
+            align: 'center'
+          },
+          {
             title: '操作',
             align: 'center',
             render: (h, params) => {

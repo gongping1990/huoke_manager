@@ -275,8 +275,8 @@
     },
     methods: {
       changeDate (data) {
-        this.getStartTime = data.startTime
-        this.getEndTime = data.endTime
+        this.searchInfo.fromDate = data.startTime
+        this.searchInfo.toDate = data.endTime
         this.getList(1)
       },
       delImg() {
