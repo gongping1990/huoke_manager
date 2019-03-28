@@ -348,20 +348,22 @@
           })
       },
       weekFormat (date) {
+
         var now = new Date(date);
         var nowTime = now.getTime() ;
         var day = now.getDay();
         var oneDayLong = 24*60*60*1000 ;
 
 
-        var MondayTime = nowTime - (day-1)*oneDayLong  ;
-        var SundayTime =  nowTime + (7-day)*oneDayLong ;
+        var MondayTime = nowTime - ((day == 0 ? 7 : day) -1)*oneDayLong  ;
+        var SundayTime =  nowTime + (7-(day == 0 ? 7 : day))*oneDayLong ;
 
 
         var monday = new Date(MondayTime);
         var sunday = new Date(SundayTime);
         this.searchInfo.startTime = new Date(monday).getTime()
         this.searchInfo.endTime = new Date(sunday).getTime()
+        console.log(monday,sunday)
         this.getList(1)
       }
     }
