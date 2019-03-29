@@ -15,7 +15,7 @@
       </FormItem>
       <Form-item label="课文内容" class="-c-form-item" prop="name" v-if="addInfo.contentType==1">
         <Input class="-s-width" type="textarea" :rows="6" v-model="addInfo.introduction"
-               placeholder="请输入课文内容(换行请以“/n”隔开！例如：枯藤老树昏鸦/n小桥流水人家)"/>
+               placeholder="请输入课文内容"/>
       </Form-item>
       <Form-item label="范读音频" class="-c-form-item" v-if="addInfo.contentType==2">
         <Upload
