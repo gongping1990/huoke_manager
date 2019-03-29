@@ -17,7 +17,7 @@
         <Input class="-s-width" type="textarea" :rows="6" v-model="addInfo.introduction"
                placeholder="请输入课文内容(换行请以“/n”隔开！例如：枯藤老树昏鸦/n小桥流水人家)"/>
       </Form-item>
-      <Form-item label="上传音频" class="-c-form-item" v-if="addInfo.contentType==2">
+      <Form-item label="范读音频" class="-c-form-item" v-if="addInfo.contentType==2">
         <Upload
           style="display: inline-block"
           :action="baseUrlVa"
@@ -36,6 +36,29 @@
             <audio style="margin-left: 20px;display: flex"
                    ref="media"
                    :src="playUrl"
+                   controls="controls" preload="auto"></audio>
+          </div>
+        </div>
+      </Form-item>
+      <Form-item label="背景音频" class="-c-form-item" v-if="addInfo.contentType==2">
+        <Upload
+          style="display: inline-block"
+          :action="baseUrlVa"
+          :show-upload-list="false"
+          :max-size="153600"
+          :before-upload="beforeUpload"
+          :on-success="handleSuccessAudioBg"
+          :on-exceeded-size="handleSize"
+          :on-error="handleErr">
+          <Button ghost type="primary">上传音频</Button>
+        </Upload>
+        <div class="-c-tips">音频格式：mp3、wma、arm 音频大小：150M以内</div>
+        <div class="-c-course-wrap" v-if="addInfo.bgMusic">
+          <div class="-c-course-item -item-audio">
+            <Icon class="-item-icon" type="md-volume-up" size="30"/>
+            <audio style="margin-left: 20px;display: flex"
+                   ref="media"
+                   :src="playUrlBg"
                    controls="controls" preload="auto"></audio>
           </div>
         </div>
@@ -102,6 +125,7 @@
         addInfo: {},
         coverImgUrl: '',
         playUrl: '',
+        playUrlBg: '',
         audioType: ['mp3', 'wma', 'arm'],
         baseUrl: `${getBaseUrl()}/common/uploadPublicFile`, // 公有 （图片）
         baseUrlVa: `http://hkupload.prod.k12.vip/common/uploadPrivateFile`, //私有地址 （音视频）
@@ -115,11 +139,13 @@
     mounted() {
       this.isOpenModal = this.isOpen
       this.playUrl = this.dataInfo.authorVrAudio
+      this.playUrlBg = this.dataInfo.authorBgMusic
       this.addInfo = {
         contentType: 1,
         impAchievement: this.dataInfo.impAchievement,
         comAchievement: this.dataInfo.comAchievement,
         vrAudio: this.dataInfo.vrAudio,
+        bgMusic: this.dataInfo.bgMusic,
         introduction: this.dataInfo.introduction,
         id: this.dataInfo.id
       }
@@ -166,6 +192,14 @@
           this.getAvUrl(this.addInfo.vrAudio)
         }
       },
+      handleSuccessAudioBg(res) {
+        if (res.code === 200) {
+          this.isFetching = false
+          this.addInfo.bgMusic = res.resultData.url
+          this.addInfo.duration = res.resultData.duration
+          this.getBgUrl(this.addInfo.bgMusic)
+        }
+      },
       getAvUrl(data) {
         if (this.isFetching) return
         this.isFetching = true
@@ -183,6 +217,23 @@
             this.isFetching = false
           });
       },
+      getBgUrl(data) {
+        if (this.isFetching) return
+        this.isFetching = true
+        this.$api.common.getAVUrl({
+          key: data
+        })
+          .then(
+            response => {
+              if (response.data.code == '200') {
+                this.$Message.success('上传成功')
+                this.playUrlBg = response.data.resultData
+              }
+            })
+          .finally(() => {
+            this.isFetching = false
+          });
+      },
       closeModal(name) {
         this.$emit('closeEditModal')
       },
@@ -191,6 +242,7 @@
           id: this.addInfo.id,
           introduction: this.addInfo.introduction,
           vrAudio: this.addInfo.vrAudio,
+          bgMusic: this.addInfo.bgMusic,
           comAchievement: this.addInfo.comAchievement,
           impAchievement: this.addInfo.impAchievement
         }).then(res=>{
