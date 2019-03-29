@@ -74,28 +74,35 @@
       footer-hide
       width="350"
       title="举报历史">
-      <Timeline>
-        <TimelineItem>
-          <p class="time">1976年</p>
-          <p class="content">Apple I 问世</p>
-        </TimelineItem>
-        <TimelineItem>
-          <p class="time">1984年</p>
-          <p class="content">发布 Macintosh</p>
-        </TimelineItem>
-        <TimelineItem>
-          <p class="time">2007年</p>
-          <p class="content">发布 iPhone</p>
-        </TimelineItem>
-        <TimelineItem>
-          <p class="time">2010年</p>
-          <p class="content">发布 iPad</p>
-        </TimelineItem>
-        <TimelineItem>
-          <p class="time">2011年10月5日</p>
-          <p class="content">史蒂夫·乔布斯去世</p>
-        </TimelineItem>
-      </Timeline>
+      <div class="p-contentOperation-report-wrap">
+        <!--<Timeline>-->
+          <!--<TimelineItem>-->
+            <!--<p class="time">1976年</p>-->
+            <!--<p class="content">Apple I 问世</p>-->
+          <!--</TimelineItem><TimelineItem>-->
+            <!--<p class="time">1976年</p>-->
+            <!--<p class="content">Apple I 问世</p>-->
+          <!--</TimelineItem><TimelineItem>-->
+            <!--<p class="time">1976年</p>-->
+            <!--<p class="content">Apple I 问世</p>-->
+          <!--</TimelineItem><TimelineItem>-->
+            <!--<p class="time">1976年</p>-->
+            <!--<p class="content">Apple I 问世</p>-->
+          <!--</TimelineItem><TimelineItem>-->
+            <!--<p class="time">1976年</p>-->
+            <!--<p class="content">Apple I 问世</p>-->
+          <!--</TimelineItem><TimelineItem>-->
+            <!--<p class="time">1976年</p>-->
+            <!--<p class="content">Apple I 问世</p>-->
+          <!--</TimelineItem><TimelineItem>-->
+            <!--<p class="time">1976年</p>-->
+            <!--<p class="content">Apple I 问世</p>-->
+          <!--</TimelineItem><TimelineItem>-->
+            <!--<p class="time">1976年</p>-->
+            <!--<p class="content">Apple I 问世</p>-->
+          <!--</TimelineItem>-->
+        <!--</Timeline>-->
+      </div>
     </Modal>
   </div>
 </template>
@@ -187,7 +194,19 @@
           },
           {
             title: '被举报',
-            key: 'report',
+            render: (h, params) => {
+              return h('div', {
+                style: {
+                  color: '#5444E4',
+                  cursor: 'pointer'
+                },
+                on: {
+                  click: () => {
+                    this.openModalSort(params.row)
+                  }
+                }
+              }, params.row.report)
+            },
             align: 'center'
           },
           {
@@ -291,7 +310,7 @@
         this.isOpenModalPlay = true
         console.log(data)
       },
-      changeStatus (data) {
+      changeStatus(data) {
         this.$api.work.changeWorkChange({
           id: data.id,
           disabled: data.status ? '0' : '1'
@@ -303,7 +322,7 @@
             }
           })
       },
-      toRecommend (data) {
+      toRecommend(data) {
         this.$api.work.workRecommend({
           id: data.id,
           recommend: data.recommend ? '0' : '1'
@@ -347,23 +366,23 @@
             this.isFetching = false
           })
       },
-      weekFormat (date) {
+      weekFormat(date) {
 
         var now = new Date(date);
-        var nowTime = now.getTime() ;
+        var nowTime = now.getTime();
         var day = now.getDay();
-        var oneDayLong = 24*60*60*1000 ;
+        var oneDayLong = 24 * 60 * 60 * 1000;
 
 
-        var MondayTime = nowTime - ((day == 0 ? 7 : day) -1)*oneDayLong  ;
-        var SundayTime =  nowTime + (7-(day == 0 ? 7 : day))*oneDayLong ;
+        var MondayTime = nowTime - ((day == 0 ? 7 : day) - 1) * oneDayLong;
+        var SundayTime = nowTime + (7 - (day == 0 ? 7 : day)) * oneDayLong;
 
 
         var monday = new Date(MondayTime);
         var sunday = new Date(SundayTime);
         this.searchInfo.startTime = new Date(monday).getTime()
         this.searchInfo.endTime = new Date(sunday).getTime()
-        console.log(monday,sunday)
+        console.log(monday, sunday)
         this.getList(1)
       }
     }
@@ -373,6 +392,11 @@
 
 <style lang="less" scoped>
   .p-contentOperation {
+
+    &-report-wrap {
+      overflow-y: auto;
+      max-height: 300px;
+    }
 
     .-search-select-text {
       min-width: 50px;
