@@ -1,6 +1,6 @@
 <template>
   <div class="p-content">
-    <div class="-c-wrap" v-if="!isShowEdit && type != '0' && type!= '-1'">
+    <div class="-c-wrap" v-if="!isShowEdit && type != '0' && type!= '-1'&& type!= '4'">
       <Row class="-c-wrap-row">
         <div v-for="(item,index) of itemList" :key="index" class="-c-item">
           <div class="-c-point" :class="{'g-primary-btn': item.isActive}" @click="toCheckBtn(item,index)">
@@ -53,6 +53,8 @@
 
     <course-cover v-if="type == '-1'"></course-cover>
 
+    <course-read v-if="type == '4'"></course-read>
+
     <div v-if="isOpenModal">
       <Modal
         class="p-content"
@@ -98,10 +100,12 @@
   import PreviewPictures from "@/components/previewPictures";
   import CourseCover from "./courseCover";
   import WordModal from "../../../../components/tree/wordModal";
+  import CourseRead from "./courseRead";
 
   export default {
     name: 'courseTitle',
     components: {
+      CourseRead,
       WordModal,
       CourseCover, PreviewPictures, PreviewPicturesModel, LearningGoals, CourseEdit, Loading, draggable
     },
@@ -139,7 +143,7 @@
         } else {
           this.dataItem = '';
           this.storageItem = '';
-          (this.type != '0' && this.type != '-1') && this.getList()
+          (this.type != '0' && this.type != '-1' && this.type != '4') && this.getList()
         }
       }
     },
@@ -149,7 +153,7 @@
       }
     },
     mounted() {
-      (this.type != '0' && this.type != '-1') && this.getList()
+      (this.type != '0' && this.type != '-1' && this.type != '4') && this.getList()
     },
     methods: {
       changeWordType() {
@@ -209,7 +213,7 @@
           content: '返回列表页面，当前页面编辑内容将全部丢失',
           onOk: () => {
             this.isShowEdit = false;
-            (this.type != '0' && this.type != '-1') && this.getList()
+            (this.type != '0' && this.type != '-1' && this.type != '4') && this.getList()
           },
           onCancel: () => {
             this.isShowEdit = true
@@ -278,7 +282,7 @@
             response => {
               this.dataList = response.data.resultData;
               this.dataList.forEach((item, index) => {
-                if(this.storageItem && (this.storageItem.id == item.id)) {
+                if (this.storageItem && (this.storageItem.id == item.id)) {
                   item.isActive = true
                   this.dataItem = item
                   if (this.type == '1') {

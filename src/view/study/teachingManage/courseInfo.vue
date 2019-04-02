@@ -9,6 +9,7 @@
             <Radio label="1">学习生字</Radio>
             <Radio label="2">听读语文</Radio>
             <Radio label="3">课文精讲</Radio>
+            <Radio label="4">朗读音频</Radio>
           </RadioGroup>
         </Col>
         <Col :span="14">

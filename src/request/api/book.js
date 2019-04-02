@@ -70,6 +70,10 @@ const book = {
   changeStatus(params) {
     return axios.post('/prep/book/lesson/enabled', qs.stringify(params))
   },
+  //音频
+  readaudio(params) {
+    return axios.post('/prep/book/lesson/readaudio', qs.stringify(params))
+  },
 
 }
 
