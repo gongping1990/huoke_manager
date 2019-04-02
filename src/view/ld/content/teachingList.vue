@@ -281,7 +281,7 @@
       //分页查询
       getGradeList() {
         this.isFetching = true
-        this.$api.materia.gradeList()
+        this.$api.config.gradeList()
           .then(
             response => {
               this.gradeList = response.data.resultData;

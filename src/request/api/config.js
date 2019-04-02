@@ -19,6 +19,10 @@ const config = {
   // 删除
   delHomeRecommend(params) {
     return axios.post('/config/homepage/remove', qs.stringify(params))
+  },
+  // 年级
+  gradeList(params) {
+    return axios.get('/declaim/config/grade/list', params)
   }
 }
 
