@@ -11,6 +11,10 @@ const order = {
   //订单详情
   orderDetail(params) {
     return axios.get(`/order/getOrderById/${params}`)
+  },
+  //订单 huokeyuwen
+  hkywOrderList(params) {
+    return axios.get(`/prep/order/adminOrderList`, {params})
   }
 }
 

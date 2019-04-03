@@ -427,6 +427,19 @@ export const appRouter = [
           }
         ],
         component: () => import('@/view/orderManagement/orderList')
+      },
+      {
+        path: '/hkyw_orderList',
+        name: 'hkyw_orderList',
+        meta: [
+          {
+            name: '订单管理'
+          },
+          {
+            name: '订单列表'
+          }
+        ],
+        component: () => import('@/view/hkyw/orderManagement/orderList')
       }
     ]
   },
