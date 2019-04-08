@@ -204,6 +204,11 @@
         },
         columns: [
           {
+            title: 'id',
+            width: 200,
+            key: 'id'
+          },
+          {
             title: '标题',
             width: 200,
             key: 'name'
