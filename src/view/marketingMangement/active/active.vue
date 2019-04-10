@@ -37,6 +37,26 @@
           </div>
 
         </FormItem>
+        <Form-item label="封面图" class="-c-form-item ivu-form-item-required">
+          <Upload
+            v-if="isShowEdit"
+            style="display: inline-block"
+            :action="baseUrl"
+            :show-upload-list="false"
+            :max-size="500"
+            :on-success="handleSuccess"
+            :on-exceeded-size="handleSize"
+            :on-error="handleErr">
+            <Button ghost type="primary">上传图片</Button>
+          </Upload>
+          <div v-if="isShowEdit" class="-c-tips">图片尺寸不低于960px*360px 图片大小：500K以内</div>
+          <div class="-c-course-wrap" v-if="addInfo.coverphoto">
+            <div class="-c-course-item">
+              <img :src="addInfo.coverphoto">
+              <div v-if="isShowEdit" class="-i-del" @click="addInfo.coverphoto= ''">删除</div>
+            </div>
+          </div>
+        </Form-item>
         <FormItem>
           <div class="-c-flex">
             <Button @click="isShowEdit = true" ghost type="primary" class="-c-btn" v-if="!isShowEdit">进入编辑</Button>
@@ -53,6 +73,7 @@
 </template>
 
 <script>
+  import {getBaseUrl} from "@/libs/index";
   import Loading from "@/components/loading";
   import CheckCourse from "../../../components/checkCourse";
   import {pattern} from '@/libs/regexp'
@@ -68,8 +89,10 @@
         isFetching: false,
         isShowCourseModal: false,
         courseList: [],
+        baseUrl: `${getBaseUrl()}/common/uploadPublicFile`, // 公有 （图片）
         addInfo: {
           courseGoodsIdList: [],
+          coverphoto: '',
           enable: 0
         },
         ruleValidate: {
@@ -139,6 +162,7 @@
           couponMoney:  this.addInfo.couponMoney,
           enable: this.addInfo.enable != '0',
           keepTime:  this.addInfo.keepTime,
+          coverphoto:  this.addInfo.coverphoto,
           courseGoodsIdList:  this.addInfo.courseGoodsIdList,
         }
 
@@ -164,6 +188,20 @@
           }
         })
       },
+      handleSuccess(res) {
+        if (res.code === 200) {
+          this.$Message.success('上传成功')
+          this.addInfo.coverphoto = res.resultData.url
+        }
+      },
+      handleSize() {
+        this.isFetching = false
+        this.$Message.info('文件超过限制')
+      },
+      handleErr() {
+        this.isFetching = false
+        this.$Message.error('上传失败，请重新上传')
+      }
     }
   };
 </script>
@@ -218,7 +256,7 @@
         .-i-del {
           position: absolute;
           top: 0;
-          left: 84px;
+          right: 0px;
           color: #ffff;
           background-color: rgba(0, 0, 0, 0.4);
           line-height: normal;
