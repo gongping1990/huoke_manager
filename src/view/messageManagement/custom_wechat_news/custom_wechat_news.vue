@@ -150,20 +150,37 @@
             title: '操作',
             render: (h, params) => {
               if (params.row.status == 1) {
-                return h('Button', {
-                  props: {
-                    type: 'text',
-                    size: 'small'
-                  },
-                  style: {
-                    color: '#5444E4'
-                  },
-                  on: {
-                    click: () => {
-                      this.openModal(params.row.id)
+                return h('div',[
+                  h('Button', {
+                    props: {
+                      type: 'text',
+                      size: 'small'
+                    },
+                    style: {
+                      color: '#5444E4'
+                    },
+                    on: {
+                      click: () => {
+                        this.openModal(params.row.id)
+                      }
                     }
-                  }
-                }, '发送记录')
+                  }, '发送记录'),
+                  h('Button', {
+                    props: {
+                      type: 'text',
+                      size: 'small'
+                    },
+                    style: {
+                      display: params.row.failNum > 0 ? 'inline' : 'none',
+                      color: '#5444E4'
+                    },
+                    on: {
+                      click: () => {
+                        this.sendAgain(params.row.id)
+                      }
+                    }
+                  }, '重新发送')
+                ])
               } else if (params.row.status == 3) {
                 return h('Button', {
                   props: {
@@ -190,6 +207,15 @@
       this.getWxAccountList()
     },
     methods: {
+      sendAgain (id) {
+        this.$api.user.reSendFailed({
+          taskId: id
+        })
+          .then(response => {
+            this.$Message.success("操作成功");
+            this.getList()
+          })
+      },
       changeWxAccount() {
         if (this.radioType == '1') {
           this.getList(1)

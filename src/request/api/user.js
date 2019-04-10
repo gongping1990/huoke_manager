@@ -54,6 +54,10 @@ const user = {
   getWxTemplateList(params) {
     return axios.get("/user/listWxTemplate",{params: params});
   },
+  // 重新发送
+  reSendFailed(params) {
+    return axios.post("/user/reSendFailed",qs.stringify(params));
+  },
   // 获取微信发送记录
   getWxMessageList(params) {
     return axios.get("/user/queryWxTemplateMessagePage",{params: params});

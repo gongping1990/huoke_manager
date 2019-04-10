@@ -27,6 +27,11 @@ const custom = {
     return axios.post("/custom/cancelWxTask", qs.stringify(params));
   },
 
+  // 重新发送
+  reCustomSendFailed(params) {
+    return axios.post("/custom/reSendFailed",qs.stringify(params));
+  },
+
   // 获取微信模板列表
   getListCustomTemplate(params) {
     return axios.get("/custom/listCustomTemplate", {params: params});
