@@ -32,7 +32,7 @@
         ruleValidate: {
           word: [
             {required: true, message: '请输入生字', trigger: 'blur'},
-            {type: 'string', max: 1, message: '生字不能超过1个', trigger: 'blur'}
+            {type: 'string', max: 3, message: '生字不能超过3个', trigger: 'blur'}
           ],
         }
       }
