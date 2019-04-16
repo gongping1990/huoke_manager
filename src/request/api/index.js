@@ -25,6 +25,7 @@ import dataCenter from "./dataCenter";
 import materia from "./materia";
 import work from "./work";
 import teacher from "./teacher";
+import poem from "./poem";
 
 
 export default {
@@ -54,5 +55,6 @@ export default {
   dataCenter,
   materia,
   work,
-  teacher
+  teacher,
+  poem
 }

@@ -195,6 +195,37 @@
           <Menu-item name="contentOperation">内容运营</Menu-item>
         </Submenu>
       </div>
+      <div v-if="roleType == '5'" >
+        <Submenu name="gsw_course" class="-left-li">
+          <template slot="title">
+            <Icon type="ios-school" class="hk-menu-icon"></Icon>
+            <span>课程管理</span>
+          </template>
+          <Menu-item name="gsw_courseInfo">课程信息</Menu-item>
+          <Menu-item name="courseContent">课程内容</Menu-item>
+        </Submenu>
+        <Submenu name="orderManager" class="-left-li">
+          <template slot="title">
+            <Icon type="ios-document" class="hk-menu-icon"/>
+            <span>订单管理</span>
+          </template>
+          <Menu-item name="gsw_orderList">订单列表</Menu-item>
+        </Submenu>
+        <Submenu name="operate" class="-left-li">
+          <template slot="title">
+            <Icon type="ios-document" class="hk-menu-icon"/>
+            <span>运营管理</span>
+          </template>
+          <Menu-item name="gsw_wheelMessage">消息列表</Menu-item>
+        </Submenu>
+        <Submenu name="user" class="-left-li">
+          <template slot="title">
+            <Icon type="ios-contacts" class="hk-menu-icon"/>
+            <span>用户管理</span>
+          </template>
+          <Menu-item name="gswUserList">用户列表</Menu-item>
+        </Submenu>
+      </div>
     </Menu>
     <div v-if="isOpenModal">
       <switching-system @closePwdModal="closeModal"></switching-system>

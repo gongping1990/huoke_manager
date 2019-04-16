@@ -105,6 +105,10 @@ const user = {
   // 获取朗读用户列表
   getLdUserList(params) {
     return axios.get("/declaim/user/listUserByPage", {params: params});
+  },
+  // 获取古诗文用户列表
+  getGswUserList(params) {
+    return axios.get("/poem/user/listUserByPage", {params: params});
   }
 };
 
