@@ -15,6 +15,10 @@ const order = {
   //订单 huokeyuwen
   hkywOrderList(params) {
     return axios.get(`/prep/order/adminOrderList`, {params})
+  },
+  //订单 huokeyuwen
+  gswOrderList(params) {
+    return axios.get(`/poem/order/newOrder`, {params})
   }
 }
 
