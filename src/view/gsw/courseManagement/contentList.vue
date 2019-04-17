@@ -104,6 +104,7 @@
         addInfo: {
           coverphoto: '',
           video: '',
+          duration: '',
           sortnum: null
         },
         columns: [
@@ -194,6 +195,7 @@
         if (res.code === 200) {
           this.isFetching = false
           this.addInfo.video = res.resultData.url
+          this.addInfo.duration = res.resultData.duration
           this.getAvUrl(this.addInfo.video)
         }
       },
@@ -231,6 +233,7 @@
           this.addInfo = {
             lessonId: this.lessonId,
             coverphoto: '',
+            duration: '',
             video: '',
             sortnum: null
           }
