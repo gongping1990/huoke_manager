@@ -47,13 +47,13 @@
           </Form-item>
         </Form>
         <Form v-if="radioType==='2'" ref="addInfo" :model="addInfo" :rules="ruleValidateTwo" :label-width="80">
-          <FormItem label="单独购买帮助信息" v-if="isEdit" prop="aloneInfo" class="ivu-form-item-required">
+          <FormItem label="单独购买帮助信息" v-if="isEdit" prop="aloneInfo">
             <Editor v-model="addInfo.aloneInfo" :uploadImgServer="baseUrl"></Editor>
           </FormItem>
-          <FormItem label="团购购买帮助信息" v-if="isEdit" prop="groupInfo" class="ivu-form-item-required">
+          <FormItem label="团购购买帮助信息" v-if="isEdit" prop="groupInfo">
             <Editor v-model="addInfo.groupInfo" :uploadImgServer="baseUrl"></Editor>
           </FormItem>
-          <FormItem label="参加团购帮助信息" v-if="isEdit" prop="launchInfo" class="ivu-form-item-required">
+          <FormItem label="参加团购帮助信息" v-if="isEdit" prop="launchInfo">
             <Editor v-model="addInfo.launchInfo" :uploadImgServer="baseUrl"></Editor>
           </FormItem>
           <div v-if="!isEdit">
@@ -188,6 +188,12 @@
           if (valid) {
             if (!this.addInfo.coverphoto && this.radioType === '1') {
               return this.$Message.error('请上传封面图片')
+            } else if (this.radioType === '2' && (!this.addInfo.aloneInfo || this.addInfo.aloneInfo == '<p><br></p>')) {
+              return this.$Message.error('请输入单独购买帮助信息')
+            } else if (this.radioType === '2' && (!this.addInfo.groupInfo || this.addInfo.groupInfo == '<p><br></p>')) {
+              return this.$Message.error('请输入团购购买帮助信息')
+            } else if (this.radioType === '2' && (!this.addInfo.launchInfo || this.addInfo.launchInfo == '<p><br></p>')) {
+              return this.$Message.error('请输入参加团购帮助信息')
             }
             let paramsUrl = this.addInfo.id ? this.$api.poem.poemCourseUpdate : this.$api.poem.poemCourseAdd
             paramsUrl(this.addInfo)

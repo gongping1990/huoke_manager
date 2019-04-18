@@ -145,7 +145,7 @@
           {
             title: '操作',
             align: 'center',
-            width: 180,
+            width: 300,
             render: (h, params) => {
               return h('div', [
                 h('Button', {
@@ -258,7 +258,7 @@
           }
         }
       },
-      closeModalContent () {
+      closeModalContent() {
         this.isOpenModalContent = !this.isOpenModalContent
       },
       openModalContent(data) {
@@ -329,7 +329,7 @@
           if (valid) {
             if (!this.addInfo.coverphoto && this.isOpenModalPoetry) {
               return this.$Message.error('请上传封面图片')
-            } else if (!this.addInfo.content && this.isOpenModalPoetry) {
+            } else if ((!this.addInfo.content || this.addInfo.content == '<p><br></p>') && this.isOpenModalPoetry) {
               return this.$Message.error('请输入诗词内容')
             }
 
