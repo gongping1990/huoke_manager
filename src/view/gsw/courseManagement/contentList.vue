@@ -4,16 +4,13 @@
       class="p-course-content-list"
       v-model="isOpenModal"
       @on-cancel="closeModal()"
+      footer-hide
       width="700"
       title="课时内容">
       <Button @click="openModal()" ghost type="primary" style="width: 100px;">新增课时</Button>
 
       <Table class="-c-tab" :loading="isFetching" :columns="columns" :data="dataList"></Table>
 
-      <div slot="footer" class="g-flex-j-sa">
-        <Button @click="closeModal()" ghost type="primary" style="width: 100px;">取消</Button>
-        <div @click="submitSort()" class="g-primary-btn "> {{isSending ? '提交中...' : '确 认'}}</div>
-      </div>
     </Modal>
 
     <Modal
