@@ -172,10 +172,10 @@
                   },
                   on: {
                     click: () => {
-                      this.openModalContent(params.row)
+                      this.openModalPoetry(params.row)
                     }
                   }
-                }, '课时内容'),
+                }, '诗词'),
                 h('Button', {
                   props: {
                     type: 'text',
@@ -186,10 +186,10 @@
                   },
                   on: {
                     click: () => {
-                      this.openModalPoetry(params.row)
+                      this.openModalContent(params.row)
                     }
                   }
-                }, '诗词'),
+                }, '课时内容'),
                 h('Button', {
                   props: {
                     type: 'text',
