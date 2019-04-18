@@ -296,7 +296,7 @@
           title: '提示',
           content: '确认要删除吗？',
           onOk: () => {
-            this.$api.course.delClassHour({
+            this.$api.poem.delPoemLesson({
               id: param.id
             }).then(
               response => {
