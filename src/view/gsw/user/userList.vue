@@ -10,18 +10,18 @@
             </Select>
           </div>
         </Col>
-        <Col :span="5" class="g-t-left">
-          <div class="g-flex-a-j-center">
-            <div class="-search-select-text-two">是否付费：</div>
-            <Select v-model="searchInfo.hasPhone" @on-change="getList(1)" class="-search-selectOne">
-              <Option v-for="item of phoneList" :label=item.name :value=item.id :key="item.id" ></Option>
-            </Select>
-          </div>
-        </Col>
+        <!--<Col :span="5" class="g-t-left">-->
+          <!--<div class="g-flex-a-j-center">-->
+            <!--<div class="-search-select-text-two">是否付费：</div>-->
+            <!--<Select v-model="searchInfo.hasPhone" @on-change="getList(1)" class="-search-selectOne">-->
+              <!--<Option v-for="item of phoneList" :label=item.name :value=item.id :key="item.id" ></Option>-->
+            <!--</Select>-->
+          <!--</div>-->
+        <!--</Col>-->
         <Col :span="5" class="g-t-left">
           <div class="g-flex-a-j-center">
             <div class="-search-select-text-two">公众号：</div>
-            <Select v-model="searchInfo.hasPhone" @on-change="getList(1)" class="-search-selectOne">
+            <Select v-model="searchInfo.subscripbe" @on-change="getList(1)" class="-search-selectOne">
               <Option v-for="item of phoneList" :label=item.name :value=item.id :key="item.id" ></Option>
             </Select>
           </div>
@@ -64,7 +64,8 @@
           currentPage: 1
         },
         searchInfo: {
-          hasPhone: '-1'
+          hasPhone: '-1',
+          subscripbe: '-1'
         },
         phoneList: [
           {
@@ -114,6 +115,18 @@
             key: 'phone'
           },
           {
+            title: '关注公众号',
+            render: (h,params)=>{
+              return h('div',params.row.subscripbe ? '是' : '否')
+            }
+          },
+          {
+            title: '是否付费',
+            render: (h,params)=>{
+              return h('div',params.row.subscripbe ? '是' : '否')
+            }
+          },
+          {
             title: '创建时间',
             key: 'creatTime'
           },
@@ -160,7 +173,7 @@
     methods: {
       toChangeStatus(params) {
 
-        this.$api.user.ldChangeUserStatus({
+        this.$api.user.gswChangeStatus({
           userId: params.userId,
           disabled: !params.disabled
         }).then(
@@ -183,7 +196,8 @@
         let params = {
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
-          hasPhone: this.searchInfo.hasPhone != '-1' ? (this.searchInfo.hasPhone == '1') : ''
+          hasPhone: this.searchInfo.hasPhone != '-1' ? (this.searchInfo.hasPhone == '1') : '',
+          subscripbe: this.searchInfo.subscripbe != '-1' ? (this.searchInfo.subscripbe == '1') : ''
         }
 
         if (this.selectInfo == '1' && this.searchInfo) {

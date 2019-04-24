@@ -47,11 +47,11 @@
           <FormItem label="订单金额" class="-p-o-width">{{orderInfo.amount | moneyFormatter}} 元</FormItem>
         </div>
         <div class="-p-o-flex">
-          <FormItem label="教材名称" class="-p-o-width">{{orderInfo.bookName}}</FormItem>
+          <FormItem label="教材名称" class="-p-o-width">{{orderInfo.courseName}}</FormItem>
           <FormItem label="用户昵称" class="-p-o-width -c-tips g-cursor"><span>{{orderInfo.nickName}}</span></FormItem>
         </div>
         <div class="-p-o-flex">
-          <FormItem label="订单状态" class="-p-o-width">{{orderStatus[orderInfo.orderStatus]}}</FormItem>
+          <FormItem label="订单状态" class="-p-o-width">{{orderType[orderInfo.orderMode-1]}}</FormItem>
           <FormItem label="三方交易号" class="-p-o-width">{{orderInfo.transactionNo}}</FormItem>
         </div>
         <div class="-p-o-flex">
@@ -88,8 +88,7 @@
         selectInfo: '0',
         orderStatus: {
           '0': '未支付',
-          '10': '已支付',
-          '20': '已取消'
+          '10': '已支付'
         },
         orderStatusList: [
           {
@@ -109,7 +108,7 @@
             id: '20'
           }
         ],
-        orderType: ['单独购买', '团体拼课', '好友助力','秒杀订单'],
+        orderType: ['单独购买', '开团购买', '跟团购买'],
         dataList: [],
         dateOption: {
           name: '创建时间',
@@ -131,7 +130,7 @@
           },
           {
             title: '教材名称',
-            key: 'bookName',
+            key: 'courseName',
             align: 'center'
           },
           {
@@ -146,11 +145,17 @@
             key: 'nickName',
             align: 'center'
           },
-
           {
             title: '订单状态',
             render: (h, params) => {
-              return h('div', this.orderStatus[params.row.orderStatus])
+              return h('div', this.orderType[params.row.orderMode-1])
+            },
+            align: 'center'
+          },
+          {
+            title: '支付状态',
+            render: (h, params) => {
+              return h('div', this.orderStatus[params.row.payStatus])
             },
             align: 'center'
           },
@@ -232,13 +237,13 @@
         let params = {
           current: this.tab.page,
           size: this.tab.pageSize,
-          orderStatus: this.searchInfo.status,
-          createStart: this.getStartTime ? new Date(this.getStartTime).getTime() : "",
-          createEnd: this.getEndTime ? new Date(this.getEndTime).getTime() : ""
+          payStatus: this.searchInfo.status,
+          startTime: this.getStartTime ? new Date(this.getStartTime).getTime() : "",
+          endTime: this.getEndTime ? new Date(this.getEndTime).getTime() : ""
         }
 
         if (this.selectInfo == '0' && this.searchInfo.antistop) {
-          params.orderId = this.searchInfo.antistop
+          params.id = this.searchInfo.antistop
         } else if (this.selectInfo == '1' && this.searchInfo.antistop) {
           params.nickName = this.searchInfo.antistop
         }
