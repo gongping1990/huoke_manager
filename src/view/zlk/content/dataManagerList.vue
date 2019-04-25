@@ -54,7 +54,7 @@
             <Input type="text" v-model="addInfo.name" placeholder="请输入标题"></Input>
           </FormItem>
           <FormItem label="排序值" prop="sortnum">
-            <InputNumber :max="999" :min="1" v-model="addInfo.sortnum" placeholder="请输入排序值"
+            <InputNumber :max="99999" :min="1" v-model="addInfo.sortnum" placeholder="请输入排序值"
                          class="-p-inputNum"></InputNumber>
           </FormItem>
           <FormItem label="下载币" prop="currency">
