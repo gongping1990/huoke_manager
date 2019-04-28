@@ -22,7 +22,7 @@
           <div class="g-flex-a-j-center">
             <div class="-search-select-text-two">公众号：</div>
             <Select v-model="searchInfo.subscripbe" @on-change="getList(1)" class="-search-selectOne">
-              <Option v-for="item of phoneList" :label=item.name :value=item.id :key="item.id" ></Option>
+              <Option v-for="item of subscripbeList" :label=item.name :value=item.id :key="item.id" ></Option>
             </Select>
           </div>
         </Col>
@@ -79,6 +79,20 @@
           {
             id: '0',
             name: '无',
+          }
+        ],
+        subscripbeList: [
+          {
+            id: '-1',
+            name: '全部'
+          },
+          {
+            id: '1',
+            name: '是',
+          },
+          {
+            id: '0',
+            name: '否',
           }
         ],
         selectInfo: '1',
@@ -197,7 +211,7 @@
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
           hasPhone: this.searchInfo.hasPhone != '-1' ? (this.searchInfo.hasPhone == '1') : '',
-          subscripbe: this.searchInfo.subscripbe != '-1' ? (this.searchInfo.subscripbe == '1') : ''
+          subscribe: this.searchInfo.subscripbe != '-1' ? (this.searchInfo.subscripbe == '1') : ''
         }
 
         if (this.selectInfo == '1' && this.searchInfo) {
