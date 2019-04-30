@@ -11,6 +11,7 @@
           <Radio :label=1>课文</Radio>
           <Radio :label=2>音频</Radio>
           <Radio :label=3>成就</Radio>
+          <Radio :label=4>课文摘要</Radio>
         </Radio-group>
       </FormItem>
       <Form-item label="课文内容" class="-c-form-item" prop="name" v-if="addInfo.contentType==1">
@@ -101,6 +102,10 @@
           </div>
         </div>
       </Form-item>
+      <Form-item label="课文摘要" class="-c-form-item" prop="remark" v-if="addInfo.contentType==4">
+        <Input class="-s-width" type="textarea" :rows="6" v-model="addInfo.remark"
+               placeholder="请输入课文摘要"/>
+      </Form-item>
     </Form>
     <div slot="footer" class="-p-s-footer">
       <Button @click="closeModal()" ghost type="primary" style="width: 100px;">取 消</Button>
@@ -147,7 +152,8 @@
         vrAudio: this.dataInfo.vrAudio,
         bgMusic: this.dataInfo.bgMusic,
         introduction: this.dataInfo.introduction,
-        id: this.dataInfo.id
+        id: this.dataInfo.id,
+        remark: this.dataInfo.remark,
       }
     },
     methods: {
@@ -244,7 +250,8 @@
           vrAudio: this.addInfo.vrAudio,
           bgMusic: this.addInfo.bgMusic,
           comAchievement: this.addInfo.comAchievement,
-          impAchievement: this.addInfo.impAchievement
+          impAchievement: this.addInfo.impAchievement,
+          remark: this.addInfo.remark
         }).then(res=>{
           if(res.data.code == '200') {
             this.$Message.success('课程更新成功')
