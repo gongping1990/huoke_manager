@@ -10,14 +10,14 @@
             </Select>
           </div>
         </Col>
-        <!--<Col :span="5" class="g-t-left">-->
-          <!--<div class="g-flex-a-j-center">-->
-            <!--<div class="-search-select-text-two">是否付费：</div>-->
-            <!--<Select v-model="searchInfo.hasPhone" @on-change="getList(1)" class="-search-selectOne">-->
-              <!--<Option v-for="item of phoneList" :label=item.name :value=item.id :key="item.id" ></Option>-->
-            <!--</Select>-->
-          <!--</div>-->
-        <!--</Col>-->
+        <Col :span="5" class="g-t-left">
+          <div class="g-flex-a-j-center">
+            <div class="-search-select-text-two">是否付费：</div>
+            <Select v-model="searchInfo.payed" @on-change="getList(1)" class="-search-selectOne">
+              <Option v-for="item of payedList" :label=item.name :value=item.id :key="item.id" ></Option>
+            </Select>
+          </div>
+        </Col>
         <Col :span="5" class="g-t-left">
           <div class="g-flex-a-j-center">
             <div class="-search-select-text-two">公众号：</div>
@@ -65,7 +65,8 @@
         },
         searchInfo: {
           hasPhone: '-1',
-          subscripbe: '-1'
+          subscripbe: '-1',
+          payed: '-1',
         },
         phoneList: [
           {
@@ -93,6 +94,16 @@
           {
             id: '0',
             name: '否',
+          }
+        ],
+        payedList: [
+          {
+            id: '-1',
+            name: '全部'
+          },
+          {
+            id: '1',
+            name: '是',
           }
         ],
         selectInfo: '1',
@@ -134,12 +145,12 @@
               return h('div',params.row.subscripbe ? '是' : '否')
             }
           },
-          {
-            title: '是否付费',
-            render: (h,params)=>{
-              return h('div',params.row.subscripbe ? '是' : '否')
-            }
-          },
+          // {
+          //   title: '是否付费',
+          //   render: (h,params)=>{
+          //     return h('div',params.row.payed ? '是' : '否')
+          //   }
+          // },
           {
             title: '创建时间',
             key: 'creatTime'
@@ -211,7 +222,8 @@
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
           hasPhone: this.searchInfo.hasPhone != '-1' ? (this.searchInfo.hasPhone == '1') : '',
-          subscribe: this.searchInfo.subscripbe != '-1' ? (this.searchInfo.subscripbe == '1') : ''
+          subscribe: this.searchInfo.subscripbe != '-1' ? (this.searchInfo.subscripbe == '1') : '',
+          payed: this.searchInfo.payed != '-1' ? (this.searchInfo.payed == '1') : ''
         }
 
         if (this.selectInfo == '1' && this.searchInfo) {
