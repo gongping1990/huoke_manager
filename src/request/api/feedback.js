@@ -28,8 +28,8 @@ const feedback = {
   },
 
   // 置顶
-  updateTop(params) {
-    return axios.post('/feedback/course/updateTop',  qs.stringify(params))
+  changeLevel(params) {
+    return axios.get('/feedback/course/changeLevel',  {params: params})
   }
 }
 

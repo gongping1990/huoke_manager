@@ -33,10 +33,11 @@
         </FormItem>
         <FormItem label="展示模板">
           <Radio-group v-model="addInfo.mode">
-            <Radio :label=1>1行一个</Radio>
+            <Radio :label=1>1行一个（竖排）</Radio>
+            <Radio :label=3>1行一个（横排）</Radio>
             <Radio :label=2>1行两个</Radio>
           </Radio-group>
-          <div class="-p-h-img"><img :src="imgUrl"/></div>
+          <div class="-p-h-img"><img :src="imgList[addInfo.mode-1]"/></div>
         </FormItem>
         <FormItem label="首页展示数量" prop="showNum">
           <Select v-model="addInfo.showNum">
@@ -99,6 +100,7 @@
         isSending: false,
         isEdit: false,
         isShowCourseModal: false,
+        imgList: [require('../../../assets/images/1.png'),require('../../../assets/images/2.png'),require('../../../assets/images/3.png')],
         numList: [
           {
             id: '2',
@@ -203,11 +205,6 @@
           ]
         }
       };
-    },
-    computed: {
-      imgUrl() {
-        return this.addInfo.mode == '2' ? require('../../../assets/images/home-r-two.png') : require('../../../assets/images/home-r-one.png')
-      }
     },
     mounted() {
       this.getList()

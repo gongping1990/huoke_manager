@@ -356,6 +356,19 @@ export const appRouter = [
         component: () => import('@/view/operate/pushWindow/pushWindowList')
       },
       {
+        path: '/capsule',
+        name: 'capsule',
+        meta: [
+          {
+            name: '运营管理'
+          },
+          {
+            name: '胶囊位管理'
+          }
+        ],
+        component: () => import('@/view/operate/capsule/capsule')
+      },
+      {
         path: '/operationalLocation',
         name: 'operationalLocation',
         meta: [
@@ -596,7 +609,7 @@ export const appRouter = [
             name: '反馈管理'
           },
           {
-            name: '留言审核'
+            name: '评价管理'
           }
         ],
         component: () => import('@/view/feedback/messageManagement/messageManagementList')

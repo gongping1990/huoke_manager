@@ -3,9 +3,8 @@
     <Card>
       <Row class="g-t-left">
         <Radio-group v-model="feedbackType" type="button" @on-change="getList(1)">
-          <Radio :label=1>待审核</Radio>
-          <Radio :label=2>未通过</Radio>
-          <Radio :label=3>已通过</Radio>
+          <Radio :label=0>非精选</Radio>
+          <Radio :label=1>精选</Radio>
         </Radio-group>
       </Row>
 
@@ -18,14 +17,7 @@
             </Select>
           </div>
         </Col>
-        <Col :span="3" class="g-t-left" v-if="feedbackType=='3'">
-          <div class="g-flex-a-j-center">
-            <div class="-search-select-text">是否回复：</div>
-            <Select v-model="searchInfo.replyed" @on-change="getList(1)" class="-search-selectOne">
-              <Option v-for="(item,index) in statusList" :label="item.name" :value="item.id" :key="index"></Option>
-            </Select>
-          </div>
-        </Col>
+
         <Col :span="5">
           <div class="-search">
             <Select v-model="selectInfo" class="-search-select">
@@ -41,7 +33,7 @@
         </Col>
       </Row>
 
-      <Table class="-c-tab" :loading="isFetching" :columns="columnsType[feedbackType-1]"
+      <Table class="-c-tab" :loading="isFetching" :columns="!feedbackType ? columnsUnanswered : columnsPass"
              :data="dataList"></Table>
 
       <Page class="g-text-right" :total="total" size="small" show-elevator :page-size="tab.pageSize"
@@ -85,7 +77,6 @@
         searchInfo: {
           keyword: '',
           goodsId: '-1',
-          replyed: '-1',
           startTime: '',
           endTime: ''
         },
@@ -112,7 +103,7 @@
         dataList: [],
         courseList: [],
         total: 0,
-        feedbackType: 1,
+        feedbackType: 0,
         isPass: 0,
         isFetching: false,
         isOpenModal: false,
@@ -125,15 +116,20 @@
             {required: true, message: '请输入回复内容', trigger: 'blur'},
           ]
         },
-        columns: [
+        columnsUnanswered: [
           {
             title: '课程名称',
             key: 'courseName',
             align: 'center'
           },
           {
-            title: '留言内容',
+            title: '评价内容',
             key: 'content',
+            align: 'center'
+          },
+          {
+            title: '回复内容',
+            key: 'replyContent',
             align: 'center'
           },
           {
@@ -149,29 +145,46 @@
             align: 'center'
           },
           {
+            title: '回复时间',
+            render: (h, params) => {
+              return h('div', dayjs(params.row.replyTime).format("YYYY-MM-DD HH:mm:ss"))
+            },
+            align: 'center'
+          },
+          {
             title: '操作',
+            width: 150,
             render: (h, params) => {
               return h('div', [
-                h('Poptip', {
+                h('Button', {
                   props: {
-                    confirm: true,
-                    title: '是否通过审核？',
-                    'ok-text': '通过',
-                    'cancel-text': '不通过'
+                    type: 'text',
+                    size: 'small'
                   },
                   style: {
-                    cursor: 'pointer',
-                    color: '#5444E4'
+                    color: '#5444E4',
                   },
                   on: {
-                    'on-ok': () => {
-                      this.changeExamine(params.row, 1)
-                    },
-                    'on-cancel': () => {
-                      this.changeExamine(params.row, 0)
+                    click: () => {
+                      this.changeExamine(params.row,1)
                     }
                   }
-                }, '审核')
+                }, '设为精选'),
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: '#5444E4',
+                    display: params.row.replyed ? 'none' : 'inline-block'
+                  },
+                  on: {
+                    click: () => {
+                      this.openModal(params.row)
+                    }
+                  }
+                }, '回复'),
               ])
             }
           }
@@ -230,6 +243,34 @@
                   },
                   style: {
                     color: '#5444E4',
+                  },
+                  on: {
+                    click: () => {
+                      this.changeExamine(params.row,0)
+                    }
+                  }
+                }, '取消精选'),
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: '#5444E4'
+                  },
+                  on: {
+                    click: () => {
+                      this.changeExamine(params.row, params.row.topone ? 1 : 2)
+                    }
+                  }
+                }, params.row.topone ? '取消置顶' : '置顶'),
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: '#5444E4',
                     display: params.row.replyed ? 'none' : 'inline-block'
                   },
                   on: {
@@ -237,115 +278,12 @@
                       this.openModal(params.row)
                     }
                   }
-                }, '回复'),
-                h('Button', {
-                  props: {
-                    type: 'text',
-                    size: 'small'
-                  },
-                  style: {
-                    color: '#5444E4'
-                  },
-                  on: {
-                    click: () => {
-                      this.changeTop(params.row)
-                    }
-                  }
-                }, params.row.topone ? '取消置顶' : '置顶'),
-                h('Poptip', {
-                  props: {
-                    confirm: true,
-                    title: '确认该条留言不通过？',
-                    'ok-text': '确认',
-                    'cancel-text': '取消'
-                  },
-                  style: {
-                    color: '#5444E4',
-                    cursor: 'pointer'
-                  },
-                  on: {
-                    'on-ok': () => {
-                      this.changeExamine(params.row, 0)
-                    }
-                  }
-                }, '不通过')
-              ])
-            }
-          }
-        ],
-        columnsUnanswered: [
-          {
-            title: '课程名称',
-            key: 'courseName',
-            align: 'center'
-          },
-          {
-            title: '留言内容',
-            key: 'content',
-            align: 'center'
-          },
-          {
-            title: '用户昵称',
-            key: 'createUserName',
-            align: 'center'
-          },
-          {
-            title: '留言时间',
-            render: (h, params) => {
-              return h('div', dayjs(params.row.createTime).format("YYYY-MM-DD HH:mm:ss"))
-            },
-            align: 'center'
-          },
-          {
-            title: '操作',
-            render: (h, params) => {
-              return h('div', [
-                h('Poptip', {
-                  props: {
-                    confirm: true,
-                    title: '确认该条留言通过？',
-                    'ok-text': '确认',
-                    'cancel-text': '取消'
-                  },
-                  style: {
-                    color: '#5444E4'
-                  },
-                  on: {
-                    'on-ok': () => {
-                      this.changeExamine(params.row, 1)
-                    }
-                  }
-                }, '通过'),
-                h('Button', {
-                  props: {
-                    type: 'text',
-                    size: 'small'
-                  },
-                  style: {
-                    color: 'rgb(218, 55, 75)',
-                    marginRight: '5px'
-                  },
-                  on: {
-                    click: () => {
-                      this.delItem(params.row)
-                    }
-                  }
-                }, '删除')
+                }, '回复')
               ])
             }
           }
         ]
       };
-    },
-    computed: {
-      columnsType() {
-        let obj = {
-          '0': this.columns,
-          '1': this.columnsUnanswered,
-          '2': this.columnsPass
-        };
-        return obj
-      },
     },
     mounted() {
       this.getList()
@@ -357,32 +295,16 @@
         this.searchInfo.endTime = data.endTime
         this.getList(1)
       },
-      changeExamine(data, bool) {
-        let param = {
-          sourceId: data.id
-        }
-        if (bool == '2') {
-          param.content = this.addInfo.content
-        } else {
-          param.approved = bool ? true : false
-        }
-        this.$api.feedback.addCourseReply(param)
+      changeExamine(data,num) {
+        this.$api.feedback.changeLevel({
+          id: data.id,
+          level: num
+        })
           .then(res => {
             if (res.data.code == '200') {
               this.$Message.success('提交成功')
               this.getList()
               this.isOpenModal = false
-            }
-          })
-      },
-      changeTop(data) {
-        this.$api.feedback.updateTop({
-          id: data.id
-        })
-          .then(res => {
-            if (res.data.code == '200') {
-              this.$Message.success('操作成功')
-              this.getList()
             }
           })
       },
@@ -445,10 +367,9 @@
         this.$api.feedback.messageManagementList({
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
-          approved: this.feedbackType,
+          recommend: this.feedbackType ? true : false,
           goodsId: this.searchInfo.goodsId == '-1' ? '' : this.searchInfo.goodsId,
           keyword: this.searchInfo.keyword,
-          replyed: this.searchInfo.replyed == '-1' ? '' : this.searchInfo.replyed,
           startDate: startTime,
           endDate: endTime
         })
@@ -465,8 +386,16 @@
       submitInfo(name) {
         this.$refs[name].validate((valid) => {
           if (valid) {
-            console.log(this.addInfo, 1)
-            this.changeExamine(this.addInfo, 2)
+            this.$api.feedback.addCourseReply({
+              sourceId: this.addInfo.id,
+              content: this.addInfo.content
+            })
+              .then(res => {
+                if (res.data.code == '200') {
+                  this.$Message.success('操作成功')
+                  this.getList()
+                }
+              })
           }
         })
       }

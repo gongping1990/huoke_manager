@@ -59,6 +59,7 @@
           <Menu-item name="trusteeship">托管管理</Menu-item>
           <Menu-item name="channelManagement">渠道管理</Menu-item>
           <Menu-item name="operationalLocation">运营位管理</Menu-item>
+          <Menu-item name="capsule">胶囊位管理</Menu-item>
           <Menu-item name="pushWindow">活动推送</Menu-item>
           <Menu-item name="homeRecommend">首页推荐</Menu-item>
         </Submenu>
@@ -87,7 +88,7 @@
             <span>用户反馈</span>
           </template>
           <Menu-item name="userFeedback">用户反馈</Menu-item>
-          <Menu-item name="messageManagement">留言审核</Menu-item>
+          <Menu-item name="messageManagement">评价管理</Menu-item>
           <Menu-item name="customerService">客服管理</Menu-item>
         </Submenu>
         <Submenu name="setting" class="-left-li">

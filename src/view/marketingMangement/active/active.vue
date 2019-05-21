@@ -9,13 +9,48 @@
             <Radio :label=1 :disabled="!isShowEdit">启用</Radio>
           </Radio-group>
         </Form-item>
-        <FormItem label="优惠金额" prop="couponMoney">
+        <FormItem label="优惠券面额" prop="couponMoney">
           <Input type="text" v-model="addInfo.couponMoney" placeholder="请输入优惠金额" :disabled="!isShowEdit"></Input>
           <span class="-c-tips">* 精确到小数点后2位，如99.99</span>
         </FormItem>
+        <Form-item label="使用条件" class="ivu-form-item-required">
+          <Radio-group v-model="addInfo.useCondition" @on-change="changeUseCondition">
+            <Radio :label=0 :disabled="!isShowEdit">无门槛使用</Radio>
+            <Radio :label=1 :disabled="!isShowEdit">输入满减金额</Radio>
+          </Radio-group>
+        </Form-item>
+        <Form-item label="满减金额" prop="minMoney" v-if="addInfo.useCondition">
+          <Input-number style="width: 100%;" :max="1000000" :min="0" :step="1" v-model="addInfo.minMoney"
+                        :disabled="!isShowEdit" placeholder="满减金额（元）"></Input-number>
+          <span class="-c-tips">* 精确到小数点后2位，如99.99</span>
+        </Form-item>
         <FormItem label="有效期" prop="keepTime">
           <Input type="text" v-model="addInfo.keepTime" placeholder="请输入有效期（小时）" :disabled="!isShowEdit"></Input>
         </FormItem>
+        <Form-item label="课程类型" prop="useScope">
+          <Radio-group v-model="addInfo.useScope" @on-change="changeUseScope">
+            <Radio :label=0 :disabled="!isShowEdit">全部课程通用</Radio>
+            <Radio :label=1 :disabled="!isShowEdit">指定课程可用</Radio>
+          </Radio-group>
+        </Form-item>
+        <Form-item label="选择课程" v-if="addInfo.useScope">
+          <div class="g-course-add-style" @click="isShowCourse=true" v-if="isShowEdit">
+            <span>+</span>
+            <span>选择课程</span>
+          </div>
+          <div v-if="isShowCourse">
+            <check-course :isShowModal="isShowCourse" :checkCourseList="courseListOne" :isUpdate='isShowEdit'
+                          :courseType="1" @cancleCourseModal="isShowCourse = false"
+                          @closeCourseModal="checkCourseOne"></check-course>
+          </div>
+          <div class="-c-course-wrap" v-if="courseListOne.length">
+            <div class="-c-course-item" v-for="(item, index) of courseListOne" :key="index">
+              <img :src="item.courseImgUrl">
+              <div class="-i-text">{{item.courseName}}</div>
+              <div class="-i-del" v-if="isShowEdit" @click="delCourse(item,index)">删除课程</div>
+            </div>
+          </div>
+        </Form-item>
         <FormItem label="体验课" prop="url">
           <div class="g-course-add-style" @click="isShowCourseModal=true" v-if="isShowEdit">
             <span>+</span>
@@ -57,6 +92,9 @@
             </div>
           </div>
         </Form-item>
+        <FormItem label="专区链接">
+          http://baidu.com
+        </FormItem>
         <FormItem>
           <div class="-c-flex">
             <Button @click="isShowEdit = true" ghost type="primary" class="-c-btn" v-if="!isShowEdit">进入编辑</Button>
@@ -88,19 +126,23 @@
         isSending: false,
         isFetching: false,
         isShowCourseModal: false,
+        isShowCourse: false,
+        courseListOne: [],
         courseList: [],
         baseUrl: `${getBaseUrl()}/common/uploadPublicFile`, // 公有 （图片）
         addInfo: {
           courseGoodsIdList: [],
           coverphoto: '',
-          enable: 0
+          useCondition: 0,
+          useScope: 0,
+          type: 0
         },
         ruleValidate: {
           couponMoney: [
             {required: true, message: '请输入优惠金额', trigger: 'blur'},
           ],
           keepTime: [
-            {required: true,  message: '请输入有效期', trigger: 'blur'},
+            {required: true, message: '请输入有效期', trigger: 'blur'},
           ]
         },
       }
@@ -109,6 +151,34 @@
       this.getList()
     },
     methods: {
+      delCourse(item, index) {
+        this.courseListOne.splice(index, 1)
+      },
+      changeUseScope() {
+        if (!this.addInfo.useScope) {
+          this.courseListOne = []
+        }
+        this.$forceUpdate()
+      },
+      changeUseCondition() {
+        if (!this.addInfo.useCondition) {
+          this.addInfo.minMoney = null
+        }
+        this.$forceUpdate()
+      },
+      checkCourseOne(params) {
+        this.isShowCourse = false
+        if (this.isEdit) {
+          for (let data of this.addInfo.couponCourseObject) {
+            for (let item of params) {
+              if (data.id == item.id) {
+                item.isOldCourse = true
+              }
+            }
+          }
+        }
+        this.courseListOne = params
+      },
       checkCourse(params) {
         if (params.length > 3) {
           return this.$Message.error('最多选择三个课程')
@@ -123,6 +193,7 @@
       getList() {
         this.isFetching = true
         this.courseList = []
+        this.courseListOne = []
         this.$api.giftpack.giftPackInfo()
           .then(
             response => {
@@ -131,6 +202,18 @@
                 this.addInfo.couponMoney = this.addInfo.couponMoney.toString()
                 this.addInfo.keepTime = this.addInfo.keepTime.toString()
                 this.addInfo.enable = this.addInfo.enable ? 1 : 0
+                this.addInfo.useCondition = this.addInfo.minMoney ? 1 : 0
+                this.addInfo.useScope = this.addInfo.couponGoodsList.length ? 1 : 0
+                this.addInfo.couponCourseObject = this.addInfo.couponGoodsList
+
+                for (let item of this.addInfo.couponCourseObject) {
+                  this.courseListOne.push({
+                    courseImgUrl: item.coverUrl,
+                    courseName: item.name,
+                    id: item.goodsId
+                  })
+                }
+
                 for (let item of this.addInfo.courseGoodsList) {
                   this.courseList.push({
                     courseImgUrl: item.coverUrl,
@@ -150,20 +233,29 @@
           return this.$Message.error('金额保留两位小数')
         } else if (!this.courseList.length) {
           return this.$Message.error('请选择体验课')
+        } else if (this.addInfo.useScope && !this.courseListOne.length) {
+          return this.$Message.error('请选择课程类型')
         }
 
         this.addInfo.courseGoodsIdList = []
+        this.addInfo.couponGoodsIds = []
 
         for (let item of this.courseList) {
           this.addInfo.courseGoodsIdList.push(item.goodsId || item.id)
         }
 
+        for (let item of this.courseListOne) {
+          this.addInfo.couponGoodsIds.push(item.goodsId || item.id)
+        }
+
         param = {
-          couponMoney:  this.addInfo.couponMoney,
+          couponMoney: this.addInfo.couponMoney,
           enable: this.addInfo.enable != '0',
-          keepTime:  this.addInfo.keepTime,
-          coverphoto:  this.addInfo.coverphoto,
-          courseGoodsIdList:  this.addInfo.courseGoodsIdList,
+          keepTime: this.addInfo.keepTime,
+          coverphoto: this.addInfo.coverphoto,
+          courseGoodsIdList: this.addInfo.courseGoodsIdList,
+          couponGoodsIds: this.addInfo.couponGoodsIds,
+          minMoney: this.addInfo.minMoney,
         }
 
         this.$refs[name].validate((valid) => {
@@ -210,7 +302,7 @@
   .p-active {
 
     .-c-form {
-      width: 50%;
+      width: 70%;
 
       .-c-form-item {
         padding: 14px 0;
