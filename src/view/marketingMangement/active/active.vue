@@ -59,7 +59,7 @@
 
           <div v-if="isShowCourseModal">
             <check-course :isShowModal="isShowCourseModal" :checkCourseList="courseList" :isUpdate='isShowEdit'
-                          :courseType='true'
+                          :courseType='1'
                           @closeCourseModal="checkCourse" @cancleCourseModal="isShowCourseModal= false"></check-course>
           </div>
 
