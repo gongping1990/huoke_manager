@@ -20,7 +20,9 @@ const capsule = {
   listByCapsuleCount(params) {
     return axios.get('/capsule/listByCapsuleCount', {params: params})
   },
-
+  listByGoods(params) {
+    return axios.get('/capsule/listByGoods', {params: params})
+  }
 }
 
 export default capsule

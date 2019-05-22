@@ -54,11 +54,11 @@
               </Col>
             </Row>
           </FormItem>
-          <Form-item label="推荐课程" prop="turn">
+          <Form-item label="推荐课程" prop="type">
             <Radio-group v-model="addInfo.type">
-              <Radio :label=1>拼课</Radio>
-              <Radio :label=2>助力</Radio>
-              <Radio :label=3>秒杀</Radio>
+              <Radio :label=1 :disabled="addInfo.id!=''">拼课</Radio>
+              <Radio :label=2 :disabled="addInfo.id!=''">助力</Radio>
+              <Radio :label=3 :disabled="addInfo.id!=''">秒杀</Radio>
             </Radio-group>
           </Form-item>
           <Form-item label="选择课程">
@@ -67,8 +67,12 @@
               <span>选择课程</span>
             </div>
             <div v-if="isShowCourse">
-              <check-course :isShowModal="isShowCourse" :checkCourseList="courseList" :isUpdate='isOpenModal'
-                            :courseType="1" @cancleCourseModal="isShowCourse = false"
+              <check-course :isShowModal="isShowCourse"
+                            :checkCourseList="courseList"
+                            :isUpdate='isOpenModal'
+                            :courseType="2"
+                            :goodsType="addInfo.type"
+                            @cancleCourseModal="isShowCourse = false"
                             @closeCourseModal="checkCourseOne"></check-course>
             </div>
             <div class="-c-course-wrap" v-if="courseList.length">
@@ -293,16 +297,8 @@
       },
       checkCourseOne(params) {
         this.isShowCourse = false
-        if (this.addInfo.id) {
-          for (let data of this.addInfo.couponCourseObject) {
-            for (let item of params) {
-              if (data.id == item.id) {
-                item.isOldCourse = true
-              }
-            }
-          }
-        }
-
+        this.courseList= []
+        console.log(params)
         params.forEach(item => {
           this.courseList.push({
             goodsId: item.goodsId,
@@ -326,7 +322,10 @@
         } else {
           this.getStartTime = ''
           this.getEndTime = ''
-          this.addInfo = {}
+          this.addInfo = {
+            type: 1,
+            id: ''
+          }
           this.courseList = []
         }
       },
@@ -360,7 +359,7 @@
         this.$api.capsule.getHCapsuleDetails({
           capsuleId: data.id
         }).then(res => {
-          this.addInfo = JSON.parse(JSON.stringify(res.data.data))
+          this.addInfo = res.data.resultData
           this.courseList = this.addInfo.goodsDetails
           this.getStartTime = new Date(this.addInfo.showTime)
           this.getEndTime = new Date(this.addInfo.hideTime)
@@ -381,8 +380,8 @@
         })
           .then(
             response => {
-              this.dataList = response.data.data.records;
-              this.total = response.data.data.total;
+              this.dataList = response.data.resultData.records;
+              this.total = response.data.resultData.total;
             })
           .finally(() => {
             this.isFetching = false
@@ -424,7 +423,7 @@
 
           for (let item of this.courseList) {
             this.addInfo.goodsDetails.push({
-              goodsId: item.id,
+              goodsId: item.id || item.goodsId,
               name: item.name,
               imgurl: item.imgurl
             })

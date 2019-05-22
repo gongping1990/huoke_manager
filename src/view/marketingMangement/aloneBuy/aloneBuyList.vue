@@ -38,7 +38,7 @@
             <span>选择课程</span>
           </div>
           <div v-if="isShowCourseModal">
-            <check-course :isShowModal="isShowCourseModal" :checkCourseList="courseList" :isUpdate='isEdit'
+            <check-course :isShowModal="isShowCourseModal" :checkCourseList="courseList" :isUpdate='isEdit' :course-type="0"
                           :isRadioModal="true"
                           @cancleCourseModal="isShowCourseModal = false"
                           @closeCourseModal="checkCourse"></check-course>

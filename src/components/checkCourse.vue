@@ -46,7 +46,7 @@
   export default {
     name: 'checkCourse',
     components: {Loading},
-    props: ['isShowModal', 'checkCourseList', 'isUpdate', 'isRadioModal', 'courseType'],// 显示，父组件带进列表，是否是编辑，单选/多选，课程类别（单独购接口/课程接口）,多选课程限制
+    props: ['isShowModal', 'checkCourseList', 'isUpdate', 'isRadioModal', 'courseType','goodsType'],// 显示，父组件带进列表，是否是编辑，单选/多选，课程类别（单独购接口/课程接口）, 订单类别
     data() {
       return {
         searchInfo: '',
@@ -60,7 +60,8 @@
         size: 10000,
         checkCourseIds: [],
         storageList: [],
-        checkCourseArray: []
+        checkCourseArray: [],
+        urlList: [ this.$api.course.courseList, this.$api.goods.aloneList, this.$api.capsule.listByGoods]
       }
     },
     mounted() {
@@ -93,11 +94,12 @@
         if (this.isFetching) return
         let routeUrl = ''
         this.isFetching = true
-        routeUrl = this.courseType ? this.$api.goods.aloneList : this.$api.course.courseList
+        routeUrl = this.urlList[this.courseType]
         routeUrl({
           current: 1,
           size: this.size,
-          name: this.searchInfo
+          name: this.searchInfo,
+          type: this.goodsType
         }).then(
           res => {
             this.courseList = res.data.resultData.records;
@@ -106,7 +108,7 @@
               data.courseImgUrl = data.url || data.coverUrl
               data.courseName = data.name
 
-              if (this.courseType == 1) {
+              if (this.courseType != 0) {
                 data.id = data.goodsId
               }
             }

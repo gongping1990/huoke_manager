@@ -227,13 +227,13 @@
           {
             title: '是否置顶',
             render: (h, params) => {
-              return h('div', params.row.topone ? '是' : '否')
+              return h('div', params.row.level ? '是' : '否')
             },
             align: 'center'
           },
           {
             title: '操作',
-            width: 200,
+            width: 220,
             render: (h, params) => {
               return h('div', [
                 h('Button', {
@@ -260,10 +260,10 @@
                   },
                   on: {
                     click: () => {
-                      this.changeExamine(params.row, params.row.topone ? 1 : 2)
+                      this.changeExamine(params.row, params.row.level === 2 ? 1 : 2)
                     }
                   }
-                }, params.row.topone ? '取消置顶' : '置顶'),
+                }, params.row.level === 2 ? '取消置顶' : '置顶'),
                 h('Button', {
                   props: {
                     type: 'text',
