@@ -431,6 +431,7 @@
             })
           }
         } else {
+          delete this.addInfo.id
           this.addInfo.goodsDetails = this.courseList
         }
 
