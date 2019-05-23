@@ -227,7 +227,7 @@
           {
             title: '是否置顶',
             render: (h, params) => {
-              return h('div', params.row.level ? '是' : '否')
+              return h('div', params.row.level===2 ? '是' : '否')
             },
             align: 'center'
           },
