@@ -351,8 +351,8 @@
           current: this.tabDetail.page,
           size: this.tabDetail.pageSize,
         }).then(response => {
-          this.detailList = response.data.data.records;
-          this.totalDetail = response.data.data.total;
+          this.detailList = response.data.resultData.records;
+          this.totalDetail = response.data.resultData.total;
         })
       },
       getInfo(data) {
@@ -448,21 +448,6 @@
               .finally(() => {
                 this.isSending = false
               })
-          }
-        })
-      },
-      submitSort() {
-        if (!this.sortNum) {
-          return this.$Message.error('请输入排序值')
-        }
-        this.$api.capsule.updateSortNum({
-          id: this.addInfo.id,
-          sortnum: this.sortNum
-        }).then(response => {
-          if (response.data.code == '200') {
-            this.$Message.success('修改成功');
-            this.getList()
-            this.isOpenModalDetail = false
           }
         })
       }
