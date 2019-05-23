@@ -147,7 +147,7 @@
           {
             title: '回复时间',
             render: (h, params) => {
-              return h('div', dayjs(+params.row.replyTime).format("YYYY-MM-DD HH:mm:ss"))
+              return h('div', params.row.replyTime ? dayjs(+params.row.replyTime).format("YYYY-MM-DD HH:mm:ss") : '')
             },
             align: 'center'
           },
@@ -220,7 +220,7 @@
           {
             title: '回复时间',
             render: (h, params) => {
-              return h('div', dayjs(+params.row.replyTime).format("YYYY-MM-DD HH:mm:ss"))
+              return h('div',params.row.replyTime ? dayjs(+params.row.replyTime).format("YYYY-MM-DD HH:mm:ss") : '')
             },
             align: 'center'
           },
