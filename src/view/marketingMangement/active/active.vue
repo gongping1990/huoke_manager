@@ -235,7 +235,7 @@
           return this.$Message.error('请选择体验课')
         } else if (this.addInfo.useScope && !this.courseListOne.length) {
           return this.$Message.error('请选择课程类型')
-        } else if (!this.addInfo.minMoney) {
+        } else if (this.addInfo.useCondition && !this.addInfo.minMoney) {
           return this.$Message.error('满减金额不能为0')
         } else if (!this.addInfo.coverphoto) {
           return this.$Message.error('请上传封面图')
