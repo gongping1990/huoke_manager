@@ -154,6 +154,7 @@
         isShowCourse: false,
         isSending: false,
         addInfo: {},
+        capsuleId: '',
         getStartTime: '',
         getEndTime: '',
         dateStartOption: {
@@ -292,7 +293,7 @@
     },
     methods: {
       toExcel() {
-        let downUrl = `${getBaseUrl()}/dataCenter/exportData`
+        let downUrl = `${getBaseUrl()}/capsule/download?capsuleId=${this.capsuleId}`
         window.open(downUrl, '_blank');
       },
       checkCourseOne(params) {
@@ -346,6 +347,7 @@
         this.getDetailList();
       },
       getDetailList(data) {
+        this.capsuleId = data.id
         this.$api.capsule.listByCapsuleCount({
           capsuleId: data.id,
           current: this.tabDetail.page,
