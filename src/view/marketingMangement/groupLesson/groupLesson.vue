@@ -67,6 +67,15 @@
         <FormItem label="拼课时限" class="ivu-form-item-required">
           <Input type="text" :disabled="isEdit" v-model="addInfo.groupWaitTime" placeholder="请输入拼课时限（小时）"></Input>
         </FormItem>
+        <FormItem label="最大限制" class="ivu-form-item-required">
+          <Radio-group v-model="maxPersonStatus" @on-change="changeMax">
+            <Radio :label=0 :disabled="isEdit">不启用</Radio>
+            <Radio :label=1 :disabled="isEdit">启用</Radio>
+          </Radio-group>
+        </FormItem>
+        <FormItem label="限制人数" class="ivu-form-item-required" v-if="maxPersonStatus">
+          <Input type="text" :disabled="isEdit" v-model="addInfo.maxPerson" placeholder="请输入拼课时限（小时）"></Input>
+        </FormItem>
         <FormItem label="拼课价格" class="ivu-form-item-required">
           <Input type="text" :disabled="isEdit" v-model="addInfo.groupPriceYuan" placeholder="请输入拼课时限（元）"></Input>
           <span class="-c-tips">* 精确到小数点后2位，如99.99</span>
@@ -156,6 +165,7 @@
         isSending: false,
         isEdit: false,
         isShowCourseModal: false,
+        maxPersonStatus: 0,
         getStartTime: '',
         getEndTime: '',
         addInfo: {
@@ -196,6 +206,13 @@
           {
             title: '拼课时限',
             key: 'groupWaitTime',
+            align: 'center'
+          },
+          {
+            title: '限制人数',
+            render: (h, params) => {
+              return h('div', params.row.maxPerson == '0' ? '无限制' : params.row.maxPerson)
+            },
             align: 'center'
           },
           {
@@ -294,6 +311,9 @@
       this.getList()
     },
     methods: {
+      changeMax () {
+        this.addInfo.maxPerson = 0
+      },
       delCourse(item, index) {
         this.courseList.splice(index, 1)
       },
@@ -318,6 +338,7 @@
           this.isEdit = true
           this.addInfo = JSON.parse(JSON.stringify(data))
           this.addInfo.limit = this.addInfo.groupFirstPriceYuan ? 1 : 0
+          this.maxPersonStatus = this.addInfo.maxPerson ? 1 : 0
           this.getStartTime = new Date(this.addInfo.showTime)
           this.getEndTime = new Date(this.addInfo.endTime)
           this.addInfo.goodsId = this.addInfo.id
@@ -335,7 +356,8 @@
           this.getEndTime = ''
           this.isEdit = false
           this.addInfo = {
-            limit: 0
+            limit: 0,
+            maxPerson: 0
           }
         }
       },
@@ -391,6 +413,8 @@
           return this.$Message.error('请输入拼课时限')
         } else if (this.addInfo.groupWaitTime > 99 || this.addInfo.groupWaitTime < 0) {
           return this.$Message.error('拼课时限范围为 1-99')
+        } else if (this.maxPersonStatus && !this.addInfo.maxPerson) {
+          return this.$Message.error('请输入限制人数')
         } else if (!this.addInfo.groupPriceYuan) {
           return this.$Message.error('请输入拼课价格')
         } else if (this.addInfo.groupPriceYuan > 99999 || this.addInfo.groupPriceYuan < 0) {
