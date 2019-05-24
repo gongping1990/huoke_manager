@@ -41,7 +41,7 @@
             <Row>
               <Col span="11">
                 <Form-item prop="getStartTime">
-                  <Date-picker style="width: 100%" type="datetime" placeholder="选择开始日期"
+                  <Date-picker style="width: 100%" type="datetime" placeholder="选择开始日期" :disabled="addInfo.id!=''"
                                v-model="getStartTime" :options="dateStartOption"></Date-picker>
                 </Form-item>
               </Col>
