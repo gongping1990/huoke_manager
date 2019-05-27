@@ -1,5 +1,27 @@
 <template>
   <div class="p-data" id="dataCenter">
+    <Row class="g-search">
+      <Col :span="3" class="g-t-left">
+        <div class="g-flex-a-j-center">
+          <div class="-search-select-text">日期查询：</div>
+          <Select v-model="selectType" class="-search-selectOne">
+            <Option label='自然天' :value="1"></Option>
+            <Option label='自定义' :value="2"></Option>
+          </Select>
+        </div>
+      </Col>
+      <Col :span="21" class="g-flex-a-j-center">
+        <Date-picker class="date-time"
+                     v-if="selectType===1"
+                     placeholder="选择开始日期"
+                     :options="dateOptionOne"
+                     @on-change="changeDateOne"
+                     v-model="selectTime"></Date-picker>
+        <date-picker-template v-if="selectType===2" :dataInfo="dateOption"
+                              @changeDate="changeDateTwo"></date-picker-template>
+      </Col>
+    </Row>
+
     <Row class="g-flex-a-j-center -c-tab" :gutter="10" style="width:80%">
       <Col v-for="(item,index) of titleListOne" :key="index" class="-p-d-col">
         <Card class="g-t-left">
@@ -28,7 +50,7 @@
     </Card>
 
     <Row class="g-flex-a-j-center -c-tab" :gutter="10" style="width:80%">
-      <Col v-for="(item,index) of titleListTwo" :key="index" class="-p-d-col">
+      <Col v-for="(item,index) of titleListTwo" :key="index" class="-p-d-col -p-d-col-two">
         <Card class="g-t-left">
           <div>{{item.name}}</div>
           <div class="-col-num">{{item.num}}</div>
@@ -69,14 +91,29 @@
   import "echarts/lib/component/markPoint";
   import "echarts/lib/component/tooltip";
   import "echarts/lib/component/dataZoom";
+  import DatePickerTemplate from "../../../components/datePickerTemplate";
 
   export default {
     name: 'transactionData',
+    components: {DatePickerTemplate},
     data() {
       return {
         radioType: '1',
+        selectType: 1,
+        dateOptionOne: {
+          disabledDate(date) {
+            return date && date.valueOf() > (new Date().getTime() - 24 * 60 * 60 * 1000);
+          }
+        },
+        dateOption: {
+          name: '',
+          type: 'datetime'
+        },
         isFetching: false,
         dataInfo: '',
+        selectTime: new Date(new Date().getTime() - 24 * 60 * 60 * 1000),
+        getStartTime: '',
+        getEndTime: '',
         titleListOne: [],
         titleListTwo: [],
       }
@@ -94,13 +131,15 @@
           systemAccessUser: [],
           goodsAccessUser: [],
           orderUser: [],
-          payUser: []
+          payUser: [],
+          payAmount: []
         }
         for (let item of this.dataInfo.data) {
           dataList.systemAccessUser.push(item.systemAccessUser)
           dataList.goodsAccessUser.push(item.goodsAccessUser)
           dataList.orderUser.push(item.orderUser)
           dataList.payUser.push(item.payUser)
+          dataList.payAmount.push(item.payAmount/100)
         }
         let optionSeriesLine = [
           {
@@ -122,6 +161,11 @@
             name: '付费用户',
             type: 'line',
             data: dataList.payUser
+          },
+          {
+            name: '付费金额',
+            type: 'line',
+            data: dataList.payAmount
           }
         ]
         return optionSeriesLine
@@ -129,12 +173,11 @@
       optionSeriesLineTwo() {
         let dataList = {
           allPayAmount: [],
-          payAmount: [],
+
           averagePayAmount: []
         }
         for (let item of this.dataInfo.data) {
           dataList.allPayAmount.push(item.allPayAmount/100)
-          dataList.payAmount.push(item.payAmount/100)
           dataList.averagePayAmount.push(item.averagePayAmount/100)
         }
         let optionSeriesLineTwo = [
@@ -142,11 +185,6 @@
             name: '累计付费金额',
             type: 'line',
             data: dataList.allPayAmount
-          },
-          {
-            name: '付费金额',
-            type: 'line',
-            data: dataList.payAmount
           },
           {
             name: '客单价',
@@ -161,6 +199,15 @@
       this.getList()
     },
     methods: {
+      changeDateOne(data) {
+        this.selectTime = data
+        this.getList()
+      },
+      changeDateTwo(data) {
+        this.getStartTime = data.startTime
+        this.getEndTime = data.endTime
+        this.getList()
+      },
       drawLine() {
         let self = this;
         let myChart = echarts.init(this.$refs.echart);
@@ -193,6 +240,10 @@
               },
               {
                 name: '付费用户',
+                icon: 'circle',
+              },
+              {
+                name: '付费金额',
                 icon: 'circle',
               }
             ],
@@ -250,10 +301,6 @@
                 icon: 'circle'
               },
               {
-                name: '付费金额',
-                icon: 'circle'
-              },
-              {
                 name: '客单价',
                 icon: 'circle'
               }
@@ -291,6 +338,7 @@
       },
       getList() {
         let myChart = echarts.init(this.$refs.echart);
+        let params = {}
         myChart.showLoading({
           text: '图表加载中...',
           color: '#20a0ff',
@@ -298,8 +346,15 @@
           zlevel: 0
         })
 
+        if (this.selectType === 2) {
+          params.startDate = new Date(this.getStartTime).getTime()
+          params.endDate = new Date(this.getEndTime).getTime()
+        } else {
+          params.date = new Date(this.selectTime).getTime()
+        }
+
         this.isFetching = true
-        this.$api.dataCenter.getData()
+        this.$api.dataCenter.getData(params)
           .then(
             response => {
               this.dataInfo = response.data.resultData;
@@ -334,6 +389,12 @@
             num: this.dataInfo.payUser,
             dayRatio: this.dataInfo.payUserChainDay,
             weekRatio: this.dataInfo.payUserBasisWeek
+          },
+          {
+            name: '付费金额',
+            num: thousandFormatter(this.dataInfo.payAmount/100),
+            dayRatio: this.dataInfo.payAmountChainDay,
+            weekRatio: this.dataInfo.payAmountBasisWeek
           }
         ]
         this.titleListTwo = [
@@ -342,12 +403,6 @@
             num: thousandFormatter(this.dataInfo.allPayAmount/100),
             dayRatio: this.dataInfo.allPayAmountChainDay,
             weekRatio: this.dataInfo.allPayAmountBasisWeek
-          },
-          {
-            name: '付费金额',
-            num: thousandFormatter(this.dataInfo.payAmount/100),
-            dayRatio: this.dataInfo.payAmountChainDay,
-            weekRatio: this.dataInfo.payAmountBasisWeek
           },
           {
             name: '客单价',
@@ -366,6 +421,21 @@
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="less">
   .p-data {
+    .-search-select-text {
+      min-width: 70px;
+    }
+    .-search-selectOne {
+      width: 100px;
+      border: 1px solid #dcdee2;
+      border-radius: 4px;
+      margin-right: 20px;
+    }
+    .date-time {
+      width: 20%;
+      border: 1px solid #dcdee2;
+      border-radius: 4px;
+      min-width: 155px;
+    }
     .-c-tab {
       margin: 20px 0;
     }
@@ -400,6 +470,11 @@
         /*overflow: hidden;*/
       }
     }
+
+    .-p-d-col-two {
+      width: 300px;
+    }
+
     .-p-d-red {
       color: #fe4758
     }
