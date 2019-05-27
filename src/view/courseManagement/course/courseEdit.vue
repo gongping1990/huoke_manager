@@ -136,6 +136,7 @@
           <div class="-c-course-wrap" v-if="addInfo.ercodeimgResUrl">
             <div class="-c-course-item -code">
               <img :src="addInfo.ercodeimgResUrl">
+              <div class="-i-del" @click="addInfo.ercodeimgResUrl= ''">删除</div>
             </div>
           </div>
         </Form-item>
@@ -170,12 +171,35 @@
                      ref="media"
                      :src="playUrl"
                      controls="controls" preload="auto"></audio>
+              <div class="-i-del" @click="addInfo.trailerResUrl= ''">删除</div>
             </div>
-            <div class="-item-video" v-else>
+            <div class="-c-course-item -item-video" v-else>
               <video style="width: 300px"
                      ref="media"
                      :src="playUrl"
                      controls="controls" preload="auto"></video>
+              <div class="-i-del" @click="addInfo.trailerResUrl= ''">删除</div>
+            </div>
+          </div>
+        </Form-item>
+
+        <Form-item label="视频预览图" prop="previewImgurl" class="-c-form-item">
+          <Upload
+            style="display: inline-block"
+            :action="baseUrl"
+            :show-upload-list="false"
+            :max-size="1024"
+            :on-success="handleSuccessPreviewImgurl"
+            :on-exceeded-size="handleSize"
+            :on-error="handleErr">
+            <Button ghost type="primary">上传图片</Button>
+          </Upload>
+
+          <span class="-c-tips">图片尺寸不低于640x1008px 图片大小：1M以内</span>
+          <div class="-c-course-wrap" v-if="addInfo.previewImgurl">
+            <div class="-c-course-item -code">
+              <img :src="addInfo.previewImgurl">
+              <div class="-i-del" @click="addInfo.previewImgurl= ''">删除</div>
             </div>
           </div>
         </Form-item>
@@ -230,6 +254,7 @@
           ercodeimgResUrl: '', //二维码·
           sharedimgUrl: '', //分享海报维码url·
           trailerResUrl: '', //课程预告·
+          previewImgurl: '', //视频预览图·
           albumList: [], //图册（包括封面图，详情图册）·
           type: 1, //1音频 2视频
         },
@@ -289,7 +314,7 @@
       submitInfo(name) {
         let paramUrl = ''
         this.addInfo.albumList = []
-
+console.log(this.addInfo,11)
         this.addInfo.firstpayTime = this.addInfo.firstpayTime ? dayjs(this.addInfo.firstpayTime).format("YYYY/MM/DD") : ''
         if (this.ageType == '1') {
           this.addInfo.ageHead = '0'
@@ -398,6 +423,12 @@
           this.isFetching = false
           this.addInfo.trailerResUrl = res.resultData.url
           this.getAvUrl(this.addInfo.trailerResUrl)
+        }
+      },
+      handleSuccessPreviewImgurl(res) {
+        if (res.code === 200) {
+          this.$Message.success('上传成功')
+          this.addInfo.previewImgurl = res.resultData.url
         }
       },
       handleSize() {
@@ -540,6 +571,8 @@
         }
 
         .-item-video {
+          width: 310px;
+          height: 180px;
           margin: 10px 0;
         }
       }
