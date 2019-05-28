@@ -165,7 +165,7 @@
         </Submenu>
         <Submenu name="operate" class="-left-li">
           <template slot="title">
-            <Icon type="ios-help-circle" class="hk-menu-icon"></Icon>
+            <Icon type="md-trophy" class="hk-menu-icon"></Icon>
             <span>运营管理</span>
           </template>
           <Menu-item name="zlkBannerList">banner管理</Menu-item>
@@ -189,7 +189,7 @@
         </Submenu>
         <Submenu name="operate" class="-left-li">
           <template slot="title">
-            <Icon type="ios-help-circle" class="hk-menu-icon"></Icon>
+            <Icon type="md-trophy" class="hk-menu-icon"></Icon>
             <span>运营管理</span>
           </template>
           <Menu-item name="ldBannerList">banner管理</Menu-item>
@@ -223,7 +223,7 @@
         </Submenu>
         <Submenu name="operate" class="-left-li">
           <template slot="title">
-            <Icon type="ios-document" class="hk-menu-icon"/>
+            <Icon type="md-trophy" class="hk-menu-icon"></Icon>
             <span>运营管理</span>
           </template>
           <Menu-item name="gsw_wheelMessage">消息列表</Menu-item>
