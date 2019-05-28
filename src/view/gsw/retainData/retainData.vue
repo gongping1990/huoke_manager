@@ -51,15 +51,13 @@
         columns: [
           {
             title: '初次上课时间',
-            render: (h,params)=>{
-              return h('div',dayjs(params.row.date).format('YYYY-MM-DD HH:mm:ss'))
-            },
-            width: 200,
+            key:'date',
+            width: 120,
             align: 'center'
           },
           {
             title: '初次上课用户',
-            key: 'newuser',
+            key: 'learnuser',
             align: 'center',
           },
           {
@@ -109,29 +107,29 @@
           },
           {
             title: '30日后访问/打卡',
-            key: 'fourteenRate',
+            key: 'thirtyRate',
             align: 'center',
           },
           {
             title: '45日后访问/打卡',
-            key: 'fourteenRate',
+            key: 'fortyfiveRate',
             align: 'center',
           },
           {
             title: '60日后访问/打卡',
-            key: 'fourteenRate',
+            key: 'sixtyRate',
             align: 'center',
           },
           {
             title: '75日后访问/打卡',
-            key: 'fourteenRate',
+            key: 'seventyfiveRate',
             align: 'center',
           }
         ],
       };
     },
     mounted() {
-      // this.getChannelList()
+      this.getChannelList()
     },
     methods: {
       changeDate(data) {
@@ -144,7 +142,7 @@
         this.getList();
       },
       getChannelList() {
-        this.$api.wzjh.listByChannel({
+        this.$api.poem.listByChannel({
           current: 1,
           size: 10000
         })
@@ -172,7 +170,7 @@
         if (num) {
           this.tab.currentPage = 1
         }
-        this.$api.wzjh.listRetentionRate({
+        this.$api.poem.listRetentionRate({
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
           begin: startTime,

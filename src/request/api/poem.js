@@ -115,6 +115,26 @@ const poem = {
   // 渠道详情
   listByChannelDetails(params) {
     return axios.get('/poem/channel/listByChannelDetails', {params: params})
+  },
+
+  // 留存数据
+  listRetentionRate(params) {
+    return axios.get('/poem/statistics/listRetentionRate', {params: params})
+  },
+
+  // 日交易数据
+  userStatisticsToday(params) {
+    return axios.get('/poem/statistics/today', {params: params})
+  },
+
+  // 总计
+  userStatisticsTotal(params) {
+    return axios.get('/poem/statistics/total', {params: params})
+  },
+
+  // 图表
+  userStatisticsLineChart(params) {
+    return axios.get('/poem/statistics/lineChart', {params: params})
   }
 }
 
