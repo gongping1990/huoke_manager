@@ -182,6 +182,33 @@ export const appRouter = [
           {name:'栏目数据'}
         ],
         component: () => import('@/view/zlk/dataStatistics/columnData/columnData')
+      },
+      {
+        path: '/gsw_channel',
+        name: 'gsw_channel',
+        meta: [
+          {name:'数据统计'},
+          {name:'渠道管理'}
+        ],
+        component: () => import('@/view/gsw/channelManagement/channelManagementList')
+      },
+      {
+        path: '/gsw_retainData',
+        name: 'gsw_retainData',
+        meta: [
+          {name:'数据统计'},
+          {name:'留存数据'}
+        ],
+        component: () => import('@/view/gsw/retainData/retainData')
+      },
+      {
+        path: '/gsw_userData',
+        name: 'gsw_userData',
+        meta: [
+          {name:'数据统计'},
+          {name:'交易数据'}
+        ],
+        component: () => import('@/view/gsw/userData/userData')
       }
     ]
   },
@@ -432,6 +459,19 @@ export const appRouter = [
           }
         ],
         component: () => import('@/view/gsw/wheelMessage/wheelMessageList')
+      },
+      {
+        path: '/gsw_patchRecord',
+        name: 'gsw_patchRecord',
+        meta: [
+          {
+            name: '运营管理'
+          },
+          {
+            name: '补卡记录'
+          }
+        ],
+        component: () => import('@/view/gsw/patchRecord/patchRecord')
       }
     ]
   },

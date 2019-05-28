@@ -197,6 +197,15 @@
         </Submenu>
       </div>
       <div v-if="roleType == '5'" >
+        <Submenu name="dataStatistics" class="-left-li">
+          <template slot="title">
+            <Icon type="ios-stats" class="hk-menu-icon"/>
+            <span>数据统计</span>
+          </template>
+          <Menu-item name="gsw_userData">交易数据</Menu-item>
+          <Menu-item name="gsw_retainData">留存数据</Menu-item>
+          <Menu-item name="gsw_channel">渠道管理</Menu-item>
+        </Submenu>
         <Submenu name="gsw_course" class="-left-li">
           <template slot="title">
             <Icon type="ios-school" class="hk-menu-icon"></Icon>
@@ -218,6 +227,7 @@
             <span>运营管理</span>
           </template>
           <Menu-item name="gsw_wheelMessage">消息列表</Menu-item>
+          <Menu-item name="gsw_patchRecord">补卡记录</Menu-item>
         </Submenu>
         <Submenu name="user" class="-left-li">
           <template slot="title">

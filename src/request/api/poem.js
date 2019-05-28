@@ -80,6 +80,21 @@ const poem = {
   // 删除
   removeBroadcast(params) {
     return axios.post('/poem/course/removeBroadcast', qs.stringify(params))
+  },
+
+  // 查询手机补卡记录
+  listRepairCard(params) {
+    return axios.post('/poem/operate/listRepairCard', qs.stringify(params))
+  },
+
+  // 查询手机补卡记录
+  getUserByPhone(params) {
+    return axios.get('/poem/user/getUserByPhone', {params: params})
+  },
+
+  // 查询手机补卡记录
+  repairCard(params) {
+    return axios.post('/poem/operate/repairCard', qs.stringify(params))
   }
 }
 
