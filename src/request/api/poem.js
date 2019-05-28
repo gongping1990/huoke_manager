@@ -95,6 +95,26 @@ const poem = {
   // 查询手机补卡记录
   repairCard(params) {
     return axios.post('/poem/operate/repairCard', qs.stringify(params))
+  },
+
+  // 渠道列表
+  listByChannel(params) {
+    return axios.get('/poem/channel/listByChannel', {params: params})
+  },
+
+  // 新增渠道
+  addChannel(params) {
+    return axios.post('/poem/channel/addChannel', qs.stringify(params))
+  },
+
+  // 修改渠道
+  updateChannel(params) {
+    return axios.post('/poem/channel/updateChannel', qs.stringify(params))
+  },
+
+  // 渠道详情
+  listByChannelDetails(params) {
+    return axios.get('/poem/channel/listByChannelDetails', {params: params})
   }
 }
 

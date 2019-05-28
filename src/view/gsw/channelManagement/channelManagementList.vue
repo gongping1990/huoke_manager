@@ -207,7 +207,7 @@
       };
     },
     mounted() {
-      // this.getList()
+      this.getList()
     },
     methods: {
       copyUrlFn(row) {
@@ -249,7 +249,7 @@
         this.getList();
       },
       getChannelDetail (data) {
-        this.$api.wzjh.listByChannelDetails({
+        this.$api.poem.listByChannelDetails({
           channelId: data.id
         }).then(
           response => {
@@ -264,12 +264,9 @@
           this.tab.currentPage = 1
         }
 
-        this.$api.wzjh.listByChannel({
+        this.$api.poem.listByChannel({
           current: num ? num : this.tab.page,
-          size: this.tab.pageSize,
-          name: this.searchInfo.nickname,
-          begin: this.searchInfo.fromDate ? dayjs(this.searchInfo.fromDate).format("YYYY/MM/DD HH:mm:ss") : '',
-          end: this.searchInfo.toDate ? dayjs(this.searchInfo.toDate).format("YYYY/MM/DD HH:mm:ss") : ''
+          size: this.tab.pageSize
         })
           .then(
             response => {
@@ -285,7 +282,7 @@
         this.$refs[name].validate((valid) => {
           if (valid) {
             this.isSending = true
-            let promiseDate = this.addInfo.id ? this.$api.wzjh.updateChannel(this.addInfo) : this.$api.wzjh.addChannel(this.addInfo)
+            let promiseDate = this.addInfo.id ? this.$api.poem.updateChannel(this.addInfo) : this.$api.poem.addChannel(this.addInfo)
             promiseDate
               .then(
                 response => {
