@@ -157,7 +157,7 @@
         })
           .then(
             response => {
-              this.dataList = response.data.resultData;
+              this.dataList = response.data.resultData || [];
             })
           .finally(() => {
             this.isFetching = false
