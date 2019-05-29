@@ -28,16 +28,18 @@
           <upload-audio @successAudioUrl="successAudioUrl" :option="uploadAudioOption"></upload-audio>
         </FormItem>
         <FormItem label="问答题目" v-if="modalType===3">
-          <choice-question :type="1" @submitChoice="submitChoice"></choice-question>
+          <choice-question ref="childOne" :type="1" @submitChoice="submitChoice"
+                           :childList="dataItem.choiceItem"></choice-question>
         </FormItem>
         <FormItem label="检测题目" v-if="modalType===4">
-          <choice-question :type="2" @submitChoice="submitChoice"></choice-question>
+          <choice-question ref="childTwo" :type="2" @submitChoice="submitChoice"
+                           :childList="dataItem.choiceList"></choice-question>
         </FormItem>
         <FormItem label="作业名称" v-if="modalType===5">
           <Input type="text" v-model="detailInfo.jobName" placeholder="请输入作业名称"></Input>
         </FormItem>
         <FormItem label="作业要求" v-if="modalType===5">
-          <Input type="textarea"  :rows="4" v-model="detailInfo.jobRequirement" placeholder="请输入作业要求"></Input>
+          <Input type="textarea" :rows="4" v-model="detailInfo.jobRequirement" placeholder="请输入作业要求"></Input>
         </FormItem>
       </Form>
 
@@ -158,6 +160,7 @@
         modalType: '',
         addInfo: {},
         detailInfo: {},
+        dataItem: '',
         sortNum: '',
         ruleValidateAdd: {
           name: [
@@ -378,11 +381,22 @@
         }
       },
       closeModalContent() {
+        console.log(121)
+        this.detailInfo = {}
+        this.dataItem = {
+          choiceItem: [],
+          choiceList: []
+        }
         this.isOpenModalContent = false
       },
       openModalContent(data, type) {
-        if (data) {
-          console.log('测试')
+        this.dataItem = data
+        setTimeout(()=>{
+          this.$refs.childOne.init()
+        },0)
+
+        {
+          this.uploadAudioOption.url = null
           this.uploadAudioOption.url = null
         }
         this.modalType = type
@@ -420,19 +434,38 @@
             response => {
               this.dataList = response.data.resultData.records;
               this.total = response.data.resultData.total;
+              this.dataList[0].choiceItem = [
+                {
+                  name: '测试111',
+                  optionList: [
+                    {
+                      value: '1',
+                      isChecked: false,
+                    },
+                    {
+                      value: '3',
+                      isChecked: false,
+                    },
+                    {
+                      value: '2',
+                      isChecked: false,
+                    }
+                  ]
+                }
+              ]
             })
           .finally(() => {
             this.isFetching = false
           })
       },
-      submitChoice (data) {
-        if(this.modalType===3) {
+      submitChoice(data) {
+        if (this.modalType === 3) {
           this.detailInfo.choiceItem = data
         } else {
           this.detailInfo.choiceList = data
         }
       },
-      submitDetail(){
+      submitDetail() {
         console.log(this.detailInfo)
       },
       submitAdd(name) {

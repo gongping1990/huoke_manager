@@ -22,7 +22,7 @@
 <script>
   export default {
     name: "choiceQuestion",
-    props: ['type'],
+    props: ['type', 'childList'],
     data() {
       return {
         choiceList: [],
@@ -30,8 +30,10 @@
         isShowAddChoice: true
       }
     },
-    watch: {},
     methods: {
+      init () {
+       this.choiceList = this.childList || []
+      },
       addChoice() {
         this.choiceList.push({
           name: '',
