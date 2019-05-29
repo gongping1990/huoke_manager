@@ -20,6 +20,9 @@
 
       <Table class="-c-tab" :loading="isFetching" :columns="columns" :data="dataList"></Table>
 
+      <Page class="-p-text-right" :total="total" size="small" show-elevator :page-size="tab.pageSize"
+            :current.sync="tab.currentPage"
+            @on-change="currentChange"></Page>
       <Modal
         class="p-patchRecord"
         v-model="isOpenModal"
@@ -57,10 +60,16 @@
     components: {DatePickerTemplate},
     data() {
       return {
+        tab: {
+          page: 1,
+          currentPage: 1,
+          pageSize: 10
+        },
         dataList: [],
         selectInfo: '1',
         searchInfo: {},
         userInfo: '',
+        total: 0,
         isFetching: false,
         isOpenModal: false,
         addInfo: {
@@ -119,6 +128,10 @@
       // this.getList()
     },
     methods: {
+      currentChange(val) {
+        this.tab.page = val;
+        this.getList();
+      },
       checkPhone() {
         if (!this.addInfo.phone) {
           return this.$Message.error('请输入手机号码')
@@ -150,14 +163,19 @@
       },
 
       //分页查询
-      getList() {
+      getList(num) {
         this.isFetching = true
+        if (num) {
+          this.tab.currentPage = 1
+        }
         this.$api.poem.listRepairCard({
+          current: num ? num : this.tab.page,
           phone: this.searchInfo.phone
         })
           .then(
             response => {
-              this.dataList = response.data.resultData || [];
+              this.dataList = response.data.resultData.records || [];
+              this.total = response.data.resultData.total;
             })
           .finally(() => {
             this.isFetching = false
