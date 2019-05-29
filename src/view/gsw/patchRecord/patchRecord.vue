@@ -119,13 +119,13 @@
           },
           {
             title: '补卡时间',
-            key: 'creatTime'
+            key: 'createTime'
           }
         ],
       };
     },
     mounted() {
-      // this.getList()
+      this.getList()
     },
     methods: {
       currentChange(val) {
