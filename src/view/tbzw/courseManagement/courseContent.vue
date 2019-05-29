@@ -14,37 +14,42 @@
 
     <Modal
       class="p-gsw-course-list"
-      v-model="isOpenModalPoetry"
-      @on-cancel="closeModal('addInfoAdd')"
-      width="700"
-      :title="addInfo.name">
-      <Form :model="addInfo" :label-width="70" class="ivu-form-item-required" v-if="isOpenModalPoetry">
-        <Form-item label="诗词封面" class="-c-form-item ivu-form-item-required">
-          <Upload
-            style="display: inline-block"
-            :action="baseUrl"
-            :show-upload-list="false"
-            :max-size="500"
-            :on-success="handleSuccessCover"
-            :on-exceeded-size="handleSize"
-            :on-error="handleErr">
-            <Button ghost type="primary">上传图片</Button>
-          </Upload>
-          <div class="-c-tips">图片尺寸不低于960px*360px 图片大小：500K以内</div>
-          <div class="-c-course-wrap" v-if="addInfo.coverphoto">
-            <div class="-c-course-item">
-              <img :src="addInfo.coverphoto">
-              <div class="-i-del" @click="addInfo.coverphoto= ''">删除</div>
-            </div>
-          </div>
-        </Form-item>
-        <FormItem label="诗词内容">
-          <Editor v-model="addInfo.content"></Editor>
+      v-model="isOpenModalContent"
+      @on-cancel="closeModalContent()"
+      width="600"
+      :title="modalTitleName[modalType]">
+      <Form :model="detailInfo" :label-width="70" class="ivu-form-item-required" v-if="modalType!=6">
+        <FormItem label="选择教师" v-if="modalType===1">
+          <Select v-model="detailInfo.teacher" class="-search-selectOne">
+            <Option v-for="(item,index) in teacherList" :label="item.name" :value="item.id" :key="index"></Option>
+          </Select>
+        </FormItem>
+        <FormItem label="引导音频" v-if="modalType===2">
+          <upload-audio @successAudioUrl="successAudioUrl" :option="uploadAudioOption"></upload-audio>
+        </FormItem>
+        <FormItem label="问答题目" v-if="modalType===3">
+          <choice-question :type="1" @submitChoice="submitChoice"></choice-question>
+        </FormItem>
+        <FormItem label="检测题目" v-if="modalType===4">
+          <choice-question :type="2" @submitChoice="submitChoice"></choice-question>
+        </FormItem>
+        <FormItem label="作业名称" v-if="modalType===5">
+          <Input type="text" v-model="detailInfo.jobName" placeholder="请输入作业名称"></Input>
+        </FormItem>
+        <FormItem label="作业要求" v-if="modalType===5">
+          <Input type="textarea"  :rows="4" v-model="detailInfo.jobRequirement" placeholder="请输入作业要求"></Input>
         </FormItem>
       </Form>
-      <div slot="footer" class="g-flex-j-sa" v-if="isOpenModalPoetry">
-        <Button @click="closeModal('addInfoAdd')" ghost type="primary" style="width: 100px;">取消</Button>
-        <div @click="submitAdd('addInfoAdd')" class="g-primary-btn "> {{isSending ? '提交中...' : '确 认'}}</div>
+
+      <div v-else>
+        <Table class="-c-tab" :columns="columnsSource" :data="sourceList"></Table>
+        <Page class="g-text-right" :total="totalSource" size="small" show-elevator :page-size="tabSource.pageSize"
+              @on-change="currentChangeSource"></Page>
+      </div>
+
+      <div slot="footer" class="g-flex-j-sa">
+        <Button @click="closeModalContent()" ghost type="primary" style="width: 100px;">取消</Button>
+        <div @click="submitDetail('detailInfo')" class="g-primary-btn ">确认</div>
       </div>
     </Modal>
 
@@ -79,14 +84,14 @@
         <Form-item label="课程封面" class="-c-form-item ivu-form-item-required">
           <upload-img @successImgUrl="successImgUrl" :option="uploadOption"></upload-img>
         </Form-item>
-        <!--<Form-item label="课程视频" class="-c-form-item ivu-form-item-required">-->
-          <!--<upload-img @successImgUrl="successImgUrl" :option="uploadOption"></upload-img>-->
-        <!--</Form-item>-->
+        <Form-item label="课程视频" class="-c-form-item ivu-form-item-required">
+          <upload-video @successVideoUrl="successVideoUrl" :option="uploadVideoOption"></upload-video>
+        </Form-item>
       </Form>
 
       <div slot="footer" class="g-flex-j-sa">
         <Button @click="closeModal('addInfoAdd')" ghost type="primary" style="width: 100px;">取消</Button>
-        <div @click="submitAdd('addInfoAdd')" class="g-primary-btn "> {{isSending ? '提交中...' : '确 认'}}</div>
+        <div @click="submitAdd('addInfoAdd')" class="g-primary-btn ">确认</div>
       </div>
     </Modal>
 
@@ -97,15 +102,23 @@
   import {getBaseUrl} from "@/libs/index";
   import Editor from "../../../components/editor";
   import UploadImg from "../../../components/uploadImg";
+  import UploadVideo from "../../../components/uploadVideo";
+  import Operation from "iview/src/components/transfer/operation";
+  import UploadAudio from "../../../components/uploadAudio";
+  import ChoiceQuestion from "./choiceQuestion";
 
 
   export default {
     name: 'courseList',
-    components: {UploadImg, Editor},
+    components: {ChoiceQuestion, UploadAudio, Operation, UploadVideo, UploadImg, Editor},
     data() {
       return {
         baseUrl: `${getBaseUrl()}/common/uploadPublicFile`, // 公有 （图片）
         tab: {
+          page: 1,
+          pageSize: 10
+        },
+        tabSource: {
           page: 1,
           pageSize: 10
         },
@@ -114,18 +127,37 @@
           url: '',
           size: 200
         },
+        uploadVideoOption: {
+          tipText: '视频格式：mp4、wmv、rmvb、avi 视频大小：150M以内',
+          url: '',
+          size: 153600,
+          format: ['mp4', 'wmv', 'rmvb', 'avi']
+        },
+        uploadAudioOption: {
+          tipText: '音频格式：mp3、wma、arm 音频大小：150M以内',
+          url: '',
+          size: 153600,
+          format: ['mp3', 'wma', 'arm']
+        },
+        modalTitleName: {
+          '1': '授课教师',
+          '2': '课前引导',
+          '3': '课中回答',
+          '4': '随堂检测',
+          '5': '作业',
+          '6': '素材评价',
+        },
         dataList: [],
+        sourceList: [],
+        teacherList: [],
         total: 0,
+        totalSource: 0,
         isFetching: false,
         isOpenModalAdd: false,
-        isOpenModalPoetry: false,
         isOpenModalContent: false,
-        isSending: false,
-        lessonId: '',
         modalType: '',
-        addInfo: {
-
-        },
+        addInfo: {},
+        detailInfo: {},
         sortNum: '',
         ruleValidateAdd: {
           name: [
@@ -170,7 +202,7 @@
                   },
                   on: {
                     click: () => {
-                      this.openModalContent(params.row,1)
+                      this.openModalContent(params.row, 1)
                     }
                   }
                 }, '授课教师'),
@@ -184,7 +216,7 @@
                   },
                   on: {
                     click: () => {
-                      this.openModalContent(params.row,2)
+                      this.openModalContent(params.row, 2)
                     }
                   }
                 }, '课前引导'),
@@ -198,7 +230,7 @@
                   },
                   on: {
                     click: () => {
-                      this.openModalContent(params.row,3)
+                      this.openModalContent(params.row, 3)
                     }
                   }
                 }, '课中问答'),
@@ -212,7 +244,7 @@
                   },
                   on: {
                     click: () => {
-                      this.openModalContent(params.row,4)
+                      this.openModalContent(params.row, 4)
                     }
                   }
                 }, '随堂检测'),
@@ -226,10 +258,24 @@
                   },
                   on: {
                     click: () => {
-                      this.openModalContent(params.row,5)
+                      this.openModalContent(params.row, 5)
                     }
                   }
-                }, '作业')
+                }, '作业'),
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: '#5444E4'
+                  },
+                  on: {
+                    click: () => {
+                      this.openModalContent(params.row, 6)
+                    }
+                  }
+                }, '素材评价')
               ])
             }
           },
@@ -270,6 +316,23 @@
               ])
             }
           }
+        ],
+        columnsSource: [
+          {
+            title: '用户昵称',
+            key: 'name',
+            align: 'center'
+          },
+          {
+            title: '评分',
+            key: 'name',
+            align: 'center'
+          },
+          {
+            title: '评分时间',
+            key: 'name',
+            align: 'center'
+          },
         ]
       };
     },
@@ -279,9 +342,22 @@
     methods: {
       successImgUrl(url) {
         this.addInfo.coverphoto = url
+        this.uploadOption.url = url
+      },
+      successVideoUrl(url) {
+        this.addInfo.videoUrl = url
+        this.uploadVideoOption.url = url
+      },
+      successAudioUrl(url) {
+        this.addInfo.audioUrl = url
+        this.uploadAudioOption.url = url
       },
       currentChange(val) {
         this.tab.page = val;
+        this.getList();
+      },
+      currentChangeSource(val) {
+        this.tabSource.page = val;
         this.getList();
       },
       openModal(data) {
@@ -293,6 +369,7 @@
           this.uploadOption.url = this.addInfo.coverphoto
         } else {
           this.uploadOption.url = null
+          this.uploadVideoOption.url = null
           this.addInfo = {
             sortnum: null,
             contentType: 1,
@@ -301,38 +378,19 @@
         }
       },
       closeModalContent() {
-        this.isOpenModalContent = !this.isOpenModalContent
+        this.isOpenModalContent = false
       },
-      openModalContent(data,type) {
+      openModalContent(data, type) {
+        if (data) {
+          console.log('测试')
+          this.uploadAudioOption.url = null
+        }
         this.modalType = type
-        this.lessonId = data.id
-        this.closeModalContent()
-      },
-      openModalPoetry(data) {
-        this.addInfo.content = ''
-        this.isOpenModalPoetry = true
-        this.addInfo = JSON.parse(JSON.stringify(data))
-        this.addInfo.sortnum = +this.addInfo.sortnum
-        console.log(this.addInfo, 11)
+        this.isOpenModalContent = true
       },
       closeModal(name) {
         this.$refs[name].resetFields();
-        this.isOpenModalAdd = false
-        this.isOpenModalPoetry = false
-      },
-      handleSize() {
-        this.isFetching = false
-        this.$Message.info('文件超过限制')
-      },
-      handleErr() {
-        this.isFetching = false
-        this.$Message.error('上传失败，请重新上传')
-      },
-      handleSuccessCover(res) {
-        if (res.code === 200) {
-          this.$Message.success('上传成功')
-          this.addInfo.coverphoto = res.resultData.url
-        }
+        this.isOpenModalContent = false
       },
       delItem(param) {
         this.$Modal.confirm({
@@ -367,13 +425,23 @@
             this.isFetching = false
           })
       },
+      submitChoice (data) {
+        if(this.modalType===3) {
+          this.detailInfo.choiceItem = data
+        } else {
+          this.detailInfo.choiceList = data
+        }
+      },
+      submitDetail(){
+        console.log(this.detailInfo)
+      },
       submitAdd(name) {
         this.$refs[name].validate((valid) => {
           if (valid) {
-            if (!this.addInfo.coverphoto && this.isOpenModalPoetry) {
-              return this.$Message.error('请上传封面图片')
-            } else if ((!this.addInfo.content || this.addInfo.content == '<p><br></p>') && this.isOpenModalPoetry) {
-              return this.$Message.error('请输入诗词内容')
+            if (!this.addInfo.coverphoto) {
+              return this.$Message.error('请上传课程封面')
+            } else if (!this.addInfo.videoUrl) {
+              return this.$Message.error('请上传课程视频')
             }
 
             let paramUrl = this.addInfo.id ? this.$api.poem.updatePoemLesson : this.$api.poem.addPoemLesson
