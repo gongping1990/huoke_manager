@@ -194,6 +194,7 @@
                   if (response.data.code == '200') {
                     this.$Message.success('提交成功');
                     this.closeModal(name)
+                    this.getList()
                   }
                 })
           }
