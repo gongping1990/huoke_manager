@@ -206,7 +206,7 @@
           <Menu-item name="gsw_retainData">留存数据</Menu-item>
           <Menu-item name="gsw_channel">渠道管理</Menu-item>
         </Submenu>
-        <Submenu name="gsw_course" class="-left-li">
+        <Submenu name="course" class="-left-li">
           <template slot="title">
             <Icon type="ios-school" class="hk-menu-icon"></Icon>
             <span>课程管理</span>
@@ -228,6 +228,63 @@
           </template>
           <Menu-item name="gsw_wheelMessage">消息列表</Menu-item>
           <Menu-item name="gsw_patchRecord">补卡记录</Menu-item>
+        </Submenu>
+        <Submenu name="user" class="-left-li">
+          <template slot="title">
+            <Icon type="ios-contacts" class="hk-menu-icon"/>
+            <span>用户管理</span>
+          </template>
+          <Menu-item name="gswUserList">用户列表</Menu-item>
+        </Submenu>
+      </div>
+      <div v-if="roleType == '6'" >
+        <Submenu name="dataStatistics" class="-left-li">
+          <template slot="title">
+            <Icon type="ios-stats" class="hk-menu-icon"/>
+            <span>数据统计</span>
+          </template>
+          <Menu-item name="gsw_userData">交易数据</Menu-item>
+          <Menu-item name="gsw_retainData">留存数据</Menu-item>
+          <Menu-item name="gsw_channel">渠道管理</Menu-item>
+        </Submenu>
+        <Submenu name="course" class="-left-li">
+          <template slot="title">
+            <Icon type="ios-school" class="hk-menu-icon"></Icon>
+            <span>课程管理</span>
+          </template>
+          <Menu-item name="tbzw_courseInfo">课程信息</Menu-item>
+          <Menu-item name="tbzw_courseContent">课程内容</Menu-item>
+          <Menu-item name="tbzw_teacher">教师信息</Menu-item>
+        </Submenu>
+        <Submenu name="orderManager" class="-left-li">
+          <template slot="title">
+            <Icon type="ios-document" class="hk-menu-icon"/>
+            <span>订单管理</span>
+          </template>
+          <Menu-item name="gsw_orderList">订单列表</Menu-item>
+          <Menu-item name="gsw_orderList">发货管理</Menu-item>
+        </Submenu>
+        <Submenu name="operate" class="-left-li">
+          <template slot="title">
+            <Icon type="md-trophy" class="hk-menu-icon"></Icon>
+            <span>运营管理</span>
+          </template>
+          <Menu-item name="gsw_wheelMessage">轮播消息</Menu-item>
+          <Menu-item name="gsw_patchRecord">群二维码</Menu-item>
+        </Submenu>
+        <Submenu name="operate" class="-left-li">
+          <template slot="title">
+            <Icon type="md-trophy" class="hk-menu-icon"></Icon>
+            <span>预约管理</span>
+          </template>
+          <Menu-item name="gsw_wheelMessage">预约列表</Menu-item>
+        </Submenu>
+        <Submenu name="operate" class="-left-li">
+          <template slot="title">
+            <Icon type="md-trophy" class="hk-menu-icon"></Icon>
+            <span>作业管理</span>
+          </template>
+          <Menu-item name="gsw_wheelMessage">作业列表</Menu-item>
         </Submenu>
         <Submenu name="user" class="-left-li">
           <template slot="title">

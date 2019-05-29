@@ -606,6 +606,51 @@ export const appRouter = [
           }
         ],
         component: () => import('@/view/courseManagement/course/courseList')
+      },
+      {
+        path: '/gsw_courseInfo',
+        name: 'gsw_courseInfo',
+        meta: [
+          {name: '课程管理'},
+          {name: '课程信息'}
+        ],
+        component: () => import('@/view/gsw/courseManagement/courseInfo')
+      },
+      {
+        path: '/courseContent',
+        name: 'courseContent',
+        meta: [
+          {name: '课程管理'},
+          {name: '课程内容'}
+        ],
+        component: () => import('@/view/gsw/courseManagement/courseContent')
+      },
+      {
+        path: '/tbzw_courseInfo',
+        name: 'tbzw_courseInfo',
+        meta: [
+          {name: '课程管理'},
+          {name: '课程信息'}
+        ],
+        component: () => import('@/view/tbzw/courseManagement/courseInfo')
+      },
+      {
+        path: '/tbzw_courseContent',
+        name: 'tbzw_courseContent',
+        meta: [
+          {name: '课程管理'},
+          {name: '课程内容'}
+        ],
+        component: () => import('@/view/tbzw/courseManagement/courseContent')
+      },
+      {
+        path: '/tbzw_teacher',
+        name: 'tbzw_teacher',
+        meta: [
+          {name: '课程管理'},
+          {name: '教师信息'}
+        ],
+        component: () => import('@/view/tbzw/courseManagement/courseContent')
       }
     ]
   },
@@ -824,32 +869,6 @@ export const appRouter = [
           {name: '教师列表'}
         ],
         component: () => import('@/view/ld/content/teacherList')
-      }
-    ]
-  },
-  {
-    path: '/gsw_course',
-    name: 'gsw_course',
-    title: '课程管理',
-    component: Main,
-    children: [
-      {
-        path: '/gsw_courseInfo',
-        name: 'gsw_courseInfo',
-        meta: [
-          {name: '课程管理'},
-          {name: '课程信息'}
-        ],
-        component: () => import('@/view/gsw/courseManagement/courseInfo')
-      },
-      {
-        path: '/courseContent',
-        name: 'courseContent',
-        meta: [
-          {name: '课程管理'},
-          {name: '课程内容'}
-        ],
-        component: () => import('@/view/gsw/courseManagement/courseContent')
       }
     ]
   }
