@@ -1,7 +1,7 @@
 <template>
   <div class="p-uploadImg">
     <Upload
-      v-if="!itemUrl"
+      v-if="!itemUrl && !isDisabled"
       :action="baseUrl"
       :show-upload-list="false"
       :max-size="option.size"
@@ -33,7 +33,8 @@
     data() {
       return {
         baseUrl: `${getBaseUrl()}/common/uploadPublicFile`,
-        itemUrl: this.option.url
+        itemUrl: this.option.url,
+        isDisabled: false
       }
     },
     mounted() {
@@ -41,11 +42,14 @@
     },
     watch: {
       'option.url'(_n,_o) {
-        console.log(_n,11111111111)
         this.itemUrl = _n
       }
     },
     methods: {
+      init() {
+        this.itemUrl = this.option.url
+        this.isDisabled = this.option.isDisabled
+      },
       delImg() {
         this.itemUrl = ''
       },

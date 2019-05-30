@@ -32,7 +32,14 @@
     },
     methods: {
       init () {
-       this.choiceList = this.childList || []
+        this.isShowAddChoice = true
+        this.choiceList = this.childList || []
+        if (this.type == 1 && this.choiceList.length) {
+          this.isShowAddChoice = false
+        } else if (this.type == 2 && this.choiceList.length > 2) {
+          console.log(2)
+          this.isShowAddChoice = false
+        }
       },
       addChoice() {
         this.choiceList.push({

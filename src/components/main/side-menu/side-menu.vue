@@ -269,22 +269,22 @@
             <Icon type="md-trophy" class="hk-menu-icon"></Icon>
             <span>运营管理</span>
           </template>
-          <Menu-item name="gsw_wheelMessage">轮播消息</Menu-item>
-          <Menu-item name="gsw_patchRecord">群二维码</Menu-item>
+          <Menu-item name="tbzw_wheelMessage">轮播消息</Menu-item>
+          <Menu-item name="tbzw_qrcode">群二维码</Menu-item>
         </Submenu>
-        <Submenu name="operate" class="-left-li">
+        <Submenu name="booking" class="-left-li">
           <template slot="title">
-            <Icon type="md-trophy" class="hk-menu-icon"></Icon>
+            <Icon type="md-cafe" class="hk-menu-icon"></Icon>
             <span>预约管理</span>
           </template>
-          <Menu-item name="gsw_wheelMessage">预约列表</Menu-item>
+          <Menu-item name="tbzw_bookingList">预约列表</Menu-item>
         </Submenu>
-        <Submenu name="operate" class="-left-li">
+        <Submenu name="task" class="-left-li">
           <template slot="title">
-            <Icon type="md-trophy" class="hk-menu-icon"></Icon>
+            <Icon type="md-bookmarks" class="hk-menu-icon"></Icon>
             <span>作业管理</span>
           </template>
-          <Menu-item name="gsw_wheelMessage">作业列表</Menu-item>
+          <Menu-item name="tbzw_job">作业列表</Menu-item>
         </Submenu>
         <Submenu name="user" class="-left-li">
           <template slot="title">

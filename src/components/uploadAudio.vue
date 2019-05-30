@@ -1,6 +1,7 @@
 <template>
   <div class="p-uploadAudio">
     <Upload
+      v-if="!itemUrl && !isDisabled"
       style="display: inline-block"
       :action="baseUrlVa"
       :show-upload-list="false"
@@ -31,25 +32,21 @@
 
   export default {
     name: 'uploadAudio',
-    props:['option'],
+    props: ['option'],
     data() {
       return {
         baseUrlVa: `http://hkupload.prod.k12.vip/common/uploadPrivateFile`, //私有地址 （音视频）
         itemUrl: this.option.url,
         audioType: this.option.format,
-        isFetching: false
-      }
-    },
-    mounted() {
-      console.log(this.option,1)
-    },
-    watch: {
-      'option.url'(_n,_o) {
-        console.log(_n,111111)
-        this.itemUrl = _n
+        isFetching: false,
+        isDisabled: false
       }
     },
     methods: {
+      init() {
+        this.itemUrl = this.option.url
+        this.isDisabled = this.option.isDisabled
+      },
       delImg() {
         this.itemUrl = ''
       },

@@ -32,7 +32,7 @@
                            :childList="dataItem.choiceItem"></choice-question>
         </FormItem>
         <FormItem label="检测题目" v-if="modalType===4">
-          <choice-question ref="childTwo" :type="2" @submitChoice="submitChoice"
+          <choice-question ref="childOne" :type="2" @submitChoice="submitChoice"
                            :childList="dataItem.choiceList"></choice-question>
         </FormItem>
         <FormItem label="作业名称" v-if="modalType===5">
@@ -177,6 +177,7 @@
           {
             title: '课时名称',
             key: 'name',
+
             align: 'center'
           },
           {
@@ -381,25 +382,17 @@
         }
       },
       closeModalContent() {
-        console.log(121)
         this.detailInfo = {}
-        this.dataItem = {
-          choiceItem: [],
-          choiceList: []
-        }
         this.isOpenModalContent = false
       },
       openModalContent(data, type) {
-        this.dataItem = data
-        setTimeout(()=>{
-          this.$refs.childOne.init()
-        },0)
-
-        {
-          this.uploadAudioOption.url = null
-          this.uploadAudioOption.url = null
-        }
         this.modalType = type
+        this.dataItem = data
+        if (this.modalType === 3 || this.modalType === 4) {
+          setTimeout(() => {
+            this.$refs.childOne.init()
+          }, 0)
+        }
         this.isOpenModalContent = true
       },
       closeModal(name) {

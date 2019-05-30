@@ -109,6 +109,10 @@
   cursor: pointer;
 }
 
+.g-tab {
+  margin: 20px 0;
+}
+
 .g-success{
   color: rgba(57, 186, 92, 1);
 }

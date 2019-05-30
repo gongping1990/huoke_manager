@@ -472,6 +472,32 @@ export const appRouter = [
           }
         ],
         component: () => import('@/view/gsw/patchRecord/patchRecord')
+      },
+      {
+        path: '/tbzw_wheelMessage',
+        name: 'tbzw_wheelMessage',
+        meta: [
+          {
+            name: '运营管理'
+          },
+          {
+            name: '轮播消息'
+          }
+        ],
+        component: () => import('@/view/tbzw/wheelMessage/wheelMessageList')
+      },
+      {
+        path: '/tbzw_qrcode',
+        name: 'tbzw_qrcode',
+        meta: [
+          {
+            name: '运营管理'
+          },
+          {
+            name: '群二维码'
+          }
+        ],
+        component: () => import('@/view/tbzw/qrcode/qrcodeList')
       }
     ]
   },
@@ -650,7 +676,7 @@ export const appRouter = [
           {name: '课程管理'},
           {name: '教师信息'}
         ],
-        component: () => import('@/view/tbzw/courseManagement/courseContent')
+        component: () => import('@/view/tbzw/teacher/teacherList')
       }
     ]
   },
@@ -869,6 +895,40 @@ export const appRouter = [
           {name: '教师列表'}
         ],
         component: () => import('@/view/ld/content/teacherList')
+      }
+    ]
+  },
+  {
+    path: 'task',
+    name: 'task',
+    title: '作业管理',
+    component: Main,
+    children: [
+      {
+        path: '/tbzw_job',
+        name: 'tbzw_job',
+        meta: [
+          {name: '作业管理'},
+          {name: '作业列表'}
+        ],
+        component: () => import('@/view/tbzw/jobManagement/jobList')
+      }
+    ]
+  },
+  {
+    path: 'booking',
+    name: 'booking',
+    title: '预约管理',
+    component: Main,
+    children: [
+      {
+        path: '/tbzw_bookingList',
+        name: 'tbzw_bookingList',
+        meta: [
+          {name: '作业管理'},
+          {name: '作业列表'}
+        ],
+        component: () => import('@/view/tbzw/bookingManagement/bookingList')
       }
     ]
   }
