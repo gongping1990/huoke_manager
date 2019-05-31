@@ -1,7 +1,7 @@
 <template>
   <div class="p-uploadAudio">
     <Upload
-      v-if="!itemUrl && !isDisabled"
+      v-if="!isDisabled"
       style="display: inline-block"
       :action="baseUrlVa"
       :show-upload-list="false"
@@ -47,8 +47,8 @@
         this.itemUrl = this.option.url
         this.isDisabled = this.option.isDisabled
       },
-      delImg() {
-        this.itemUrl = ''
+      loadAuido() {
+        this.$refs.media.load()
       },
       beforeUpload(file) {
         let fileType = file.type.split('/')

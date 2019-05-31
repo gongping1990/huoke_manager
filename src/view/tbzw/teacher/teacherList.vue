@@ -61,13 +61,11 @@
     <Modal
       class="p-teacherList"
       v-model="isOpenModalPlay"
-      @on-cancel="isOpenModalPlay = false"
+      @on-cancel="closeModalPlay"
+      footer-hide
       width="350"
       title="播放">
-      <audio ref="playAudio" :src="addInfo.resUrl" autoplay controls></audio>
-      <div slot="footer" class="g-flex-j-sa">
-        <div @click="isOpenModalPlay = false" class="g-primary-btn ">确认</div>
-      </div>
+      <audio ref="playAudio" :src="addInfo.voiceUrl"  controls></audio>
     </Modal>
   </div>
 </template>
@@ -184,15 +182,19 @@
         ],
       }
     },
+    mounted () {
+      this.getList();
+    },
     methods: {
       successAudioUrl(url) {
-        this.uploadAudioOption.url = url
+        this.addInfo.voiceUrl = url
       },
       openModal(data) {
         this.isOpenModal = true
         if (data) {
           this.textType = '1'
           this.addInfo = JSON.parse(JSON.stringify(data))
+          this.uploadAudioOption.url =  this.addInfo.voiceUrl
         } else {
           this.textType = '0'
           this.addInfo = {}
@@ -203,6 +205,11 @@
         }, 0)
       },
       closeModal() {
+        if(this.addInfo.id) {
+          setTimeout(() => {
+            this.$refs.childAudio.loadAuido()
+          }, 0)
+        }
         this.isOpenModal = false
       },
       openModalPlay(data) {
@@ -210,11 +217,27 @@
         this.isOpenModalPlay = true
       },
       closeModalPlay() {
-        this.$refs.playAudio.pause()
+        this.$refs.playAudio.load()
         this.isOpenModalPlay = false
       },
       submitInfo() {
-        //if(this.addInfo.)
+        if (!this.addInfo.headImage) {
+          return this.$Message.error('请上传头像')
+        } else if (!this.addInfo.teacherName ) {
+          return this.$Message.error('请输入教师名称')
+        } else if (!this.addInfo.voiceUrl ) {
+          return this.$Message.error('请输入随堂检测音频')
+        }
+        let paramUrl = this.addInfo.id ? this.$api.composition.updateTeacher : this.$api.composition.saveTeacher
+        paramUrl(this.addInfo)
+          .then(response => {
+            if (response.data.code == '200') {
+              this.$Message.success('操作成功');
+              this.getList()
+              this.closeModal()
+              this.isOpenModal = false
+            }
+          })
       },
       currentChange(val) {
         this.tab.page = val;
@@ -223,7 +246,7 @@
       //分页查询
       getList() {
         this.isFetching = true
-        this.$api.teacher.teacherList({
+        this.$api.composition.getTeacherList({
           current: this.tab.page,
           size: this.tab.pageSize
         })
@@ -235,6 +258,23 @@
           .finally(() => {
             this.isFetching = false
           })
+      },
+      delItem(param) {
+        this.$Modal.confirm({
+          title: '提示',
+          content: '确认要删除吗？',
+          onOk: () => {
+            this.$api.composition.removeTeacherById({
+              id: param.id
+            }).then(
+              response => {
+                if (response.data.code == "200") {
+                  this.$Message.success("操作成功");
+                  this.getList();
+                }
+              })
+          }
+        })
       },
       beforeUpload(file) {
         let imgType = ['jpeg', 'png']
