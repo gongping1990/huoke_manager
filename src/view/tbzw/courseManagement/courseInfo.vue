@@ -22,8 +22,8 @@
                          placeholder="请输入拼课价格（元）"></InputNumber>
             <span class="-c-tips">* 精确到小数点后2位，如99.99</span>
           </FormItem>
-          <FormItem label="拼课时限" prop="groupPrice">
-            <InputNumber type="text" :disabled="!isEdit" v-model="addInfo.groupPrice" :min="0"
+          <FormItem label="拼课时限" prop="groupTime">
+            <InputNumber type="text" :disabled="!isEdit" v-model="addInfo.groupTime" :min="0"
                          placeholder="请输入拼课时限（小时）"></InputNumber>
           </FormItem>
           <FormItem label="咨询电话" prop="consultPhone">
@@ -172,7 +172,7 @@
       //分页查询
       getList() {
         this.isFetching = true
-        this.$api.poem.getCourseByDefult()
+        this.$api.composition.getDefultCourse()
           .then(
             response => {
               this.addInfo = response.data.resultData
@@ -199,7 +199,7 @@
             } else if (this.radioType === '2' && (!this.addInfo.launchInfo || this.addInfo.launchInfo == '<p><br></p>')) {
               return this.$Message.error('请输入参加团购帮助信息')
             }
-            let paramsUrl = this.addInfo.id ? this.$api.poem.poemCourseUpdate : this.$api.poem.poemCourseAdd
+            let paramsUrl = this.addInfo.id ? this.$api.composition.tbzwCourseUpdate : this.$api.composition.tbzwCourseAdd
             paramsUrl(this.addInfo)
               .then(response => {
                 if (response.data.code == '200') {

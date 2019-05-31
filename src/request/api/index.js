@@ -27,6 +27,7 @@ import work from "./work";
 import teacher from "./teacher";
 import poem from "./poem";
 import capsule from "./capsule";
+import composition from "./composition";
 
 
 export default {
@@ -58,5 +59,6 @@ export default {
   work,
   teacher,
   poem,
-  capsule
+  capsule,
+  composition
 }
