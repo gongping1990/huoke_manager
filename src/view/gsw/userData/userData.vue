@@ -76,6 +76,7 @@
 <script>
   import {thousandFormatter} from '@/libs/index'
   import echarts from "echarts/lib/echarts";
+  import dayjs from 'dayjs'
   // 引入柱状图
   import "echarts/lib/chart/bar";
   import "echarts/lib/chart/line";
@@ -124,7 +125,7 @@
       dateTypesLine() {
         let arrayX = []
         for (let item of this.dataInfo) {
-          arrayX.push(item.date)
+          arrayX.push(dayjs(item.day).format('YYYY/MM/DD'))
         }
         return arrayX
       },
