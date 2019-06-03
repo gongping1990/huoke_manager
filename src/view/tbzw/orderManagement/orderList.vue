@@ -24,9 +24,9 @@
         <Col :span="10" style="margin-left: 10px" class="g-flex-a-j-center">
           <date-picker-template :dataInfo="dateOption" @changeDate="changeDate"></date-picker-template>
         </Col>
-        <!--<div class="g-text-right">-->
-          <!--<Button type="primary" ghost class="-p-modal-btn -date-search" @click="toExcel">导出表格</Button>-->
-        <!--</div>-->
+        <div class="g-text-right">
+          <Button type="primary" ghost class="-p-modal-btn -date-search" @click="toExcel">导出表格</Button>
+        </div>
       </Row>
 
       <Table class="-c-tab" :loading="isFetching" :columns="columns" :data="dataList"></Table>
@@ -129,12 +129,26 @@
             align: 'center'
           },
           {
-            title: '教材名称',
+            title: '课程名称',
             key: 'courseName',
             align: 'center'
           },
           {
             title: '订单金额',
+            render: (h, params) => {
+              return h('div', params.row.amount / 100)
+            },
+            align: 'center'
+          },
+          {
+            title: '优惠金额',
+            render: (h, params) => {
+              return h('div', params.row.amount / 100)
+            },
+            align: 'center'
+          },
+          {
+            title: '实际支付',
             render: (h, params) => {
               return h('div', params.row.amount / 100)
             },
@@ -149,13 +163,6 @@
             title: '订单状态',
             render: (h, params) => {
               return h('div', this.orderType[params.row.orderMode-1])
-            },
-            align: 'center'
-          },
-          {
-            title: '支付状态',
-            render: (h, params) => {
-              return h('div', this.orderStatus[params.row.payStatus])
             },
             align: 'center'
           },
