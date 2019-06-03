@@ -168,8 +168,8 @@ const composition = {
   },
 
   // 删除二维码
-  removeQrcode(params) {
-    return axios.post('/composition/broadcast/removeBroadcast',  qs.stringify(params))
+  deleteQrcode(params) {
+    return axios.post('/composition/reservat/deleteQrcode',  qs.stringify(params))
   },
 
   // 预约列表

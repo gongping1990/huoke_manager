@@ -217,7 +217,7 @@
           title: '提示',
           content: '确认要删除吗？',
           onOk: () => {
-            this.$api.composition.removeBroadcast({
+            this.$api.composition.deleteQrcode({
               id: param.id
             }).then(
               response => {
