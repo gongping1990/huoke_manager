@@ -142,17 +142,17 @@ const composition = {
     return axios.get('/composition/broadcast/getBroadcastList', {params: params})
   },
 
-  // 轮播
+  // 新增轮播
   saveBroadcast(params) {
     return axios.post('/composition/broadcast/saveBroadcast',  qs.stringify(params))
   },
 
-  // 轮播
+  // 修改轮播
   updateBroadcast(params) {
     return axios.post('/composition/broadcast/updateBroadcast',  qs.stringify(params))
   },
 
-  // 轮播
+  // 删除轮播
   removeBroadcast(params) {
     return axios.post('/composition/broadcast/removeBroadcast',  qs.stringify(params))
   },
@@ -180,7 +180,11 @@ const composition = {
   // 审核
   recordAudit(params) {
     return axios.post('/composition/reservat/audit',  qs.stringify(params))
-  }
+  },
+  // 订单
+  tbzwOrderList(params) {
+    return axios.get('/composition/order/orderList', {params: params})
+  },
 }
 
 export default composition

@@ -4,18 +4,18 @@
       <Row class="g-search">
         <Row class="g-t-left">
           <Radio-group v-model="gradeType" type="button" @on-change="getList(1)">
-            <Radio :label=1>三年级</Radio>
-            <Radio :label=2>四年级</Radio>
-            <Radio :label=3>五年级</Radio>
-            <Radio :label=4>六年级</Radio>
+            <Radio :label=3>三年级</Radio>
+            <Radio :label=4>四年级</Radio>
+            <Radio :label=5>五年级</Radio>
+            <Radio :label=6>六年级</Radio>
           </Radio-group>
         </Row>
 
         <Row class="g-t-left g-tab">
           <Radio-group v-model="radioType" type="button" @on-change="getList(1)">
-            <Radio :label=1>待审核</Radio>
-            <Radio :label=2>已通过</Radio>
-            <Radio :label=3>未通过</Radio>
+            <Radio :label=0>待审核</Radio>
+            <Radio :label=1>已通过</Radio>
+            <Radio :label=2>未通过</Radio>
           </Radio-group>
         </Row>
 
@@ -76,8 +76,8 @@
         total: 0,
         selectInfo: '1',
         searchInfo: {},
-        radioType:1,
-        gradeType:1,
+        radioType:0,
+        gradeType:3,
         isFetching: false,
         columns: [
           {
@@ -210,9 +210,14 @@
         if (num) {
           this.tab.currentPage = 1
         }
-        this.$api.poem.getBroadcastList({
+        this.$api.composition.reservatRecordPage({
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
+          grade: this.gradeType,
+          status: this.radioType,
+          nickname: this.searchInfo.nickname,
+          startTime: this.searchInfo.getStartTime ? new Date(this.searchInfo.getStartTime).getTime() : "",
+          endTime: this.searchInfo.getEndTime ? new Date(this.searchInfo.getEndTime).getTime() : ""
         })
           .then(
             response => {
@@ -228,7 +233,7 @@
           title: '提示',
           content: '确认要删除吗？',
           onOk: () => {
-            this.$api.poem.removeBroadcast({
+            this.$api.composition.removeBroadcast({
               id: param.id
             }).then(
               response => {
@@ -245,7 +250,7 @@
         this.$refs[name].validate((valid) => {
           if (valid) {
             this.isSending = true
-            let promiseDate = this.addInfo.id ? this.$api.poem.updateBroadcast(this.addInfo) : this.$api.poem.saveBroadcast(this.addInfo)
+            let promiseDate = this.addInfo.id ? this.$api.composition.updateBroadcast(this.addInfo) : this.$api.composition.saveBroadcast(this.addInfo)
             promiseDate
               .then(
                 response => {

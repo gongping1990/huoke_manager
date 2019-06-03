@@ -261,8 +261,8 @@
             <Icon type="ios-document" class="hk-menu-icon"/>
             <span>订单管理</span>
           </template>
-          <Menu-item name="gsw_orderList">订单列表</Menu-item>
-          <Menu-item name="gsw_orderList">发货管理</Menu-item>
+          <Menu-item name="tbzw_orderList">订单列表</Menu-item>
+          <!--<Menu-item name="tbzw_orderList">发货管理</Menu-item>-->
         </Submenu>
         <Submenu name="operate" class="-left-li">
           <template slot="title">

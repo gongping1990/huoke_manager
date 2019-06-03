@@ -93,7 +93,7 @@
               return h('div', [
                 h('img', {
                   attrs: {
-                    src: params.row.headImage
+                    src: params.row.qrcode
                   },
                   style: {
                     width: '50px',
@@ -106,22 +106,22 @@
           },
           {
             title: '扫码次数',
-            key: 'sortnum',
+            key: 'scanNum',
             align: 'center'
           },
           {
             title: '创建时间',
-            key: 'sortnum',
+            key: 'gmtCreate',
             align: 'center'
           },
           {
             title: '结束日期',
-            key: 'sortnum',
+            key: 'gmtRemove',
             align: 'center'
           },
           {
             title: '状态',
-            key: 'sortnum',
+            key: 'show',
             align: 'center'
           },
           {

@@ -126,6 +126,9 @@
           groupPrice: [
             {required: true, type: 'number', message: '请输入拼课价格', trigger: 'blur'},
           ],
+          groupTime: [
+            {required: true, type: 'number', message: '请输入拼课时限', trigger: 'blur'},
+          ],
           consultPhone: [
             {required: true, type: 'number', message: '请输入咨询电话', trigger: 'blur'},
           ]
@@ -179,6 +182,7 @@
               if (this.addInfo.id) {
                 this.addInfo.alonePrice = +this.addInfo.alonePrice
                 this.addInfo.groupPrice = +this.addInfo.groupPrice
+                this.addInfo.groupTime = +this.addInfo.groupTime
                 this.addInfo.consultPhone = +this.addInfo.consultPhone
               }
             })

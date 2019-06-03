@@ -572,6 +572,19 @@ export const appRouter = [
           }
         ],
         component: () => import('@/view/gsw/orderManagement/orderList')
+      },
+      {
+        path: '/tbzw_orderList',
+        name: 'tbzw_orderList',
+        meta: [
+          {
+            name: '订单管理'
+          },
+          {
+            name: '订单列表'
+          }
+        ],
+        component: () => import('@/view/tbzw/orderManagement/orderList')
       }
     ]
   },
