@@ -636,7 +636,7 @@
         })
           .then(response => {
             if (response.data.code == '200') {
-              this.$Message.success('操作成功');
+              // this.$Message.success('操作成功');
               this.getList()
               this.closeModalContent()
               this.isOpenModalAdd = false
