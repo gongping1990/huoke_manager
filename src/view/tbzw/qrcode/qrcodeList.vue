@@ -35,7 +35,7 @@
                          v-model="addInfo.endTime"></Date-picker>
           </FormItem>
           <FormItem label="二维码">
-            <upload-img ref="childImg" @successImgUrl="successImgUrl" :option="uploadOption"></upload-img>
+            <upload-img ref="childImg" @successImgUrl="successImgUrl" :option="uploadOption" @delItem="delItemImg"></upload-img>
           </FormItem>
         </Form>
         <div slot="footer" class="-p-b-flex">
@@ -171,6 +171,10 @@
       successImgUrl(url) {
         this.addInfo.qrcode = url
       },
+      delItemImg() {
+        this.addInfo.qrcode = ''
+      },
+
       openModal(data) {
         this.isOpenModal = true
         if (data) {
@@ -178,6 +182,7 @@
           this.addInfo.endTime = new Date(+this.addInfo.endTime)
           this.uploadOption.url = this.addInfo.qrcode
         } else {
+          this.uploadOption.url = null
           this.addInfo = {}
         }
         setTimeout(() => {
