@@ -52,6 +52,7 @@
       },
       delImg() {
         this.itemUrl = ''
+        this.$emit('delItem')
       },
       beforeUpload(file) {
         let imgType = ['jpeg', 'png']

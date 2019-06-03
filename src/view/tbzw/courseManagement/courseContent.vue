@@ -76,8 +76,8 @@
       <Form :model="addInfo" ref="addInfoAdd" :label-width="120" :rules="ruleValidateAdd">
         <FormItem label="课时类型" prop="type">
           <Radio-group v-model="addInfo.type">
-            <Radio :label=1>小班课</Radio>
-            <Radio :label=2>素材课</Radio>
+            <Radio :label=1 :disabled="isEdit">小班课</Radio>
+            <Radio :label=2 :disabled="isEdit">素材课</Radio>
           </Radio-group>
         </FormItem>
         <FormItem label="课时名称" prop="name">
@@ -87,7 +87,7 @@
           <InputNumber :max="999" :min="0" v-model="addInfo.sortnum" placeholder="请输入排序值"></InputNumber>
         </FormItem>
         <Form-item label="课程封面" class="-c-form-item ivu-form-item-required">
-          <upload-img @successImgUrl="successImgUrl" :option="uploadOption"></upload-img>
+          <upload-img @successImgUrl="successImgUrl" :option="uploadOption" @delItem="delItemImg"></upload-img>
         </Form-item>
         <Form-item label="课程视频" class="-c-form-item ivu-form-item-required" v-if="addInfo.type === 1">
           <upload-video ref="childVideo" @successVideoUrl="successVideoUrl" :option="uploadVideoOption"></upload-video>
@@ -163,6 +163,7 @@
         totalSource: 0,
         gradeType: 3,
         isFetching: false,
+        isEdit: false,
         isOpenModalAdd: false,
         isOpenModalContent: false,
         modalType: '',
@@ -362,6 +363,9 @@
         this.addInfo.coverphoto = url
         this.uploadOption.url = url
       },
+      delItemImg() {
+        this.addInfo.coverphoto = ''
+      },
       successVideoUrl(url) {
         this.addInfo.videoUrl = url
       },
@@ -379,11 +383,13 @@
       openModal(data) {
         this.isOpenModalAdd = true
         if (data) {
+          this.isEdit = true
           this.addInfo = JSON.parse(JSON.stringify(data))
           this.addInfo.sortnum = +this.addInfo.sortnum
           this.uploadOption.url = this.addInfo.coverphoto
           this.uploadVideoOption.url = this.addInfo.videoUrl
         } else {
+          this.isEdit = false
           this.uploadOption.url = null
           this.uploadVideoOption.url = null
           this.addInfo = {
@@ -394,9 +400,11 @@
           }
         }
 
-        setTimeout(() => {
-          this.$refs.childVideo.init()
-        }, 0)
+        if (this.radioType === 1) {
+          setTimeout(() => {
+            this.$refs.childVideo.init()
+          }, 0)
+        }
       },
       closeModalContent() {
         this.detailInfo = {}
@@ -429,7 +437,7 @@
         this.isOpenModalContent = true
       },
       closeModal(name) {
-        if (this.addInfo.id) {
+        if (this.addInfo.id && (this.radioType === 1)) {
           setTimeout(() => {
             this.$refs.childVideo.load()
           }, 0)
@@ -582,7 +590,7 @@
             isCheckoptionJsonLength = false
           }
 
-          if(item.optionJson.length) {
+          if (item.optionJson.length) {
             isCheckOptionBool = item.optionJson.some(list => {
               return list.isChecked == true
             })
@@ -655,7 +663,16 @@
             }
 
             let paramUrl = this.addInfo.id ? this.$api.composition.updateLesson : this.$api.composition.saveLesson
-            paramUrl(this.addInfo)
+            paramUrl({
+              id: this.addInfo.id,
+              grade: this.addInfo.grade,
+              name: this.addInfo.name,
+              sortnum: this.addInfo.sortnum,
+              type: this.addInfo.type,
+              videoUrl: this.addInfo.videoUrl,
+              content: this.addInfo.content,
+              coverphoto: this.addInfo.coverphoto
+            })
               .then(response => {
                 if (response.data.code == '200') {
                   this.$Message.success('操作成功');
