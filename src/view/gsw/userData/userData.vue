@@ -125,7 +125,7 @@
       dateTypesLine() {
         let arrayX = []
         for (let item of this.dataInfo) {
-          arrayX.push(dayjs(item.day).format('YYYY/MM/DD'))
+          arrayX.push(dayjs(+item.day).format('YYYY/MM/DD'))
         }
         return arrayX
       },
