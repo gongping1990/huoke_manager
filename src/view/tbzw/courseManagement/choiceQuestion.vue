@@ -46,7 +46,6 @@
       init() {
         this.isShowAddChoice = true
         this.choiceList = this.childList || []
-        console.log( this.childList,'child')
         if (this.choiceList.length > 2) {
           this.isShowAddChoice = false
         }
@@ -91,6 +90,7 @@
                 response => {
                   if (response.data.code == "200") {
                     this.$Message.error('删除成功')
+                    this.choiceList.splice(listIndex, 1)
                   }
                 })
             }
@@ -142,7 +142,7 @@
 
     .-form-btn {
       margin: 10px 0 0 0;
-      width: 333px;
+      /*width: 333px;*/
       height: 40px;
       line-height: 40px;
       text-align: center;

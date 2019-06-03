@@ -71,7 +71,7 @@
       class="p-gsw-course-list"
       v-model="isOpenModalAdd"
       @on-cancel="closeModal('addInfoAdd')"
-      width="500"
+      width="700"
       :title="addInfo.id ? '编辑课时' : '新增课时'">
       <Form :model="addInfo" ref="addInfoAdd" :label-width="120" :rules="ruleValidateAdd">
         <FormItem label="课时类型" prop="type">
@@ -89,8 +89,11 @@
         <Form-item label="课程封面" class="-c-form-item ivu-form-item-required">
           <upload-img @successImgUrl="successImgUrl" :option="uploadOption"></upload-img>
         </Form-item>
-        <Form-item label="课程视频" class="-c-form-item ivu-form-item-required">
+        <Form-item label="课程视频" class="-c-form-item ivu-form-item-required" v-if="addInfo.type === 1">
           <upload-video ref="childVideo" @successVideoUrl="successVideoUrl" :option="uploadVideoOption"></upload-video>
+        </Form-item>
+        <Form-item label="课时内容" class="-c-form-item ivu-form-item-required" v-else>
+          <Editor v-model="addInfo.content" :uploadImgServer="baseUrl"></Editor>
         </Form-item>
       </Form>
 
@@ -432,7 +435,7 @@
           }, 0)
         }
         this.$refs[name].resetFields();
-        this.isOpenModalContent = false
+        this.isOpenModalAdd = false
       },
       delItem(param) {
         this.$Modal.confirm({
@@ -501,14 +504,13 @@
               this.choiceList.forEach(list => {
                 list.optionJson = JSON.parse(list.optionJson)
               })
-              console.log(this.choiceList,'1')
               setTimeout(() => {
                 this.$refs.childOne.init()
               }, 0)
             })
       },
       submitChoice(data) {
-        this.choiceList = data
+        this.choiceList = data || []
       },
       submitDetail() {
         switch (this.modalType) {
@@ -567,11 +569,17 @@
       submitSaveLessonQuestion() {
         let isCheckQuestion = true
         let isCheckOptionBool = false
+        let isCheckoptionJsonLength = true
         let isCheckOptionOK = false
+        let choiceDataList = []
 
         this.choiceList.forEach(item => {
-          if (item.answerPoint === '' || item.answerTime === '' || item.name === '' || item.publishPoint === '' || !item.optionJson.length) {
+          if (item.answerPoint === '' || item.answerTime === '' || item.name === '' || item.publishPoint === '') {
             isCheckQuestion = false
+          }
+
+          if (!item.optionJson.length) {
+            isCheckoptionJsonLength = false
           }
 
           if(item.optionJson.length) {
@@ -588,27 +596,29 @@
           return this.$Message.error('请新增题目')
         } else if (!isCheckQuestion) {
           return this.$Message.error('请填写完整的答题字段')
+        } else if (!isCheckoptionJsonLength) {
+          return this.$Message.error('请新增选项')
         } else if (!isCheckOptionBool) {
           return this.$Message.error('请选择一个正确的答案')
         } else if (!isCheckOptionOK) {
           return this.$Message.error('选择题不能有空选项')
         }
 
-        this.choiceList.forEach(item => {
+        choiceDataList = JSON.parse(JSON.stringify(this.choiceList))
+
+        choiceDataList.forEach(item => {
           item.optionJson = JSON.stringify(item.optionJson)
         })
 
         this.$api.composition.saveLessonQuestion({
           lessonId: this.dataItem.id,
-          questionList: this.choiceList,
+          questionList: choiceDataList,
           type: this.modalType === 3 ? 1 : 2
         })
           .then(response => {
             if (response.data.code == '200') {
-              this.$Message.success('操作成功');
-              this.getList()
               this.closeModalContent()
-              this.isOpenModalAdd = false
+              this.$Message.success('操作成功');
             }
           })
       },
@@ -638,8 +648,10 @@
           if (valid) {
             if (!this.addInfo.coverphoto) {
               return this.$Message.error('请上传课程封面')
-            } else if (!this.addInfo.videoUrl) {
+            } else if (this.addInfo.type === 1 && !this.addInfo.videoUrl) {
               return this.$Message.error('请上传课程视频')
+            } else if (this.addInfo.type === 2 && (!this.addInfo.content || this.addInfo.content === '<p><br></p>')) {
+              return this.$Message.error('请输入课时内容')
             }
 
             let paramUrl = this.addInfo.id ? this.$api.composition.updateLesson : this.$api.composition.saveLesson
