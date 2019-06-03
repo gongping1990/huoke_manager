@@ -72,6 +72,11 @@ const composition = {
     return axios.post('/composition/lesson/saveLessonQuestion', params)
   },
 
+  // 删除课程答案
+  removeLessonQuestion(params) {
+    return axios.get('/composition/lesson/removeLessonQuestion', {params: params})
+  },
+
   // 删除-教师
   removeTeacherById(params) {
     return axios.post('/composition/teacher/removeTeacherById', qs.stringify(params))
@@ -130,6 +135,51 @@ const composition = {
   // 图表
   userStatisticsLineChart(params) {
     return axios.get('/composition/statistics/lineChart', {params: params})
+  },
+
+  // 轮播
+  getBroadcastList(params) {
+    return axios.get('/composition/broadcast/getBroadcastList', {params: params})
+  },
+
+  // 轮播
+  saveBroadcast(params) {
+    return axios.post('/composition/broadcast/saveBroadcast',  qs.stringify(params))
+  },
+
+  // 轮播
+  updateBroadcast(params) {
+    return axios.post('/composition/broadcast/updateBroadcast',  qs.stringify(params))
+  },
+
+  // 轮播
+  removeBroadcast(params) {
+    return axios.post('/composition/broadcast/removeBroadcast',  qs.stringify(params))
+  },
+
+  // 二维码
+  qrcodeList(params) {
+    return axios.get('/composition/reservat/qrcodeList', {params: params})
+  },
+
+  // 新增/修改
+  saveQrcode(params) {
+    return axios.post('/composition/reservat/saveQrcode',  qs.stringify(params))
+  },
+
+  // 删除二维码
+  removeQrcode(params) {
+    return axios.post('/composition/broadcast/removeBroadcast',  qs.stringify(params))
+  },
+
+  // 预约列表
+  reservatRecordPage(params) {
+    return axios.get('/composition/reservat/reservatRecordPage', {params: params})
+  },
+
+  // 审核
+  recordAudit(params) {
+    return axios.post('/composition/reservat/audit',  qs.stringify(params))
   }
 }
 

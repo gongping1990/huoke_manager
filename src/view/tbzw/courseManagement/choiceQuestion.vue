@@ -80,7 +80,24 @@
         list.optionJson.splice(index, 1)
       },
       delChoice(list, listIndex) {
-        this.choiceList.splice(listIndex, 1)
+        if(list.id) {
+          this.$Modal.confirm({
+            title: '提示',
+            content: '确认要删除吗？',
+            onOk: () => {
+              this.$api.composition.removeLessonQuestion({
+                questionId: list.id
+              }).then(
+                response => {
+                  if (response.data.code == "200") {
+                    this.$Message.error('删除成功')
+                  }
+                })
+            }
+          })
+        } else {
+          this.choiceList.splice(listIndex, 1)
+        }
       },
     }
   }

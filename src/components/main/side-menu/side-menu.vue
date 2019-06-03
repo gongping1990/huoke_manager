@@ -243,9 +243,9 @@
             <Icon type="ios-stats" class="hk-menu-icon"/>
             <span>数据统计</span>
           </template>
-          <Menu-item name="gsw_userData">交易数据</Menu-item>
-          <Menu-item name="gsw_retainData">留存数据</Menu-item>
-          <Menu-item name="gsw_channel">渠道管理</Menu-item>
+          <Menu-item name="tbzw_userData">交易数据</Menu-item>
+          <Menu-item name="tbzw_retainData">留存数据</Menu-item>
+          <Menu-item name="tbzw_channel">渠道管理</Menu-item>
         </Submenu>
         <Submenu name="course" class="-left-li">
           <template slot="title">

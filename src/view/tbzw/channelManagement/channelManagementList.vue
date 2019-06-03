@@ -1,16 +1,9 @@
 <template>
-  <div class="p-qrcode">
-    <Card>
-      <Row class="g-search">
-        <Row class="g-t-left">
-          <Radio-group v-model="radioType" type="button" @on-change="getList()">
-            <Radio :label=1>正常</Radio>
-            <Radio :label=2>失效</Radio>
-          </Radio-group>
-        </Row>
-      </Row>
+  <div class="p-channel">
+    <input type="text" v-model="copy_url" class="copy-input" ref="copyInput">
 
-      <div class="g-add-btn g-add-top" @click="openModal()">
+    <Card>
+      <div class="g-add-btn " @click="openModal()">
         <Icon class="-btn-icon" color="#fff" type="ios-add" size="24"/>
       </div>
 
@@ -21,21 +14,14 @@
             @on-change="currentChange"></Page>
 
       <Modal
-        class="p-qrcode"
+        class="p-channel"
         v-model="isOpenModal"
         @on-cancel="closeModal('addInfo')"
-        width="500"
-        :title="addInfo.id ? '编辑二维码' : '创建二维码'">
+        width="350"
+        :title="addInfo.id ? '编辑渠道' : '新增渠道'">
         <Form ref="addInfo" :model="addInfo" :rules="ruleValidate" :label-width="90">
-          <FormItem label="二维码名称" prop="content">
-            <Input type="text" v-model="addInfo.content" placeholder="请输入消息内容"></Input>
-          </FormItem>
-          <FormItem label="有效期" prop="sortnum">
-            <Date-picker style="width: 100%" type="datetime" placeholder="选择结束日期"
-                         v-model="addInfo.dateTime"></Date-picker>
-          </FormItem>
-          <FormItem label="二维码" prop="sortnum">
-            <upload-img ref="childImg" @successImgUrl="successImgUrl" :option="uploadOption"></upload-img>
+          <FormItem label="渠道名称" prop="name">
+            <Input type="text" v-model="addInfo.name" placeholder="请输入渠道名称"></Input>
           </FormItem>
         </Form>
         <div slot="footer" class="-p-b-flex">
@@ -43,17 +29,28 @@
           <div @click="submitInfo('addInfo')" class="g-primary-btn "> {{isSending ? '提交中...' : '确 认'}}</div>
         </div>
       </Modal>
+
+      <Modal
+        class="p-channel"
+        v-model="isOpenModalCopy"
+        footer-hide
+        @on-cancel="isOpenModalCopy = false"
+        width="600"
+        title="复制链接">
+        <Table class="-c-tab" :loading="isFetching" :columns="columnsModal" :data="detailList"></Table>
+      </Modal>
     </Card>
   </div>
 </template>
 
 <script>
+  import dayjs from 'dayjs'
   import {getBaseUrl} from '@/libs/index'
-  import UploadImg from "../../../components/uploadImg";
+  import DatePickerTemplate from "../../../components/datePickerTemplate";
 
   export default {
-    name: 'qrcodeList',
-    components: {UploadImg},
+    name: 'channelManagement',
+    components: {DatePickerTemplate},
     data() {
       return {
         baseUrl: `${getBaseUrl()}/common/uploadPublicFile`,
@@ -62,71 +59,47 @@
           currentPage: 1,
           pageSize: 10
         },
-        uploadOption: {
-          tipText: '只能上传jpg/png文件，且不超过200kb',
-          url: '',
-          size: 200
+        dateOption: {
+          name: '创建时间',
+          type: 'datetime'
         },
+        copy_url: '',
+        detailList: [],
         dataList: [],
+        selectInfo: '1',
+        searchInfo: {
+          fromDate: '',
+          toDate: ''
+        },
         total: 0,
-        radioType:1,
         isFetching: false,
         isOpenModal: false,
+        isOpenModalCopy: false,
         isSending: false,
         addInfo: {},
         ruleValidate: {
-          content: [
-            {required: true, message: '请输入消息内容', trigger: 'blur'}
-          ],
-          sortnum: [
-            {required: true, message: '请输入排序值', trigger: 'blur'},
+          name: [
+            {required: true, message: '请输入渠道名称', trigger: 'blur'},
+            {type: 'string', max: 20, message: '渠道名称长度为20字', trigger: 'blur'}
           ]
         },
         columns: [
           {
-            title: '二维码名称',
-            key: 'content'
-          },
-          {
-            title: '二维码',
-            render: (h, params) => {
-              return h('div', [
-                h('img', {
-                  attrs: {
-                    src: params.row.headImage
-                  },
-                  style: {
-                    width: '50px',
-                    height: '50px',
-                    margin: '10px'
-                  }
-                })
-              ])
-            }
-          },
-          {
-            title: '扫码次数',
-            key: 'sortnum',
+            title: '名称',
+            key: 'name',
             align: 'center'
           },
           {
             title: '创建时间',
-            key: 'sortnum',
-            align: 'center'
-          },
-          {
-            title: '结束日期',
-            key: 'sortnum',
-            align: 'center'
-          },
-          {
-            title: '状态',
-            key: 'sortnum',
+            render: (h, params) => {
+              return h('span', `${params.row.gmtCreate}`)
+            },
+            width: 300,
             align: 'center'
           },
           {
             title: '操作',
-            width: 190,
+            width: 250,
             align: 'center',
             render: (h, params) => {
               return h('div', [
@@ -151,40 +124,121 @@
                     size: 'small'
                   },
                   style: {
-                    color: 'rgba(218, 55, 75)',
+                    color: '#5444E4',
                     marginRight: '5px'
                   },
                   on: {
                     click: () => {
-                      this.delItem(params.row)
+                      this.toDetail(params.row)
                     }
                   }
-                }, '删除')
+                }, '详情')
               ])
             }
           }
         ],
+        columnsModal: [
+          {
+            title: '学科名称',
+            key: 'subjectName',
+            align: 'center'
+          },
+          {
+            title: '渠道链接',
+            key: 'channelurl',
+            align: 'center'
+          },
+          {
+            title: '渠道二维码',
+            render: (h, params) => {
+              return h('img', {
+                attrs: {
+                  src: params.row.channelqrcode
+                },
+                style: {
+                  width: '60px',
+                  height: '60px',
+                  margin: '10px'
+                }
+              })
+            },
+            align: 'center'
+          },
+          {
+            title: '操作',
+            width: 250,
+            align: 'center',
+            render: (h, params) => {
+              return h('div', [
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: '#5444E4',
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.copyUrlFn(params.row)
+                    }
+                  }
+                }, '复制链接'),
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: '#5444E4',
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.download(params.row)
+                    }
+                  }
+                }, '下载二维码')
+              ])
+            }
+          }
+        ]
       };
     },
     mounted() {
       this.getList()
     },
     methods: {
-
-      successImgUrl(url) {
-        this.addInfo.coverphoto = url
+      copyUrlFn(row) {
+        this.copy_url = row.channelurl;
+        setTimeout(() => {
+          this.$refs.copyInput.select();
+          document.execCommand("copy");
+          this.$Message.success('复制成功');
+        }, 500);
+      },
+      download (data) {
+        window.open(data.channelqrcode, '_blank');
+      },
+      changeDate(data) {
+        this.searchInfo.fromDate = data.startTime
+        this.searchInfo.toDate = data.endTime
+        this.getList(1)
+      },
+      toDetail(data) {
+        this.isOpenModalCopy = true
+        this.getChannelDetail(data)
       },
       openModal(data) {
         this.isOpenModal = true
         if (data) {
           this.addInfo = JSON.parse(JSON.stringify(data))
-          this.addInfo.sortnum = this.addInfo.sortnum.toString()
         } else {
-          this.addInfo = {}
+          this.addInfo = {
+            name: ''
+          }
         }
-        setTimeout(() => {
-          this.$refs.childImg.init()
-        }, 0)
       },
       closeModal(name) {
         this.isOpenModal = false
@@ -194,15 +248,25 @@
         this.tab.page = val;
         this.getList();
       },
+      getChannelDetail (data) {
+        this.$api.composition.listByChannelDetails({
+          channelId: data.id
+        }).then(
+          response => {
+            this.detailList = response.data.resultData;
+          }
+        )
+      },
       //分页查询
       getList(num) {
         this.isFetching = true
         if (num) {
           this.tab.currentPage = 1
         }
-        this.$api.composition.qrcodeList({
+
+        this.$api.composition.listByChannel({
           current: num ? num : this.tab.page,
-          size: this.tab.pageSize,
+          size: this.tab.pageSize
         })
           .then(
             response => {
@@ -213,29 +277,13 @@
             this.isFetching = false
           })
       },
-      delItem(param) {
-        this.$Modal.confirm({
-          title: '提示',
-          content: '确认要删除吗？',
-          onOk: () => {
-            this.$api.composition.removeBroadcast({
-              id: param.id
-            }).then(
-              response => {
-                if (response.data.code == "200") {
-                  this.$Message.success("操作成功");
-                  this.getList();
-                }
-              })
-          }
-        })
-      },
       submitInfo(name) {
         if (this.isSending) return
         this.$refs[name].validate((valid) => {
           if (valid) {
             this.isSending = true
-            this.$api.composition.saveQrcode(this.addInfo)
+            let promiseDate = this.addInfo.id ? this.$api.composition.updateChannel(this.addInfo) : this.$api.composition.addChannel(this.addInfo)
+            promiseDate
               .then(
                 response => {
                   if (response.data.code == '200') {
@@ -256,43 +304,14 @@
 
 
 <style lang="less" scoped>
-  .p-qrcode {
-    .-c-tips {
-      color: #39f
+  .p-channel {
+    .copy-input{
+      position: absolute;
+      opacity: 0;
     }
 
-    .-c-course-wrap {
-      display: inline-block;
-      .-c-course-item {
-        position: relative;
-        display: inline-block;
-        /*height: 70px;*/
-        overflow: hidden;
-
-        img {
-          width: 140px;
-          height: 70px;
-        }
-
-        .-i-text {
-          display: -webkit-box;
-          -webkit-box-orient: vertical;
-          /*-webkit-line-clamp: 1;*/
-          line-height: normal;
-        }
-
-        .-i-del {
-          position: absolute;
-          top: 0;
-          right: 0;
-          color: #ffff;
-          background-color: rgba(0, 0, 0, 0.4);
-          line-height: normal;
-          cursor: pointer;
-          padding: 4px;
-          border-radius: 4px;
-        }
-      }
+    .-c-tips {
+      color: #39f
     }
 
     .-p-b-flex {

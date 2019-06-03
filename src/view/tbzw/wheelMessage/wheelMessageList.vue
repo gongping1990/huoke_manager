@@ -140,7 +140,7 @@
         if (num) {
           this.tab.currentPage = 1
         }
-        this.$api.poem.getBroadcastList({
+        this.$api.composition.getBroadcastList({
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
         })
@@ -158,7 +158,7 @@
           title: '提示',
           content: '确认要删除吗？',
           onOk: () => {
-            this.$api.poem.removeBroadcast({
+            this.$api.composition.removeBroadcast({
               id: param.id
             }).then(
               response => {
@@ -175,7 +175,7 @@
         this.$refs[name].validate((valid) => {
           if (valid) {
             this.isSending = true
-            let promiseDate = this.addInfo.id ? this.$api.poem.updateBroadcast(this.addInfo) : this.$api.poem.saveBroadcast(this.addInfo)
+            let promiseDate = this.addInfo.id ? this.$api.composition.updateBroadcast(this.addInfo) : this.$api.composition.saveBroadcast(this.addInfo)
             promiseDate
               .then(
                 response => {

@@ -209,6 +209,33 @@ export const appRouter = [
           {name:'交易数据'}
         ],
         component: () => import('@/view/gsw/userData/userData')
+      },
+      {
+        path: '/tbzw_channel',
+        name: 'tbzw_channel',
+        meta: [
+          {name:'数据统计'},
+          {name:'渠道管理'}
+        ],
+        component: () => import('@/view/tbzw/channelManagement/channelManagementList')
+      },
+      {
+        path: '/tbzw_retainData',
+        name: 'tbzw_retainData',
+        meta: [
+          {name:'数据统计'},
+          {name:'留存数据'}
+        ],
+        component: () => import('@/view/gsw/retainData/retainData')
+      },
+      {
+        path: '/tbzw_userData',
+        name: 'tbzw_userData',
+        meta: [
+          {name:'数据统计'},
+          {name:'交易数据'}
+        ],
+        component: () => import('@/view/gsw/userData/userData')
       }
     ]
   },
