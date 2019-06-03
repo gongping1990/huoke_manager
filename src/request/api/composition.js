@@ -52,6 +52,11 @@ const composition = {
     return axios.post('/composition/lesson/uploadGuideAudio', qs.stringify(params))
   },
 
+  // 新增作业
+  saveHomeWork(params) {
+    return axios.post('/composition/lesson/saveHomeWork', qs.stringify(params))
+  },
+
   // 素材评分
   listByLessonScore(params) {
     return axios.post('/composition/mark/listByLessonScore', qs.stringify(params))
@@ -64,7 +69,7 @@ const composition = {
 
   // 新增课程答案
   saveLessonQuestion(params) {
-    return axios.post('/composition/lesson/saveLessonQuestion', qs.stringify(params))
+    return axios.post('/composition/lesson/saveLessonQuestion', params)
   },
 
   // 删除-教师

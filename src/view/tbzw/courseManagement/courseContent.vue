@@ -1,7 +1,18 @@
 <template>
   <div class="p-gsw-course-list">
     <Card>
-      <div class="g-add-btn" @click="openModal()">
+      <Row class="g-search">
+        <Row class="g-t-left">
+          <Radio-group v-model="gradeType" type="button" @on-change="getList(1)">
+            <Radio :label=3>三年级</Radio>
+            <Radio :label=4>四年级</Radio>
+            <Radio :label=5>五年级</Radio>
+            <Radio :label=6>六年级</Radio>
+          </Radio-group>
+        </Row>
+      </Row>
+
+      <div class="g-add-btn g-add-top" @click="openModal()">
         <Icon class="-btn-icon" color="#fff" type="ios-add" size="24"/>
       </div>
 
@@ -20,26 +31,27 @@
       :title="modalTitleName[modalType]">
       <Form :model="detailInfo" :label-width="70" class="ivu-form-item-required" v-if="modalType!=6">
         <FormItem label="选择教师" v-if="modalType===1">
-          <Select v-model="detailInfo.teacher" class="-search-selectOne">
-            <Option v-for="(item,index) in teacherList" :label="item.name" :value="item.id" :key="index"></Option>
+          <Select v-model="detailInfo.teacher">
+            <Option v-for="(item,index) in teacherList" :label="item.teacherName" :value="item.id"
+                    :key="index"></Option>
           </Select>
         </FormItem>
         <FormItem label="引导音频" v-if="modalType===2">
-          <upload-audio @successAudioUrl="successAudioUrl" :option="uploadAudioOption"></upload-audio>
+          <upload-audio ref="childAudio" @successAudioUrl="successAudioUrl" :option="uploadAudioOption"></upload-audio>
         </FormItem>
         <FormItem label="问答题目" v-if="modalType===3">
           <choice-question ref="childOne" :type="1" @submitChoice="submitChoice"
-                           :childList="dataItem.choiceItem"></choice-question>
+                           :childList="choiceList"></choice-question>
         </FormItem>
         <FormItem label="检测题目" v-if="modalType===4">
           <choice-question ref="childOne" :type="2" @submitChoice="submitChoice"
-                           :childList="dataItem.choiceList"></choice-question>
+                           :childList="choiceList"></choice-question>
         </FormItem>
         <FormItem label="作业名称" v-if="modalType===5">
-          <Input type="text" v-model="detailInfo.jobName" placeholder="请输入作业名称"></Input>
+          <Input type="text" v-model="detailInfo.homework" placeholder="请输入作业名称"></Input>
         </FormItem>
         <FormItem label="作业要求" v-if="modalType===5">
-          <Input type="textarea" :rows="4" v-model="detailInfo.jobRequirement" placeholder="请输入作业要求"></Input>
+          <Input type="textarea" :rows="4" v-model="detailInfo.homeworkClaim" placeholder="请输入作业要求"></Input>
         </FormItem>
       </Form>
 
@@ -62,8 +74,8 @@
       width="500"
       :title="addInfo.id ? '编辑课时' : '新增课时'">
       <Form :model="addInfo" ref="addInfoAdd" :label-width="120" :rules="ruleValidateAdd">
-        <FormItem label="课时类型" prop="contentType">
-          <Radio-group v-model="addInfo.contentType">
+        <FormItem label="课时类型" prop="type">
+          <Radio-group v-model="addInfo.type">
             <Radio :label=1>小班课</Radio>
             <Radio :label=2>素材课</Radio>
           </Radio-group>
@@ -74,20 +86,11 @@
         <FormItem label="排序值" prop="sortnum">
           <InputNumber :max="999" :min="0" v-model="addInfo.sortnum" placeholder="请输入排序值"></InputNumber>
         </FormItem>
-        <FormItem label="答题时间点" prop="author">
-          <Input type="text" v-model="addInfo.author" placeholder="请输入答题时间点(单位：秒)"></Input>
-        </FormItem>
-        <FormItem label="答题时长" prop="author">
-          <Input type="text" v-model="addInfo.author" placeholder="请输入答题时长(单位：秒)"></Input>
-        </FormItem>
-        <FormItem label="答题公布时间点" prop="author">
-          <Input type="text" v-model="addInfo.author" placeholder="请输入答题公布时间点(单位：秒)"></Input>
-        </FormItem>
         <Form-item label="课程封面" class="-c-form-item ivu-form-item-required">
           <upload-img @successImgUrl="successImgUrl" :option="uploadOption"></upload-img>
         </Form-item>
         <Form-item label="课程视频" class="-c-form-item ivu-form-item-required">
-          <upload-video @successVideoUrl="successVideoUrl" :option="uploadVideoOption"></upload-video>
+          <upload-video ref="childVideo" @successVideoUrl="successVideoUrl" :option="uploadVideoOption"></upload-video>
         </Form-item>
       </Form>
 
@@ -152,8 +155,10 @@
         dataList: [],
         sourceList: [],
         teacherList: [],
+        choiceList: [],
         total: 0,
         totalSource: 0,
+        gradeType: 3,
         isFetching: false,
         isOpenModalAdd: false,
         isOpenModalContent: false,
@@ -165,9 +170,6 @@
         ruleValidateAdd: {
           name: [
             {required: true, message: '请输入课时名称', trigger: 'blur'},
-          ],
-          author: [
-            {required: true, message: '请输入作者', trigger: 'blur'},
           ],
           sortnum: [
             {required: true, type: 'number', message: '请输入排序值', trigger: 'blur'},
@@ -182,7 +184,9 @@
           },
           {
             title: '类型',
-            key: 'author',
+            render: (h, params) => {
+              return h('div', params.row.type === 1 ? '小班课' : '素材课')
+            },
             align: 'center'
           },
           {
@@ -202,6 +206,7 @@
                     size: 'small'
                   },
                   style: {
+                    display: params.row.type === 1 ? 'inline-block' : 'none',
                     color: '#5444E4'
                   },
                   on: {
@@ -216,6 +221,7 @@
                     size: 'small'
                   },
                   style: {
+                    display: params.row.type === 1 ? 'inline-block' : 'none',
                     color: '#5444E4'
                   },
                   on: {
@@ -230,6 +236,7 @@
                     size: 'small'
                   },
                   style: {
+                    display: params.row.type === 1 ? 'inline-block' : 'none',
                     color: '#5444E4'
                   },
                   on: {
@@ -244,6 +251,7 @@
                     size: 'small'
                   },
                   style: {
+                    display: params.row.type === 1 ? 'inline-block' : 'none',
                     color: '#5444E4'
                   },
                   on: {
@@ -258,6 +266,7 @@
                     size: 'small'
                   },
                   style: {
+                    display: params.row.type === 1 ? 'inline-block' : 'none',
                     color: '#5444E4'
                   },
                   on: {
@@ -272,6 +281,7 @@
                     size: 'small'
                   },
                   style: {
+                    display: params.row.type === 2 ? 'inline-block' : 'none',
                     color: '#5444E4'
                   },
                   on: {
@@ -324,17 +334,17 @@
         columnsSource: [
           {
             title: '用户昵称',
-            key: 'name',
+            key: 'nickName',
             align: 'center'
           },
           {
             title: '评分',
-            key: 'name',
+            key: 'score',
             align: 'center'
           },
           {
             title: '评分时间',
-            key: 'name',
+            key: 'gmtCreate',
             align: 'center'
           },
         ]
@@ -342,6 +352,7 @@
     },
     mounted() {
       this.getList()
+      this.getTeacherList()
     },
     methods: {
       successImgUrl(url) {
@@ -350,11 +361,9 @@
       },
       successVideoUrl(url) {
         this.addInfo.videoUrl = url
-        this.uploadVideoOption.url = url
       },
       successAudioUrl(url) {
-        this.addInfo.audioUrl = url
-        this.uploadAudioOption.url = url
+        this.detailInfo.auideAudio = url
       },
       currentChange(val) {
         this.tab.page = val;
@@ -365,21 +374,26 @@
         this.getList();
       },
       openModal(data) {
-
         this.isOpenModalAdd = true
         if (data) {
           this.addInfo = JSON.parse(JSON.stringify(data))
           this.addInfo.sortnum = +this.addInfo.sortnum
           this.uploadOption.url = this.addInfo.coverphoto
+          this.uploadVideoOption.url = this.addInfo.videoUrl
         } else {
           this.uploadOption.url = null
           this.uploadVideoOption.url = null
           this.addInfo = {
+            grade: this.gradeType,
             sortnum: null,
-            contentType: 1,
+            type: 1,
             coverphoto: '',
           }
         }
+
+        setTimeout(() => {
+          this.$refs.childVideo.init()
+        }, 0)
       },
       closeModalContent() {
         this.detailInfo = {}
@@ -388,14 +402,35 @@
       openModalContent(data, type) {
         this.modalType = type
         this.dataItem = data
-        if (this.modalType === 3 || this.modalType === 4) {
-          setTimeout(() => {
-            this.$refs.childOne.init()
-          }, 0)
+        this.detailInfo.teacher = this.dataItem.teacherId
+        this.detailInfo.homework = this.dataItem.homework
+        this.detailInfo.homeworkClaim = this.dataItem.homeworkClaim
+        this.uploadAudioOption.url = this.dataItem.guideAudio
+
+        switch (this.modalType) {
+          case 2:
+            setTimeout(() => {
+              this.$refs.childAudio.init()
+            }, 0)
+            break
+          case 3:
+            this.getListByLessonQuestion()
+            break
+          case 4:
+            this.getListByLessonQuestion()
+            break
+          case 6:
+            this.getListByLessonScore()
+            break
         }
         this.isOpenModalContent = true
       },
       closeModal(name) {
+        if (this.addInfo.id) {
+          setTimeout(() => {
+            this.$refs.childVideo.load()
+          }, 0)
+        }
         this.$refs[name].resetFields();
         this.isOpenModalContent = false
       },
@@ -404,7 +439,7 @@
           title: '提示',
           content: '确认要删除吗？',
           onOk: () => {
-            this.$api.poem.delPoemLesson({
+            this.$api.composition.removeLessonById({
               id: param.id
             }).then(
               response => {
@@ -419,47 +454,184 @@
       //分页查询
       getList() {
         this.isFetching = true
-        this.$api.poem.getPoemLessonList({
+        this.$api.composition.getQueryLessonPage({
           current: this.tab.page,
-          size: this.tab.pageSize
+          size: this.tab.pageSize,
+          grade: this.gradeType
         })
           .then(
             response => {
               this.dataList = response.data.resultData.records;
               this.total = response.data.resultData.total;
-              this.dataList[0].choiceItem = [
-                {
-                  name: '测试111',
-                  optionList: [
-                    {
-                      value: '1',
-                      isChecked: false,
-                    },
-                    {
-                      value: '3',
-                      isChecked: false,
-                    },
-                    {
-                      value: '2',
-                      isChecked: false,
-                    }
-                  ]
-                }
-              ]
             })
           .finally(() => {
             this.isFetching = false
           })
       },
+      getTeacherList() {
+        this.$api.composition.getTeacherList({
+          current: this.tab.page,
+          size: 10000
+        })
+          .then(
+            response => {
+              this.teacherList = response.data.resultData.records;
+            })
+      },
+      getListByLessonScore() {
+        this.$api.composition.listByLessonScore({
+          current: this.tabSource.page,
+          size: this.tabSource.pageSize,
+          lessonId: this.dataItem.id
+        })
+          .then(
+            response => {
+              this.sourceList = response.data.resultData.records;
+            })
+      },
+      getListByLessonQuestion() {
+        this.$api.composition.listByLessonQuestion({
+          type: this.modalType === 3 ? 1 : 2,
+          lessonId: this.dataItem.id
+        })
+          .then(
+            response => {
+              this.choiceList = response.data.resultData;
+
+              this.choiceList.forEach(list => {
+                list.optionJson = JSON.parse(list.optionJson)
+              })
+              console.log(this.choiceList,'1')
+              setTimeout(() => {
+                this.$refs.childOne.init()
+              }, 0)
+            })
+      },
       submitChoice(data) {
-        if (this.modalType === 3) {
-          this.detailInfo.choiceItem = data
-        } else {
-          this.detailInfo.choiceList = data
-        }
+        this.choiceList = data
       },
       submitDetail() {
-        console.log(this.detailInfo)
+        switch (this.modalType) {
+          case 1:
+            this.submitTeacher()
+            break
+          case 2:
+            this.submitUploadGuideAudio()
+            break
+          case 3:
+            this.submitSaveLessonQuestion()
+            break
+          case 4:
+            this.submitSaveLessonQuestion()
+            break
+          case 5:
+            this.saveHomeWork()
+            break
+
+        }
+      },
+      submitTeacher() {
+        if (!this.detailInfo.teacher) {
+          return this.$Message.error('请选择教师')
+        }
+        this.$api.composition.updateLessonTeacher({
+          lessonId: this.dataItem.id,
+          teacherId: this.detailInfo.teacher
+        })
+          .then(response => {
+            if (response.data.code == '200') {
+              this.$Message.success('操作成功');
+              this.getList()
+              this.closeModalContent()
+              this.isOpenModalAdd = false
+            }
+          })
+      },
+      submitUploadGuideAudio() {
+        if (!this.detailInfo.auideAudio) {
+          return this.$Message.error('请上传引导音频')
+        }
+        this.$api.composition.uploadGuideAudio({
+          lessonId: this.dataItem.id,
+          auideAudio: this.detailInfo.auideAudio
+        })
+          .then(response => {
+            if (response.data.code == '200') {
+              this.$Message.success('操作成功');
+              this.getList()
+              this.closeModalContent()
+              this.isOpenModalAdd = false
+            }
+          })
+      },
+      submitSaveLessonQuestion() {
+        let isCheckQuestion = true
+        let isCheckOptionBool = false
+        let isCheckOptionOK = false
+
+        this.choiceList.forEach(item => {
+          if (item.answerPoint === '' || item.answerTime === '' || item.name === '' || item.publishPoint === '' || !item.optionJson.length) {
+            isCheckQuestion = false
+          }
+
+          if(item.optionJson.length) {
+            isCheckOptionBool = item.optionJson.some(list => {
+              return list.isChecked == true
+            })
+            isCheckOptionOK = item.optionJson.every(list => {
+              return list.value != ''
+            })
+          }
+        })
+
+        if (!this.choiceList.length) {
+          return this.$Message.error('请新增题目')
+        } else if (!isCheckQuestion) {
+          return this.$Message.error('请填写完整的答题字段')
+        } else if (!isCheckOptionBool) {
+          return this.$Message.error('请选择一个正确的答案')
+        } else if (!isCheckOptionOK) {
+          return this.$Message.error('选择题不能有空选项')
+        }
+
+        this.choiceList.forEach(item => {
+          item.optionJson = JSON.stringify(item.optionJson)
+        })
+
+        this.$api.composition.saveLessonQuestion({
+          lessonId: this.dataItem.id,
+          questionList: this.choiceList,
+          type: this.modalType === 3 ? 1 : 2
+        })
+          .then(response => {
+            if (response.data.code == '200') {
+              this.$Message.success('操作成功');
+              this.getList()
+              this.closeModalContent()
+              this.isOpenModalAdd = false
+            }
+          })
+      },
+      saveHomeWork() {
+        if (!this.detailInfo.homework) {
+          return this.$Message.error('请输入作业名称')
+        } else if (!this.detailInfo.homeworkClaim) {
+          return this.$Message.error('请输入作业要求')
+        }
+
+        this.$api.composition.saveHomeWork({
+          lessonId: this.dataItem.id,
+          homework: this.detailInfo.homework,
+          homeworkClaim: this.detailInfo.homeworkClaim
+        })
+          .then(response => {
+            if (response.data.code == '200') {
+              this.$Message.success('操作成功');
+              this.getList()
+              this.closeModalContent()
+              this.isOpenModalAdd = false
+            }
+          })
       },
       submitAdd(name) {
         this.$refs[name].validate((valid) => {
@@ -470,7 +642,7 @@
               return this.$Message.error('请上传课程视频')
             }
 
-            let paramUrl = this.addInfo.id ? this.$api.poem.updatePoemLesson : this.$api.poem.addPoemLesson
+            let paramUrl = this.addInfo.id ? this.$api.composition.updateLesson : this.$api.composition.saveLesson
             paramUrl(this.addInfo)
               .then(response => {
                 if (response.data.code == '200') {

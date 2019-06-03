@@ -47,8 +47,12 @@
       }
     },
     methods: {
-      delImg() {
-        this.itemUrl = ''
+      init() {
+        this.itemUrl = this.option.url
+        // this.isDisabled = this.option.isDisabled
+      },
+      load() {
+        this.$refs.media.load()
       },
       beforeUpload(file) {
         let fileType = file.type.split('/')

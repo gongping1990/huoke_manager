@@ -2,18 +2,30 @@
   <div class="p-choice">
     <div v-for="(list,listIndex) of choiceList" :key="listIndex" class="p-choice-wrap">
       <div class="-name">
-        <span>题目：</span>
+        <span  class="-span">题目{{listIndex+1}}：</span>
         <Input class="-input-name -s-width" v-model="list.name" type="text" placeholder="请输入题目"/>
-        <span class="-s-color g-cursor" v-if="type==2" @click="delChoice(list,listIndex)">删除</span>
+        <span class="-s-color g-cursor" @click="delChoice(list,listIndex)">删除</span>
       </div>
-      <div v-for="(item,index) of list.optionList" :key="index" class="-p-item-select-wrap">
-        <span class="-s-width">选项{{optionLetter[index]}}</span>
+      <div class="-name" v-if="type === 1">
+        <span class="-span">答题时间：</span>
+        <Input class="-input-name -s-width" v-model="list.answerPoint" type="text" placeholder="请输入答题时间点"/>
+      </div>
+      <div class="-name" v-if="type === 1">
+        <span class="-span">答题时长：</span>
+        <Input class="-input-name -s-width" v-model="list.answerTime" type="text" placeholder="请输入答题时长"/>
+      </div>
+      <div class="-name" v-if="type === 1">
+        <span class="-span">答案公布时间：</span>
+        <Input class="-input-name -s-width" v-model="list.publishPoint" type="text" placeholder="请输入答案公布时间"/>
+      </div>
+      <div v-for="(item,index) of list.optionJson" :key="index" class="-p-item-select-wrap">
+        <span class="-s-width -span">选项{{optionLetter[index]}}：</span>
         <Input class="-s-width" v-model="item.value" type="textarea" placeholder="请输入选择题干"
                :maxlength="40" style="width: 300px"/>
         <Checkbox v-model="item.isChecked" @on-change="changeCheck(list,index)">设为答案</Checkbox>
         <span class="-s-width -s-color g-cursor" @click="delOption(list,index)">删除</span>
       </div>
-      <div class="-form-btn g-cursor" v-if="list.optionList.length < 4" @click="addOption(list)">+ 新增选项</div>
+      <div class="-form-btn g-cursor" v-if="list.optionJson.length < 4" @click="addOption(list)">+ 新增选项</div>
     </div>
     <div class="-form-btn g-cursor" v-if="isShowAddChoice" @click="addChoice">+ 新增题目</div>
   </div>
@@ -31,44 +43,41 @@
       }
     },
     methods: {
-      init () {
+      init() {
         this.isShowAddChoice = true
         this.choiceList = this.childList || []
-        if (this.type == 1 && this.choiceList.length) {
-          this.isShowAddChoice = false
-        } else if (this.type == 2 && this.choiceList.length > 2) {
-          console.log(2)
+        console.log( this.childList,'child')
+        if (this.choiceList.length > 2) {
           this.isShowAddChoice = false
         }
       },
       addChoice() {
         this.choiceList.push({
           name: '',
-          optionList: []
+          optionJson: [],
+          sortnum: this.choiceList.length + 1
         })
-        if (this.type == 1) {
-          this.isShowAddChoice = false
-        } else if (this.type == 2 && this.choiceList.length > 2) {
+        if (this.choiceList.length > 2) {
           this.isShowAddChoice = false
         }
         this.$emit('submitChoice', this.choiceList)
       },
       changeCheck(list, idx) {
-        list.optionList.forEach((item, index) => {
+        list.optionJson.forEach((item, index) => {
           if (idx !== index) {
             item.isChecked = false
           }
         })
       },
       addOption(list) {
-        list.optionList.push({
+        list.optionJson.push({
           value: '',
           isChecked: false,
-          index: this.optionLetter[list.optionList.length]
+          index: this.optionLetter[list.optionJson.length]
         })
       },
       delOption(list, index) {
-        list.optionList.splice(index, 1)
+        list.optionJson.splice(index, 1)
       },
       delChoice(list, listIndex) {
         this.choiceList.splice(listIndex, 1)
@@ -79,6 +88,12 @@
 
 <style scoped lang="less">
   .p-choice {
+
+    .-span {
+      text-align: right;
+      display: inline-block;
+      width: 90px;
+    }
 
     &-wrap {
       padding-bottom: 10px;
@@ -92,7 +107,7 @@
 
     .-input-name {
       padding: 10px 0;
-      width: 80%;
+      width: 60%;
     }
 
     .-p-item-select-wrap {
