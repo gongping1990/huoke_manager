@@ -27,14 +27,14 @@
         width="500"
         :title="addInfo.id ? '编辑二维码' : '创建二维码'">
         <Form ref="addInfo" :model="addInfo" :rules="ruleValidate" :label-width="90">
-          <FormItem label="二维码名称" prop="content">
-            <Input type="text" v-model="addInfo.content" placeholder="请输入消息内容"></Input>
+          <FormItem label="二维码名称" prop="name">
+            <Input type="text" v-model="addInfo.name" placeholder="请输入消息内容"></Input>
           </FormItem>
-          <FormItem label="有效期" prop="sortnum">
+          <FormItem label="有效期" prop="endTime">
             <Date-picker style="width: 100%" type="datetime" placeholder="选择结束日期"
-                         v-model="addInfo.dateTime"></Date-picker>
+                         v-model="addInfo.endTime"></Date-picker>
           </FormItem>
-          <FormItem label="二维码" prop="sortnum">
+          <FormItem label="二维码">
             <upload-img ref="childImg" @successImgUrl="successImgUrl" :option="uploadOption"></upload-img>
           </FormItem>
         </Form>
@@ -50,6 +50,7 @@
 <script>
   import {getBaseUrl} from '@/libs/index'
   import UploadImg from "../../../components/uploadImg";
+  import dayjs from 'dayjs'
 
   export default {
     name: 'qrcodeList',
@@ -63,9 +64,9 @@
           pageSize: 10
         },
         uploadOption: {
-          tipText: '只能上传jpg/png文件，且不超过200kb',
+          tipText: '只能上传jpg/png文件，且不超过500kb',
           url: '',
-          size: 200
+          size: 500
         },
         dataList: [],
         total: 0,
@@ -75,17 +76,17 @@
         isSending: false,
         addInfo: {},
         ruleValidate: {
-          content: [
-            {required: true, message: '请输入消息内容', trigger: 'blur'}
+          name: [
+            {required: true, message: '请输入二维码名称', trigger: 'blur'}
           ],
-          sortnum: [
-            {required: true, message: '请输入排序值', trigger: 'blur'},
+          endTime: [
+            {required: true, type: 'date', message: '请选择有效期', trigger: 'change'},
           ]
         },
         columns: [
           {
             title: '二维码名称',
-            key: 'content'
+            key: 'name'
           },
           {
             title: '二维码',
@@ -111,18 +112,15 @@
           },
           {
             title: '创建时间',
-            key: 'gmtCreate',
-            align: 'center'
+            render: (h, params) => {
+              return h('div', dayjs(+params.row.gmtCreate).format('YYYY-MM-DD HH:mm:ss'))
+            }
           },
           {
             title: '结束日期',
-            key: 'gmtRemove',
-            align: 'center'
-          },
-          {
-            title: '状态',
-            key: 'show',
-            align: 'center'
+            render: (h, params) => {
+              return h('div', dayjs(+params.row.endTime).format('YYYY-MM-DD HH:mm:ss'))
+            }
           },
           {
             title: '操作',
@@ -170,15 +168,15 @@
       this.getList()
     },
     methods: {
-
       successImgUrl(url) {
-        this.addInfo.coverphoto = url
+        this.addInfo.qrcode = url
       },
       openModal(data) {
         this.isOpenModal = true
         if (data) {
           this.addInfo = JSON.parse(JSON.stringify(data))
-          this.addInfo.sortnum = this.addInfo.sortnum.toString()
+          this.addInfo.endTime = new Date(+this.addInfo.endTime)
+          this.uploadOption.url = this.addInfo.qrcode
         } else {
           this.addInfo = {}
         }
@@ -203,6 +201,7 @@
         this.$api.composition.qrcodeList({
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
+          normal: this.radioType === 1
         })
           .then(
             response => {
@@ -234,8 +233,16 @@
         if (this.isSending) return
         this.$refs[name].validate((valid) => {
           if (valid) {
+            if (!this.addInfo.qrcode) {
+              return this.$Message.error('请上传二维码')
+            }
             this.isSending = true
-            this.$api.composition.saveQrcode(this.addInfo)
+            this.$api.composition.saveQrcode({
+              id: this.addInfo.id,
+              name: this.addInfo.name,
+              qrcode: this.addInfo.qrcode,
+              endTime: new Date(this.addInfo.endTime).getTime()
+            })
               .then(
                 response => {
                   if (response.data.code == '200') {

@@ -37,7 +37,7 @@
         </Row>
       </Row>
 
-      <Table :loading="isFetching" :columns="radioType === 1 ? columns : columnsTwo" :data="dataList"></Table>
+      <Table :loading="isFetching" :columns="radioType === 0 ? columns : columnsTwo" :data="dataList"></Table>
 
       <Page class="-p-text-right" :total="total" size="small" show-elevator :page-size="tab.pageSize"
             :current.sync="tab.currentPage"
@@ -51,6 +51,7 @@
   import {getBaseUrl} from '@/libs/index'
   import UploadImg from "../../../components/uploadImg";
   import DatePickerTemplate from "../../../components/datePickerTemplate";
+  import dayjs from 'dayjs'
 
   export default {
     name: 'bookingList',
@@ -69,29 +70,38 @@
           size: 200
         },
         dateOption: {
-          name: '创建时间',
+          name: '预约时间',
           type: 'datetime'
         },
         dataList: [],
+        gradeList: {
+          3: '三年级',
+          4: '四年级',
+          5: '五年级',
+          6: '六年级'
+        },
         total: 0,
         selectInfo: '1',
         searchInfo: {},
-        radioType:0,
-        gradeType:3,
+        radioType: 0,
+        gradeType: 3,
         isFetching: false,
         columns: [
           {
             title: '用户昵称',
-            key: 'content'
+            key: 'nickname'
           },
           {
             title: '预约课程年级',
-            key: 'content'
+            render: (h, params) => {
+              return h('div', this.gradeList[params.row.grade])
+            }
           },
           {
             title: '预约时间',
-            key: 'sortnum',
-            align: 'center'
+            render: (h, params) => {
+              return h('div', dayjs(+params.row.gmtModified).format('YYYY-MM-DD HH:mm:ss'))
+            }
           },
           {
             title: '操作',
@@ -112,10 +122,10 @@
                   },
                   on: {
                     'on-ok': () => {
-                      console.log(1)
+                      this.changeAudit(params.row, 1)
                     },
-                    'on-cancel': ()=>{
-                      console.log(2)
+                    'on-cancel': () => {
+                      this.changeAudit(params.row, 0)
                     }
                   }
                 }, '审核')
@@ -126,21 +136,25 @@
         columnsTwo: [
           {
             title: '用户昵称',
-            key: 'content'
+            key: 'nickname'
           },
           {
             title: '预约课程年级',
-            key: 'content'
+            render: (h, params) => {
+              return h('div', this.gradeList[params.row.grade])
+            }
           },
           {
             title: '预约时间',
-            key: 'sortnum',
-            align: 'center'
+            render: (h, params) => {
+              return h('div', dayjs(+params.row.gmtModified).format('YYYY-MM-DD HH:mm:ss'))
+            }
           },
           {
             title: '最新审核时间',
-            key: 'sortnum',
-            align: 'center'
+            render: (h, params) => {
+              return h('div', dayjs(+params.row.auditTime).format('YYYY-MM-DD HH:mm:ss'))
+            }
           },
           {
             title: '操作',
@@ -153,16 +167,16 @@
                     title: '确认重置为不通过？'
                   },
                   style: {
+                    display: this.radioType === 2 ? 'none' : 'inline-block',
                     cursor: 'pointer',
                     color: '#5444E4',
                     marginRight: '5px'
                   },
                   on: {
                     'on-ok': () => {
-                      console.log(1)
+                      this.changeAudit(params.row, 2)
                     },
-                    'on-cancel': ()=>{
-                      console.log(2)
+                    'on-cancel': () => {
                     }
                   }
                 }, '不通过')
@@ -176,13 +190,23 @@
       this.getList()
     },
     methods: {
-      changeDate (data) {
+      changeDate(data) {
         this.searchInfo.getStartTime = data.startTime
         this.searchInfo.getEndTime = data.endTime
         this.getList(1)
       },
-      successImgUrl(url) {
-        this.addInfo.coverphoto = url
+      changeAudit(param, num) {
+        console.log(param)
+        this.$api.composition.recordAudit({
+          id: param.id,
+          status: num
+        }).then(
+          response => {
+            if (response.data.code == "200") {
+              this.$Message.success("操作成功");
+              this.getList();
+            }
+          })
       },
       openModal(data) {
         this.isOpenModal = true
