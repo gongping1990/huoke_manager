@@ -36,7 +36,7 @@
     data() {
       return {
         baseUrlVa: `http://hkupload.prod.k12.vip/common/uploadPrivateFile`, //私有地址 （音视频）
-        audioPlayAddress: this.option.url,
+        audioPlayAddress: '',
         audioStorageAddress: '',
         audioType: this.option.format,
         isFetching: false,
