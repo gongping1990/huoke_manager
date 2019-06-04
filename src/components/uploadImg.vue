@@ -9,7 +9,7 @@
       :on-success="handleSuccess"
       :on-exceeded-size="handleSize"
       :on-error="handleErr">
-      <div class="g-course-add-style" >
+      <div class="g-course-add-style">
         <span>+</span>
         <span>上传图片</span>
       </div>
@@ -29,30 +29,30 @@
 
   export default {
     name: 'uploadImg',
-    props:['option'],
+    props: ['option', 'childData'],
     data() {
       return {
         baseUrl: `${getBaseUrl()}/common/uploadPublicFile`,
-        itemUrl: this.option.url,
+        itemUrl: '',
         isDisabled: false
       }
     },
-    mounted() {
-      console.log(this.option,1)
+    model: {
+      prop: 'childData',
+      event: 'changeUrl'
     },
     watch: {
-      'option.url'(_n,_o) {
+      childData(_n, _o) {
         this.itemUrl = _n
+      },
+
+      itemUrl(_n, _o) {
+        this.$emit('changeUrl', _n)
       }
     },
     methods: {
-      init() {
-        this.itemUrl = this.option.url
-        this.isDisabled = this.option.isDisabled
-      },
       delImg() {
         this.itemUrl = ''
-        this.$emit('delItem')
       },
       beforeUpload(file) {
         let imgType = ['jpeg', 'png']
@@ -65,7 +65,6 @@
       handleSuccess(res, file) {
         if (res.code === 200) {
           this.itemUrl = res.resultData.url
-          this.$emit('successImgUrl', this.itemUrl)
         }
       },
       handleSize() {

@@ -87,7 +87,7 @@
           <InputNumber :max="999" :min="0" v-model="addInfo.sortnum" placeholder="请输入排序值"></InputNumber>
         </FormItem>
         <Form-item label="课程封面" class="-c-form-item ivu-form-item-required">
-          <upload-img @successImgUrl="successImgUrl" :option="uploadOption" @delItem="delItemImg"></upload-img>
+          <upload-img v-model="addInfo.coverphoto" :option="uploadOption" ></upload-img>
         </Form-item>
         <Form-item label="课程视频" class="-c-form-item ivu-form-item-required" v-if="addInfo.type === 1">
           <upload-video ref="childVideo" @successVideoUrl="successVideoUrl" :option="uploadVideoOption"></upload-video>
@@ -132,7 +132,6 @@
         },
         uploadOption: {
           tipText: '只能上传jpg/png文件，且不超过200kb',
-          url: '',
           size: 200
         },
         uploadVideoOption: {
@@ -359,13 +358,6 @@
       this.getTeacherList()
     },
     methods: {
-      successImgUrl(url) {
-        this.addInfo.coverphoto = url
-        this.uploadOption.url = url
-      },
-      delItemImg() {
-        this.addInfo.coverphoto = ''
-      },
       successVideoUrl(url) {
         this.addInfo.videoUrl = url
       },
@@ -386,11 +378,9 @@
           this.isEdit = true
           this.addInfo = JSON.parse(JSON.stringify(data))
           this.addInfo.sortnum = +this.addInfo.sortnum
-          this.uploadOption.url = this.addInfo.coverphoto
           this.uploadVideoOption.url = this.addInfo.videoUrl
         } else {
           this.isEdit = false
-          this.uploadOption.url = null
           this.uploadVideoOption.url = null
           this.addInfo = {
             grade: this.gradeType,

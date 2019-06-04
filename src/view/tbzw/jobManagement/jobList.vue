@@ -64,7 +64,7 @@
             <Input type="text" v-model="addInfo.content" placeholder="请输入消息内容"></Input>
           </FormItem>
           <FormItem label="批改图片" prop="sortnum">
-            <upload-img ref="childImg" @successImgUrl="successImgUrl" :option="uploadOption"></upload-img>
+            <upload-img v-model="addInfo.poto"  :option="uploadOption"></upload-img>
           </FormItem>
           <FormItem label="批改音频" prop="sortnum">
             <upload-audio ref="childAudio" @successAudioUrl="successAudioUrl"
@@ -99,7 +99,6 @@
         },
         uploadOption: {
           tipText: '只能上传jpg/png文件，且不超过200kb',
-          url: '',
           size: 200
         },
         uploadAudioOption: {

@@ -35,7 +35,7 @@
                          v-model="addInfo.endTime"></Date-picker>
           </FormItem>
           <FormItem label="二维码">
-            <upload-img ref="childImg" @successImgUrl="successImgUrl" :option="uploadOption" @delItem="delItemImg"></upload-img>
+            <upload-img v-model="addInfo.qrcode" :option="uploadOption"></upload-img>
           </FormItem>
         </Form>
         <div slot="footer" class="-p-b-flex">
@@ -65,7 +65,6 @@
         },
         uploadOption: {
           tipText: '只能上传jpg/png文件，且不超过500kb',
-          url: '',
           size: 500
         },
         dataList: [],
@@ -168,26 +167,14 @@
       this.getList()
     },
     methods: {
-      successImgUrl(url) {
-        this.addInfo.qrcode = url
-      },
-      delItemImg() {
-        this.addInfo.qrcode = ''
-      },
-
       openModal(data) {
         this.isOpenModal = true
         if (data) {
           this.addInfo = JSON.parse(JSON.stringify(data))
           this.addInfo.endTime = new Date(+this.addInfo.endTime)
-          this.uploadOption.url = this.addInfo.qrcode
         } else {
-          this.uploadOption.url = null
           this.addInfo = {}
         }
-        setTimeout(() => {
-          this.$refs.childImg.init()
-        }, 0)
       },
       closeModal(name) {
         this.isOpenModal = false
