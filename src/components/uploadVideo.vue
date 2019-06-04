@@ -14,11 +14,11 @@
 
     <div class="-c-tips">{{option.tipText}}</div>
 
-    <div class="-c-course-wrap" v-if="itemUrl">
+    <div class="-c-course-wrap" v-if="videoStorageAddress">
       <div class="-item-video">
         <video style="width: 300px"
                ref="media"
-               :src="itemUrl"
+               :src="videoPlayAddress"
                controls="controls" preload="auto"></video>
       </div>
     </div>
@@ -29,28 +29,31 @@
 
   export default {
     name: 'uploadVideo',
-    props:['option'],
+    props:['option', 'childVideo'],
     data() {
       return {
         baseUrlVa: `http://hkupload.prod.k12.vip/common/uploadPrivateFile`, //私有地址 （音视频）
-        itemUrl: this.option.url,
+        videoPlayAddress: '',
+        videoStorageAddress: '',
         videoType: this.option.format,
         isFetching: false
       }
     },
-    mounted() {
-      console.log(this.option,1)
+    model: {
+      prop: 'childVideo',
+      event: 'changeVideo'
     },
     watch: {
-      'option.url'(_n,_o) {
-        this.itemUrl = _n
+      childVideo(_n, _o) {
+        this.videoStorageAddress = _n
+        this.getAvUrl(_n)
+      },
+
+      videoStorageAddress(_n, _o) {
+        this.$emit('changeVideo', _n)
       }
     },
     methods: {
-      init() {
-        this.itemUrl = this.option.url
-        // this.isDisabled = this.option.isDisabled
-      },
       load() {
         this.$refs.media.load()
       },
@@ -70,8 +73,8 @@
       handleSuccessPlay(res) {
         if (res.code === 200) {
           this.isFetching = false
+          this.videoStorageAddress = res.resultData.url
           this.getAvUrl(res.resultData.url)
-          this.$emit('successVideoUrl', res.resultData.url)
         }
       },
       getAvUrl(data) {
@@ -83,8 +86,7 @@
           .then(
             response => {
               if (response.data.code == '200') {
-                this.$Message.success('上传成功')
-                this.itemUrl = response.data.resultData
+                this.videoPlayAddress = response.data.resultData
               }
             })
           .finally(() => {

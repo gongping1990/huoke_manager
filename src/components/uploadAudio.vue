@@ -58,7 +58,7 @@
       }
     },
     methods: {
-      loadAuido() {
+      load() {
         this.$refs.media.load()
       },
       beforeUpload(file) {

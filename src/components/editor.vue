@@ -118,9 +118,7 @@ export default {
   },
   watch: {
     value(n, o) {
-      if(!o || o == "") {
-        this.setHtml(n);
-      }
+      this.setHtml(n);
     }
   },
   methods: {

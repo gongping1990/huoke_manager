@@ -36,8 +36,8 @@
                     :key="index"></Option>
           </Select>
         </FormItem>
-        <FormItem label="引导音频" v-if="modalType===2">
-          <upload-audio ref="childAudio" @successAudioUrl="successAudioUrl" :option="uploadAudioOption"></upload-audio>
+        <FormItem label="引导音频" v-show="modalType===2">
+          <upload-audio ref="childAudio" v-model="detailInfo.guideAudio" :option="uploadAudioOption"></upload-audio>
         </FormItem>
         <FormItem label="问答题目" v-if="modalType===3">
           <choice-question ref="childOne" :type="1" @submitChoice="submitChoice"
@@ -90,10 +90,10 @@
         <Form-item label="课程封面" class="-c-form-item ivu-form-item-required">
           <upload-img v-model="addInfo.coverphoto" :option="uploadOption"></upload-img>
         </Form-item>
-        <Form-item label="课程视频" class="-c-form-item ivu-form-item-required" v-if="addInfo.type === 1">
-          <upload-video ref="childVideo" @successVideoUrl="successVideoUrl" :option="uploadVideoOption"></upload-video>
+        <Form-item label="课程视频" class="-c-form-item ivu-form-item-required" v-show="addInfo.type === 1">
+          <upload-video ref="childVideo" v-model="addInfo.videoUrl" :option="uploadVideoOption"></upload-video>
         </Form-item>
-        <Form-item label="课时内容" class="-c-form-item ivu-form-item-required" v-else>
+        <Form-item label="课时内容" class="-c-form-item ivu-form-item-required" v-show="addInfo.type === 2">
           <Editor v-model="addInfo.content" :uploadImgServer="baseUrl"></Editor>
         </Form-item>
       </Form>
@@ -137,13 +137,11 @@
         },
         uploadVideoOption: {
           tipText: '视频格式：mp4、wmv、rmvb、avi 视频大小：150M以内',
-          url: '',
           size: 153600,
           format: ['mp4', 'wmv', 'rmvb', 'avi']
         },
         uploadAudioOption: {
           tipText: '音频格式：mp3、wma、arm 音频大小：150M以内',
-          url: '',
           size: 153600,
           format: ['mp3', 'wma', 'arm']
         },
@@ -167,8 +165,12 @@
         isOpenModalAdd: false,
         isOpenModalContent: false,
         modalType: '',
-        addInfo: {},
-        detailInfo: {},
+        addInfo: {
+          videoUrl: ''
+        },
+        detailInfo: {
+          guideAudio: '1'
+        },
         dataItem: '',
         sortNum: '',
         ruleValidateAdd: {
@@ -359,12 +361,6 @@
       this.getTeacherList()
     },
     methods: {
-      successVideoUrl(url) {
-        this.addInfo.videoUrl = url
-      },
-      successAudioUrl(url) {
-        this.detailInfo.auideAudio = url
-      },
       currentChange(val) {
         this.tab.page = val;
         this.getList();
@@ -379,10 +375,8 @@
           this.isEdit = true
           this.addInfo = JSON.parse(JSON.stringify(data))
           this.addInfo.sortnum = +this.addInfo.sortnum
-          this.uploadVideoOption.url = this.addInfo.videoUrl
         } else {
           this.isEdit = false
-          this.uploadVideoOption.url = null
           this.addInfo = {
             grade: this.gradeType,
             sortnum: null,
@@ -390,31 +384,23 @@
             coverphoto: '',
           }
         }
-
-        if (this.radioType === 1) {
-          setTimeout(() => {
-            this.$refs.childVideo.init()
-          }, 0)
-        }
       },
       closeModalContent() {
-        this.detailInfo = {}
+        if (this.modalType === 2) {
+          setTimeout(() => {
+            this.$refs.childAudio.load()
+          }, 0)
+        }
         this.isOpenModalContent = false
       },
       openModalContent(data, type) {
-        this.modalType = type
+        this.isOpenModalContent = true
+        this.detailInfo = JSON.parse(JSON.stringify(data))
         this.dataItem = data
+        this.modalType = type
         this.detailInfo.teacher = this.dataItem.teacherId
-        this.detailInfo.homework = this.dataItem.homework
-        this.detailInfo.homeworkClaim = this.dataItem.homeworkClaim
-        this.uploadAudioOption.url = this.dataItem.guideAudio
 
         switch (this.modalType) {
-          case 2:
-            setTimeout(() => {
-              this.$refs.childAudio.init()
-            }, 0)
-            break
           case 3:
             this.getListByLessonQuestion()
             break
@@ -425,10 +411,9 @@
             this.getListByLessonScore()
             break
         }
-        this.isOpenModalContent = true
       },
       closeModal(name) {
-        if (this.addInfo.id && (this.radioType === 1)) {
+        if (this.addInfo.id && (this.addInfo.type === 1)) {
           setTimeout(() => {
             this.$refs.childVideo.load()
           }, 0)
@@ -549,12 +534,12 @@
           })
       },
       submitUploadGuideAudio() {
-        if (!this.detailInfo.auideAudio) {
+        if (!this.detailInfo.guideAudio) {
           return this.$Message.error('请上传引导音频')
         }
         this.$api.composition.uploadGuideAudio({
           lessonId: this.dataItem.id,
-          auideAudio: this.detailInfo.auideAudio
+          auideAudio: this.detailInfo.guideAudio
         })
           .then(response => {
             if (response.data.code == '200') {
