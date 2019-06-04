@@ -157,6 +157,7 @@
       closeEdit(name) {
         this.$refs[name].resetFields();
         this.isEdit = false
+        this.getList()
       },
       handleSize() {
         this.isFetching = false
