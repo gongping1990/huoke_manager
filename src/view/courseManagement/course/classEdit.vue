@@ -39,7 +39,7 @@
           style="display: inline-block"
           :action="baseUrlVa"
           :show-upload-list="false"
-          :max-size="153600"
+          :max-size="307200"
           :before-upload="beforeUpload"
           :on-success="handleSuccessPlay"
           :on-exceeded-size="handleSize"
@@ -47,8 +47,8 @@
           <Button ghost type="primary">{{addInfo.type==1 ? '上传音频' : '上传视频'}}</Button>
         </Upload>
 
-        <span v-if="addInfo.type=='1'" class="-c-tips">音频格式：mp3、wma、arm 音频大小：150M以内</span>
-        <span v-else class="-c-tips">视频格式：mp4、wmv、rmvb、avi 视频大小：150M以内</span>
+        <span v-if="addInfo.type=='1'" class="-c-tips">音频格式：mp3、wma、arm 音频大小：300M以内</span>
+        <span v-else class="-c-tips">视频格式：mp4、wmv、rmvb、avi 视频大小：300M以内</span>
 
         <div class="-c-course-wrap" v-if="addInfo.resUrl">
           <div class="-c-course-item -item-audio" v-if="addInfo.type == '1'">
