@@ -558,7 +558,7 @@
         let choiceDataList = []
 
         this.choiceList.forEach(item => {
-          if (item.answerPoint === '' || item.answerTime === '' || item.name === '' || item.publishPoint === '') {
+          if (!item.answerPoint || !item.answerTime|| !item.name || !item.publishPoint) {
             isCheckQuestion = false
           }
 
