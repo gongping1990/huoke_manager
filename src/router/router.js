@@ -585,6 +585,19 @@ export const appRouter = [
           }
         ],
         component: () => import('@/view/tbzw/orderManagement/orderList')
+      },
+      {
+        path: '/tbzw_deliverGoods',
+        name: 'tbzw_deliverGoods',
+        meta: [
+          {
+            name: '订单管理'
+          },
+          {
+            name: '发货管理'
+          }
+        ],
+        component: () => import('@/view/tbzw/deliverGoods/deliverGoods')
       }
     ]
   },

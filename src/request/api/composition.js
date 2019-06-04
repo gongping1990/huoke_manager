@@ -181,10 +181,22 @@ const composition = {
   recordAudit(params) {
     return axios.post('/composition/reservat/audit',  qs.stringify(params))
   },
+
   // 订单
   tbzwOrderList(params) {
     return axios.get('/composition/order/orderList', {params: params})
   },
+
+  // 发货列表
+  tbzwGoodsList(params) {
+    return axios.get('/composition/order/goodsList', {params: params})
+  },
+
+  // 发货
+  sendOutGoods(params) {
+    return axios.post('/composition/order/sendOutGoods', qs.stringify(params))
+  },
+
 }
 
 export default composition
