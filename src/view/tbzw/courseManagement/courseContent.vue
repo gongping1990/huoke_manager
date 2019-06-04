@@ -48,10 +48,11 @@
                            :childList="choiceList"></choice-question>
         </FormItem>
         <FormItem label="作业名称" v-if="modalType===5">
-          <Input type="text" v-model="detailInfo.homework" placeholder="请输入作业名称"></Input>
+          <Input type="text" v-model="detailInfo.homework" placeholder="请输入作业名称（字数不超过150字）" :maxlength="150"></Input>
         </FormItem>
         <FormItem label="作业要求" v-if="modalType===5">
-          <Input type="textarea" :rows="4" v-model="detailInfo.homeworkClaim" placeholder="请输入作业要求"></Input>
+          <Input type="textarea" :rows="4" v-model="detailInfo.homeworkClaim" placeholder="请输入作业要求（字数不超过500字）"
+                 :maxlength='500'></Input>
         </FormItem>
       </Form>
 
@@ -87,7 +88,7 @@
           <InputNumber :max="999" :min="0" v-model="addInfo.sortnum" placeholder="请输入排序值"></InputNumber>
         </FormItem>
         <Form-item label="课程封面" class="-c-form-item ivu-form-item-required">
-          <upload-img v-model="addInfo.coverphoto" :option="uploadOption" ></upload-img>
+          <upload-img v-model="addInfo.coverphoto" :option="uploadOption"></upload-img>
         </Form-item>
         <Form-item label="课程视频" class="-c-form-item ivu-form-item-required" v-if="addInfo.type === 1">
           <upload-video ref="childVideo" @successVideoUrl="successVideoUrl" :option="uploadVideoOption"></upload-video>
