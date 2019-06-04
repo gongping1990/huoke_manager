@@ -555,6 +555,8 @@
         let isCheckOptionBool = false
         let isCheckoptionJsonLength = true
         let isCheckOptionOK = false
+        let checkOptionStatus = []
+        let checkOptionBoolStatus = []
         let choiceDataList = []
 
         this.choiceList.forEach(item => {
@@ -570,10 +572,22 @@
             isCheckOptionBool = item.optionJson.some(list => {
               return list.isChecked == true
             })
+
             isCheckOptionOK = item.optionJson.every(list => {
               return list.value != ''
             })
+
+            checkOptionStatus.push(isCheckOptionOK)
+            checkOptionBoolStatus.push(isCheckOptionBool)
           }
+
+          isCheckOptionBool = checkOptionBoolStatus.every(list => {
+            return list
+          })
+
+          isCheckOptionOK = checkOptionStatus.every(list => {
+            return list
+          })
         })
 
         if (!this.choiceList.length) {

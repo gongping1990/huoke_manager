@@ -197,6 +197,20 @@ const composition = {
     return axios.post('/composition/order/sendOutGoods', qs.stringify(params))
   },
 
+  // 作业
+  listHomeworkByPage(params) {
+    return axios.get('/composition/study/listHomeworkByPage', {params: params})
+  },
+
+  // 批改
+  replyHomework(params) {
+    return axios.post('/composition/study/replyHomework', qs.stringify(params))
+  },
+
+  // 表扬
+  praiseHomework(params) {
+    return axios.get('/composition/study/praise', {params: params})
+  }
 }
 
 export default composition

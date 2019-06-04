@@ -4,17 +4,17 @@
       <Row class="g-search">
         <Row class="g-t-left">
           <Radio-group v-model="gradeType" type="button" @on-change="getList()">
-            <Radio :label=1>三年级</Radio>
-            <Radio :label=2>四年级</Radio>
-            <Radio :label=3>五年级</Radio>
-            <Radio :label=4>六年级</Radio>
+            <Radio :label=3>三年级</Radio>
+            <Radio :label=4>四年级</Radio>
+            <Radio :label=5>五年级</Radio>
+            <Radio :label=6>六年级</Radio>
           </Radio-group>
         </Row>
         <Row class="g-t-left g-tab">
           <Radio-group v-model="radioType" type="button" @on-change="getList(1)">
-            <Radio :label=1>待批改</Radio>
-            <Radio :label=2>已批改</Radio>
-            <Radio :label=3>表扬</Radio>
+            <Radio :label=0>待批改</Radio>
+            <Radio :label=1>已批改</Radio>
+            <Radio :label=2>表扬</Radio>
           </Radio-group>
         </Row>
         <Row class="g-t-left g-tab">
@@ -33,7 +33,7 @@
                 <Option value="2">老师名称</Option>
               </Select>
               <span class="-search-center">|</span>
-              <Input v-model="searchInfo.nickname" class="-search-input" placeholder="请输入关键字" icon="ios-search"
+              <Input v-model="searchInfo.manner" class="-search-input" placeholder="请输入关键字" icon="ios-search"
                      @on-click="getList(1)"></Input>
             </div>
           </Col>
@@ -43,11 +43,7 @@
         </Row>
       </Row>
 
-      <div class="g-add-btn g-add-top -p-job-top" @click="openModal()">
-        <Icon class="-btn-icon" color="#fff" type="ios-add" size="24"/>
-      </div>
-
-      <Table :loading="isFetching" :columns="radioType===1 ? columns : columnsTwo" :data="dataList"></Table>
+      <Table :loading="isFetching" :columns="radioType===0 ? columns : columnsTwo" :data="dataList"></Table>
 
       <Page class="-p-text-right" :total="total" size="small" show-elevator :page-size="tab.pageSize"
             :current.sync="tab.currentPage"
@@ -58,17 +54,16 @@
         v-model="isOpenModal"
         @on-cancel="closeModal('addInfo')"
         width="500"
-        :title="addInfo.id ? '编辑二维码' : '创建二维码'">
-        <Form ref="addInfo" :model="addInfo" :rules="ruleValidate" :label-width="90">
-          <FormItem label="教师名称" prop="content">
-            <Input type="text" v-model="addInfo.content" placeholder="请输入消息内容"></Input>
+        title="批改作业">
+        <Form ref="addInfo" :model="addInfo" :rules="ruleValidate" :label-width="70" class="ivu-form-item-required">
+          <FormItem label="教师名称" prop="replyTeacher">
+            <Input type="text" v-model="addInfo.replyTeacher" placeholder="请输入消息内容"></Input>
           </FormItem>
-          <FormItem label="批改图片" prop="sortnum">
-            <upload-img v-model="addInfo.poto"  :option="uploadOption"></upload-img>
+          <FormItem label="批改图片" prop="replyImg">
+            <upload-img v-model="addInfo.replyImg" :option="uploadOption"></upload-img>
           </FormItem>
-          <FormItem label="批改音频" prop="sortnum">
-            <upload-audio ref="childAudio" @successAudioUrl="successAudioUrl"
-                          :option="uploadAudioOption"></upload-audio>
+          <FormItem label="批改音频" prop="replyAudio">
+            <upload-audio ref="childAudio" v-model="addInfo.replyAudio" :option="uploadAudioOption"></upload-audio>
           </FormItem>
         </Form>
         <div slot="footer" class="-p-b-flex">
@@ -85,6 +80,7 @@
   import UploadImg from "../../../components/uploadImg";
   import UploadAudio from "../../../components/uploadAudio";
   import DatePickerTemplate from "../../../components/datePickerTemplate";
+  import dayjs from 'dayjs'
 
   export default {
     name: 'jobList',
@@ -103,7 +99,6 @@
         },
         uploadAudioOption: {
           tipText: '音频格式：mp3、wma、arm 音频大小：150M以内',
-          url: '',
           size: 153600,
           format: ['mp3', 'wma', 'arm']
         },
@@ -114,10 +109,14 @@
         evaluateList: [
           {
             name: '全部',
-            id: '1'
+            id: '-1'
           },
           {
             name: '满意',
+            id: '1'
+          },
+          {
+            name: '一般',
             id: '2'
           },
           {
@@ -125,40 +124,40 @@
             id: '3'
           },
           {
-            name: '一般',
-            id: '4'
-          },
-          {
             name: '无',
-            id: '5'
+            id: '0'
           }
         ],
+        evaluateColumn: {
+          '0': '无',
+          '1': '满意',
+          '2': '一般',
+          '3': '不满意'
+        },
         dataList: [],
         total: 0,
-        gradeType: 1,
-        radioType: 1,
+        gradeType: 3,
+        radioType: 0,
         selectInfo: '1',
         getStartTime: '',
         getEndTime: '',
         searchInfo: {
-          evaluate: '1'
+          evaluate: '-1'
         },
         isFetching: false,
         isOpenModal: false,
         isEdit: false,
         addInfo: {},
         ruleValidate: {
-          content: [
-            {required: true, message: '请输入消息内容', trigger: 'blur'}
-          ],
-          sortnum: [
-            {required: true, message: '请输入排序值', trigger: 'blur'},
+          replyTeacher: [
+            {required: true, message: '请输入教师名称', trigger: 'blur'}
           ]
         },
         columns: [
           {
             title: '用户昵称',
-            key: 'content'
+            key: 'nickname',
+            align: 'center'
           },
           {
             title: '作业图片',
@@ -166,7 +165,7 @@
               return h('div', [
                 h('img', {
                   attrs: {
-                    src: params.row.headImage
+                    src: params.row.workImg
                   },
                   style: {
                     width: '50px',
@@ -175,11 +174,14 @@
                   }
                 })
               ])
-            }
+            },
+            align: 'center'
           },
           {
             title: '提交时间',
-            key: 'sortnum',
+            render: (h, params) => {
+              return h('div', dayjs(+params.row.workTime).format('YYYY-MM-DD HH:mm:ss'))
+            },
             align: 'center'
           },
           {
@@ -210,7 +212,8 @@
         columnsTwo: [
           {
             title: '用户昵称',
-            key: 'content'
+            key: 'nickname',
+            align: 'center'
           },
           {
             title: '作业图片',
@@ -218,7 +221,7 @@
               return h('div', [
                 h('img', {
                   attrs: {
-                    src: params.row.headImage
+                    src: params.row.workImg
                   },
                   style: {
                     width: '50px',
@@ -227,25 +230,33 @@
                   }
                 })
               ])
-            }
+            },
+            align: 'center'
           },
           {
             title: '提交时间',
-            key: 'sortnum',
+            render: (h, params) => {
+              return h('div', dayjs(+params.row.workTime).format('YYYY-MM-DD HH:mm:ss'))
+            },
             align: 'center'
           },
           {
             title: '老师名称',
-            key: 'content'
+            key: 'replyTeacher',
+            align: 'center'
           },
           {
             title: '最后批改时间',
-            key: 'sortnum',
+            render: (h, params) => {
+              return h('div', dayjs(+params.row.replyTime).format('YYYY-MM-DD HH:mm:ss'))
+            },
             align: 'center'
           },
           {
             title: '评价',
-            key: 'sortnum',
+            render: (h, params) => {
+              return h('div', this.evaluateColumn[params.row.evaluation])
+            },
             align: 'center'
           },
           {
@@ -261,27 +272,12 @@
                   },
                   style: {
                     color: '#5444E4',
-                    marginRight: '5px'
-                  },
-                  on: {
-                    click: () => {
-                      this.openModal(params.row, true)
-                    }
-                  }
-                }, '详情'),
-                h('Button', {
-                  props: {
-                    type: 'text',
-                    size: 'small'
-                  },
-                  style: {
-                    color: '#5444E4',
                     display: this.radioType === 3 ? 'none' : 'inline-block',
                     marginRight: '5px'
                   },
                   on: {
                     click: () => {
-                      this.openModal(params.row, false)
+                      this.openModal(params.row)
                     }
                   }
                 }, '修改'),
@@ -292,7 +288,7 @@
                   },
                   style: {
                     color: '#5444E4',
-                    display: this.radioType === 3 ? 'none' : 'inline-block',
+                    display: this.radioType === 2 ? 'none' : 'inline-block',
                     marginRight: '5px'
                   },
                   on: {
@@ -308,7 +304,7 @@
                   },
                   style: {
                     color: '#5444E4',
-                    display: this.radioType !== 3 ? 'none' : 'inline-block',
+                    display: this.radioType !== 2 ? 'none' : 'inline-block',
                     marginRight: '5px'
                   },
                   on: {
@@ -327,31 +323,18 @@
       this.getList()
     },
     methods: {
-      changeDate (data) {
+      changeDate(data) {
         this.getStartTime = data.startTime
         this.getEndTime = data.endTime
         this.getList(1)
       },
-      successAudioUrl() {
-
-      },
-      successImgUrl(url) {
-        this.addInfo.coverphoto = url
-      },
-      openModal(data,bool) {
+      openModal(data) {
         this.isOpenModal = true
-        this.uploadOption.isDisabled = bool
-        this.uploadAudioOption.isDisabled = bool
         if (data) {
           this.addInfo = JSON.parse(JSON.stringify(data))
-          this.addInfo.sortnum = this.addInfo.sortnum.toString()
         } else {
           this.addInfo = {}
         }
-        setTimeout(() => {
-          this.$refs.childImg.init()
-          this.$refs.childAudio.init()
-        }, 0)
       },
       closeModal(name) {
         this.isOpenModal = false
@@ -364,13 +347,32 @@
       //分页查询
       getList(num) {
         this.isFetching = true
+        let params = {
+          current: num ? num : this.tab.page,
+          size: this.tab.pageSize,
+          grade: this.gradeType,
+          evaluation: this.searchInfo.evaluate == '-1' ? '' : this.searchInfo.evaluate,
+          starttime: this.getStartTime ? new Date(this.getStartTime).getTime() : "",
+          endtime: this.getEndTime ? new Date(this.getEndTime).getTime() : ""
+        }
+
+        if (this.selectInfo == '1' && this.searchInfo) {
+          params.nickname = this.searchInfo.manner
+        } else if (this.selectInfo == '2' && this.searchInfo) {
+          params.teachername = this.searchInfo.manner
+        }
+
         if (num) {
           this.tab.currentPage = 1
         }
-        this.$api.poem.getBroadcastList({
-          current: num ? num : this.tab.page,
-          size: this.tab.pageSize,
-        })
+
+        if (this.radioType !== 2) {
+          params.reply = this.radioType
+        } else  {
+          params.praise = true
+        }
+
+        this.$api.composition.listHomeworkByPage(params)
           .then(
             response => {
               this.dataList = response.data.resultData.records;
@@ -383,10 +385,11 @@
       praiseItem(param) {
         this.$Modal.confirm({
           title: '提示',
-          content: this.radioType === 3 ? '确认要移出表扬吗？' : '确认要加入表扬吗',
+          content: this.radioType === 2 ? '确认要移出表扬吗？' : '确认要加入表扬吗',
           onOk: () => {
-            this.$api.poem.removeBroadcast({
-              id: param.id
+            this.$api.composition.praiseHomework({
+              id: param.id,
+              praise: this.radioType === 1
             }).then(
               response => {
                 if (response.data.code == "200") {
@@ -400,8 +403,12 @@
       submitInfo(name) {
         this.$refs[name].validate((valid) => {
           if (valid) {
-            let promiseDate = this.addInfo.id ? this.$api.poem.updateBroadcast(this.addInfo) : this.$api.poem.saveBroadcast(this.addInfo)
-            promiseDate
+            if (!this.addInfo.replyImg) {
+              return this.$Message.error('请上传批改图片')
+            } else if (!this.addInfo.replyAudio) {
+              return this.$Message.error('请上传批改音频')
+            }
+            this.$api.composition.replyHomework(this.addInfo)
               .then(
                 response => {
                   if (response.data.code == '200') {
