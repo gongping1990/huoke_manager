@@ -291,7 +291,7 @@
             <Icon type="ios-contacts" class="hk-menu-icon"/>
             <span>用户管理</span>
           </template>
-          <Menu-item name="gswUserList">用户列表</Menu-item>
+          <Menu-item name="tbzw_userList">用户列表</Menu-item>
         </Submenu>
       </div>
     </Menu>

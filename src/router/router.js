@@ -845,6 +845,15 @@ export const appRouter = [
         component: () => import('@/view/gsw/user/userList')
       },
       {
+        path: '/tbzw_userList',
+        name: 'tbzw_userList',
+        meta: [
+          {name: '用户管理'},
+          {name: '用户列表'}
+        ],
+        component: () => import('@/view/tbzw/user/userList')
+      },
+      {
         path: '/virtualUser',
         name: 'virtualUser',
         meta: [

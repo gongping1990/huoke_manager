@@ -113,6 +113,14 @@ const user = {
   // 用户禁用启用
   gswChangeStatus(params) {
     return axios.post("/poem/user/updateUserDisabledStatusById", qs.stringify(params));
+  },
+  // 获取同步作文文用户列表
+  getTbzwUserList(params) {
+    return axios.get("/composition/user/listUserByPage", {params: params});
+  },
+  // 用户禁用启用
+  TbzwChangeStatus(params) {
+    return axios.post("/composition/user/updateUserDisabledStatusById", qs.stringify(params));
   }
 };
 
