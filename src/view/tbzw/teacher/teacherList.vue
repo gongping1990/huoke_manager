@@ -49,7 +49,7 @@
           <Input type="text" v-model="addInfo.teacherName" placeholder="请输入教师名称"></Input>
         </FormItem>
         <FormItem label="随堂音频" prop="introduce">
-          <upload-audio ref="childAudio" @successAudioUrl="successAudioUrl" :option="uploadAudioOption"></upload-audio>
+          <upload-audio ref="childAudio" v-model="addInfo.voiceUrl" :option="uploadAudioOption"></upload-audio>
         </FormItem>
       </Form>
       <div slot="footer" class="-p-v-flex">
@@ -65,7 +65,7 @@
       footer-hide
       width="350"
       title="播放">
-      <audio ref="playAudio" :src="addInfo.voiceUrl"  controls></audio>
+      <audio ref="playAudio" :src="addInfo.authVoiceUrl"  controls></audio>
     </Modal>
   </div>
 </template>
@@ -94,7 +94,6 @@
         textStatus: ['上传用户对象', '更换头像', '上传成功', '上传失败'],
         uploadAudioOption: {
           tipText: '音频格式：mp3、wma、arm 音频大小：150M以内',
-          url: '',
           size: 153600,
           format: ['mp3', 'wma', 'arm']
         },
@@ -186,23 +185,15 @@
       this.getList();
     },
     methods: {
-      successAudioUrl(url) {
-        this.addInfo.voiceUrl = url
-      },
       openModal(data) {
         this.isOpenModal = true
         if (data) {
           this.textType = '1'
           this.addInfo = JSON.parse(JSON.stringify(data))
-          this.uploadAudioOption.url =  this.addInfo.voiceUrl
         } else {
           this.textType = '0'
           this.addInfo = {}
-          this.uploadAudioOption.url = ''
         }
-        setTimeout(() => {
-          this.$refs.childAudio.init()
-        }, 0)
       },
       closeModal() {
         if(this.addInfo.id) {

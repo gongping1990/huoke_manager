@@ -15,12 +15,12 @@
 
     <div class="-c-tips">{{option.tipText}}</div>
 
-    <div class="-c-course-wrap" v-if="itemUrl">
+    <div class="-c-course-wrap" v-if="audioStorageAddress">
       <div class="-c-course-item -item-audio">
         <Icon class="-item-icon" type="md-volume-up" size="30"/>
         <audio style="margin-left: 20px;display: flex"
                ref="media"
-               :src="itemUrl"
+               :src="audioPlayAddress"
                controls="controls" preload="auto"></audio>
       </div>
     </div>
@@ -32,21 +32,32 @@
 
   export default {
     name: 'uploadAudio',
-    props: ['option'],
+    props: ['option', 'childData'],
     data() {
       return {
         baseUrlVa: `http://hkupload.prod.k12.vip/common/uploadPrivateFile`, //私有地址 （音视频）
-        itemUrl: this.option.url,
+        audioPlayAddress: this.option.url,
+        audioStorageAddress: '',
         audioType: this.option.format,
         isFetching: false,
         isDisabled: false
       }
     },
-    methods: {
-      init() {
-        this.itemUrl = this.option.url
-        this.isDisabled = this.option.isDisabled
+    model: {
+      prop: 'childData',
+      event: 'changeUrl'
+    },
+    watch: {
+      childData(_n, _o) {
+        this.audioStorageAddress = _n
+        this.getAvUrl(_n)
       },
+
+      audioStorageAddress(_n, _o) {
+        this.$emit('changeUrl', _n)
+      }
+    },
+    methods: {
       loadAuido() {
         this.$refs.media.load()
       },
@@ -66,8 +77,8 @@
       handleSuccessPlay(res) {
         if (res.code === 200) {
           this.isFetching = false
+          this.audioStorageAddress = res.resultData.url
           this.getAvUrl(res.resultData.url)
-          this.$emit('successAudioUrl', res.resultData.url)
         }
       },
       getAvUrl(data) {
@@ -79,8 +90,7 @@
           .then(
             response => {
               if (response.data.code == '200') {
-                this.$Message.success('上传成功')
-                this.itemUrl = response.data.resultData
+                this.audioPlayAddress = response.data.resultData
               }
             })
           .finally(() => {
