@@ -93,7 +93,7 @@
           </div>
         </Form-item>
         <FormItem label="专区链接">
-          http://baidu.com
+          http://huoke.k12.vip/newpackage
         </FormItem>
         <FormItem>
           <div class="-c-flex">

@@ -61,11 +61,6 @@
             align: 'center',
           },
           {
-            title: '当日访问/打卡',
-            key: 'oneRate',
-            align: 'center',
-          },
-          {
             title: '次日访问/打卡',
             key: 'oneRate',
             align: 'center',
