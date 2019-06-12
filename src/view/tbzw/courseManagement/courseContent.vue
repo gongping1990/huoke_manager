@@ -75,12 +75,6 @@
       width="700"
       :title="addInfo.id ? '编辑课时' : '新增课时'">
       <Form :model="addInfo" ref="addInfoAdd" :label-width="120" :rules="ruleValidateAdd">
-        <FormItem label="课时类型" prop="type">
-          <Radio-group v-model="addInfo.type">
-            <Radio :label=1 :disabled="isEdit">小班课</Radio>
-            <Radio :label=2 :disabled="isEdit">素材课</Radio>
-          </Radio-group>
-        </FormItem>
         <FormItem label="课时名称" prop="name">
           <Input type="text" v-model="addInfo.name" placeholder="请输入课时名称"></Input>
         </FormItem>
@@ -90,11 +84,8 @@
         <Form-item label="课程封面" class="-c-form-item ivu-form-item-required">
           <upload-img v-model="addInfo.coverphoto" :option="uploadOption"></upload-img>
         </Form-item>
-        <Form-item label="课程视频" class="-c-form-item ivu-form-item-required" v-show="addInfo.type === 1">
+        <Form-item label="课程视频" class="-c-form-item ivu-form-item-required">
           <upload-video ref="childVideo" v-model="addInfo.videoUrl" :option="uploadVideoOption"></upload-video>
-        </Form-item>
-        <Form-item label="课时内容" class="-c-form-item ivu-form-item-required" v-show="addInfo.type === 2">
-          <Editor v-model="addInfo.content" :uploadImgServer="baseUrl"></Editor>
         </Form-item>
       </Form>
 
@@ -552,6 +543,7 @@
       },
       submitSaveLessonQuestion() {
         let isCheckQuestion = true
+        let isCheckName = true
         let isCheckOptionBool = false
         let isCheckoptionJsonLength = true
         let isCheckOptionOK = false
@@ -560,8 +552,12 @@
         let choiceDataList = []
 
         this.choiceList.forEach(item => {
-          if (!item.answerPoint || !item.answerTime|| !item.name || !item.publishPoint) {
+          if (!item.answerPoint || !item.answerTime || !item.publishPoint) {
             isCheckQuestion = false
+          }
+
+          if (!item.name) {
+            isCheckName = false
           }
 
           if (!item.optionJson.length) {
@@ -590,7 +586,9 @@
           })
         })
 
-        if (!this.choiceList.length) {
+        if (!isCheckName) {
+          return this.$Message.error('请输入题目')
+        } else if (!this.choiceList.length) {
           return this.$Message.error('请新增题目')
         } else if (!isCheckQuestion && this.modalType == '3') {
           return this.$Message.error('请填写完整的答题字段')
