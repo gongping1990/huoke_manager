@@ -18,7 +18,7 @@
           </Radio-group>
         </Row>
         <Row class="g-t-left g-tab">
-          <Col :span="3" class="g-t-left" v-if="radioType!==1">
+          <Col :span="3" class="g-t-left" v-if="radioType!==0">
             <div class="g-flex-a-j-center">
               <div class="-search-select-text">用户评价：</div>
               <Select v-model="searchInfo.evaluate" @on-change="getList(1)" class="-search-selectOne">
