@@ -592,7 +592,7 @@
 
         if (!this.choiceList.length) {
           return this.$Message.error('请新增题目')
-        } else if (!isCheckQuestion) {
+        } else if (!isCheckQuestion && this.modalType == '3') {
           return this.$Message.error('请填写完整的答题字段')
         } else if (!isCheckoptionJsonLength) {
           return this.$Message.error('请新增选项')
