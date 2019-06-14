@@ -47,7 +47,7 @@
           <FormItem label="订单金额" class="-p-o-width">{{orderInfo.amount | moneyFormatter}} 元</FormItem>
         </div>
         <div class="-p-o-flex">
-          <FormItem label="教材名称" class="-p-o-width">{{orderInfo.courseName}}</FormItem>
+          <FormItem label="课程名称" class="-p-o-width">小学轻作文</FormItem>
           <FormItem label="用户昵称" class="-p-o-width -c-tips g-cursor"><span>{{orderInfo.nickName}}</span></FormItem>
         </div>
         <div class="-p-o-flex">
@@ -126,11 +126,6 @@
           {
             title: '订单号',
             key: 'id',
-            align: 'center'
-          },
-          {
-            title: '课程名称',
-            key: 'courseName',
             align: 'center'
           },
           {
