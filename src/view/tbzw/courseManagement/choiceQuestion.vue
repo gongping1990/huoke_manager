@@ -8,16 +8,20 @@
       </div>
       <div class="-name" v-if="type === 1">
         <span class="-span">答题时间：</span>
-        <Input class="-input-name -s-width" v-model="list.answerPoint" type="text" placeholder="请输入答题时间点"/>
+        <Input class="-input-name -s-b-width" v-model="list.answerMinute" type="text" placeholder="请输入答题时间（分）"/>分
+        <Input class="-input-name -s-b-width" v-model="list.answerSecond" type="text" placeholder="请输入答题时间（分）"/>秒
       </div>
+      <!--//answerPoint-->
       <div class="-name" v-if="type === 1">
         <span class="-span">答题时长：</span>
         <Input class="-input-name -s-width" v-model="list.answerTime" type="text" placeholder="请输入答题时长"/>
       </div>
       <div class="-name" v-if="type === 1">
         <span class="-span">答案公布时间：</span>
-        <Input class="-input-name -s-width" v-model="list.publishPoint" type="text" placeholder="请输入答案公布时间"/>
+        <Input class="-input-name -s-b-width" v-model="list.publishMinute" type="text" placeholder="请输入答题时间（分）"/>分
+        <Input class="-input-name -s-b-width" v-model="list.publishSecond" type="text" placeholder="请输入答题时间（秒）"/>秒
       </div>
+      <!--publishPoint-->
       <div v-for="(item,index) of list.optionJson" :key="index" class="-p-item-select-wrap">
         <span class="-s-width -span">选项{{optionLetter[index]}}：</span>
         <Input class="-s-width" v-model="item.value" type="textarea" placeholder="请输入选择题干"
@@ -134,6 +138,11 @@
 
     .-s-width {
       padding-right: 10px;
+    }
+
+    .-s-b-width {
+      margin-right: 10px;
+      width: 27%
     }
 
     .-s-color {

@@ -193,8 +193,8 @@
           },
           {
             title: '数据完整',
-            render: (h,params) => {
-             return h('div',params.row.complete ? '是' : '否')
+            render: (h, params) => {
+              return h('div', params.row.complete ? '是' : '否')
             },
             align: 'center'
           },
@@ -484,6 +484,10 @@
               this.choiceList = response.data.resultData;
 
               this.choiceList.forEach(list => {
+                list.answerMinute = parseInt(list.answerPoint / 60)
+                list.answerSecond = list.answerPoint % 60
+                list.publishMinute = parseInt(list.publishPoint / 60)
+                list.publishSecond = list.publishPoint % 60
                 list.optionJson = JSON.parse(list.optionJson)
               })
               setTimeout(() => {
@@ -559,7 +563,7 @@
         let choiceDataList = []
 
         this.choiceList.forEach(item => {
-          if (!item.answerPoint || !item.answerTime || !item.publishPoint) {
+          if (!item.answerMinute || !item.answerSecond || !item.answerTime || !item.publishSecond || !item.publishMinute) {
             isCheckQuestion = false
           }
 
@@ -610,7 +614,13 @@
         choiceDataList = JSON.parse(JSON.stringify(this.choiceList))
 
         choiceDataList.forEach(item => {
+          item.answerPoint = (+item.answerMinute * 60) + (+item.answerSecond)
+          item.publishPoint = (+item.publishMinute * 60) + (+item.publishSecond)
           item.optionJson = JSON.stringify(item.optionJson)
+          delete item.answerMinute
+          delete item.answerSecond
+          delete item.publishMinute
+          delete item.publishSecond
         })
 
         this.$api.composition.saveLessonQuestion({
