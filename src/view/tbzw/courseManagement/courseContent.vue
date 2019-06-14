@@ -192,6 +192,13 @@
             align: 'center'
           },
           {
+            title: '数据完整',
+            render: (h,params) => {
+             return h('div',params.row.complete ? '是' : '否')
+            },
+            align: 'center'
+          },
+          {
             title: '补充内容',
             align: 'center',
             width: 340,
