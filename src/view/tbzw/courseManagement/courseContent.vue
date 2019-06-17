@@ -563,7 +563,7 @@
         let choiceDataList = []
 
         this.choiceList.forEach(item => {
-          if (!item.answerMinute || !item.answerSecond || !item.answerTime || !item.publishSecond || !item.publishMinute) {
+          if ( !item.answerSecond || !item.answerTime || !item.publishSecond ) {
             isCheckQuestion = false
           }
 
