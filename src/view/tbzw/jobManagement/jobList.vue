@@ -204,7 +204,22 @@
                       this.openModal(params.row, false)
                     }
                   }
-                }, '批改')
+                }, '批改'),
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: '#5444E4',
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      window.open(params.row.workImg)
+                    }
+                  }
+                }, '下载')
               ])
             }
           }
