@@ -187,7 +187,6 @@
           {
             title: '操作',
             width: 190,
-            align: 'center',
             render: (h, params) => {
               return h('div', [
                 h('Button', {
@@ -277,7 +276,7 @@
           {
             title: '操作',
             width: 200,
-            align: 'center',
+            align: 'left',
             render: (h, params) => {
               return h('div', [
                 h('Button', {
@@ -303,7 +302,7 @@
                   },
                   style: {
                     color: '#5444E4',
-                    display: this.radioType === 2 ? 'none' : 'inline-block',
+                    display: (this.radioType === 2) || (this.radioType === 1 && params.row.praise) ? 'none' : 'inline-block',
                     marginRight: '5px'
                   },
                   on: {

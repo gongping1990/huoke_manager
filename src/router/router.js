@@ -226,7 +226,7 @@ export const appRouter = [
           {name:'数据统计'},
           {name:'留存数据'}
         ],
-        component: () => import('@/view/gsw/retainData/retainData')
+        component: () => import('@/view/tbzw/retainData/retainData')
       },
       {
         path: '/tbzw_userData',
@@ -235,7 +235,7 @@ export const appRouter = [
           {name:'数据统计'},
           {name:'交易数据'}
         ],
-        component: () => import('@/view/gsw/userData/userData')
+        component: () => import('@/view/tbzw/userData/userData')
       }
     ]
   },
