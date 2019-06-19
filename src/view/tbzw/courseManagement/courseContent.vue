@@ -48,11 +48,11 @@
                            :childList="choiceList"></choice-question>
         </FormItem>
         <FormItem label="作业名称" v-if="modalType===5">
-          <Input type="text" v-model="detailInfo.homework" placeholder="请输入作业名称（字数不超过150字）" :maxlength="150"></Input>
+          <Input type="text" v-model="detailInfo.homework" placeholder="请输入作业名称（字数不超过20字）" :maxlength="20"></Input>
         </FormItem>
         <FormItem label="作业要求" v-if="modalType===5">
-          <Input type="textarea" :rows="4" v-model="detailInfo.homeworkClaim" placeholder="请输入作业要求（字数不超过500字）"
-                 :maxlength='500'></Input>
+          <Input type="textarea" :rows="4" v-model="detailInfo.homeworkClaim" placeholder="请输入作业要求（字数不超过80字）"
+                 :maxlength='80'></Input>
         </FormItem>
       </Form>
 
