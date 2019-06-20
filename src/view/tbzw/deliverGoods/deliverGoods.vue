@@ -50,7 +50,7 @@
           <Input type="text" v-model="addInfo.sendinfo" placeholder="请输入发货信息"></Input>
         </FormItem>
         <FormItem label="发货时间" prop="sendTime">
-          <Date-picker style="width: 100%" type="date" placeholder="选择发货时间" v-model="addInfo.sendTime"></Date-picker>
+          <Date-picker style="width: 100%" type="datetime" placeholder="选择发货时间" v-model="addInfo.sendTime"></Date-picker>
         </FormItem>
       </Form>
       <div slot="footer" class="g-flex-j-sa">
@@ -162,7 +162,18 @@
           },
           {
             title: '收货信息',
-            key: 'recipient',
+            render: (h,params)=>{
+              return h('div',{
+                style: {
+                  'text-align': 'left'
+                }
+              },[
+                h('div',`名称：${params.row.recipient.name}`),
+                h('div',`电话：${params.row.recipient.telephone}`),
+                h('div',`地址：${params.row.recipient.areas}`),
+                h('div',`详情：${params.row.recipient.address}`)
+              ])
+            },
             align: 'center'
           },
           {
@@ -172,7 +183,17 @@
           },
           {
             title: '发货信息',
-            key: 'sendinfo',
+            render: (h,params)=>{
+              return h('div',{
+                style: {
+                  'text-align': 'left'
+                }
+              },[
+                h('div',`发货人：${params.row.sendinfo.sender}`),
+                h('div',`发货信息：${params.row.sendinfo.sendinfo}`),
+                h('div',`发货时间：${params.row.sendinfo.sendTime}`)
+              ])
+            },
             align: 'center'
           },
           {
@@ -243,6 +264,7 @@
               this.dataList = response.data.resultData.records;
               this.dataList.forEach(item => {
                 item.recipient = JSON.parse(item.recipient)
+                item.sendinfo = JSON.parse(item.sendinfo)
               })
               this.total = response.data.resultData.total;
             })
