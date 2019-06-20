@@ -257,7 +257,7 @@
             this.isSending = true
             this.$api.composition.sendOutGoods({
               ...this.addInfo,
-              sendTime: new Date(this.addInfo.sendTime).getTime()
+              sendTime: dayjs(this.addInfo.sendTime).format('YYYY/MM/DD HH:mm:ss')
             })
               .then(
                 response => {
