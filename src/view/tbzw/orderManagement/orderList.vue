@@ -51,7 +51,7 @@
           <FormItem label="用户昵称" class="-p-o-width -c-tips g-cursor"><span>{{orderInfo.nickName}}</span></FormItem>
         </div>
         <div class="-p-o-flex">
-          <FormItem label="订单状态" class="-p-o-width">{{orderType[orderInfo.orderMode-1]}}</FormItem>
+          <FormItem label="订单状态" class="-p-o-width">{{orderStatus[orderInfo.payStatus]}}</FormItem>
           <FormItem label="三方交易号" class="-p-o-width">{{orderInfo.transactionNo}}</FormItem>
         </div>
         <div class="-p-o-flex">
@@ -157,7 +157,7 @@
           {
             title: '订单状态',
             render: (h, params) => {
-              return h('div', this.orderType[params.row.orderMode-1])
+              return h('div', this.orderStatus[params.row.payStatus])
             },
             align: 'center'
           },
