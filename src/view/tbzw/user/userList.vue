@@ -145,12 +145,12 @@
               return h('div',params.row.subscripbe ? '是' : '否')
             }
           },
-          // {
-          //   title: '是否付费',
-          //   render: (h,params)=>{
-          //     return h('div',params.row.payed ? '是' : '否')
-          //   }
-          // },
+          {
+            title: '是否付费',
+            render: (h,params)=>{
+              return h('div',params.row.payed ? '是' : '否')
+            }
+          },
           {
             title: '创建时间',
             key: 'creatTime'
