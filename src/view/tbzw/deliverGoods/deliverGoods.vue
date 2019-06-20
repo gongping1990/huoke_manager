@@ -101,7 +101,7 @@
             {required: true, message: '请输入发货信息', trigger: 'blur'},
           ],
           sendTime: [
-            {required: true, type:'date', message: '请选择发货时间', trigger: 'change'},
+            {required: true, type: 'date', message: '请选择发货时间', trigger: 'change'},
           ],
         },
         columns: [
@@ -112,14 +112,23 @@
           },
           {
             title: '收货信息',
-            key: 'recipient',
+            render: (h,params)=>{
+              return h('div',{
+                style: {
+                  'text-align': 'left'
+                }
+              },[
+                h('div',`名称：${params.row.recipient.name}`),
+                h('div',`电话：${params.row.recipient.telephone}`),
+                h('div',`地址：${params.row.recipient.areas}`),
+                h('div',`详情：${params.row.recipient.address}`)
+              ])
+            },
             align: 'center'
           },
           {
             title: '创建时间',
-            render: (h, params) => {
-              return h('div', dayjs(+params.row.sendGmtCreate).format("YYYY-MM-DD HH:mm:ss"))
-            },
+            key: 'sendGmtCreate',
             align: 'center'
           },
           {
@@ -158,9 +167,7 @@
           },
           {
             title: '创建时间',
-            render: (h, params) => {
-              return h('div', dayjs(+params.row.sendGmtCreate).format("YYYY-MM-DD HH:mm:ss"))
-            },
+            key: 'sendGmtCreate',
             align: 'center'
           },
           {
@@ -184,7 +191,7 @@
     methods: {
       toExcel() {
         let params = {
-          send : this.radioType,
+          send: this.radioType,
           nickName: this.searchInfo.nickname,
           startTime: this.searchInfo.startTime,
           endTime: this.searchInfo.endTime
@@ -234,6 +241,9 @@
           .then(
             response => {
               this.dataList = response.data.resultData.records;
+              this.dataList.forEach(item => {
+                item.recipient = JSON.parse(item.recipient)
+              })
               this.total = response.data.resultData.total;
             })
           .finally(() => {
