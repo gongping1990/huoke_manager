@@ -76,7 +76,7 @@
       :title="addInfo.id ? '编辑课时' : '新增课时'">
       <Form :model="addInfo" ref="addInfoAdd" :label-width="120" :rules="ruleValidateAdd">
         <FormItem label="课时名称" prop="name">
-          <Input type="text" v-model="addInfo.name" placeholder="请输入课时名称"></Input>
+          <Input type="text" v-model="addInfo.name" :maxlength="14" placeholder="请输入课时名称(最多十四个字)"></Input>
         </FormItem>
         <FormItem label="排序值" prop="sortnum">
           <InputNumber :max="999" :min="0" v-model="addInfo.sortnum" placeholder="请输入排序值"></InputNumber>

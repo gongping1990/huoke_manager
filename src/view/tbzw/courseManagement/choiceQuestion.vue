@@ -3,7 +3,7 @@
     <div v-for="(list,listIndex) of choiceList" :key="listIndex" class="p-choice-wrap">
       <div class="-name">
         <span  class="-span">题目{{listIndex+1}}：</span>
-        <Input class="-input-name -s-width" v-model="list.name" type="text" placeholder="请输入题目"/>
+        <Input class="-input-name -s-width" v-model="list.name" type="text" :maxlength="40" placeholder="请输入题目（最多四十个字）"/>
         <span class="-s-color g-cursor" @click="delChoice(list,listIndex)">删除</span>
       </div>
       <div class="-name" v-if="type === 1">
