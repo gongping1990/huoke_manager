@@ -283,7 +283,10 @@
           {
             title: '评价',
             render: (h, params) => {
-              return h('div', this.evaluateColumn[params.row.evaluation])
+              return h('div', [
+                h('div',this.evaluateColumn[params.row.evaluation]),
+                h('div',params.row.stumsg === null ? '' : `(${params.row.stumsg})`)
+              ])
             },
             align: 'center'
           },
