@@ -4,10 +4,10 @@
       <Row class="g-search">
         <Row class="g-t-left">
           <Radio-group v-model="gradeType" type="button" @on-change="getList()">
-            <Radio :label=3>三年级</Radio>
-            <Radio :label=4>四年级</Radio>
-            <Radio :label=5>五年级</Radio>
-            <Radio :label=6>六年级</Radio>
+            <Radio :label=3>L1</Radio>
+            <Radio :label=4>L2</Radio>
+            <Radio :label=5>L3</Radio>
+            <Radio :label=6>L4</Radio>
           </Radio-group>
         </Row>
         <Row class="g-t-left g-tab">
