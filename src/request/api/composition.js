@@ -206,6 +206,10 @@ const composition = {
   replyHomework(params) {
     return axios.post('/composition/study/replyHomework', qs.stringify(params))
   },
+  // 删除
+  removeHomework(params) {
+    return axios.post('/composition/study/removeHomework', qs.stringify(params))
+  },
 
   // 表扬
   praiseHomework(params) {

@@ -217,7 +217,22 @@
                       window.open(params.row.workImg)
                     }
                   }
-                }, '下载')
+                }, '下载'),
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: 'rgba(218, 55, 75)',
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.delItem(params.row)
+                    }
+                  }
+                }, '删除')
               ])
             }
           }
@@ -325,7 +340,23 @@
                       this.praiseItem(params.row)
                     }
                   }
-                }, '移出表扬')
+                }, '移出表扬'),
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    display: this.radioType === 2 ? 'none' : 'inline-block',
+                    color: 'rgba(218, 55, 75)',
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.delItem(params.row)
+                    }
+                  }
+                }, '删除')
               ])
             }
           }
@@ -336,6 +367,23 @@
       this.getList()
     },
     methods: {
+      delItem(param) {
+        this.$Modal.confirm({
+          title: '提示',
+          content: '确认要删除吗？',
+          onOk: () => {
+            this.$api.composition.removeHomework({
+              id: param.id
+            }).then(
+              response => {
+                if (response.data.code == "200") {
+                  this.$Message.success("操作成功");
+                  this.getList();
+                }
+              })
+          }
+        })
+      },
       changeDate(data) {
         this.getStartTime = data.startTime
         this.getEndTime = data.endTime
