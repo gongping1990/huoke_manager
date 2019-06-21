@@ -74,12 +74,6 @@
           type: 'datetime'
         },
         dataList: [],
-        gradeList: {
-          3: 'L1',
-          4: 'L2',
-          5: 'L3',
-          6: 'L4'
-        },
         total: 0,
         selectInfo: '1',
         searchInfo: {},
@@ -90,12 +84,6 @@
           {
             title: '用户昵称',
             key: 'nickname'
-          },
-          {
-            title: '预约课程年级',
-            render: (h, params) => {
-              return h('div', this.gradeList[params.row.grade])
-            }
           },
           {
             title: '预约时间',
@@ -137,12 +125,6 @@
           {
             title: '用户昵称',
             key: 'nickname'
-          },
-          {
-            title: '预约课程年级',
-            render: (h, params) => {
-              return h('div', this.gradeList[params.row.grade])
-            }
           },
           {
             title: '预约时间',
