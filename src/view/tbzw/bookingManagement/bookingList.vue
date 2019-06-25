@@ -113,7 +113,7 @@
                       this.changeAudit(params.row, 1)
                     },
                     'on-cancel': () => {
-                      this.changeAudit(params.row, 0)
+                      this.changeAudit(params.row, 2)
                     }
                   }
                 }, '审核')
