@@ -191,7 +191,7 @@
           isCheckAllPeople: false,
           type: '3'
         },
-        baseUrl: `${getBaseUrl()}/common/uploadPublicFile`,
+        baseUrl: `${getBaseUrl()}/sch/common/uploadPublicFile`,
         dateStartOption: {
           disabledDate(date) {
             return date && (new Date(date).getTime() <= new Date().getTime() - 24 * 3600 * 1000);

@@ -53,7 +53,7 @@
     components: {DatePickerTemplate},
     data() {
       return {
-        baseUrl: `${getBaseUrl()}/common/uploadPublicFile`,
+        baseUrl: `${getBaseUrl()}/sch/common/uploadPublicFile`,
         tab: {
           page: 1,
           currentPage: 1,

@@ -198,7 +198,7 @@
     methods: {
       toChangeStatus(params) {
 
-        this.$api.user.gswChangeStatus({
+        this.$api.gswUser.gswChangeStatus({
           userId: params.userId,
           disabled: !params.disabled
         }).then(
@@ -233,7 +233,7 @@
         }
 
         this.isFetching = true
-        this.$api.user.getGswUserList(params)
+        this.$api.gswUser.getGswUserList(params)
           .then(
             response => {
               this.dataList = response.data.resultData.records;

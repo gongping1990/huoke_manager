@@ -315,7 +315,7 @@
         })
 
         this.isFetching = true
-        this.$api.dataCenter.getPrepStatisticsData()
+        this.$api.hkywDataCenter.getPrepStatisticsData()
           .then(
             response => {
               this.dataInfo = response.data.resultData;

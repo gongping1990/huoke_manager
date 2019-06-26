@@ -83,7 +83,7 @@
           page: 1,
           pageSize: 10
         },
-        baseUrl: `${getBaseUrl()}/common/uploadPublicFile`,
+        baseUrl: `${getBaseUrl()}/sch/common/uploadPublicFile`,
         isOpenModal: false,
         isOpenModalPlay: false,
         isFetching: false,

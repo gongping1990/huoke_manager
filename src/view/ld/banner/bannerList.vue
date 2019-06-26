@@ -120,7 +120,7 @@
     components: {DatePickerTemplate},
     data() {
       return {
-        baseUrl: `${getBaseUrl()}/common/uploadPublicFile`,
+        baseUrl: `${getBaseUrl()}/sch/common/uploadPublicFile`,
         tab: {
           page: 1,
           currentPage: 1,
@@ -335,7 +335,7 @@
         if(num) {
           this.tab.currentPage = 1
         }
-        this.$api.banner.ldBannerList({
+        this.$api.ldBanner.ldBannerList({
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
           name: this.searchInfo.nickname,
@@ -356,7 +356,7 @@
           title: '提示',
           content: '确认要删除banner图片吗？',
           onOk: () => {
-            this.$api.banner.ldDelBanner({
+            this.$api.ldBanner.ldDelBanner({
               id: param.id
             }).then(
               response => {
@@ -386,7 +386,7 @@
         this.$refs[name].validate((valid) => {
           if (valid) {
             this.isSending = true
-            let promiseDate = this.addInfo.id ? this.$api.banner.ldUpdateBanner(this.addInfo) : this.$api.banner.ldAddBanner(this.addInfo)
+            let promiseDate = this.addInfo.id ? this.$api.ldBanner.ldUpdateBanner(this.addInfo) : this.$api.ldBanner.ldAddBanner(this.addInfo)
             promiseDate
               .then(
                 response => {
@@ -406,7 +406,7 @@
         if (!this.sortNum) {
           return this.$Message.error('请输入排序值')
         }
-        this.$api.banner.ldUpdateSortNum({
+        this.$api.ldBanner.ldUpdateSortNum({
           id: this.addInfo.id,
           sortnum: this.sortNum
         }).then(response => {

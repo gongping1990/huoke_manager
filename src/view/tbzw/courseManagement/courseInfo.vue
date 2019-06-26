@@ -13,21 +13,21 @@
             <Input type="text" :disabled="!isEdit" v-model="addInfo.name" placeholder="请输入课程名称"></Input>
           </FormItem>
           <FormItem label="单独购价格" prop="alonePrice">
-            <InputNumber type="text" :disabled="!isEdit" v-model="addInfo.alonePrice" :min="0"
+            <InputNumber  style="width: 100%;" type="text" :disabled="!isEdit" v-model="addInfo.alonePrice" :min="0"
                          placeholder="请输入单独购价格（元）"></InputNumber>
             <span class="-c-tips">* 精确到小数点后2位，如99.99</span>
           </FormItem>
           <FormItem label="拼课价格" prop="groupPrice">
-            <InputNumber type="text" :disabled="!isEdit" v-model="addInfo.groupPrice" :min="0"
+            <InputNumber style="width: 100%;" type="text" :disabled="!isEdit" v-model="addInfo.groupPrice" :min="0"
                          placeholder="请输入拼课价格（元）"></InputNumber>
             <span class="-c-tips">* 精确到小数点后2位，如99.99</span>
           </FormItem>
           <FormItem label="拼课时限" prop="groupTime">
-            <InputNumber type="text" :disabled="!isEdit" v-model="addInfo.groupTime" :min="0"
+            <InputNumber style="width: 100%;" type="text" :disabled="!isEdit" v-model="addInfo.groupTime" :min="0"
                          placeholder="请输入拼课时限（小时）"></InputNumber>
           </FormItem>
           <FormItem label="咨询电话" prop="consultPhone">
-            <InputNumber type="text" :disabled="!isEdit" v-model="addInfo.consultPhone"
+            <InputNumber style="width: 100%;" type="text" :disabled="!isEdit" v-model="addInfo.consultPhone"
                          placeholder="请输入咨询电话"></InputNumber>
           </FormItem>
           <Form-item label="封面图片" class="-c-form-item ivu-form-item-required">
@@ -102,7 +102,7 @@
     props: ['open'],
     data() {
       return {
-        baseUrl: `${getBaseUrl()}/common/uploadPublicFile`, // 公有 （图片）
+        baseUrl: `${getBaseUrl()}/sch/common/uploadPublicFile`, // 公有 （图片）
         addInfo: {
           name: '',
           alonePrice: null,

@@ -1,81 +1,100 @@
 <template>
   <div class="p-data" id="dataCenter">
-    <Row class="g-search">
-      <Col :span="3" class="g-t-left">
-        <div class="g-flex-a-j-center">
-          <div class="-search-select-text">日期查询：</div>
-          <Select v-model="selectType" class="-search-selectOne">
-            <Option label='自然天' :value="1"></Option>
-            <Option label='自定义' :value="2"></Option>
-          </Select>
+    <div>
+      <div class="g-t-left -title">今日数据</div>
+      <Table class="-c-tab" :loading="isFetching" :columns="columnsToday" :data="dataListToday"></Table>
+    </div>
+    <div>
+      <div class="g-t-left -title">累计数据</div>
+      <Row class="g-search -c-tab">
+        <Col :span="3" class="g-t-left">
+          <div class="g-flex-a-j-center">
+            <div class="-search-select-text">日期查询：</div>
+            <Select v-model="selectTypeOne" class="-search-selectOne" @on-change="changeSelectData">
+              <Option label='全部' :value="1"></Option>
+              <Option label='自定义' :value="2"></Option>
+            </Select>
+          </div>
+        </Col>
+        <Col :span="21" class="g-flex-a-j-center">
+          <date-picker-template v-if="selectTypeOne===2" :dataInfo="dateOption"
+                                @changeDate="changeDateTwo"></date-picker-template>
+        </Col>
+      </Row>
+      <Table class="-c-tab" :loading="isFetching" :columns="columnsToday" :data="dataListToday"></Table>
+    </div>
+
+    <div>
+      <div class="g-t-left -title">交易趋势</div>
+      <Row class="g-search -c-tab">
+        <Col :span="3" class="g-t-left">
+          <div class="g-flex-a-j-center">
+            <div class="-search-select-text">日期查询：</div>
+            <Select v-model="selectTypeTwo" class="-search-selectOne" @on-change="changeSelectData">
+              <Option label='最近一月' :value="1"></Option>
+              <Option label='自定义' :value="2"></Option>
+            </Select>
+          </div>
+        </Col>
+        <Col :span="21" class="g-flex-a-j-center">
+          <date-picker-template v-if="selectTypeTwo===2" :dataInfo="dateOption"
+                                @changeDate="changeDateTwo"></date-picker-template>
+        </Col>
+      </Row>
+
+      <div class="-c-tab g-t-left">
+        <Radio-group v-model="radioTypeOne" type="button" @on-change="changeRadio(1)">
+          <Radio label="1">全部用户</Radio>
+          <Radio label="2">当日新增用户</Radio>
+          <Radio label="3">老付费用户</Radio>
+        </Radio-group>
+      </div>
+
+
+      <Card class="-p-d-col">
+        <div class="-c-tab -p-d-echart">
+          <div ref="echart" class="-p-c-content"></div>
         </div>
-      </Col>
-      <Col :span="21" class="g-flex-a-j-center">
-        <Date-picker class="date-time"
-                     v-if="selectType===1"
-                     placeholder="选择开始日期"
-                     :options="dateOptionOne"
-                     @on-change="changeDateOne"
-                     v-model="selectTime"></Date-picker>
-        <date-picker-template v-if="selectType===2" :dataInfo="dateOption"
-                              @changeDate="changeDateTwo"></date-picker-template>
-      </Col>
-    </Row>
+      </Card>
+    </div>
 
-    <Row class="g-flex-a-j-center -c-tab" :gutter="10" style="width:80%">
-      <Col v-for="(item,index) of titleListOne" :key="index" class="-p-d-col">
-        <Card class="g-t-left">
-          <div>{{item.name}}</div>
-          <div class="-col-num">{{item.num}}</div>
-          <div class="-col-flex">
-            <div class="-col-ratio">
-              <span><span class="-p-d-gray">日环比：</span>{{item.dayRatio}}%</span>
-              <Icon :type="item.dayRatio < 0 ? 'md-arrow-dropdown' : 'md-arrow-dropup'" size="18"
-                    :class="[item.dayRatio < 0 ? '-p-d-red' : '-p-d-green']"/>
-            </div>
-            <div class="-col-ratio">
-              <span><span class="-p-d-gray">周同比：</span>{{item.weekRatio}}%</span>
-              <Icon :type="item.weekRatio < 0 ? 'md-arrow-dropdown' : 'md-arrow-dropup'" size="18"
-                    :class="[item.weekRatio < 0 ? '-p-d-red' : '-p-d-green']"/>
-            </div>
+    <div>
+      <div class="g-t-left -title -c-tab">数据对比</div>
+      <Row class="g-search">
+        <Col :span="3" class="g-t-left">
+          <div class="g-flex-a-j-center">
+            <div class="-search-select-text">日期查询：</div>
+            <Select v-model="selectTypeThree" class="-search-selectOne" @on-change="changeSelectData">
+              <Option label='最近一月' :value="1"></Option>
+              <Option label='自定义' :value="2"></Option>
+            </Select>
           </div>
-        </Card>
-      </Col>
-    </Row>
+        </Col>
+        <Col :span="21" class="g-flex-a-j-center">
+          <date-picker-template v-if="selectTypeThree===2" :dataInfo="dateOption"
+                                @changeDate="changeDateTwo"></date-picker-template>
+        </Col>
+      </Row>
 
-    <Card class="-p-d-col">
-      <div class="-c-tab -p-d-echart">
-        <div ref="echart" class="-p-c-content"></div>
+      <div class="-c-tab g-t-left">
+        <Radio-group v-model="radioTypeOne" type="button" @on-change="changeRadio(2)">
+          <Radio label="1">系统页面访问量</Radio>
+          <Radio label="2">系统访问用户</Radio>
+          <Radio label="3">商品页面访问量</Radio>
+          <Radio label="4">商品访问用户</Radio>
+          <Radio label="5">下单用户</Radio>
+          <Radio label="6">付费用户</Radio>
+          <Radio label="7">付费金额</Radio>
+          <Radio label="8">客单价</Radio>
+        </Radio-group>
       </div>
-    </Card>
 
-    <Row class="g-flex-a-j-center -c-tab" :gutter="10" style="width:80%">
-      <Col v-for="(item,index) of titleListTwo" :key="index" class="-p-d-col -p-d-col-two">
-        <Card class="g-t-left">
-          <div>{{item.name}}</div>
-          <div class="-col-num">{{item.num}}</div>
-          <div class="-col-flex">
-            <div class="-col-ratio">
-              <span><span class="-p-d-gray">日环比：</span>{{item.dayRatio}}%</span>
-              <Icon :type="item.dayRatio < 0 ? 'md-arrow-dropdown' : 'md-arrow-dropup'" size="18"
-                    :class="[item.dayRatio < 0 ? '-p-d-red' : '-p-d-green']"/>
-            </div>
-            <div class="-col-ratio">
-              <span><span class="-p-d-gray">周同比：</span>{{item.weekRatio}}%</span>
-              <Icon :type="item.weekRatio < 0 ? 'md-arrow-dropdown' : 'md-arrow-dropup'" size="18"
-                    :class="[item.weekRatio < 0 ? '-p-d-red' : '-p-d-green']"/>
-            </div>
-          </div>
-        </Card>
-      </Col>
-    </Row>
-
-    <Card class="-p-d-col">
-      <div class="-c-tab -p-d-echart">
-        <div ref="echartTwo" class="-p-c-content"></div>
-      </div>
-    </Card>
-
+      <Card class="-p-d-col">
+        <div class="-c-tab -p-d-echart">
+          <div ref="echartTwo" class="-p-c-content"></div>
+        </div>
+      </Card>
+    </div>
   </div>
 </template>
 
@@ -98,8 +117,11 @@
     components: {DatePickerTemplate},
     data() {
       return {
-        radioType: '1',
-        selectType: 1,
+        radioTypeOne: '1',
+        radioTypeTwo: '1',
+        selectTypeOne: 1,
+        selectTypeTwo: 1,
+        selectTypeThree: 1,
         dateOptionOne: {
           disabledDate(date) {
             return date && date.valueOf() > (new Date().getTime() - 24 * 60 * 60 * 1000);
@@ -114,8 +136,45 @@
         selectTime: new Date(new Date().getTime() - 24 * 60 * 60 * 1000),
         getStartTime: '',
         getEndTime: '',
-        titleListOne: [],
-        titleListTwo: [],
+        columnsToday: [
+          {
+            title: '用户',
+            key: 'phone'
+          },
+          {
+            title: '系统页面访问量',
+            key: 'phone'
+          },
+          {
+            title: '系统访问用户',
+            key: 'phone'
+          },
+          {
+            title: '商品页面访问量',
+            key: 'phone'
+          },
+          {
+            title: '商品访问用户',
+            key: 'phone'
+          },
+          {
+            title: '下单用户',
+            key: 'phone'
+          },
+          {
+            title: '付费用户',
+            key: 'phone'
+          },
+          {
+            title: '付费金额',
+            key: 'phone'
+          },
+          {
+            title: '客单价',
+            key: 'phone'
+          }
+        ],
+        dataListToday: []
       }
     },
     computed: {
@@ -139,7 +198,7 @@
           dataList.goodsAccessUser.push(item.goodsAccessUser)
           dataList.orderUser.push(item.orderUser)
           dataList.payUser.push(item.payUser)
-          dataList.payAmount.push(item.payAmount/100)
+          dataList.payAmount.push(item.payAmount / 100)
         }
         let optionSeriesLine = [
           {
@@ -177,8 +236,8 @@
           averagePayAmount: []
         }
         for (let item of this.dataInfo.data) {
-          dataList.allPayAmount.push(item.allPayAmount/100)
-          dataList.averagePayAmount.push(item.averagePayAmount/100)
+          dataList.allPayAmount.push(item.allPayAmount / 100)
+          dataList.averagePayAmount.push(item.averagePayAmount / 100)
         }
         let optionSeriesLineTwo = [
           {
@@ -199,9 +258,13 @@
       this.getList()
     },
     methods: {
-      changeDateOne(data) {
-        this.selectTime = data
-        this.getList()
+      changeRadio (num) {
+
+      },
+      changeSelectData() {
+        if (this.selectType == 1) {
+          this.getList()
+        }
       },
       changeDateTwo(data) {
         this.getStartTime = data.startTime
@@ -220,8 +283,8 @@
             axisPointer: {
               type: 'line'
             },
-            textStyle:{
-              align:'left'
+            textStyle: {
+              align: 'left'
             }
           },
           legend: {
@@ -290,8 +353,8 @@
             axisPointer: {
               type: 'line'
             },
-            textStyle:{
-              align:'left'
+            textStyle: {
+              align: 'left'
             }
           },
           legend: {
@@ -349,8 +412,6 @@
         if (this.selectType === 2) {
           params.startDate = new Date(this.getStartTime).getTime()
           params.endDate = new Date(this.getEndTime).getTime()
-        } else {
-          params.date = new Date(this.selectTime).getTime()
         }
 
         this.isFetching = true
@@ -365,52 +426,6 @@
           })
       },
       initData() {
-        this.titleListOne = [
-          {
-            name: '系统访问用户',
-            num: this.dataInfo.systemAccessUser,
-            dayRatio: this.dataInfo.systemAccessUserChainDay,
-            weekRatio: this.dataInfo.systemAccessUserBasisWeek
-          },
-          {
-            name: '商品访问用户',
-            num: this.dataInfo.goodsAccessUser,
-            dayRatio: this.dataInfo.goodsAccessUserChainDay,
-            weekRatio: this.dataInfo.goodsAccessUserBasisWeek
-          },
-          {
-            name: '下单用户',
-            num: this.dataInfo.orderUser,
-            dayRatio: this.dataInfo.orderUserChainDay,
-            weekRatio: this.dataInfo.orderUserBasisWeek
-          },
-          {
-            name: '付费用户',
-            num: this.dataInfo.payUser,
-            dayRatio: this.dataInfo.payUserChainDay,
-            weekRatio: this.dataInfo.payUserBasisWeek
-          },
-          {
-            name: '付费金额',
-            num: thousandFormatter(this.dataInfo.payAmount/100),
-            dayRatio: this.dataInfo.payAmountChainDay,
-            weekRatio: this.dataInfo.payAmountBasisWeek
-          }
-        ]
-        this.titleListTwo = [
-          {
-            name: '累计付费金额',
-            num: thousandFormatter(this.dataInfo.allPayAmount/100),
-            dayRatio: this.dataInfo.allPayAmountChainDay,
-            weekRatio: this.dataInfo.allPayAmountBasisWeek
-          },
-          {
-            name: '客单价',
-            num: thousandFormatter(this.dataInfo.averagePayAmount/100),
-            dayRatio: this.dataInfo.averagePayAmountChainDay,
-            weekRatio: this.dataInfo.averagePayAmountBasisWeek
-          }
-        ]
         this.drawLine()
         this.drawLineTwo()
       }
@@ -421,6 +436,10 @@
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="less">
   .p-data {
+    .-title {
+      font-size: 18px;
+      font-weight: bold;
+    }
     .-search-select-text {
       min-width: 70px;
     }

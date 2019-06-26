@@ -166,8 +166,8 @@
         isFetching: false,
         isSwitchTemplate: false,
         dataList: [],
-        baseUrl: `${getBaseUrl()}/common/uploadPublicFile`, // 公有 （图片）
-        baseUrlVa: `${getBaseUrl()}/common/uploadPrivateFile`, //私有地址 （音视频）
+        baseUrl: `${getBaseUrl()}/sch/common/uploadPublicFile`, // 公有 （图片）
+        baseUrlVa: `${getBaseUrl()}/sch/common/uploadPrivateFile`, //私有地址 （音视频）
         playAudioUrl: '',
         singleAnswer: 0,
         anyAnswer: '',

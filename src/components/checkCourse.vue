@@ -1,7 +1,15 @@
 <template>
   <Modal v-model="isShow" title="选择课程" width="500" @on-cancel="cancleCourseModal">
     <Row class="g-search -course-search">
-      <Col :span="24">
+      <Col :span="8">
+        <div class="-search" style="margin-right: 20px">
+          <Select v-model="classificationOfCourses" class="-search-select">
+            <Option :value="item.id" v-for="(item,index) of typeList">{{item.name}}</Option>
+          </Select>
+        </div>
+      </Col>
+
+      <Col :span="15">
         <div class="-search">
           <Select v-model="selectInfo" class="-search-select">
             <Option value="1">课程名称</Option>
@@ -56,6 +64,8 @@
         isFetching: false,
         isEdit: false,
         courseList: [],
+        typeList: [],
+        classificationOfCourses: '',
         radioCourseId: '',
         size: 10000,
         checkCourseIds: [],
@@ -70,10 +80,12 @@
         for (let item of this.checkCourseList) {
           this.checkCourseIds.push(item.id)
         }
+        console.log(this.checkCourseList,'011')
       } else {
         this.radioCourseId = this.checkCourseList.length && this.checkCourseList[0].id
       }
       this.getCourseList()
+      this.getCourseTypeList()
     },
     methods: {
       changeIndex() {
@@ -89,6 +101,20 @@
         } else {
           this.courseList = this.storageList
         }
+      },
+      getCourseTypeList() {
+        this.isFetching = true
+        this.$api.course.courseTypeList({
+          current: 1,
+          size: this.size,
+        })
+          .then(
+            response => {
+              this.typeList = response.data.resultData.records;
+            })
+          .finally(() => {
+            this.isFetching = false
+          })
       },
       getCourseList() {
         if (this.isFetching) return

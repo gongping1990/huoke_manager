@@ -304,7 +304,7 @@
       //分页查询
       getList() {
         this.isFetching = true
-        this.$api.course.ldCourseList({
+        this.$api.ldCourse.ldCourseList({
           current: this.tab.page,
           size: this.tab.pageSize,
           grade: this.gradeType,
@@ -325,7 +325,7 @@
           title: '提示',
           content: '确认要删除吗？',
           onOk: () => {
-            this.$api.course.ldDelList({
+            this.$api.ldCourse.ldDelList({
               id: param.id
             }).then(
               response => {
@@ -338,7 +338,7 @@
         })
       },
       changeStatus(data) {
-        this.$api.course.ldChangeStatus({
+        this.$api.ldCourse.ldChangeStatus({
           id: data.id,
           disable: data.isdisabled == 0 ? 1 : 0
         }).then(
@@ -359,7 +359,7 @@
         this.$refs[name].validate((valid) => {
           if (valid) {
             this.isSending = true
-            let promiseDate = this.addInfo.id ? this.$api.course.ldUpdateList(this.addInfo) : this.$api.course.ldAddCourse(this.addInfo)
+            let promiseDate = this.addInfo.id ? this.$api.ldCourse.ldUpdateList(this.addInfo) : this.$api.ldCourse.ldAddCourse(this.addInfo)
             promiseDate
               .then(
                 response => {

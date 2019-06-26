@@ -28,7 +28,7 @@
     name: 'courseCover',
     data() {
       return {
-        baseUrl: `${getBaseUrl()}/common/uploadPublicFile`,
+        baseUrl: `${getBaseUrl()}/sch/common/uploadPublicFile`,
         isShowEditor: false,
         isSending: false,
         isFetching: false,

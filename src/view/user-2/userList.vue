@@ -138,7 +138,7 @@
         }
 
         this.isFetching = true
-        this.$api.user.getPrepUserList(params)
+        this.$api.hkywUser.getPrepUserList(params)
           .then(
             response => {
               this.dataList = response.data.resultData.records;

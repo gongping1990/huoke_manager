@@ -32,9 +32,9 @@
     props: ['option', 'childData'],
     data() {
       return {
-        baseUrl: `${getBaseUrl()}/common/uploadPublicFile`,
+        baseUrl: `${getBaseUrl()}/sch/common/uploadPublicFile`,
         itemUrl: '',
-        isDisabled: false
+        isDisabled: this.option.isDisabled || false
       }
     },
     model: {

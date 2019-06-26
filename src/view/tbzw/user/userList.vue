@@ -198,7 +198,7 @@
     methods: {
       toChangeStatus(params) {
 
-        this.$api.user.TbzwChangeStatus({
+        this.$api.tbzwUser.TbzwChangeStatus({
           userId: params.userId,
           disabled: !params.disabled
         }).then(
@@ -233,7 +233,7 @@
         }
 
         this.isFetching = true
-        this.$api.user.getTbzwUserList(params)
+        this.$api.tbzwUser.getTbzwUserList(params)
           .then(
             response => {
               this.dataList = response.data.resultData.records;

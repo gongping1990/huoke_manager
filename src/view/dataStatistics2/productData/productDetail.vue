@@ -165,7 +165,7 @@
         if (num) {
           this.tab.currentPage = 1
         }
-        this.$api.dataCenter.getPrepProductDetail({
+        this.$api.hkywDataCenter.getPrepProductDetail({
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
           lessonId: this.form.state

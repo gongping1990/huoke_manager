@@ -129,7 +129,7 @@
         isShowCourse: false,
         courseListOne: [],
         courseList: [],
-        baseUrl: `${getBaseUrl()}/common/uploadPublicFile`, // 公有 （图片）
+        baseUrl: `${getBaseUrl()}/sch/common/uploadPublicFile`, // 公有 （图片）
         addInfo: {
           courseGoodsIdList: [],
           coverphoto: '',

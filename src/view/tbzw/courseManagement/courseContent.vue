@@ -113,7 +113,7 @@
     components: {ChoiceQuestion, UploadAudio, Operation, UploadVideo, UploadImg, Editor},
     data() {
       return {
-        baseUrl: `${getBaseUrl()}/common/uploadPublicFile`, // 公有 （图片）
+        baseUrl: `${getBaseUrl()}/sch/common/uploadPublicFile`, // 公有 （图片）
         tab: {
           page: 1,
           pageSize: 10

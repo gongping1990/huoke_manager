@@ -117,7 +117,7 @@
     props: ['open'],
     data() {
       return {
-        baseUrl: `${getBaseUrl()}/common/uploadPublicFile`, // 公有 （图片）
+        baseUrl: `${getBaseUrl()}/sch/common/uploadPublicFile`, // 公有 （图片）
         addInfo: {
           name: '',
           alonePrice: null,

@@ -41,7 +41,7 @@
     components: {Loading},
     data() {
       return {
-        baseUrlVa: `${getBaseUrl()}/common/uploadPrivateFile`, //私有地址 （音视频）
+        baseUrlVa: `${getBaseUrl()}/sch/common/uploadPrivateFile`, //私有地址 （音视频）
         audioType: ['mp3', 'wma', 'arm'],
         isShowEditor: false,
         isSending: false,

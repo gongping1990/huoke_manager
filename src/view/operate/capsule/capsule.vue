@@ -126,7 +126,7 @@
     components: {CheckCourse, DatePickerTemplate},
     data() {
       return {
-        baseUrl: `${getBaseUrl()}/common/uploadPublicFile`,
+        baseUrl: `${getBaseUrl()}/sch/common/uploadPublicFile`,
         tab: {
           page: 1,
           currentPage: 1,
@@ -293,7 +293,7 @@
     },
     methods: {
       toExcel() {
-        let downUrl = `${getBaseUrl()}/capsule/download?capsuleId=${this.capsuleId}`
+        let downUrl = `${getBaseUrl()}/sch/capsule/download?capsuleId=${this.capsuleId}`
         window.open(downUrl, '_blank');
       },
       checkCourseOne(params) {

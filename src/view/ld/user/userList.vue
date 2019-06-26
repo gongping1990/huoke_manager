@@ -144,7 +144,7 @@
     methods: {
       toChangeStatus(params) {
 
-        this.$api.user.ldChangeUserStatus({
+        this.$api.ldUser.ldChangeUserStatus({
           userId: params.userId,
           disabled: !params.disabled
         }).then(
@@ -177,7 +177,7 @@
         }
 
         this.isFetching = true
-        this.$api.user.getLdUserList(params)
+        this.$api.ldUser.getLdUserList(params)
           .then(
             response => {
               this.dataList = response.data.resultData.records;

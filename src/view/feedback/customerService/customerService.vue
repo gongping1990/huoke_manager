@@ -49,7 +49,7 @@
     components: {Loading},
     data() {
       return {
-        baseUrl: `${getBaseUrl()}/common/uploadPublicFile`, // 公有 （图片）
+        baseUrl: `${getBaseUrl()}/sch/common/uploadPublicFile`, // 公有 （图片）
         isEdit: false,
         isFetching: false,
         isSending: false,

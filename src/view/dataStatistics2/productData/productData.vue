@@ -139,7 +139,7 @@
       //分页查询
       getList() {
         this.isFetching = true
-        this.$api.dataCenter.getPrepProductList({
+        this.$api.hkywDataCenter.getPrepProductList({
           current: this.tab.page,
           size: this.tab.pageSize,
           courseId: '1',

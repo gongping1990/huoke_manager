@@ -121,7 +121,7 @@
     components: {DatePickerTemplate},
     data() {
       return {
-        baseUrl: `${getBaseUrl()}/common/uploadPublicFile`,
+        baseUrl: `${getBaseUrl()}/sch/common/uploadPublicFile`,
         tab: {
           page: 1,
           currentPage: 1,
@@ -343,7 +343,7 @@
         if(num) {
           this.tab.currentPage = 1
         }
-        this.$api.banner.zlkBannerList({
+        this.$api.zlkBanner.zlkBannerList({
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
           name: this.searchInfo.nickname|| '',
@@ -364,7 +364,7 @@
           title: '提示',
           content: '确认要删除banner图片吗？',
           onOk: () => {
-            this.$api.banner.zlkDelBanner({
+            this.$api.zlkBanner.zlkDelBanner({
               id: param.id
             }).then(
               response => {
@@ -393,7 +393,7 @@
         this.$refs[name].validate((valid) => {
           if (valid) {
             this.isSending = true
-            let promiseDate = this.addInfo.id ? this.$api.banner.zlkUpdateBanner(this.addInfo) : this.$api.banner.zlkAddBanner(this.addInfo)
+            let promiseDate = this.addInfo.id ? this.$api.zlkBanner.zlkUpdateBanner(this.addInfo) : this.$api.zlkBanner.zlkAddBanner(this.addInfo)
             promiseDate
               .then(
                 response => {

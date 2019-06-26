@@ -253,7 +253,7 @@
       //分页查询
       getList() {
         this.isFetching = true
-        this.$api.order.gswOrderList(this.paramsInit())
+        this.$api.gswOrder.gswOrderList(this.paramsInit())
           .then(
             response => {
               this.dataList = response.data.resultData.records;

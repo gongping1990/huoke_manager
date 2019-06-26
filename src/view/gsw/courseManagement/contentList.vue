@@ -89,8 +89,8 @@
           page: 1,
           pageSize: 10
         },
-        baseUrl: `${getBaseUrl()}/common/uploadPublicFile`, // 公有 （图片）
-        baseUrlVa: `${getBaseUrl()}/common/uploadPrivateFile`, //私有地址 （音视频）
+        baseUrl: `${getBaseUrl()}/sch/common/uploadPublicFile`, // 公有 （图片）
+        baseUrlVa: `${getBaseUrl()}/sch/common/uploadPrivateFile`, //私有地址 （音视频）
         dataList: [],
         audioType: ['mp3', 'wma', 'arm'],
         isFetching: false,

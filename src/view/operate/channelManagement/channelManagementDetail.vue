@@ -132,7 +132,7 @@
     },
     methods: {
       toExcel() {
-        let downUrl = `${getBaseUrl()}/channel/download?channelId=${this.$route.query.id}&name=${this.searchInfo.name}`
+        let downUrl = `${getBaseUrl()}/sch/channel/download?channelId=${this.$route.query.id}&name=${this.searchInfo.name}`
         window.open(downUrl, '_blank');
       },
       currentChange(val) {

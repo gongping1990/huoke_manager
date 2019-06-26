@@ -33,6 +33,7 @@
           <Menu-item name="limitedTimeSpikeList">限时秒杀</Menu-item>
           <Menu-item name="active">新人礼包</Menu-item>
           <Menu-item name="coupon">优惠券</Menu-item>
+          <Menu-item name="coursePackages">课程套餐</Menu-item>
         </Submenu>
         <Submenu name="orderManager" class="-left-li">
           <template slot="title">
@@ -62,6 +63,7 @@
           <Menu-item name="capsule">胶囊位管理</Menu-item>
           <Menu-item name="pushWindow">活动推送</Menu-item>
           <Menu-item name="homeRecommend">首页推荐</Menu-item>
+          <Menu-item name="setMeal">套餐管理</Menu-item>
         </Submenu>
         <Submenu name="message" class="-left-li">
           <template slot="title">
