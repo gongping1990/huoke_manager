@@ -6,13 +6,13 @@ const graduategiftpack = {
     return axios.get('/sch/graduategiftpack/getGraduateGiftPack', {params: params})
   },
   editGraduateGiftPack(params) {
-    return axios.get('/sch/graduategiftpack/editGraduateGiftPack', {params: params})
+    return axios.post('/sch/graduategiftpack/editGraduateGiftPack', params)
   },
   getPreSaleRecommend(params) {
     return axios.get('/sch/graduategiftpack/getPreSaleRecommend', {params: params})
   },
   editPreSale(params) {
-    return axios.get('/sch/graduategiftpack/editPreSale', {params: params})
+    return axios.post('/sch/graduategiftpack/editPreSale', params)
   }
 }
 

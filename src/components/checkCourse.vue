@@ -3,7 +3,7 @@
     <Row class="g-search -course-search">
       <Col :span="8">
         <div class="-search" style="margin-right: 20px">
-          <Select v-model="classificationOfCourses" class="-search-select">
+          <Select v-model="classificationOfCourses" class="-search-select" @on-change="getCourseList">
             <Option :value="item.id" v-for="(item,index) of typeList" :key="index">{{item.name}}</Option>
           </Select>
         </div>
@@ -57,7 +57,7 @@
   export default {
     name: 'checkCourse',
     components: {Loading},
-    props: ['isShowModal', 'checkCourseList', 'isUpdate', 'isRadioModal', 'courseType','goodsType'],// 显示，父组件带进列表，是否是编辑，单选/多选，课程类别（单独购接口/课程接口）, 订单类别
+    props: ['isShowModal', 'checkCourseList', 'isUpdate', 'isRadioModal', 'courseType','goodsType', 'categoryId'],// 显示，父组件带进列表，是否是编辑，单选/多选，课程类别（单独购接口/课程接口）, 订单类别, 类别ID
     data() {
       return {
         searchInfo: '',
@@ -68,7 +68,7 @@
         isEdit: false,
         courseList: [],
         typeList: [],
-        classificationOfCourses: '',
+        classificationOfCourses: this.categoryId || '',
         radioCourseId: '',
         size: 10000,
         checkCourseIds: [],
@@ -83,10 +83,10 @@
         for (let item of this.checkCourseList) {
           this.checkCourseIds.push(item.id)
         }
-        console.log(this.checkCourseList,'011')
       } else {
         this.radioCourseId = this.checkCourseList.length && this.checkCourseList[0].id
       }
+      console.log(this.classificationOfCourses,1)
       this.getCourseList()
       this.getCourseTypeList()
     },

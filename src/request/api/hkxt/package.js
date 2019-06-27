@@ -25,6 +25,9 @@ const packages = {
   },
   putawayCoursePackage(params) {
     return axios.post('/sch/package/putawayCoursePackage', params)
+  },
+  getCoursePackageDetais(params) {
+    return axios.get('/sch/package/getCoursePackageDetais', {params: params})
   }
 }
 

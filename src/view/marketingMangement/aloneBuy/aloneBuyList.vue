@@ -32,7 +32,10 @@
       width="450"
       :title="openTypeList[openType]">
       <Form ref="addInfo" :model="addInfo" :rules="ruleValidate" :label-width="90">
-        <FormItem label="关联课程" prop="courseId">
+        <FormItem label="优惠券面额" v-if="openType == '1'"  class="ivu-form-item-required">
+          <Input type="text" v-model="addInfo.denomination" placeholder="请输入优惠券面额"></Input>
+        </FormItem>
+        <FormItem label="关联课程" prop="courseId"  class="ivu-form-item-required">
           <div class="g-course-add-style" @click="isShowCourseModal=true" v-if="!courseList.length || openType!='3'">
             <span>+</span>
             <span>选择课程</span>
@@ -41,13 +44,14 @@
             <check-course :isShowModal="isShowCourseModal" :checkCourseList="courseList" :isUpdate='isEdit'
                           :course-type="openType == '3' ? 0 : 1"
                           :isRadioModal="openType == '3'"
+                          :categoryId="addInfo.categoryId"
                           @cancleCourseModal="isShowCourseModal = false"
                           @closeCourseModal="checkCourse"></check-course>
           </div>
           <div class="-c-course-wrap" v-if="courseList.length">
             <div class="-c-course-item" v-for="(item, index) of courseList" :key="index">
-              <img :src="item.courseImgUrl">
-              <div class="-i-text">{{item.courseName}}</div>
+              <img :src="item.imgurl">
+              <div class="-i-text">{{item.name}}</div>
               <div v-if="!isEdit  || openType!='3'" class="-i-del" @click="delCourse(item,index)">删除课程</div>
             </div>
           </div>
@@ -57,9 +61,6 @@
         </FormItem>
         <FormItem label="初始销量" prop="showSaleNum" v-if="openType == '3'">
           <Input type="text" v-model="addInfo.showSaleNum" placeholder="请输入初始销量"></Input>
-        </FormItem>
-        <FormItem label="优惠券面额" v-if="openType == '1'">
-          <Input type="text" v-model="addInfo.denomination " placeholder="请输入优惠券面额"></Input>
         </FormItem>
       </Form>
       <div slot="footer" class="g-flex-j-sa">
@@ -94,6 +95,7 @@
         },
         dataList: [],
         courseList: [],
+        dataItem:'',
         total: 0,
         isFetching: false,
         isOpenModal: false,
@@ -280,6 +282,7 @@
         this.openType = num
         this.courseList = []
         this.isOpenModal = true
+        this.addInfo = JSON.parse(JSON.stringify(data))
         switch (num) {
           case 1 :
             this.getGraduateGiftPack(data)
@@ -290,12 +293,11 @@
           case 3:
             if (data) {
               this.isEdit = true
-              this.addInfo = JSON.parse(JSON.stringify(data))
               this.addInfo.priceYuan = this.addInfo.priceYuan.toString()
               this.addInfo.showSaleNum = this.addInfo.showSaleNum.toString()
               this.courseList.push({
-                courseImgUrl: this.addInfo.coverUrl,
-                courseName: this.addInfo.name
+                imgurl: this.addInfo.coverUrl,
+                name: this.addInfo.name
               })
             } else {
               this.isEdit = false
@@ -339,9 +341,16 @@
         })
           .then(
             response => {
-              this.addInfo.denomination = response.data.resultData.denomination;
+              this.dataItem = response.data.resultData
+              this.addInfo.denomination = this.dataItem.denomination;
+              this.dataItem.courseIds.forEach(item=>{
+                this.courseList.push({
+                  ...item,
+                  id: item.goodsId
+                })
+              });
+              this.$forceUpdate()
             })
-
       },
       getPreSaleRecommend(data) {
         this.$api.graduategiftpack.getPreSaleRecommend({
@@ -349,19 +358,31 @@
         })
           .then(
             response => {
-              this.addInfo.denomination = response.data.resultData.denomination;
+              response.data.resultData.courseIds.forEach(item=>{
+                this.courseList.push({
+                  ...item,
+                  id: item.goodsId
+                })
+              });
             })
-
       },
       submitInfo(name) {
-        if (!this.addInfo.courseId) {
+        if (!this.addInfo.courseId && this.openType == '3') {
           return this.$Message.error('请选择关联课程')
         } else if (!this.addInfo.denomination && this.openType == '1') {
           return this.$Message.error('请输入优惠券面额')
         }
         switch (this.openType) {
           case 1:
-            this.$api.graduategiftpack.editGraduateGiftPack(this.addInfo)
+            this.courseList.forEach(item=>{
+              delete item.id
+            })
+            this.$api.graduategiftpack.editGraduateGiftPack({
+              id: this.dataItem.id,
+              goodsId: this.addInfo.goodsId,
+              denomination: this.addInfo.denomination,
+              courseIds: this.courseList
+            })
               .then(
                 response => {
                   if (response.data.code == '200') {
@@ -372,7 +393,13 @@
                 })
             break
           case 2:
-            this.$api.graduategiftpack.editPreSale(this.addInfo)
+            this.courseList.forEach(item=>{
+              delete item.id
+            })
+            this.$api.graduategiftpack.editPreSale({
+              goodsId: this.addInfo.goodsId,
+              courseIds: this.courseList
+            })
               .then(
                 response => {
                   if (response.data.code == '200') {
@@ -406,7 +433,14 @@
       },
       checkCourse(params) {
         this.isShowCourseModal = false;
-        this.courseList = params
+        this.courseList = []
+        params.forEach(item => {
+          this.courseList.push({
+            goodsId: item.goodsId,
+            name: item.courseName,
+            imgurl: item.coverUrl
+          })
+        })
         this.addInfo.courseId = params.length && this.courseList[0].id
       }
     }

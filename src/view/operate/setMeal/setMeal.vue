@@ -377,13 +377,11 @@
       },
       getDetailList(data) {
         this.capsuleId = data.id
-        this.$api.capsule.listByCapsuleCount({
-          capsuleId: data.id,
-          current: this.tabDetail.page,
-          size: this.tabDetail.pageSize,
+        this.$api.packages.getCoursePackageDetais({
+          id: data.id
         }).then(response => {
           this.detailList = response.data.resultData.records;
-          this.totalDetail = response.data.resultData.total;
+          // this.totalDetail = response.data.resultData.total;
         })
       },
       //分页查询
