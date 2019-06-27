@@ -2,15 +2,6 @@
   <div class="p-booking">
     <Card>
       <Row class="g-search">
-        <Row class="g-t-left">
-          <Radio-group v-model="gradeType" type="button" @on-change="getList(1)">
-            <Radio :label=3>L1</Radio>
-            <Radio :label=4>L2</Radio>
-            <Radio :label=5>L3</Radio>
-            <Radio :label=6>L4</Radio>
-          </Radio-group>
-        </Row>
-
         <Row class="g-t-left g-tab">
           <Radio-group v-model="radioType" type="button" @on-change="getList(1)">
             <Radio :label=0>待审核</Radio>
@@ -78,7 +69,6 @@
         selectInfo: '1',
         searchInfo: {},
         radioType: 0,
-        gradeType: 3,
         isFetching: false,
         columns: [
           {
@@ -219,7 +209,6 @@
         this.$api.composition.reservatRecordPage({
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
-          grade: this.gradeType,
           status: this.radioType,
           nickname: this.searchInfo.nickname,
           startTime: this.searchInfo.getStartTime ? new Date(this.searchInfo.getStartTime).getTime() : "",
