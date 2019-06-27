@@ -344,7 +344,11 @@
       submitInfo(name) {
 
         this.addInfo.courseIds = []
-        if (!this.addInfo.banner) {
+        if (!this.addInfo.name) {
+          return this.$Message.error('请输入套餐名称')
+        } else if (!this.addInfo.packagePrice) {
+          return this.$Message.error('请输入套餐价格')
+        } else if (!this.addInfo.banner) {
           return this.$Message.error('请上传套餐商品图')
         } else if (!this.courseList.length) {
           return this.$Message.error('请选择套餐课程')
@@ -360,7 +364,7 @@
           id: this.addInfo.id,
           banner: this.addInfo.banner,
           courseIds: this.addInfo.courseIds,
-          packagePrice: this.addInfo.packagePrice,
+          packagePrice: this.addInfo.packagePrice*100,
           name: this.addInfo.name,
           link: this.addInfo.link
         })
