@@ -143,7 +143,9 @@
           },
           {
             title: '套餐价',
-            key: 'packagePrice',
+            render: (h, params)=> {
+              return h('div', params.row.packagePrice/100)
+            },
             align: 'center'
           },
           {
