@@ -29,11 +29,11 @@
         @on-cancel="closeModal('addInfo')"
         width="500"
         :title="addInfo.id ? '编辑套餐' : '创建套餐'">
-        <Form ref="addInfo" :model="addInfo" :rules="ruleValidate" :label-width="90">
-          <FormItem label="套餐名称" prop="name">
+        <Form ref="addInfo" :model="addInfo"  :label-width="90">
+          <FormItem label="套餐名称" class="ivu-form-item-required">
             <Input type="text" v-model="addInfo.name" placeholder="请输入套餐名称"></Input>
           </FormItem>
-          <FormItem label="套餐价格" prop="packagePrice">
+          <FormItem label="套餐价格" class="ivu-form-item-required">
             <Input type="text" v-model="addInfo.packagePrice" placeholder="请输入套餐价格"></Input>
           </FormItem>
           <FormItem label="链接地址">
@@ -56,9 +56,9 @@
             </div>
             <div class="-c-course-wrap" v-if="courseList.length">
               <div class="-c-course-item" v-for="(item, index) of courseList" :key="index">
-                <img :src="item.imgurl">
+                <img :src="item.img">
                 <div class="-i-text">{{item.name}}</div>
-                <div class="-i-del" @click="delCourse(item,index)">删除课程</div>
+                <div class="-i-del" @click="delCourse(item,index)">删除</div>
               </div>
             </div>
           </Form-item>
@@ -75,7 +75,7 @@
         @on-cancel="closeModal('addInfo')"
         width="500"
         title="上架到课程详情">
-        <Form ref="addInfo" :model="addInfo" :rules="ruleValidate" :label-width="90">
+        <Form ref="addInfo" :model="addInfo" :label-width="90">
           <Form-item label="展示图片" class="ivu-form-item-required">
             <upload-img v-model="addInfo.courseBanner" :option="uploadOption"></upload-img>
           </Form-item>
@@ -121,14 +121,6 @@
         isShowCourse: false,
         addInfo: {},
         dataItem: '',
-        ruleValidate: {
-          name: [
-            {required: true, message: '请输入套餐名称', trigger: 'blur'},
-          ],
-          packagePrice: [
-            {required: true, message: '请输入套餐价格', trigger: 'blur'},
-          ]
-        },
         columns: [
           {
             title: '套餐名称',
@@ -136,9 +128,10 @@
           },
           {
             title: '包含课程',
+            width:  300,
             render: (h, params) => {
-              return h('div', params.row.courseNames.map((item)=> {
-                  return h('div',item)
+              return h('div', params.row.courseNames.map((item,index)=> {
+                  return h('div',`${index+1}、${item}`)
                 }
               ))
             }
@@ -171,7 +164,7 @@
           },
           {
             title: '操作',
-            width: 190,
+            width: 210,
             align: 'center',
             render: (h, params) => {
               return h('div', [
@@ -231,9 +224,18 @@
     },
     methods: {
       openModal(data) {
+        this.courseList = []
         this.isOpenModal = true
         if (data) {
           this.addInfo = JSON.parse(JSON.stringify(data))
+          this.addInfo.courses.forEach(item=>{
+            this.courseList.push({
+              id: item.goodsId,
+              name: item.name,
+              img: item.img,
+              courseId: item.id
+            })
+          })
         } else {
           this.addInfo = {
             banner: '',
@@ -249,12 +251,10 @@
             id: item.id,
             goodsId: item.goodsId,
             name: item.courseName,
-            imgurl: item.coverUrl,
+            img: item.coverUrl,
             courseId: item.courseId,
           })
         })
-
-        console.log(params, this.courseList, 11111111)
       },
       delCourse(item, index) {
         this.courseList.splice(index, 1)
@@ -342,7 +342,8 @@
           })
       },
       submitInfo(name) {
-        console.log(1)
+
+        this.addInfo.courseIds = []
         if (!this.addInfo.banner) {
           return this.$Message.error('请上传套餐商品图')
         } else if (!this.courseList.length) {
@@ -354,23 +355,26 @@
         this.courseList.forEach(item => {
           this.addInfo.courseIds.push(item.courseId)
         })
-        this.$refs[name].validate((valid) => {
-          if (valid) {
-            this.isSending = true
-            this.$api.packages.saveOrUpdateCoursePackage(this.addInfo)
-              .then(
-                response => {
-                  if (response.data.code == '200') {
-                    this.$Message.success('提交成功');
-                    this.getList()
-                    this.closeModal(name)
-                  }
-                })
-              .finally(() => {
-                this.isSending = false
-              })
-          }
+
+        this.$api.packages.saveOrUpdateCoursePackage({
+          id: this.addInfo.id,
+          banner: this.addInfo.banner,
+          courseIds: this.addInfo.courseIds,
+          packagePrice: this.addInfo.packagePrice,
+          name: this.addInfo.name,
+          link: this.addInfo.link
         })
+          .then(
+            response => {
+              if (response.data.code == '200') {
+                this.$Message.success('提交成功');
+                this.getList()
+                this.closeModal(name)
+              }
+            })
+          .finally(() => {
+            this.isSending = false
+          })
       }
     }
   };

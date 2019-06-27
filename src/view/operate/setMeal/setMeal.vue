@@ -450,19 +450,19 @@
         }
 
         if (this.isSending) return
-        this.addInfo.startTime = new Date(this.getStartTime).getTime()
-        this.addInfo.endTime = new Date(this.getEndTime).getTime()
-
-        if (this.addInfo.id) {
-          delete this.addInfo.courseNum
-        } else {
-          delete this.addInfo.id
-        }
 
         this.$refs[name].validate((valid) => {
           if (valid) {
             this.isSending = true
-            this.$api.packages.saveOrUpdatePackageRecommend(this.addInfo)
+            this.$api.packages.saveOrUpdatePackageRecommend({
+              id: this.addInfo.id,
+              img: this.addInfo.img,
+              name: this.addInfo.name,
+              sort: this.addInfo.sort,
+              link: this.addInfo.link,
+              startTime: new Date(this.getStartTime).getTime(),
+              endTime:  new Date(this.getEndTime).getTime()
+            })
               .then(
                 response => {
                   if (response.data.code == '200') {

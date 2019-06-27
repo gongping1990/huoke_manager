@@ -26,7 +26,10 @@
                   :disabled="item.isEdit">
           <div class="-c-item-wrap">
             <img :src="item.courseImgUrl" alt="" class="downImg">
-            <span class="-item-text">{{item.courseName}}</span>
+            <div class="-c-item-text">
+              <span class="-item-text">{{item.courseName}}</span>
+              <span class="-item-text">真实销量：{{item.salesVolume}}</span>
+            </div>
           </div>
         </Checkbox>
       </Checkbox-group>
@@ -125,7 +128,9 @@
           current: 1,
           size: this.size,
           name: this.searchInfo,
-          type: this.goodsType
+          type: this.goodsType,
+          courseCategory: this.classificationOfCourses,
+          saleSort: true  //需要有真实销量 需添加该字段
         }).then(
           res => {
             this.courseList = res.data.resultData.records;
@@ -221,6 +226,14 @@
     .downImg {
       margin: 0 20px;
       width: 40%;
+      height: 60px;
+    }
+
+    .-c-item-text {
+      display: flex;
+      justify-content: space-between;
+      flex-flow: column;
+      height: 60px;
     }
   }
 </style>

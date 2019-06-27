@@ -39,7 +39,7 @@
           </div>
           <div v-if="isShowCourseModal">
             <check-course :isShowModal="isShowCourseModal" :checkCourseList="courseList" :isUpdate='isEdit'
-                          :course-type="0"
+                          :course-type="openType == '3' ? 0 : 1"
                           :isRadioModal="openType == '3'"
                           @cancleCourseModal="isShowCourseModal = false"
                           @closeCourseModal="checkCourse"></check-course>
