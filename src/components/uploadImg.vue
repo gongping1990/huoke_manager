@@ -17,7 +17,7 @@
     <div class="-c-course-wrap" v-if="itemUrl">
       <div class="-c-course-item">
         <img :src="itemUrl">
-        <div class="-i-del" @click="delImg()">删除</div>
+        <div class="-i-del" v-if="!disabled" @click="delImg()">删除</div>
       </div>
     </div>
     <div class="-c-tips">{{option.tipText}}</div>
@@ -29,12 +29,12 @@
 
   export default {
     name: 'uploadImg',
-    props: ['option', 'childData'],
+    props: ['option', 'childData', 'isDisabled'],
     data() {
       return {
         baseUrl: `${getBaseUrl()}/sch/common/uploadPublicFile`,
         itemUrl: '',
-        isDisabled: this.option.isDisabled || false
+        disabled: this.isDisabled || false
       }
     },
     model: {
@@ -48,6 +48,10 @@
 
       itemUrl(_n, _o) {
         this.$emit('changeUrl', _n)
+      },
+
+      isDisabled (_n,_o) {
+        this.disabled = _n
       }
     },
     methods: {

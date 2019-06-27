@@ -4,7 +4,7 @@
       <Col :span="8">
         <div class="-search" style="margin-right: 20px">
           <Select v-model="classificationOfCourses" class="-search-select">
-            <Option :value="item.id" v-for="(item,index) of typeList">{{item.name}}</Option>
+            <Option :value="item.id" v-for="(item,index) of typeList" :key="index">{{item.name}}</Option>
           </Select>
         </div>
       </Col>

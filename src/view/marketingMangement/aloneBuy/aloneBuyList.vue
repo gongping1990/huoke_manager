@@ -58,8 +58,8 @@
         <FormItem label="初始销量" prop="showSaleNum" v-if="openType == '3'">
           <Input type="text" v-model="addInfo.showSaleNum" placeholder="请输入初始销量"></Input>
         </FormItem>
-        <FormItem label="优惠券面额" prop="showSaleNum" v-if="openType == '1'">
-          <Input type="text" v-model="addInfo.showSaleNum" placeholder="请输入初始销量"></Input>
+        <FormItem label="优惠券面额" v-if="openType == '1'">
+          <Input type="text" v-model="addInfo.denomination " placeholder="请输入优惠券面额"></Input>
         </FormItem>
       </Form>
       <div slot="footer" class="g-flex-j-sa">
@@ -280,22 +280,32 @@
         this.openType = num
         this.courseList = []
         this.isOpenModal = true
-        if (data) {
-          this.isEdit = true
-          this.addInfo = JSON.parse(JSON.stringify(data))
-          this.addInfo.priceYuan = this.addInfo.priceYuan.toString()
-          this.addInfo.showSaleNum = this.addInfo.showSaleNum.toString()
-          this.courseList.push({
-            courseImgUrl: this.addInfo.coverUrl,
-            courseName: this.addInfo.name
-          })
-        } else {
-          this.isEdit = false
-          this.addInfo = {
-            courseId: '',
-            priceYuan: '',
-            showSaleNum: ''
-          }
+        switch (num) {
+          case 1 :
+            this.getGraduateGiftPack(data)
+            break;
+          case 2:
+            this.getPreSaleRecommend(data)
+            break
+          case 3:
+            if (data) {
+              this.isEdit = true
+              this.addInfo = JSON.parse(JSON.stringify(data))
+              this.addInfo.priceYuan = this.addInfo.priceYuan.toString()
+              this.addInfo.showSaleNum = this.addInfo.showSaleNum.toString()
+              this.courseList.push({
+                courseImgUrl: this.addInfo.coverUrl,
+                courseName: this.addInfo.name
+              })
+            } else {
+              this.isEdit = false
+              this.addInfo = {
+                courseId: '',
+                priceYuan: '',
+                showSaleNum: ''
+              }
+            }
+            break
         }
       },
       closeModal(name) {
@@ -322,15 +332,36 @@
             this.isFetching = false
           })
       },
+      //分页查询
+      getGraduateGiftPack(data) {
+        this.$api.graduategiftpack.getGraduateGiftPack({
+          goodsId: data.goodsId
+        })
+          .then(
+            response => {
+              this.addInfo.denomination = response.data.resultData.denomination;
+            })
+
+      },
+      getPreSaleRecommend(data) {
+        this.$api.graduategiftpack.getPreSaleRecommend({
+          goodsId: data.goodsId
+        })
+          .then(
+            response => {
+              this.addInfo.denomination = response.data.resultData.denomination;
+            })
+
+      },
       submitInfo(name) {
         if (!this.addInfo.courseId) {
           return this.$Message.error('请选择关联课程')
+        } else if (!this.addInfo.denomination && this.openType == '1') {
+          return this.$Message.error('请输入优惠券面额')
         }
-        this.$refs[name].validate((valid) => {
-          if (valid) {
-            this.isSending = true
-            let promiseDate = this.addInfo.goodsId ? this.$api.goods.updateAlone(this.addInfo) : this.$api.goods.addAlone(this.addInfo)
-            promiseDate
+        switch (this.openType) {
+          case 1:
+            this.$api.graduategiftpack.editGraduateGiftPack(this.addInfo)
               .then(
                 response => {
                   if (response.data.code == '200') {
@@ -339,11 +370,39 @@
                     this.closeModal(name)
                   }
                 })
-              .finally(() => {
-                this.isSending = false
-              })
-          }
-        })
+            break
+          case 2:
+            this.$api.graduategiftpack.editPreSale(this.addInfo)
+              .then(
+                response => {
+                  if (response.data.code == '200') {
+                    this.$Message.success('提交成功');
+                    this.getList()
+                    this.closeModal(name)
+                  }
+                })
+            break
+          case 3:
+            this.$refs[name].validate((valid) => {
+              if (valid) {
+                this.isSending = true
+                let promiseDate = this.addInfo.goodsId ? this.$api.goods.updateAlone(this.addInfo) : this.$api.goods.addAlone(this.addInfo)
+                promiseDate
+                  .then(
+                    response => {
+                      if (response.data.code == '200') {
+                        this.$Message.success('提交成功');
+                        this.getList()
+                        this.closeModal(name)
+                      }
+                    })
+                  .finally(() => {
+                    this.isSending = false
+                  })
+              }
+            })
+            break
+        }
       },
       checkCourse(params) {
         this.isShowCourseModal = false;

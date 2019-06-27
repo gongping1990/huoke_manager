@@ -34,19 +34,19 @@
         width="600"
         :title="addInfo.id ? '编辑推荐位' : '创建推荐位'">
         <Form ref="addInfo" :model="addInfo" :rules="ruleValidate" :label-width="90">
-          <FormItem label="推荐位图片" prop="photo">
-            <upload-img v-model="addInfo.photo" :option="uploadOption"></upload-img>
+          <FormItem label="推荐位图片" >
+            <upload-img v-model="addInfo.img" :option="uploadOption" :isDisabled="isEdit"></upload-img>
           </FormItem>
           <FormItem label="活动名称" prop="name">
             <Input type="text" v-model="addInfo.name" placeholder="请输入活动名称"></Input>
           </FormItem>
-          <FormItem label="排序值" prop="sortnum">
-            <Select>
-              <Option :value="item" v-for="(item,index) of sortnumList" :key="index"></Option>
+          <FormItem label="排序值" prop="sort">
+            <Select v-model="addInfo.sort">
+              <Option v-for="item in sortnumList" :value="item" :key="item">{{item}}</Option>
             </Select>
           </FormItem>
-          <FormItem label="链接地址" prop="href">
-            <Input type="text" v-model="addInfo.href" placeholder="请输入链接地址"></Input>
+          <FormItem label="链接地址">
+            <Input type="text" v-model="addInfo.link" placeholder="请输入链接地址"></Input>
           </FormItem>
           <FormItem label="有效期"  class="ivu-form-item-required">
             <Row>
@@ -125,7 +125,7 @@
           size: 500
         },
         dataList: [],
-        sortnumList: ['1','2','3','4','5','6','7','8','9'],
+        sortnumList: [1,2,3,4,5,6,7,8,9],
         detailList: [],
         selectInfo: '1',
         searchInfo: {},
@@ -135,6 +135,7 @@
         },
         total: 0,
         totalDetail: 0,
+        isEdit: false,
         isFetching: false,
         isOpenModal: false,
         isOpenModalDetail: false,
@@ -143,6 +144,7 @@
         capsuleId: '',
         getStartTime: '',
         getEndTime: '',
+        statusList: ['未开始','进行中','已过期','已结束'],
         dateStartOption: {
           disabledDate(date) {
             return date && (new Date(date).getTime() <= new Date().getTime() - 24 * 3600 * 1000);
@@ -155,11 +157,11 @@
         },
         ruleValidate: {
           name: [
-            {required: true, message: '请输入活动名称', trigger: 'blur'},
+            {required: true, message: '请输入活动', trigger: 'blur'},
             {type: 'string', max: 20, message: '活动名称长度为20字', trigger: 'blur'}
           ],
-          sortnum: [
-            {required: true, message: '请输入排序值', trigger: 'blur'},
+          sort: [
+            {required: true, type:'number', message: '请输入排序值', trigger: 'change'}
           ]
         },
         columns: [
@@ -179,10 +181,11 @@
               }, [
                 h('img', {
                   attrs: {
-                    src: params.row.imgResUrl
+                    src: params.row.img
                   },
                   style: {
                     width: '200px',
+                    height:'60px',
                     margin: '10px'
                   }
                 })
@@ -193,20 +196,20 @@
           },
           {
             title: '排序值',
-            key: 'courseNum',
+            key: 'sort',
             align: 'center'
           },
           {
             title: '有效期时间',
             render: (h, params) => {
-              return h('span', `${params.row.showTime} - ${params.row.hideTime}`)
+              return h('span', `${dayjs(+params.row.startTime).format('YYYY-MM-DD HH:mm:ss')} - ${dayjs(+params.row.endTime).format('YYYY-MM-DD HH:mm:ss')}`)
             },
             width: 300,
             align: 'center'
           },
           {
             title: '链接地址',
-            key: 'pv',
+            key: 'link',
             align: 'center'
           },
           {
@@ -221,7 +224,9 @@
           },
           {
             title: '状态',
-            key: 'uv',
+            render: (h,params)=>{
+              return h('div',this.statusList[params.row.timeStatus])
+            },
             align: 'center'
           },
           {
@@ -236,21 +241,7 @@
                     size: 'small'
                   },
                   style: {
-                    color: '#5444E4',
-                    marginRight: '5px'
-                  },
-                  on: {
-                    click: () => {
-                      this.openModalDetail(params.row)
-                    }
-                  }
-                }, '数据详情'),
-                h('Button', {
-                  props: {
-                    type: 'text',
-                    size: 'small'
-                  },
-                  style: {
+                    display: (params.row.timeStatus != 0 && params.row.timeStatus != 1) ? 'none' : 'inline-block',
                     color: '#5444E4',
                     marginRight: '5px'
                   },
@@ -266,15 +257,31 @@
                     size: 'small'
                   },
                   style: {
+                    display: (params.row.timeStatus != 0 && params.row.timeStatus != 1) ? 'none' : 'inline-block',
                     color: '#5444E4',
                     marginRight: '5px'
                   },
                   on: {
                     click: () => {
-                      this.openModal(params.row)
+                      this.endItem(params.row)
                     }
                   }
                 }, '结束'),
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: '#5444E4',
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.openModalDetail(params.row)
+                    }
+                  }
+                }, '数据详情'),
                 h('Button', {
                   props: {
                     type: 'text',
@@ -338,15 +345,17 @@
       openModal(data) {
         this.isOpenModal = true
         if (data) {
-          this.getInfo(data)
-          this.uploadOption.isDisabled = true
+          this.isEdit = true
+          this.addInfo = JSON.parse(JSON.stringify(data))
+          this.getStartTime = new Date(+this.addInfo.startTime)
+          this.getEndTime = new Date(+this.addInfo.endTime)
         } else {
+          this.isEdit = false
           this.getStartTime = ''
           this.getEndTime = ''
           this.addInfo = {
-            type: 1,
             id: '',
-            sortnum: null
+            sort: null
           }
         }
       },
@@ -377,27 +386,18 @@
           this.totalDetail = response.data.resultData.total;
         })
       },
-      getInfo(data) {
-        this.$api.capsule.getHCapsuleDetails({
-          capsuleId: data.id
-        }).then(res => {
-          this.addInfo = res.data.resultData
-          this.getStartTime = new Date(this.addInfo.showTime)
-          this.getEndTime = new Date(this.addInfo.hideTime)
-        })
-      },
       //分页查询
       getList(num) {
         this.isFetching = true
         if (num) {
           this.tab.currentPage = 1
         }
-        this.$api.capsule.listByHCapsule({
+        this.$api.packages.packageRecommendPage({
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
           name: this.searchInfo.nickname,
-          beginDate: this.searchInfo.fromDate ? dayjs(this.searchInfo.fromDate).format("YYYY/MM/DD HH:mm:ss") : '',
-          endDate: this.searchInfo.toDate ? dayjs(this.searchInfo.toDate).format("YYYY/MM/DD HH:mm:ss") : ''
+          startTime: this.searchInfo.fromDate ? new Date(this.searchInfo.fromDate).getTime() : '',
+          endTime: this.searchInfo.toDate ? new Date(this.searchInfo.toDate).getTime() : ''
         })
           .then(
             response => {
@@ -413,8 +413,25 @@
           title: '提示',
           content: '确认要删除吗？',
           onOk: () => {
-            this.$api.capsule.delCapsule({
-              capsuleId: param.id
+            this.$api.packages.deletePackageRecommend({
+              id: param.id
+            }).then(
+              response => {
+                if (response.data.code == "200") {
+                  this.$Message.success("操作成功");
+                  this.getList();
+                }
+              })
+          }
+        })
+      },
+      endItem(param) {
+        this.$Modal.confirm({
+          title: '提示',
+          content: '确认结束吗？',
+          onOk: () => {
+            this.$api.packages.endPackageRecommend({
+              id: param.id
             }).then(
               response => {
                 if (response.data.code == "200") {
@@ -433,9 +450,8 @@
         }
 
         if (this.isSending) return
-        this.addInfo.showTime = dayjs(this.getStartTime).format("YYYY/MM/DD HH:mm:ss")
-        this.addInfo.hideTime = dayjs(this.getEndTime).format("YYYY/MM/DD HH:mm:ss")
-        this.addInfo.goodsDetails = []
+        this.addInfo.startTime = new Date(this.getStartTime).getTime()
+        this.addInfo.endTime = new Date(this.getEndTime).getTime()
 
         if (this.addInfo.id) {
           delete this.addInfo.courseNum
@@ -446,8 +462,7 @@
         this.$refs[name].validate((valid) => {
           if (valid) {
             this.isSending = true
-            let promiseDate = this.addInfo.id ? this.$api.capsule.updateHCapsule(this.addInfo) : this.$api.capsule.saveHCapsule(this.addInfo)
-            promiseDate
+            this.$api.packages.saveOrUpdatePackageRecommend(this.addInfo)
               .then(
                 response => {
                   if (response.data.code == '200') {

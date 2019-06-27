@@ -46,6 +46,14 @@ const admin = {
   updateAdmin(params) {
     return axios.post("/umg/admin/user/update",qs.stringify(params));
   },
+  // 修改其他管理员信息
+  addRole(params) {
+    return axios.post("/umg/admin/user/addRole",qs.stringify(params));
+  },
+  // 修改其他管理员信息
+  removeRole(params) {
+    return axios.post("/umg/admin/user/removeRole",qs.stringify(params));
+  },
 };
 
 export default admin;

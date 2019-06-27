@@ -31,18 +31,18 @@
         :title="addInfo.id ? '编辑套餐' : '创建套餐'">
         <Form ref="addInfo" :model="addInfo" :rules="ruleValidate" :label-width="90">
           <FormItem label="套餐名称" prop="name">
-            <Input type="text" v-model="addInfo.name" placeholder="请输入活动名称"></Input>
+            <Input type="text" v-model="addInfo.name" placeholder="请输入套餐名称"></Input>
           </FormItem>
-          <FormItem label="套餐价格" prop="sortnum">
-            <Input type="text" v-model="addInfo.sortnum" placeholder="请输入套餐价格"></Input>
+          <FormItem label="套餐价格" prop="packagePrice">
+            <Input type="text" v-model="addInfo.packagePrice" placeholder="请输入套餐价格"></Input>
           </FormItem>
           <FormItem label="链接地址">
-            <Input type="text" v-model="addInfo.href" placeholder="请输入链接地址"></Input>
+            <Input type="text" v-model="addInfo.link" placeholder="请输入链接地址"></Input>
           </FormItem>
-          <Form-item label="套餐商品图" prop="url" class="ivu-form-item-required">
-            <upload-img v-model="addInfo.photo" :option="uploadOption"></upload-img>
+          <Form-item label="套餐商品图" class="ivu-form-item-required">
+            <upload-img v-model="addInfo.banner" :option="uploadOption"></upload-img>
           </Form-item>
-          <Form-item label="套餐课程"  class="ivu-form-item-required">
+          <Form-item label="套餐课程" class="ivu-form-item-required">
             <div class="g-course-add-style" @click="isShowCourse=true">
               <span>+</span>
               <span>选择课程</span>
@@ -66,6 +66,23 @@
         <div slot="footer" class="-p-b-flex">
           <Button @click="closeModal('addInfo')" ghost type="primary" style="width: 100px;">取消</Button>
           <div @click="submitInfo('addInfo')" class="g-primary-btn "> {{isSending ? '提交中...' : '确 认'}}</div>
+        </div>
+      </Modal>
+
+      <Modal
+        class="p-coursePackages"
+        v-model="isOpenModalTwo"
+        @on-cancel="closeModal('addInfo')"
+        width="500"
+        title="上架到课程详情">
+        <Form ref="addInfo" :model="addInfo" :rules="ruleValidate" :label-width="90">
+          <Form-item label="展示图片" class="ivu-form-item-required">
+            <upload-img v-model="addInfo.courseBanner" :option="uploadOption"></upload-img>
+          </Form-item>
+        </Form>
+        <div slot="footer" class="-p-b-flex">
+          <Button @click="closeModal('addInfo')" ghost type="primary" style="width: 100px;">取消</Button>
+          <div @click="submitInfoTwo('addInfo')" class="g-primary-btn ">确 认</div>
         </div>
       </Modal>
     </Card>
@@ -99,15 +116,17 @@
         total: 0,
         isFetching: false,
         isOpenModal: false,
+        isOpenModalTwo: false,
         isSending: false,
         isShowCourse: false,
         addInfo: {},
+        dataItem: '',
         ruleValidate: {
           name: [
-            {required: true, message: '请输入名称', trigger: 'blur'},
+            {required: true, message: '请输入套餐名称', trigger: 'blur'},
           ],
-          sortnum: [
-            {required: true, message: '请输入排序值', trigger: 'blur'},
+          packagePrice: [
+            {required: true, message: '请输入套餐价格', trigger: 'blur'},
           ]
         },
         columns: [
@@ -117,21 +136,26 @@
           },
           {
             title: '包含课程',
-            key: 'name'
+            render: (h, params) => {
+              return h('div', params.row.courseNames.map((item)=> {
+                  return h('div',item)
+                }
+              ))
+            }
           },
           {
             title: '原价总和',
-            key: 'sortnum',
+            key: 'originalTotalPrice',
             align: 'center'
           },
           {
             title: '套餐价',
-            key: 'sortnum',
+            key: 'packagePrice',
             align: 'center'
           },
           {
             title: '详情地址',
-            key: 'sortnum',
+            key: 'link',
             align: 'center'
           },
           {
@@ -140,9 +164,9 @@
             render: (h, params) => {
               return h('Tag', {
                 props: {
-                  color: params.row.disabled ? 'default' : 'success'
+                  color: params.row.putaway ? 'success' : 'default'
                 }
-              }, params.row.disabled ? '否' : '是')
+              }, params.row.putaway ? '是' : '否')
             }
           },
           {
@@ -165,7 +189,7 @@
                       this.changeStatus(params.row)
                     }
                   }
-                }, !params.row.disabled ? '上架到详情' : '下架'),
+                }, !params.row.putaway ? '上架到详情' : '下架'),
                 h('Button', {
                   props: {
                     type: 'text',
@@ -206,59 +230,39 @@
       this.getList()
     },
     methods: {
-      delImg() {
-        this.addInfo.url = ''
-      },
       openModal(data) {
         this.isOpenModal = true
         if (data) {
           this.addInfo = JSON.parse(JSON.stringify(data))
-          this.addInfo.sortnum = this.addInfo.sortnum.toString()
         } else {
           this.addInfo = {
-            url: ''
+            banner: '',
+            courseIds: []
           }
         }
       },
       checkCourseOne(params) {
         this.isShowCourse = false
-        this.courseList= []
+        this.courseList = []
         params.forEach(item => {
           this.courseList.push({
             id: item.id,
             goodsId: item.goodsId,
             name: item.courseName,
-            imgurl: item.coverUrl
+            imgurl: item.coverUrl,
+            courseId: item.courseId,
           })
         })
 
-        console.log(this.courseList,11111111)
+        console.log(params, this.courseList, 11111111)
       },
       delCourse(item, index) {
         this.courseList.splice(index, 1)
       },
       closeModal(name) {
         this.isOpenModal = false
+        this.isOpenModalTwo = false
         this.$refs[name].resetFields()
-      },
-      beforeUpload(file) {
-        let imgType = ['jpeg', 'png']
-        if (file.type.indexOf(imgType[0]) == -1 && file.type.indexOf(imgType[1]) == -1) {
-          this.$Message.error('上传文件类型错误')
-          return false;
-        }
-        return true
-      },
-      handleSuccess(res, file) {
-        if (res.code === 200) {
-          this.addInfo.url = res.resultData.url
-        }
-      },
-      handleSize() {
-        this.$Message.info('文件超过限制')
-      },
-      handleErr() {
-        this.$Message.error('上传失败，请重新上传')
       },
       currentChange(val) {
         this.tab.page = val;
@@ -267,9 +271,10 @@
       //分页查询
       getList() {
         this.isFetching = true
-        this.$api.course.courseTypeList({
+        this.$api.packages.coursePackagePage({
           current: this.tab.page,
           size: this.tab.pageSize,
+          name: this.searchInfo.nickname
         })
           .then(
             response => {
@@ -285,7 +290,7 @@
           title: '提示',
           content: '确认要删除吗？',
           onOk: () => {
-            this.$api.course.delCourseType({
+            this.$api.packages.delCoursePackage({
               id: param.id
             }).then(
               response => {
@@ -298,31 +303,61 @@
         })
       },
       changeStatus(data) {
-        this.$api.course.changeCourseTypeStatus({
-          id: data.id,
-          disabled: !data.disabled
+        if(data.putaway) {
+          this.$Modal.confirm({
+            title: '提示',
+            content: '确认要下架吗？',
+            onOk: () => {
+              this.$api.packages.putawayCoursePackage({
+                id: data.id
+              }).then(
+                response => {
+                  if (response.data.code == "200") {
+                    this.$Message.success("操作成功");
+                    this.getList();
+                  }
+                })
+            }
+          })
+        } else {
+          this.dataItem = data
+          this.isOpenModalTwo = true
+        }
+      },
+      submitInfoTwo () {
+        if (!this.addInfo.courseBanner) {
+          return this.$Message.error('请上传课程详情展示图片')
+        }
+
+        this.$api.packages.putawayCoursePackage({
+          id: this.dataItem.id,
+          courseBanner: this.addInfo.courseBanner
         }).then(
           response => {
             if (response.data.code == "200") {
               this.$Message.success("操作成功");
               this.getList();
+              this.isOpenModalTwo = false
             }
           })
       },
       submitInfo(name) {
-        if (!this.addInfo.url) {
-          return this.$Message.error('请上传分类图片')
-        } else if (this.addInfo.sortnum && (this.addInfo.sortnum < 1 || this.addInfo.sortnum > 99999)) {
-          return this.$Message.error('排序值范围1-99999')
+        console.log(1)
+        if (!this.addInfo.banner) {
+          return this.$Message.error('请上传套餐商品图')
+        } else if (!this.courseList.length) {
+          return this.$Message.error('请选择套餐课程')
         }
 
         if (this.isSending) return
 
+        this.courseList.forEach(item => {
+          this.addInfo.courseIds.push(item.courseId)
+        })
         this.$refs[name].validate((valid) => {
           if (valid) {
             this.isSending = true
-            let promiseDate = this.addInfo.id ? this.$api.course.updateCourseType(this.addInfo) : this.$api.course.addCourseType(this.addInfo)
-            promiseDate
+            this.$api.packages.saveOrUpdateCoursePackage(this.addInfo)
               .then(
                 response => {
                   if (response.data.code == '200') {
