@@ -26,17 +26,25 @@
         <div @click="submitAdmin('addInfo')" class="g-primary-btn ">确 认</div>
       </div>
     </Modal>
+
+    <div v-if="isShowRole">
+      <use-permission :roleId="addInfo.id" @changeModal="closeRole"></use-permission>
+    </div>
+
   </div>
 </template>
 
 <script>
+  import UsePermission from "./permission";
   export default {
     name: 'use-role',
+    components: {UsePermission},
     data() {
       return {
         dataList: [],
         isFetching: false,
         isOpenModal: false,
+        isShowRole: false,
         addInfo: {},
         ruleValidate: {
           name: [
@@ -57,6 +65,20 @@
             align: 'center',
             render: (h, params) => {
               return h('div', [
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: '#5444E4'
+                  },
+                  on: {
+                    click: () => {
+                      this.showRole(params.row)
+                    }
+                  }
+                }, '编辑'),
                 h('Button', {
                   props: {
                     type: 'text',
@@ -85,6 +107,13 @@
       openModal(data) {
         this.addInfo = JSON.parse(JSON.stringify(data))
         this.isOpenModal = true
+      },
+      showRole(data) {
+        this.addInfo = JSON.parse(JSON.stringify(data))
+        this.isShowRole = true
+      },
+      closeRole () {
+        this.isShowRole = false
       },
       closeModal(name) {
         this.isOpenModal = false

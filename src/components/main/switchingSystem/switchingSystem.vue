@@ -30,6 +30,14 @@
       return {
         isOpenModal: false,
         systemName: '',
+        systemList: {
+          '1': '获课学堂',
+          '2': '获课语文',
+          '4': '资料库',
+          '5': '获课朗读',
+          '7': '古诗文',
+          '8': '同步作文',
+        },
         radioType: localStorage.nowSystem,
         adminType: ''
       }
@@ -46,7 +54,7 @@
         let nowId = localStorage.nowSystem
         this.$axios.get("../static/adminList.json").then(response => {
           this.adminType = response.data.resultData
-          this.systemName = this.adminType[nowId-1].name
+          this.systemName = this.systemList[nowId]
         });
       },
       submitPwd() {

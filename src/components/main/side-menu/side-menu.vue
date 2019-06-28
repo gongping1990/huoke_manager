@@ -101,6 +101,7 @@
           <Menu-item name="user-setting">用户管理</Menu-item>
           <Menu-item name="user-role">角色管理</Menu-item>
           <Menu-item name="user-info">个人资料</Menu-item>
+          <Menu-item name="user-permission">权限列表</Menu-item>
         </Submenu>
       </div>
 
@@ -143,7 +144,7 @@
           <Menu-item name="userFeedback2">用户反馈</Menu-item>
         </Submenu>
       </div>
-      <div v-if="roleType == '3'" >
+      <div v-if="roleType == '4'" >
         <Submenu name="dataStatistics" class="-left-li">
           <template slot="title">
             <Icon type="ios-stats" class="hk-menu-icon"/>
@@ -173,7 +174,7 @@
           <Menu-item name="zlkBannerList">banner管理</Menu-item>
         </Submenu>
       </div>
-      <div v-if="roleType == '4'" >
+      <div v-if="roleType == '5'" >
         <Submenu name="content" class="-left-li">
           <template slot="title">
             <Icon type="ios-school" class="hk-menu-icon"></Icon>
@@ -198,7 +199,7 @@
           <Menu-item name="contentOperation">内容运营</Menu-item>
         </Submenu>
       </div>
-      <div v-if="roleType == '5'" >
+      <div v-if="roleType == '7'" >
         <Submenu name="dataStatistics" class="-left-li">
           <template slot="title">
             <Icon type="ios-stats" class="hk-menu-icon"/>
@@ -239,7 +240,7 @@
           <Menu-item name="gswUserList">用户列表</Menu-item>
         </Submenu>
       </div>
-      <div v-if="roleType == '6'" >
+      <div v-if="roleType == '8'" >
         <Submenu name="dataStatistics" class="-left-li">
           <template slot="title">
             <Icon type="ios-stats" class="hk-menu-icon"/>
@@ -314,7 +315,22 @@
       return {
         openNowName: this.openName,
         isOpenModal: false,
-        adminType: [],
+        systemList: {
+          '1': '获课学堂',
+          '2': '获课语文',
+          '4': '资料库',
+          '5': '获课朗读',
+          '7': '古诗文',
+          '8': '同步作文',
+        },
+        systemIdList: {
+          '1': '1',
+          '2': '2',
+          '4': '4',
+          '5': '5',
+          '7': '7',
+          '8': '8',
+        },
         systemName: ''
       }
     },
@@ -329,7 +345,7 @@
     },
     watch: {
       '$store.state.nowAdminType' (_n,_d) {
-        this.systemName = this.adminType[_n-1].name
+        this.systemName = this.systemList[_n]
         this.$router.push('/')
       }
     },
@@ -344,10 +360,29 @@
     methods: {
       getAdminList () {
         let nowId = this.$store.state.nowAdminType
-        this.$axios.get("../static/adminList.json").then(response => {
-          this.adminType = response.data.resultData
-          this.systemName = this.adminType[nowId-1].name
-        });
+        this.systemName = this.systemList[nowId]
+      },
+      getList() {
+        this.isFetching = true
+        this.$api.admin.permissionsList({
+          roleId: this.roleId,
+          system: this.systemIdList[this.$store.state.nowAdminType]
+        })
+          .then(
+            response => {
+              this.dataList = response.data.resultData
+
+              for (let item of this.dataList[0].permissions) {
+                if(item.checked) {
+                  this.checkCourseIds.push(item.code)
+                }
+              }
+
+              console.log( this.checkCourseIds,11)
+            })
+          .finally(() => {
+            this.isFetching = false
+          })
       },
       closeModal() {
         this.isOpenModal = !this.isOpenModal

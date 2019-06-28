@@ -473,6 +473,15 @@ export const hkxtRouter =[
           {name: '角色管理'}
         ],
         component: () => import('@/view/setting/role')
+      },
+      {
+        path: '/user-permission',
+        name: 'user-permission',
+        meta: [
+          {name: '设置'},
+          {name: '权限列表'}
+        ],
+        component: () => import('@/view/setting/permissionsList')
       }
     ]
   }

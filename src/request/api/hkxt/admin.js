@@ -54,6 +54,34 @@ const admin = {
   removeRole(params) {
     return axios.post("/umg/admin/user/removeRole",qs.stringify(params));
   },
+  // 权限列表信息
+  permissionsList(params) {
+    return axios.get("/umg/admin/permissions", {params});
+  },
+  // 修改其他管理员信息
+  updateRolePerm(params) {
+    return axios.post("/umg/admin/user/updateRolePerm",qs.stringify(params));
+  },
+  // 修改其他管理员信息
+  listBizSystem(params) {
+    return axios.post("/umg/listBizSystem",qs.stringify(params));
+  },
+  // 修改其他管理员信息
+  roleListMenu(params) {
+    return axios.get("/umg/admin/menu/list",{params});
+  },
+  // 修改其他管理员信息
+  roleAdd(params) {
+    return axios.post("/umg/admin/menu/add",qs.stringify(params));
+  },
+  // 修改其他管理员信息
+  roleUpdate(params) {
+    return axios.post("/umg/admin/menu/update",qs.stringify(params));
+  },
+  // 修改其他管理员信息
+  roleRemove(params) {
+    return axios.post("/umg/admin/menu/remove",qs.stringify(params));
+  }
 };
 
 export default admin;
