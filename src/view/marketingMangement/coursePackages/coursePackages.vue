@@ -230,6 +230,7 @@
         this.isOpenModal = true
         if (data) {
           this.addInfo = JSON.parse(JSON.stringify(data))
+          this.addInfo.packagePrice = this.addInfo.packagePrice / 100
           this.addInfo.courses.forEach(item=>{
             this.courseList.push({
               id: item.goodsId,

@@ -35,16 +35,36 @@
         <FormItem label="优惠券面额" v-if="openType == '1'"  class="ivu-form-item-required">
           <Input type="text" v-model="addInfo.denomination" placeholder="请输入优惠券面额"></Input>
         </FormItem>
-        <FormItem label="关联课程" prop="courseId"  class="ivu-form-item-required">
-          <div class="g-course-add-style" @click="isShowCourseModal=true" v-if="!courseList.length || openType!='3'">
+        <FormItem label="关联课程" prop="courseId"  class="ivu-form-item-required" v-if="openType != '3'">
+          <div class="g-course-add-style" @click="isShowCourseModal=true">
+            <span>+</span>
+            <span>选择课程</span>
+          </div>
+          <div v-if="isShowCourseModal">
+            <check-course-two :isShowModal="isShowCourseModal" :checkCourseList="courseList" :isUpdate='isEdit'
+                          :course-type="openType == '3' ? 0 : 1"
+                          :isRadioModal="openType == '3'"
+                          :categoryId="addInfo.categoryId"
+                          @cancleCourseModal="isShowCourseModal = false"
+                          @closeCourseModal="checkCourse"></check-course-two>
+          </div>
+          <div class="-c-course-wrap" v-if="courseList.length">
+            <div class="-c-course-item" v-for="(item, index) of courseList" :key="index">
+              <img :src="item.imgurl">
+              <div class="-i-text">{{item.name}}</div>
+              <div v-if="!isEdit  || openType!='3'" class="-i-del" @click="delCourse(item,index)">删除课程</div>
+            </div>
+          </div>
+        </FormItem>
+        <FormItem label="关联课程" prop="courseId"  class="ivu-form-item-required" v-if="openType == '3'">
+          <div class="g-course-add-style" @click="isShowCourseModal=true" v-if="!courseList.length">
             <span>+</span>
             <span>选择课程</span>
           </div>
           <div v-if="isShowCourseModal">
             <check-course :isShowModal="isShowCourseModal" :checkCourseList="courseList" :isUpdate='isEdit'
-                          :course-type="openType == '3' ? 0 : 1"
-                          :isRadioModal="openType == '3'"
-                          :categoryId="addInfo.categoryId"
+                          :course-type="0"
+                          :isRadioModal="true"
                           @cancleCourseModal="isShowCourseModal = false"
                           @closeCourseModal="checkCourse"></check-course>
           </div>
@@ -72,12 +92,13 @@
 </template>
 
 <script>
-  import CheckCourse from "../../../components/checkCourse";
   import {copyUrl} from "@/libs/index"
+  import CheckCourseTwo from "../../../components/checkCourseTwo";
+  import CheckCourse from "../../../components/checkCourse";
 
   export default {
     name: 'aloneBuy',
-    components: {CheckCourse},
+    components: {CheckCourse, CheckCourseTwo},
     data() {
       return {
         tab: {
@@ -343,12 +364,14 @@
             response => {
               this.dataItem = response.data.resultData
               this.addInfo.denomination = this.dataItem.denomination;
-              this.dataItem.courseIds.forEach(item=>{
-                this.courseList.push({
-                  ...item,
-                  id: item.goodsId
-                })
-              });
+              if (this.dataItem.courseIds) {
+                this.dataItem.courseIds.forEach(item=>{
+                  this.courseList.push({
+                    ...item,
+                    id: item.goodsId
+                  })
+                });
+              }
               this.$forceUpdate()
             })
       },
@@ -434,11 +457,13 @@
       checkCourse(params) {
         this.isShowCourseModal = false;
         this.courseList = []
+        console.log(params,'121212')
         params.forEach(item => {
           this.courseList.push({
+            id: item.goodsId,
             goodsId: item.goodsId,
-            name: item.courseName,
-            imgurl: item.coverUrl
+            name: item.name,
+            imgurl: item.imgurl || item.coverUrl || item.courseImgUrl
           })
         })
         this.addInfo.courseId = params.length && this.courseList[0].id
