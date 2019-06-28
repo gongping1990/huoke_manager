@@ -204,6 +204,10 @@
           </div>
         </Form-item>
 
+        <Form-item label="热门推荐图" class="-c-form-item">
+          <upload-img v-model="addInfo.recmdimgUrl" :option="uploadOption"></upload-img>
+        </Form-item>
+
         <FormItem>
           <div class="-c-flex">
             <Button @click="closeModal('addInfo')" ghost type="primary" class="-c-btn">返回</Button>
@@ -221,10 +225,11 @@
   import Loading from "../../../components/loading";
   import dayjs from 'dayjs'
   import Editor from "../../../components/editor";
+  import UploadImg from "../../../components/uploadImg";
 
   export default {
     name: 'courseEdit',
-    components: {Editor, Loading},
+    components: {UploadImg, Editor, Loading},
     data() {
       return {
         isSending: false,
@@ -232,6 +237,10 @@
         dataList: [],
         baseUrl: `${getBaseUrl()}/sch/common/uploadPublicFile`, // 公有 （图片）
         baseUrlVa: `http://hkupload.prod.k12.vip/common/uploadPrivateFile`, //私有地址 （音视频）
+        uploadOption: {
+          tipText: '只能上传jpg/png文件，且不超过500kb',
+          size: 500
+        },
         playUrl: '',
         keywordItem: '',
         coverImgUrl: '', //封面图片
