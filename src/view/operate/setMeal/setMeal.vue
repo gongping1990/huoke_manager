@@ -34,7 +34,7 @@
         width="600"
         :title="addInfo.id ? '编辑推荐位' : '创建推荐位'">
         <Form ref="addInfo" :model="addInfo" :rules="ruleValidate" :label-width="90">
-          <FormItem label="推荐位图片" >
+          <FormItem label="推荐位图片" class="ivu-form-item-required">
             <upload-img v-model="addInfo.img" :option="uploadOption" :isDisabled="isEdit"></upload-img>
           </FormItem>
           <FormItem label="活动名称" prop="name">
@@ -441,7 +441,9 @@
         })
       },
       submitInfo(name) {
-        if (!this.getStartTime) {
+        if (!this.addInfo.img) {
+          return this.$Message.error('请上传推荐位图片')
+        } else if (!this.getStartTime) {
           return this.$Message.error('请输入开始时间')
         } else if (!this.getEndTime) {
           return this.$Message.error('请输入结束时间')
