@@ -133,7 +133,7 @@
         playUrlBg: '',
         audioType: ['mp3', 'wma', 'arm'],
         baseUrl: `${getBaseUrl()}/sch/common/uploadPublicFile`, // 公有 （图片）
-        baseUrlVa: `http://hkupload.prod.k12.vip/sch/common/uploadPrivateFile`, //私有地址 （音视频）
+        baseUrlVa: `http://hkupload.prod.k12.vip/common/uploadPrivateFile`, //私有地址 （音视频）
       }
     },
     computed: {
