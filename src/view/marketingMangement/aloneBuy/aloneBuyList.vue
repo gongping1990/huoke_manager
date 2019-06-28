@@ -466,7 +466,7 @@
             imgurl: item.imgurl || item.coverUrl || item.courseImgUrl
           })
         })
-        this.addInfo.courseId = params.length && this.courseList[0].id
+        this.addInfo.courseId = params.length && params[0].id
       }
     }
   };
