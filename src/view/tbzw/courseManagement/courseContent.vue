@@ -139,8 +139,8 @@
         modalTitleName: {
           '1': '授课教师',
           '2': '课前引导',
-          '3': '课中回答',
-          '4': '随堂检测',
+          '3': '活学活用',
+          '4': '轻松一答',
           '5': '作业',
           '6': '素材评价',
         },
@@ -248,7 +248,7 @@
                       this.openModalContent(params.row, 3)
                     }
                   }
-                }, '课中问答'),
+                }, '活学活用'),
                 h('Button', {
                   props: {
                     type: 'text',
@@ -263,7 +263,7 @@
                       this.openModalContent(params.row, 4)
                     }
                   }
-                }, '随堂检测'),
+                }, '轻松一答'),
                 h('Button', {
                   props: {
                     type: 'text',
