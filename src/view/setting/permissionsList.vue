@@ -2,7 +2,13 @@
   <div class="p-permissionsList">
 
     <Card>
-      <div class="g-add-btn" @click="openModal('',true, 1)">
+      <Row class="g-search g-t-left">
+        <RadioGroup v-model="radioType" @on-change="getList" type="button">
+          <Radio :label="item.id" v-for="(item,index) of systemList" :key="index">{{item.name}}</Radio>
+        </RadioGroup>
+      </Row>
+
+      <div class="g-add-btn g-add-top" @click="openModal('', '',true, 0)">
         <Icon class="-btn-icon" color="#fff" type="ios-add" size="24"/>
       </div>
 
@@ -13,25 +19,26 @@
         </Col>
         <Col :span="24" v-for="(item1,index) of firstChild" :key="index" class="-t-item -t-border">
           <Col :span="12" class="-t-child-padding g-flex-a-j-center">
-            <div @click="openArrow(item1)" class="g-cursor">
+            <div @click="openArrow(item1)" class="g-cursor" v-if="item1.child.length">
               <Icon v-if="!item1.isShowChild" type="md-arrow-dropright" size="20"/>
               <Icon v-else type="md-arrow-dropdown" size="20"/>
             </div>
             <div :class="{'-t-child-m-l': !item1.child.length}">{{item1.name}}</div>
           </Col>
           <Col :span="12" class="g-text-right">
-            <Button type="text" class="-t-theme-color"  @click="openModal(item1,true, 2)">添加子菜单</Button>
-            <Button type="text" class="-t-theme-color" @click="openModal(item1, false, 2)">编辑</Button>
+            <Button type="text" class="-t-theme-color" @click="openModal(item1, '', true, 0)">添加子菜单</Button>
+            <Button type="text" class="-t-theme-color" @click="openModal(item1, '', false, 0)">编辑1</Button>
             <Button type="text" class="-t-red-color" @click="delItem(item1)">删除</Button>
           </Col>
 
-          <Col :span="24" v-show="item1.child" v-for="(item2,index2) of item1.child"
+          <Col :span="24" v-show="item1.isShowChild && item1.child" v-for="(item2,index2) of item1.child"
                :key="index2" class="-t-item -t-border">
             <Col :span="12" class="-t-child-padding-two g-flex-a-j-center">
               <div :class="{'-t-child-m-l': !item2.child.length}">{{item2.name}}</div>
             </Col>
             <Col :span="12" class="g-text-right">
-              <Button type="text" class="-t-theme-color" @click="openModal(item2,false,3)">编辑</Button>
+              <Button type="text" class="-t-theme-color" @click="openModalRole(item2)">添加权限</Button>
+              <Button type="text" class="-t-theme-color" @click="openModal(item2,item1,false,1)">编辑2</Button>
               <Button type="text" class="-t-red-color" @click="delItem(item2)">删除</Button>
             </Col>
           </Col>
@@ -48,18 +55,14 @@
       width="350"
       :title="addInfo.id ? '编辑菜单栏' : '新增菜单栏'">
       <Form ref="addInfo" :model="addInfo" :label-width="80">
+        <FormItem label="上级菜单">
+          {{nowIndex.name || '根目录'}}
+        </FormItem>
         <FormItem label="菜单名称" prop="name" class="ivu-form-item-required">
           <Input type="text" v-model="addInfo.name" placeholder="请输入菜单名称"></Input>
         </FormItem>
         <FormItem label="页面路径" prop="path">
           <Input type="text" v-model="addInfo.path" placeholder="请输入页面路径"></Input>
-        </FormItem>
-        <FormItem label="类别" prop="type " class="ivu-form-item-required">
-          <RadioGroup v-model="addInfo.type">
-            <Radio label="0">目录</Radio>
-            <Radio label="1">页面</Radio>
-            <Radio label="2">按钮</Radio>
-          </RadioGroup>
         </FormItem>
       </Form>
       <div slot="footer" class="g-flex-j-sa">
@@ -68,6 +71,24 @@
       </div>
     </Modal>
 
+    <Modal
+      class="p-permissionsList"
+      v-model="isOpenRole"
+      @on-cancel="closeModal('addInfo')"
+      width="500"
+      title="设置权限">
+      <Form ref="addInfo" :model="addInfo" :label-width="80">
+        <FormItem label="权限接口" prop="path">
+          <Select v-model="addInfo.codes" multiple>
+            <Option v-for="(item, index) in dataList" :value="item.code" :key="index">{{ item.desc}}</Option>
+          </Select>
+        </FormItem>
+      </Form>
+      <div slot="footer" class="g-flex-j-sa">
+        <Button @click="closeModal('addInfo')" ghost type="primary" style="width: 100px;">取消</Button>
+        <div @click="submitRole()" class="g-primary-btn "> {{isSending ? '提交中...' : '确 认'}}</div>
+      </div>
+    </Modal>
   </div>
 </template>
 <script>
@@ -79,26 +100,63 @@
       return {
         firstChild: [],
         isOpenModal: false,
+        isOpenRole: false,
         isFetching: false,
         isSending: false,
+        nowIndex: '',
         addInfo: {},
         storageInfo: [],
-        level: this.$route.query.level
+        dataList: [],
+        systemList: [],
+        radioType: 1,
       }
     },
     mounted() {
       this.getList()
+      this.getRoleList()
+
     },
     methods: {
-      getList() {
+      getRoleList() {
         this.isFetching = true
-
-        this.$api.admin.roleListMenu({
-          system: this.$store.state.nowAdminType
+        this.$api.admin.listBizSystem()
+          .then(
+            response => {
+              this.systemList = response.data.resultData;
+            })
+          .finally(() => {
+            this.isFetching = false
+          })
+      },
+      getPermissionList(item) {
+        this.isFetching = true
+        this.$api.admin.permissionsList({
+          menuId: item.id,
+          system: this.radioType
         })
           .then(
             response => {
-              this.firstChild = response.data.resultData;
+              this.dataList = response.data.resultData[0].permissions
+            })
+          .finally(() => {
+            this.isFetching = false
+          })
+      },
+      getList() {
+        this.firstChild = []
+        this.isFetching = true
+
+        this.$api.admin.roleListMenu({
+          system: this.radioType
+        })
+          .then(
+            response => {
+              response.data.resultData.forEach(item => {
+                this.firstChild.push({
+                  ...item,
+                  isShowChild: false
+                })
+              });
             })
           .finally(() => {
             this.isFetching = false
@@ -109,12 +167,28 @@
         this.storageInfo = this.firstChild
         this.$forceUpdate()
       },
-      openModal(data, bool, num) { //当前层级信息、第三层级信息、第二级、第一层，true为新增，false为编辑、层级
+      openModal(data, data1, bool, num) { //当前层级信息、第一层，true为新增，false为编辑、层级
         this.isOpenModal = true
+        this.nowIndex = {
+          index: num,
+          name: data1.name
+        }
+
         if (!bool) {
           this.addInfo = JSON.parse(JSON.stringify(data))
+        } else {
+          this.addInfo = {}
         }
-        this.$forceUpdate()
+
+        if (num) {
+          this.addInfo.pid = data.id
+        }
+      },
+      openModalRole(item) { //当前层级信息、第一层，true为新增，false为编辑、层级
+        this.isOpenRole = true
+        this.addInfo = JSON.parse(JSON.stringify(item))
+        this.addInfo.codes = this.addInfo.permcodes
+        this.getPermissionList(item)
       },
       delItem(param) {
         this.$Modal.confirm({
@@ -136,32 +210,53 @@
       },
       closeModal() {
         this.isOpenModal = false
+        this.isOpenRole = false
       },
       submitInfo(name) {
         if (!this.addInfo.name) {
           return this.$Message.error('请输入菜单名称')
-        } else if (!this.addInfo.type) {
-          return this.$Message.error('请选择类别')
         }
         this.isSending = true
 
         let param = ''
 
-          param = this.addInfo.id ? this.$api.admin.roleAdd : this.$api.admin.roleAdd
-          param({
-            system: this.$store.state.nowAdminType,
-            name: this.addInfo.name,
-            type: this.addInfo.type,
-            path: this.addInfo.path,
-            pid: ''
-          }).then(
-            response => {
-              if (response.data.code == '200') {
-                this.$Message.success('提交成功');
-                this.getList(1)
-                this.closeModal(name)
-              }
-            })
+        param = this.addInfo.id ? this.$api.admin.roleUpdate : this.$api.admin.roleAdd
+        param({
+          id: this.addInfo.id,
+          system: this.$store.state.nowAdminType,
+          name: this.addInfo.name,
+          type:  this.nowIndex ? 0 : 1,
+          path: this.addInfo.path,
+          pid: this.addInfo.pid
+        }).then(
+          response => {
+            if (response.data.code == '200') {
+              this.$Message.success('提交成功');
+              this.getList(1)
+              this.closeModal(name)
+            }
+          })
+          .finally(() => {
+            this.isSending = false
+          })
+      },
+      submitRole(name) {
+        if (!this.addInfo.codes.length) {
+          return this.$Message.error('请选择相应权限')
+        }
+        this.isSending = true
+
+        this.$api.admin.updateMenuPerm({
+          codes : `${this.addInfo.codes}` ,
+          menuId : this.addInfo.id
+        }).then(
+          response => {
+            if (response.data.code == '200') {
+              this.$Message.success('提交成功');
+              this.getList(1)
+              this.closeModal(name)
+            }
+          })
           .finally(() => {
             this.isSending = false
           })

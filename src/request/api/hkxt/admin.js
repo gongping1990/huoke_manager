@@ -56,11 +56,14 @@ const admin = {
   },
   // 权限列表信息
   permissionsList(params) {
-    return axios.get("/umg/admin/permissions", {params});
+    return axios.get("/umg/admin/menuPermissions", {params});
   },
   // 修改其他管理员信息
   updateRolePerm(params) {
     return axios.post("/umg/admin/user/updateRolePerm",qs.stringify(params));
+  },// 修改其他管理员信息
+  updateMenuPerm(params) {
+    return axios.post("/umg/admin/user/updateMenuPerm",qs.stringify(params));
   },
   // 修改其他管理员信息
   listBizSystem(params) {
