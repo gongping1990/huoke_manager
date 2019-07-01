@@ -12,291 +12,14 @@
           {{systemName}} <Icon type="md-swap"/>
         </span>
       </div>
-      <div v-if="roleType == '1'">
-        <Submenu name="dataStatistics" class="-left-li">
-          <template slot="title">
-            <Icon type="ios-stats" class="hk-menu-icon"/>
-            <span>数据统计</span>
-          </template>
-          <Menu-item name="userData">用户数据</Menu-item>
-          <Menu-item name="transactionData">交易数据</Menu-item>
-          <Menu-item name="commodityData">商品数据</Menu-item>
-        </Submenu>
-        <Submenu name="market" class="-left-li">
-          <template slot="title">
-            <Icon type="logo-usd" class="hk-menu-icon"></Icon>
-            <span>营销管理</span>
-          </template>
-          <Menu-item name="aloneBuy">单独购</Menu-item>
-          <Menu-item name="groupLesson">拼课</Menu-item>
-          <Menu-item name="friendHelp">好友助力</Menu-item>
-          <Menu-item name="limitedTimeSpikeList">限时秒杀</Menu-item>
-          <Menu-item name="active">新人礼包</Menu-item>
-          <Menu-item name="coupon">优惠券</Menu-item>
-          <Menu-item name="coursePackages">课程套餐</Menu-item>
-        </Submenu>
-        <Submenu name="orderManager" class="-left-li">
-          <template slot="title">
-            <Icon type="ios-document" class="hk-menu-icon"/>
-            <span>订单管理</span>
-          </template>
-          <Menu-item name="orderList">订单列表</Menu-item>
-        </Submenu>
-        <Submenu name="course" class="-left-li">
-          <template slot="title">
-            <Icon type="ios-book" class="hk-menu-icon"/>
-            <span>课程管理</span>
-          </template>
-          <Menu-item name="courseType">课程分类</Menu-item>
-          <Menu-item name="courseList">课程列表</Menu-item>
-        </Submenu>
-        <Submenu name="operate" class="-left-li">
-          <template slot="title">
-            <Icon type="md-trophy" class="hk-menu-icon"></Icon>
-            <span>运营管理</span>
-          </template>
-          <Menu-item name="topBar">topBar管理</Menu-item>
-          <Menu-item name="bannerList">banner管理</Menu-item>
-          <Menu-item name="trusteeship">托管管理</Menu-item>
-          <Menu-item name="channelManagement">渠道管理</Menu-item>
-          <Menu-item name="operationalLocation">运营位管理</Menu-item>
-          <Menu-item name="capsule">胶囊位管理</Menu-item>
-          <Menu-item name="pushWindow">活动推送</Menu-item>
-          <Menu-item name="homeRecommend">首页推荐</Menu-item>
-          <Menu-item name="setMeal">套餐管理</Menu-item>
-        </Submenu>
-        <Submenu name="message" class="-left-li">
-          <template slot="title">
-            <Icon type="ios-chatbubbles" class="hk-menu-icon"></Icon>
-            <span>消息管理</span>
-          </template>
-          <Menu-item name="wechat_news">微信推送消息</Menu-item>
-          <Menu-item name="custom_wechat_news">自定义微信消息</Menu-item>
-          <Menu-item name="custom_wechat_news_other">自定义微信消息(第三方)</Menu-item>
-          <Menu-item name="sms_news">短信推送消息</Menu-item>
-          <Menu-item name="custom_sms_news">自定义短信消息</Menu-item>
-        </Submenu>
-        <Submenu name="user" class="-left-li">
-          <template slot="title">
-            <Icon type="ios-contacts" class="hk-menu-icon"/>
-            <span>用户管理</span>
-          </template>
-          <Menu-item name="userList">用户列表</Menu-item>
-          <Menu-item name="virtualUser">虚拟用户</Menu-item>
-        </Submenu>
-        <Submenu name="feedback" class="-left-li">
-          <template slot="title">
-            <Icon type="ios-help-circle" class="hk-menu-icon"></Icon>
-            <span>用户反馈</span>
-          </template>
-          <Menu-item name="userFeedback">用户反馈</Menu-item>
-          <Menu-item name="messageManagement">评价管理</Menu-item>
-          <Menu-item name="customerService">客服管理</Menu-item>
-        </Submenu>
-        <Submenu name="setting" class="-left-li">
-          <template slot="title">
-            <Icon type="md-settings" class="hk-menu-icon"></Icon>
-            <span>设置</span>
-          </template>
-          <Menu-item name="user-setting">用户管理</Menu-item>
-          <Menu-item name="user-role">角色管理</Menu-item>
-          <Menu-item name="user-info">个人资料</Menu-item>
-          <Menu-item name="user-permission">权限列表</Menu-item>
-        </Submenu>
-      </div>
+      <Submenu :name="list.path" class="-left-li" v-for="(list,index) of sideMenuList" :key="index">
+        <template slot="title">
+          <Icon :type="list.icon" class="hk-menu-icon"/>
+          <span>{{list.title}}</span>
+        </template>
 
-      <div v-if="roleType == '2'" >
-        <Submenu name="dataStatistics" class="-left-li">
-          <template slot="title">
-            <Icon type="ios-stats" class="hk-menu-icon"/>
-            <span>数据统计</span>
-          </template>
-          <Menu-item name="userData2">用户数据</Menu-item>
-          <Menu-item name="productData">产品数据</Menu-item>
-        </Submenu>
-        <Submenu name="study" class="-left-li">
-          <template slot="title">
-            <Icon type="ios-school" class="hk-menu-icon"></Icon>
-            <span>同步学习</span>
-          </template>
-          <Menu-item name="subject">学科管理</Menu-item>
-          <Menu-item name="teachingList">教材管理</Menu-item>
-        </Submenu>
-        <Submenu name="orderManager" class="-left-li">
-          <template slot="title">
-            <Icon type="ios-document" class="hk-menu-icon"/>
-            <span>订单管理</span>
-          </template>
-          <Menu-item name="hkyw_orderList">订单列表</Menu-item>
-        </Submenu>
-        <Submenu name="user" class="-left-li">
-          <template slot="title">
-            <Icon type="ios-contacts" class="hk-menu-icon"/>
-            <span>用户管理</span>
-          </template>
-          <Menu-item name="userList2">用户列表</Menu-item>
-        </Submenu>
-        <Submenu name="feedback" class="-left-li">
-          <template slot="title">
-            <Icon type="ios-help-circle" class="hk-menu-icon"></Icon>
-            <span>留言管理</span>
-          </template>
-          <Menu-item name="userFeedback2">用户反馈</Menu-item>
-        </Submenu>
-      </div>
-      <div v-if="roleType == '4'" >
-        <Submenu name="dataStatistics" class="-left-li">
-          <template slot="title">
-            <Icon type="ios-stats" class="hk-menu-icon"/>
-            <span>数据统计</span>
-          </template>
-          <Menu-item name="columnData">栏目数据</Menu-item>
-        </Submenu>
-        <Submenu name="content" class="-left-li">
-          <template slot="title">
-            <Icon type="ios-school" class="hk-menu-icon"></Icon>
-            <span>内容管理</span>
-          </template>
-          <Menu-item name="column">栏目管理</Menu-item>
-        </Submenu>
-        <Submenu name="user" class="-left-li">
-          <template slot="title">
-            <Icon type="ios-contacts" class="hk-menu-icon"/>
-            <span>用户管理</span>
-          </template>
-          <Menu-item name="zlkUserList">用户列表</Menu-item>
-        </Submenu>
-        <Submenu name="operate" class="-left-li">
-          <template slot="title">
-            <Icon type="md-trophy" class="hk-menu-icon"></Icon>
-            <span>运营管理</span>
-          </template>
-          <Menu-item name="zlkBannerList">banner管理</Menu-item>
-        </Submenu>
-      </div>
-      <div v-if="roleType == '5'" >
-        <Submenu name="content" class="-left-li">
-          <template slot="title">
-            <Icon type="ios-school" class="hk-menu-icon"></Icon>
-            <span>内容管理</span>
-          </template>
-          <Menu-item name="teaching">教材列表</Menu-item>
-          <Menu-item name="teacher">教师列表</Menu-item>
-        </Submenu>
-        <Submenu name="user" class="-left-li">
-          <template slot="title">
-            <Icon type="ios-contacts" class="hk-menu-icon"/>
-            <span>用户管理</span>
-          </template>
-          <Menu-item name="ldUserList">用户列表</Menu-item>
-        </Submenu>
-        <Submenu name="operate" class="-left-li">
-          <template slot="title">
-            <Icon type="md-trophy" class="hk-menu-icon"></Icon>
-            <span>运营管理</span>
-          </template>
-          <Menu-item name="ldBannerList">banner管理</Menu-item>
-          <Menu-item name="contentOperation">内容运营</Menu-item>
-        </Submenu>
-      </div>
-      <div v-if="roleType == '7'" >
-        <Submenu name="dataStatistics" class="-left-li">
-          <template slot="title">
-            <Icon type="ios-stats" class="hk-menu-icon"/>
-            <span>数据统计</span>
-          </template>
-          <Menu-item name="gsw_userData">交易数据</Menu-item>
-          <Menu-item name="gsw_retainData">留存数据</Menu-item>
-          <Menu-item name="gsw_channel">渠道管理</Menu-item>
-        </Submenu>
-        <Submenu name="course" class="-left-li">
-          <template slot="title">
-            <Icon type="ios-school" class="hk-menu-icon"></Icon>
-            <span>课程管理</span>
-          </template>
-          <Menu-item name="gsw_courseInfo">课程信息</Menu-item>
-          <Menu-item name="courseContent">课程内容</Menu-item>
-        </Submenu>
-        <Submenu name="orderManager" class="-left-li">
-          <template slot="title">
-            <Icon type="ios-document" class="hk-menu-icon"/>
-            <span>订单管理</span>
-          </template>
-          <Menu-item name="gsw_orderList">订单列表</Menu-item>
-        </Submenu>
-        <Submenu name="operate" class="-left-li">
-          <template slot="title">
-            <Icon type="md-trophy" class="hk-menu-icon"></Icon>
-            <span>运营管理</span>
-          </template>
-          <Menu-item name="gsw_wheelMessage">消息列表</Menu-item>
-          <Menu-item name="gsw_patchRecord">补卡记录</Menu-item>
-        </Submenu>
-        <Submenu name="user" class="-left-li">
-          <template slot="title">
-            <Icon type="ios-contacts" class="hk-menu-icon"/>
-            <span>用户管理</span>
-          </template>
-          <Menu-item name="gswUserList">用户列表</Menu-item>
-        </Submenu>
-      </div>
-      <div v-if="roleType == '8'" >
-        <Submenu name="dataStatistics" class="-left-li">
-          <template slot="title">
-            <Icon type="ios-stats" class="hk-menu-icon"/>
-            <span>数据统计</span>
-          </template>
-          <Menu-item name="tbzw_userData">交易数据</Menu-item>
-          <Menu-item name="tbzw_retainData">留存数据</Menu-item>
-          <Menu-item name="tbzw_channel">渠道管理</Menu-item>
-        </Submenu>
-        <Submenu name="course" class="-left-li">
-          <template slot="title">
-            <Icon type="ios-school" class="hk-menu-icon"></Icon>
-            <span>课程管理</span>
-          </template>
-          <Menu-item name="tbzw_courseInfo">课程信息</Menu-item>
-          <Menu-item name="tbzw_courseContent">课程内容</Menu-item>
-          <Menu-item name="tbzw_teacher">教师信息</Menu-item>
-        </Submenu>
-        <Submenu name="orderManager" class="-left-li">
-          <template slot="title">
-            <Icon type="ios-document" class="hk-menu-icon"/>
-            <span>订单管理</span>
-          </template>
-          <Menu-item name="tbzw_orderList">订单列表</Menu-item>
-          <Menu-item name="tbzw_deliverGoods">发货管理</Menu-item>
-        </Submenu>
-        <Submenu name="operate" class="-left-li">
-          <template slot="title">
-            <Icon type="md-trophy" class="hk-menu-icon"></Icon>
-            <span>运营管理</span>
-          </template>
-          <Menu-item name="tbzw_wheelMessage">轮播消息</Menu-item>
-          <Menu-item name="tbzw_qrcode">群二维码</Menu-item>
-        </Submenu>
-        <Submenu name="booking" class="-left-li">
-          <template slot="title">
-            <Icon type="md-cafe" class="hk-menu-icon"></Icon>
-            <span>预约管理</span>
-          </template>
-          <Menu-item name="tbzw_bookingList">预约列表</Menu-item>
-        </Submenu>
-        <Submenu name="task" class="-left-li">
-          <template slot="title">
-            <Icon type="md-bookmarks" class="hk-menu-icon"></Icon>
-            <span>作业管理</span>
-          </template>
-          <Menu-item name="tbzw_job">作业列表</Menu-item>
-        </Submenu>
-        <Submenu name="user" class="-left-li">
-          <template slot="title">
-            <Icon type="ios-contacts" class="hk-menu-icon"/>
-            <span>用户管理</span>
-          </template>
-          <Menu-item name="tbzw_userList">用户列表</Menu-item>
-        </Submenu>
-      </div>
+        <Menu-item :name="item.route" v-for="(item,index1 ) of list.child" :key="index1">{{item.title}}</Menu-item>
+      </Submenu>
     </Menu>
     <div v-if="isOpenModal">
       <switching-system @closePwdModal="closeModal"></switching-system>
@@ -331,6 +54,7 @@
           '7': '7',
           '8': '8',
         },
+        sideMenuList: [],
         systemName: ''
       }
     },
@@ -346,11 +70,13 @@
     watch: {
       '$store.state.nowAdminType' (_n,_d) {
         this.systemName = this.systemList[_n]
+        this.initAdmin()
         this.$router.push('/')
       }
     },
     mounted() {
       this.getAdminList()
+      this.initAdmin()
       this.$nextTick(() => {
         if (this.$refs.sideMenu) {
           this.$refs.sideMenu.updateOpened();
@@ -358,6 +84,599 @@
       });
     },
     methods: {
+      initAdmin () {
+        switch (+this.$store.state.nowAdminType) {
+          case 1:
+            this.sideMenuList = [
+              {
+                path: 'dataStatistics',
+                title: '数据统计',
+                icon: 'ios-stats',
+                child: [
+                  {
+                    route: 'userData',
+                    title: '用户数据'
+                  },
+                  {
+                    route: 'transactionData',
+                    title: '交易数据'
+                  },
+                  {
+                    route: 'commodityData',
+                    title: '商品数据'
+                  }
+                ]
+              },
+              {
+                path: 'market',
+                title: '营销管理',
+                icon: 'logo-usd',
+                child: [
+                  {
+                    route: 'aloneBuy',
+                    title: '单独购'
+                  },
+                  {
+                    route: 'groupLesson',
+                    title: '拼课'
+                  },
+                  {
+                    route: 'friendHelp',
+                    title: '好友助力'
+                  },
+                  {
+                    route: 'limitedTimeSpikeList',
+                    title: '限时秒杀'
+                  },
+                  {
+                    route: 'active',
+                    title: '新人礼包'
+                  },
+                  {
+                    route: 'coupon',
+                    title: '优惠券'
+                  },
+                  {
+                    route: 'coursePackages',
+                    title: '课程套餐'
+                  }
+                ]
+              },
+              {
+                path: 'orderManager',
+                title: '订单管理',
+                icon: 'ios-document',
+                child: [
+                  {
+                    route: 'orderList',
+                    title: '订单列表'
+                  }
+                ]
+              },
+              {
+                path: 'course',
+                title: '课程管理',
+                icon: 'ios-book',
+                child: [
+                  {
+                    route: 'courseType',
+                    title: '课程分类'
+                  },
+                  {
+                    route: 'courseList',
+                    title: '课程列表'
+                  }
+                ]
+              },
+              {
+                path: 'operate',
+                title: '运营管理',
+                icon: 'md-trophy',
+                child: [
+                  {
+                    route: 'topBar',
+                    title: 'topBar管理'
+                  },
+                  {
+                    route: 'bannerList',
+                    title: 'banner管理'
+                  },
+                  {
+                    route: 'trusteeship',
+                    title: '托管管理'
+                  },
+                  {
+                    route: 'channelManagement',
+                    title: '渠道管理'
+                  },
+                  {
+                    route: 'operationalLocation',
+                    title: '运营位管理'
+                  },
+                  {
+                    route: 'capsule',
+                    title: '胶囊位管理'
+                  },
+                  {
+                    route: 'pushWindow',
+                    title: '活动推送'
+                  },
+                  {
+                    route: 'homeRecommend',
+                    title: '首页推荐'
+                  },
+                  {
+                    route: 'setMeal',
+                    title: '套餐管理'
+                  }
+                ]
+              },
+              {
+                path: 'message',
+                title: '消息管理',
+                icon: 'ios-chatbubbles',
+                child: [
+                  {
+                    route: 'wechat_news',
+                    title: '微信推送消息'
+                  },
+                  {
+                    route: 'custom_wechat_news',
+                    title: '自定义微信消息'
+                  },
+                  {
+                    route: 'custom_wechat_news_other',
+                    title: '自定义微信消息(第三方)'
+                  },
+                  {
+                    route: 'sms_news',
+                    title: '短信推送消息'
+                  },
+                  {
+                    route: 'custom_sms_news',
+                    title: '自定义短信消息'
+                  }
+                ]
+              },
+              {
+                path: 'user',
+                title: '用户管理',
+                icon: 'ios-contacts',
+                child: [
+                  {
+                    route: 'userList',
+                    title: '用户列表'
+                  },
+                  {
+                    route: 'virtualUser',
+                    title: '虚拟用户'
+                  },
+                  {
+                    route: 'virtualUser',
+                    title: '虚拟用户'
+                  }
+                ]
+              },
+              {
+                path: 'feedback',
+                title: '用户反馈',
+                icon: 'ios-help-circle',
+                child: [
+                  {
+                    route: 'userFeedback',
+                    title: '用户反馈'
+                  },
+                  {
+                    route: 'messageManagement',
+                    title: '评价管理'
+                  },
+                  {
+                    route: 'customerService',
+                    title: '客服管理'
+                  }
+                ]
+              },
+              {
+                path: 'setting',
+                title: '设置',
+                icon: 'md-settings',
+                child: [
+                  {
+                    route: 'user-setting',
+                    title: '用户管理'
+                  },
+                  {
+                    route: 'user-role',
+                    title: '角色管理'
+                  },
+                  {
+                    route: 'user-info',
+                    title: '个人资料'
+                  },
+                  {
+                    route: 'user-permission',
+                    title: '权限列表'
+                  }
+                ]
+              }
+            ]
+            break
+          case 2:
+            this.sideMenuList = [
+              {
+                path: 'dataStatistics',
+                title: '数据统计',
+                icon: 'ios-stats',
+                child: [
+                  {
+                    route: 'userData2',
+                    title: '用户数据'
+                  },
+                  {
+                    route: 'productData',
+                    title: '产品数据'
+                  }
+                ]
+              },
+              {
+                path: 'study',
+                title: '同步学习',
+                icon: 'ios-school',
+                child: [
+                  {
+                    route: 'subject',
+                    title: '学科管理'
+                  },
+                  {
+                    route: 'teachingList',
+                    title: '教材管理'
+                  }
+                ]
+              },
+              {
+                path: 'orderManager',
+                title: '订单管理',
+                icon: 'ios-document',
+                child: [
+                  {
+                    route: 'hkyw_orderList',
+                    title: '订单列表'
+                  }
+                ]
+              },
+              {
+                path: 'user',
+                title: '用户管理',
+                icon: 'ios-contacts',
+                child: [
+                  {
+                    route: 'userList2',
+                    title: '用户列表'
+                  }
+                ]
+              },
+              {
+                path: 'feedback',
+                title: '留言管理',
+                icon: 'ios-help-circle',
+                child: [
+                  {
+                    route: 'userFeedback2',
+                    title: '用户反馈'
+                  }
+                ]
+              }
+            ]
+            break
+          case 4:
+            this.sideMenuList = [
+              {
+                path: 'dataStatistics',
+                title: '数据统计',
+                icon: 'ios-stats',
+                child: [
+                  {
+                    route: 'columnData',
+                    title: '栏目数据'
+                  }
+                ]
+              },
+              {
+                path: 'content',
+                title: '内容管理',
+                icon: 'ios-school',
+                child: [
+                  {
+                    route: 'column',
+                    title: '栏目管理'
+                  }
+                ]
+              },
+              {
+                path: 'operate',
+                title: '运营管理',
+                icon: 'md-trophy',
+                child: [
+                  {
+                    route: 'zlkBannerList',
+                    title: 'banner管理'
+                  }
+                ]
+              },
+              {
+                path: 'user',
+                title: '用户管理',
+                icon: 'ios-contacts',
+                child: [
+                  {
+                    route: 'zlkUserList',
+                    title: '用户列表'
+                  }
+                ]
+              }
+            ]
+            break
+          case 5:
+            this.sideMenuList = [
+              {
+                path: 'content',
+                title: '内容管理',
+                icon: 'ios-school',
+                child: [
+                  {
+                    route: 'teaching',
+                    title: '教材列表'
+                  },
+                  {
+                    route: 'teacher',
+                    title: '教师列表'
+                  }
+                ]
+              },
+              {
+                path: 'operate',
+                title: '运营管理',
+                icon: 'md-trophy',
+                child: [
+                  {
+                    route: 'ldBannerList',
+                    title: 'banner管理'
+                  },
+                  {
+                    route: 'contentOperation',
+                    title: '内容运营'
+                  }
+                ]
+              },
+              {
+                path: 'user',
+                title: '用户管理',
+                icon: 'ios-contacts',
+                child: [
+                  {
+                    route: 'ldUserList',
+                    title: '用户列表'
+                  }
+                ]
+              }
+            ]
+            break
+          case 7:
+            this.sideMenuList = [
+              {
+                path: 'dataStatistics',
+                title: '数据统计',
+                icon: 'ios-stats',
+                child: [
+                  {
+                    route: 'gsw_userData',
+                    title: '交易数据'
+                  },
+                  {
+                    route: 'gsw_retainData',
+                    title: '留存数据'
+                  },
+                  {
+                    route: 'gsw_channel',
+                    title: '渠道管理'
+                  }
+                ]
+              },
+              {
+                path: 'course',
+                title: '课程管理',
+                icon: 'ios-school',
+                child: [
+                  {
+                    route: 'gsw_courseInfo',
+                    title: '课程信息'
+                  },
+                  {
+                    route: 'courseContent',
+                    title: '课程内容'
+                  },
+                  {
+                    route: 'new_courseContent',
+                    title: '新课程内容'
+                  }
+                ]
+              },
+              {
+                path: 'booking',
+                title: '预约管理',
+                icon: 'md-cafe',
+                child: [
+                  {
+                    route: 'gsw_bookingList',
+                    title: '预约列表'
+                  }
+                ]
+              },
+              {
+                path: 'task',
+                title: '作业管理',
+                icon: 'md-bookmarks',
+                child: [
+                  {
+                    route: 'gsw_job',
+                    title: '作业列表'
+                  }
+                ]
+              },
+              {
+                path: 'orderManager',
+                title: '订单管理',
+                icon: 'ios-document',
+                child: [
+                  {
+                    route: 'gsw_orderList',
+                    title: '订单列表'
+                  },
+                  {
+                    route: 'gsw_deliverGoods',
+                    title: '发货管理'
+                  }
+                ]
+              },
+              {
+                path: 'operate',
+                title: '运营管理',
+                icon: 'md-trophy',
+                child: [
+                  {
+                    route: 'gsw_wheelMessage',
+                    title: '消息列表'
+                  },
+                  {
+                    route: 'gsw_patchRecord',
+                    title: '补卡记录'
+                  },
+                  {
+                    route: 'gsw_qrcode',
+                    title: '群二维码'
+                  }
+                ]
+              },
+              {
+                path: 'user',
+                title: '用户管理',
+                icon: 'ios-contacts',
+                child: [
+                  {
+                    route: 'gswUserList',
+                    title: '用户列表'
+                  }
+                ]
+              }
+            ]
+            break
+          case 8:
+            this.sideMenuList = [
+              {
+                path: 'dataStatistics',
+                title: '数据统计',
+                icon: 'ios-stats',
+                child: [
+                  {
+                    route: 'tbzw_userData',
+                    title: '交易数据'
+                  },
+                  {
+                    route: 'tbzw_retainData',
+                    title: '留存数据'
+                  },
+                  {
+                    route: 'tbzw_channel',
+                    title: '渠道管理'
+                  }
+                ]
+              },
+              {
+                path: 'course',
+                title: '课程管理',
+                icon: 'ios-school',
+                child: [
+                  {
+                    route: 'tbzw_courseInfo',
+                    title: '课程信息'
+                  },
+                  {
+                    route: 'tbzw_courseContent',
+                    title: '课程内容'
+                  },
+                  {
+                    route: 'tbzw_teacher',
+                    title: '教师信息'
+                  }
+                ]
+              },
+              {
+                path: 'booking',
+                title: '预约管理',
+                icon: 'md-cafe',
+                child: [
+                  {
+                    route: 'tbzw_bookingList',
+                    title: '预约列表'
+                  }
+                ]
+              },
+              {
+                path: 'task',
+                title: '作业管理',
+                icon: 'md-bookmarks',
+                child: [
+                  {
+                    route: 'tbzw_job',
+                    title: '作业列表'
+                  }
+                ]
+              },
+              {
+                path: 'orderManager',
+                title: '订单管理',
+                icon: 'ios-document',
+                child: [
+                  {
+                    route: 'tbzw_orderList',
+                    title: '订单列表'
+                  },
+                  {
+                    route: 'tbzw_deliverGoods',
+                    title: '发货管理'
+                  }
+                ]
+              },
+              {
+                path: 'operate',
+                title: '运营管理',
+                icon: 'md-trophy',
+                child: [
+                  {
+                    route: 'tbzw_wheelMessage',
+                    title: '轮播消息'
+                  },
+                  {
+                    route: 'tbzw_qrcode',
+                    title: '群二维码'
+                  }
+                ]
+              },
+              {
+                path: 'user',
+                title: '用户管理',
+                icon: 'ios-contacts',
+                child: [
+                  {
+                    route: 'tbzw_userList',
+                    title: '用户列表'
+                  }
+                ]
+              }
+            ]
+            break
+        }
+      },
       getAdminList () {
         let nowId = this.$store.state.nowAdminType
         this.systemName = this.systemList[nowId]

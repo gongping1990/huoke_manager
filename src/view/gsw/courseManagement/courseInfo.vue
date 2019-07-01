@@ -5,6 +5,7 @@
         <Radio-group v-model="radioType" type="button" @on-change="changeRadio()">
           <Radio label="1">基础信息</Radio>
           <Radio label="2">帮助信息</Radio>
+          <Radio label="3">优惠信息</Radio>
         </Radio-group>
       </Row>
       <div class="p-course-info-wrap">
@@ -96,6 +97,17 @@
             </Card>
           </div>
         </Form>
+        <Form v-if="radioType==='3'" ref="addInfo" :model="addInfo" :rules="ruleValidateThree" :label-width="90">
+          <FormItem label="优惠券面额" prop="alonePrice">
+            <InputNumber type="text" :disabled="!isEdit" v-model="addInfo.alonePrice" :min="0"
+                         placeholder="请输入优惠券面额（元）"></InputNumber>
+            <span class="-c-tips">* 精确到小数点后2位，如99.99</span>
+          </FormItem>
+          <FormItem label="有效期" prop="groupPrice">
+            <InputNumber type="text" :disabled="!isEdit" v-model="addInfo.groupPrice" :min="0"
+                         placeholder="请输入有效期（小时）"></InputNumber>
+          </FormItem>
+        </Form>
         <div class="-c-flex">
           <Button v-if="isEdit" @click="closeEdit('addInfo')" ghost type="primary" class="-c-btn">取 消</Button>
           <div v-if="isEdit" @click="submitInfo('addInfo')" class="g-primary-btn -c-btn">确 认</div>
@@ -154,6 +166,14 @@
           ],
           launchInfo: [
             {required: true, message: '请输入参加团购帮助信息', trigger: 'blur'},
+          ]
+        },
+        ruleValidateThree: {
+          aloneInfo: [
+            {required: true, type: 'number', message: '请输入优惠券面额', trigger: 'blur'},
+          ],
+          groupInfo: [
+            {required: true, type: 'number', message: '请输入有效期', trigger: 'blur'}
           ]
         },
       };

@@ -67,6 +67,53 @@ export const gswRouter =[
           }
         ],
         component: () => import('@/view/gsw/patchRecord/patchRecord')
+      },
+      {
+        path: '/gsw_qrcode',
+        name: 'gsw_qrcode',
+        meta: [
+          {
+            name: '运营管理'
+          },
+          {
+            name: '群二维码'
+          }
+        ],
+        component: () => import('@/view/gsw/qrcode/qrcodeList')
+      }
+    ]
+  },
+  {
+    path: 'task',
+    name: 'task',
+    title: '作业管理',
+    component: Main,
+    children: [
+      {
+        path: '/gsw_job',
+        name: 'gsw_job',
+        meta: [
+          {name: '作业管理'},
+          {name: '作业列表'}
+        ],
+        component: () => import('@/view/gsw/jobManagement/jobList')
+      }
+    ]
+  },
+  {
+    path: 'booking',
+    name: 'booking',
+    title: '预约管理',
+    component: Main,
+    children: [
+      {
+        path: '/gsw_bookingList',
+        name: 'gsw_bookingList',
+        meta: [
+          {name: '作业管理'},
+          {name: '作业列表'}
+        ],
+        component: () => import('@/view/gsw/bookingManagement/bookingList')
       }
     ]
   },
@@ -88,6 +135,19 @@ export const gswRouter =[
           }
         ],
         component: () => import('@/view/gsw/orderManagement/orderList')
+      },
+      {
+        path: '/gsw_deliverGoods',
+        name: 'gsw_deliverGoods',
+        meta: [
+          {
+            name: '订单管理'
+          },
+          {
+            name: '发货管理'
+          }
+        ],
+        component: () => import('@/view/gsw/deliverGoods/deliverGoods')
       }
     ]
   },
@@ -114,6 +174,15 @@ export const gswRouter =[
           {name: '课程内容'}
         ],
         component: () => import('@/view/gsw/courseManagement/courseContent')
+      },
+      {
+        path: '/new_courseContent',
+        name: 'new_courseContent',
+        meta: [
+          {name: '课程管理'},
+          {name: '新课程内容'}
+        ],
+        component: () => import('@/view/gsw/courseManagement/new_courseContent')
       }
     ]
   },
