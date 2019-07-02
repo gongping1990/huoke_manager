@@ -91,14 +91,20 @@
     .-c-course-wrap {
       display: inline-block;
       .-c-course-item {
-        position: relative;
         display: inline-block;
-        /*height: 70px;*/
+        position: relative;
+        background-color: #EBEBEB;
+        width: 200px;
+        height: 90px;
+        margin: 10px 10px 10px 0;
+        border: 1px solid #EBEBEB;
+        border-radius: 4px;
+        padding: 4px;
         overflow: hidden;
 
         img {
-          width: 140px;
-          height: 70px;
+          width: 100%;
+          height: 100%;
         }
 
         .-i-text {

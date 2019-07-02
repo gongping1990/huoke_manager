@@ -66,7 +66,7 @@
             <div class="-c-tips">图片尺寸不低于960px*360px 图片大小：500K以内</div>
           </Form-item>
         </Form>
-        <Form v-if="radioType==='2'" ref="addInfo" :model="addInfo" :rules="ruleValidateTwo" :label-width="80">
+        <Form v-if="radioType==='2'" ref="addInfo" :model="addInfo" :label-width="80">
           <FormItem label="单独购买帮助信息" v-if="isEdit" prop="aloneInfo">
             <Editor v-model="addInfo.aloneInfo" :uploadImgServer="baseUrl"></Editor>
           </FormItem>
@@ -97,7 +97,7 @@
             </Card>
           </div>
         </Form>
-        <Form v-if="radioType==='3'" ref="addInfo" :model="addInfo" :rules="ruleValidateThree" :label-width="90">
+        <Form v-if="radioType==='3'" ref="addInfo" :model="addInfo" :label-width="90">
           <FormItem label="优惠券面额" prop="alonePrice">
             <InputNumber type="text" :disabled="!isEdit" v-model="addInfo.alonePrice" :min="0"
                          placeholder="请输入优惠券面额（元）"></InputNumber>
@@ -156,26 +156,7 @@
           consultPhone: [
             {required: true, type: 'number', message: '请输入咨询电话', trigger: 'blur'},
           ]
-        },
-        ruleValidateTwo: {
-          aloneInfo: [
-            {required: true, message: '请输入单独购买帮助信息', trigger: 'blur'},
-          ],
-          groupInfo: [
-            {required: true, message: '请输入团购购买帮助信息', trigger: 'blur'},
-          ],
-          launchInfo: [
-            {required: true, message: '请输入参加团购帮助信息', trigger: 'blur'},
-          ]
-        },
-        ruleValidateThree: {
-          aloneInfo: [
-            {required: true, type: 'number', message: '请输入优惠券面额', trigger: 'blur'},
-          ],
-          groupInfo: [
-            {required: true, type: 'number', message: '请输入有效期', trigger: 'blur'}
-          ]
-        },
+        }
       };
     },
     mounted() {
@@ -187,6 +168,7 @@
         this.getList()
       },
       closeEdit(name) {
+        this.getList()
         this.$refs[name].resetFields();
         this.isEdit = false
       },
@@ -241,6 +223,10 @@
               return this.$Message.error('请输入团购购买帮助信息')
             } else if (this.radioType === '2' && (!this.addInfo.launchInfo || this.addInfo.launchInfo == '<p><br></p>')) {
               return this.$Message.error('请输入参加团购帮助信息')
+            } else if (this.radioType === '3' && (!this.addInfo.launchInfo || this.addInfo.launchInfo == '<p><br></p>')) {
+              return this.$Message.error('请输入优惠券面额')
+            } else if (this.radioType === '3' && (!this.addInfo.launchInfo || this.addInfo.launchInfo == '<p><br></p>')) {
+              return this.$Message.error('请输入有效期')
             }
             let paramsUrl = this.addInfo.id ? this.$api.poem.poemCourseUpdate : this.$api.poem.poemCourseAdd
             paramsUrl({

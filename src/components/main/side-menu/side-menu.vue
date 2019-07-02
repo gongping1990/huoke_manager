@@ -1,5 +1,5 @@
 <template>
-  <div class="side-menu-wrapper">{{$route.name}}
+  <div class="side-menu-wrapper">
     <Menu ref="sideMenu" :active-name="$route.name" theme="light" width="auto" :open-names="openNowName"
           @on-select='selectMenu'>
       <div class="layout-logo-left">
