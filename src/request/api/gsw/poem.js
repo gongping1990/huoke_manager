@@ -155,7 +155,42 @@ const poem = {
   // 新课时作业
   editLessonContentByHomeWork(params) {
     return axios.post('/poem/lesson/editLessonContentByHomeWork', qs.stringify(params))
-  }
+  },
+
+  // 二维码
+  qrcodeList(params) {
+    return axios.get('/poem/reservat/qrcodeList', {params: params})
+  },
+
+  // 新增/修改
+  saveQrcode(params) {
+    return axios.post('/poem/reservat/saveQrcode',  qs.stringify(params))
+  },
+
+  // 删除二维码
+  deleteQrcode(params) {
+    return axios.post('/poem/reservat/deleteQrcode',  qs.stringify(params))
+  },
+
+  // 预约列表
+  reservatRecordPage(params) {
+    return axios.get('/poem/reservat/reservatRecordPage', {params: params})
+  },
+
+  // 审核
+  recordAudit(params) {
+    return axios.post('/poem/reservat/audit',  qs.stringify(params))
+  },
+
+  // 发货列表
+  gswGoodsList(params) {
+    return axios.get('/poem/goods/goodsList', {params: params})
+  },
+
+  // 发货
+  sendOutGoods(params) {
+    return axios.post('/poem/goods/sendOutGoods', qs.stringify(params))
+  },
 }
 
 export default poem

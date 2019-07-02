@@ -190,7 +190,7 @@
         if (num) {
           this.tab.currentPage = 1
         }
-        this.$api.composition.qrcodeList({
+        this.$api.poem.qrcodeList({
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
           normal: this.radioType === 1
@@ -209,7 +209,7 @@
           title: '提示',
           content: '确认要删除吗？',
           onOk: () => {
-            this.$api.composition.deleteQrcode({
+            this.$api.poem.deleteQrcode({
               id: param.id
             }).then(
               response => {
@@ -229,7 +229,7 @@
               return this.$Message.error('请上传二维码')
             }
             this.isSending = true
-            this.$api.composition.saveQrcode({
+            this.$api.poem.saveQrcode({
               id: this.addInfo.id,
               name: this.addInfo.name,
               qrcode: this.addInfo.qrcode,

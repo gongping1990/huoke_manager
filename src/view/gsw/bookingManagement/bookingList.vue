@@ -36,6 +36,28 @@
 
     </Card>
 
+    <Modal
+      class="p-booking"
+      v-model="isOpenModal"
+      @on-cancel="openModal()"
+      width="350"
+      title="确认要通过审核吗？">
+      <Form ref="addInfo" :model="addInfo" :label-width="70">
+        <FormItem label="审核" prop="name">
+          <Radio-group v-model="auditType" @on-change="getList(1)">
+            <Radio :label=2>不通过</Radio>
+            <Radio :label=1>通过</Radio>
+          </Radio-group>
+        </FormItem>
+        <FormItem label="手机号码" prop="name" v-if="auditType === 1">
+          <Input type="text" v-model="addInfo.phone" placeholder="请输入手机号码"></Input>
+        </FormItem>
+      </Form>
+      <div slot="footer" class="-p-s-footer">
+        <Button @click="openModal()" ghost type="primary" style="width: 100px;">取消</Button>
+        <div @click="changeAudit('','')" class="g-primary-btn ">确 认</div>
+      </div>
+    </Modal>
   </div>
 </template>
 
@@ -69,6 +91,8 @@
         total: 0,
         selectInfo: '1',
         searchInfo: {},
+        addInfo: {},
+        dataItem: '',
         radioType: 0,
         auditType: 1,
         isFetching: false,
@@ -87,6 +111,7 @@
           {
             title: '操作',
             width: 190,
+            align: 'center',
             render: (h, params) => {
               return h('div', [
                 h('Button', {
@@ -102,28 +127,7 @@
                       this.openModal(params.row)
                     }
                   }
-                }, '编辑'),
-                h('Poptip', {
-                  props: {
-                    confirm: true,
-                    title: '确认要通过审核吗？',
-                    'ok-text': "通过",
-                    'cancel-text': "不通过"
-                  },
-                  style: {
-                    cursor: 'pointer',
-                    color: '#5444E4',
-                    marginRight: '5px'
-                  },
-                  on: {
-                    'on-ok': () => {
-                      this.changeAudit(params.row, 1)
-                    },
-                    'on-cancel': () => {
-                      this.changeAudit(params.row, 2)
-                    }
-                  }
-                }, '审核')
+                }, '编辑')
               ])
             }
           }
@@ -186,9 +190,13 @@
       },
       changeAudit(param, num) {
         console.log(param)
-        this.$api.composition.recordAudit({
-          id: param.id,
-          status: num
+        if (!this.addInfo.phone && this.auditType === 1) {
+          return this.$Message.error('请输入手机号码')
+        }
+
+        this.$api.poem.recordAudit({
+          id: param.id || this.dataItem.id,
+          status: num || this.auditType
         }).then(
           response => {
             if (response.data.code == "200") {
@@ -198,23 +206,8 @@
           })
       },
       openModal(data) {
-        this.$Modal.confirm({
-          title: '确认要通过审核吗？',
-          content: ' <Radio-group v-model="addInfo.workType">\n' +
-            '            <Radio :label=0>不通过</Radio>\n' +
-            '            <Radio :label=1>通过</Radio>\n' +
-            '          </Radio-group>',
-          onOk: () => {
-            this.changeAudit(data, 1)
-          },
-          onCancel: () => {
-            this.changeAudit(data, 2)
-          }
-        });
-      },
-      closeModal(name) {
-        this.isOpenModal = false
-        this.$refs[name].resetFields()
+        this.dataItem = data
+        this.isOpenModal = !this.isOpenModal
       },
       currentChange(val) {
         this.tab.page = val;
@@ -226,7 +219,7 @@
         if (num) {
           this.tab.currentPage = 1
         }
-        this.$api.composition.reservatRecordPage({
+        this.$api.poem.reservatRecordPage({
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
           status: this.radioType,
@@ -248,7 +241,7 @@
           title: '提示',
           content: '确认要删除吗？',
           onOk: () => {
-            this.$api.composition.removeBroadcast({
+            this.$api.poem.removeBroadcast({
               id: param.id
             }).then(
               response => {
@@ -265,7 +258,7 @@
         this.$refs[name].validate((valid) => {
           if (valid) {
             this.isSending = true
-            let promiseDate = this.addInfo.id ? this.$api.composition.updateBroadcast(this.addInfo) : this.$api.composition.saveBroadcast(this.addInfo)
+            let promiseDate = this.addInfo.id ? this.$api.poem.updateBroadcast(this.addInfo) : this.$api.poem.saveBroadcast(this.addInfo)
             promiseDate
               .then(
                 response => {
@@ -353,6 +346,12 @@
     }
     .-date-search {
       margin-left: 20px;
+    }
+
+    .-p-s-footer {
+      display: flex;
+      /*text-align: center;*/
+      justify-content: space-around;
     }
   }
 </style>

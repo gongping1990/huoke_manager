@@ -218,7 +218,7 @@
           endTime: this.searchInfo.endTime
         }
 
-        let downUrl = `${getBaseUrl()}/composition/order/downloadExcelByGoods?startTime=${params.startTime}&endTime=${params.endTime}&send=${params.send}&nickName=${params.nickName}`
+        let downUrl = `${getBaseUrl()}/poem/goods/downloadExcelByGoods?startTime=${params.startTime}&endTime=${params.endTime}&send=${params.send}&nickName=${params.nickName}`
 
         window.open(downUrl, '_blank');
       },
@@ -251,7 +251,7 @@
         if (num) {
           this.tab.currentPage = 1
         }
-        this.$api.composition.tbzwGoodsList({
+        this.$api.poem.gswGoodsList({
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
           send: this.radioType,
@@ -277,7 +277,7 @@
         this.$refs[name].validate((valid) => {
           if (valid) {
             this.isSending = true
-            this.$api.composition.sendOutGoods({
+            this.$api.poem.sendOutGoods({
               ...this.addInfo,
               sendTime: dayjs(this.addInfo.sendTime).format('YYYY/MM/DD HH:mm:ss')
             })
