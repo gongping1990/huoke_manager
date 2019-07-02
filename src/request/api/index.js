@@ -19,6 +19,7 @@ import channel from "./hkxt/channel";
 import dataCenter from "./hkxt/dataCenter";
 import packages from "./hkxt/package";
 import graduategiftpack from "./hkxt/graduategiftpack";
+import statistics from "./hkxt/statistics";
 import work from "./hkld/work";
 import teacher from "./hkld/teacher";
 import ldBanner from "./hkld/banner";
@@ -67,6 +68,7 @@ export default {
   capsule,
   packages,
   graduategiftpack,
+  statistics,
   composition,
   ldBanner,
   ldUser,

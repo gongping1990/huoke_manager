@@ -1,5 +1,5 @@
 <template>
-  <div class="side-menu-wrapper">
+  <div class="side-menu-wrapper">{{$route.name}}
     <Menu ref="sideMenu" :active-name="$route.name" theme="light" width="auto" :open-names="openNowName"
           @on-select='selectMenu'>
       <div class="layout-logo-left">
@@ -59,13 +59,6 @@
       }
     },
     computed: {
-      defaultActive: function () {
-        return this.$route.path.replace("/", "");
-      },
-      roleType() {
-        return this.$store.state.nowAdminType
-      },
-
     },
     watch: {
       '$store.state.nowAdminType' (_n,_d) {
@@ -80,6 +73,7 @@
       this.$nextTick(() => {
         if (this.$refs.sideMenu) {
           this.$refs.sideMenu.updateOpened();
+          this.$refs.sideMenu.updateActiveName()
         }
       });
     },

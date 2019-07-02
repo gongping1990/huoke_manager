@@ -18,10 +18,10 @@
         </Col>
         <Col :span="21" class="g-flex-a-j-center">
           <date-picker-template v-if="selectTypeOne===2" :dataInfo="dateOption"
-                                @changeDate="changeDateTwo"></date-picker-template>
+                                @changeDate="changeDateOne"></date-picker-template>
         </Col>
       </Row>
-      <Table class="-c-tab" :loading="isFetching" :columns="columnsToday" :data="dataListToday"></Table>
+      <Table class="-c-tab" :loading="isFetching" :columns="columnsToday" :data="dataListSum"></Table>
     </div>
 
     <div>
@@ -30,7 +30,7 @@
         <Col :span="3" class="g-t-left">
           <div class="g-flex-a-j-center">
             <div class="-search-select-text">日期查询：</div>
-            <Select v-model="selectTypeTwo" class="-search-selectOne" @on-change="changeSelectData">
+            <Select v-model="selectTypeTwo" class="-search-selectOne" @on-change="changeSelectDataTwo">
               <Option label='最近一月' :value="1"></Option>
               <Option label='自定义' :value="2"></Option>
             </Select>
@@ -44,9 +44,10 @@
 
       <div class="-c-tab g-t-left">
         <Radio-group v-model="radioTypeOne" type="button" @on-change="changeRadio(1)">
-          <Radio label="1">全部用户</Radio>
-          <Radio label="2">当日新增用户</Radio>
-          <Radio label="3">老付费用户</Radio>
+          <Radio label="3">全部用户</Radio>
+          <Radio label="0">当日新增用户</Radio>
+          <Radio label="2">老未付费用户</Radio>
+          <Radio label="1">老付费用户</Radio>
         </Radio-group>
       </div>
 
@@ -64,7 +65,7 @@
         <Col :span="3" class="g-t-left">
           <div class="g-flex-a-j-center">
             <div class="-search-select-text">日期查询：</div>
-            <Select v-model="selectTypeThree" class="-search-selectOne" @on-change="changeSelectData">
+            <Select v-model="selectTypeThree" class="-search-selectOne" @on-change="changeSelectDataThree">
               <Option label='最近一月' :value="1"></Option>
               <Option label='自定义' :value="2"></Option>
             </Select>
@@ -72,20 +73,20 @@
         </Col>
         <Col :span="21" class="g-flex-a-j-center">
           <date-picker-template v-if="selectTypeThree===2" :dataInfo="dateOption"
-                                @changeDate="changeDateTwo"></date-picker-template>
+                                @changeDate="changeDateThree"></date-picker-template>
         </Col>
       </Row>
 
       <div class="-c-tab g-t-left">
-        <Radio-group v-model="radioTypeOne" type="button" @on-change="changeRadio(2)">
-          <Radio label="1">系统页面访问量</Radio>
-          <Radio label="2">系统访问用户</Radio>
-          <Radio label="3">商品页面访问量</Radio>
-          <Radio label="4">商品访问用户</Radio>
-          <Radio label="5">下单用户</Radio>
-          <Radio label="6">付费用户</Radio>
-          <Radio label="7">付费金额</Radio>
-          <Radio label="8">客单价</Radio>
+        <Radio-group v-model="radioTypeTwo" type="button" @on-change="changeRadio(2)">
+          <Radio label="pv">系统页面访问量</Radio>
+          <Radio label="uv">系统访问用户</Radio>
+          <Radio label="goodsPv">商品页面访问量</Radio>
+          <Radio label="goodsUv">商品访问用户</Radio>
+          <Radio label="orderuser">下单用户</Radio>
+          <Radio label="payeduser">付费用户</Radio>
+          <Radio label="totalMoney">付费金额</Radio>
+          <Radio label="singleUserMoney">客单价</Radio>
         </Radio-group>
       </div>
 
@@ -117,8 +118,8 @@
     components: {DatePickerTemplate},
     data() {
       return {
-        radioTypeOne: '1',
-        radioTypeTwo: '1',
+        radioTypeOne: '3',
+        radioTypeTwo: 'pv',
         selectTypeOne: 1,
         selectTypeTwo: 1,
         selectTypeThree: 1,
@@ -133,143 +134,198 @@
         },
         isFetching: false,
         dataInfo: '',
+        dataInfoTwo: '',
         selectTime: new Date(new Date().getTime() - 24 * 60 * 60 * 1000),
         getStartTime: '',
+        getStartTimeTwo: '',
+        getStartTimeThree: '',
         getEndTime: '',
+        getEndTimeTwo: '',
+        getEndTimeThree: '',
+        typeList: {
+          '0': '今日新增用户',
+          '1': '老付费用户',
+          '2': '老未付费用户',
+          '3': '总计',
+        },
         columnsToday: [
           {
             title: '用户',
-            key: 'phone'
+            key: 'phone',
+            render: (h,params)=>{
+              return h('div', this.typeList[params.row.type])
+            }
           },
           {
             title: '系统页面访问量',
-            key: 'phone'
+            key: 'pv'
           },
           {
             title: '系统访问用户',
-            key: 'phone'
+            key: 'uv'
           },
           {
             title: '商品页面访问量',
-            key: 'phone'
+            key: 'goodsPv'
           },
           {
             title: '商品访问用户',
-            key: 'phone'
+            key: 'goodsUv'
           },
           {
             title: '下单用户',
-            key: 'phone'
+            key: 'orderuser'
           },
           {
             title: '付费用户',
-            key: 'phone'
+            key: 'payeduser'
           },
           {
             title: '付费金额',
-            key: 'phone'
+            key: 'totalMoney'
           },
           {
             title: '客单价',
-            key: 'phone'
+            key: 'userMoney'
           }
         ],
-        dataListToday: []
+        dataListToday: [],
+        dataListSum: [],
       }
     },
     computed: {
-      dateTypesLine() {
-        let arrayX = []
-        for (let item of this.dataInfo.data) {
-          arrayX.push(item.date)
-        }
-        return arrayX
-      },
       optionSeriesLine() {
-        let dataList = {
-          systemAccessUser: [],
-          goodsAccessUser: [],
-          orderUser: [],
-          payUser: [],
-          payAmount: []
-        }
-        for (let item of this.dataInfo.data) {
-          dataList.systemAccessUser.push(item.systemAccessUser)
-          dataList.goodsAccessUser.push(item.goodsAccessUser)
-          dataList.orderUser.push(item.orderUser)
-          dataList.payUser.push(item.payUser)
-          dataList.payAmount.push(item.payAmount / 100)
-        }
         let optionSeriesLine = [
+          {
+            name: '系统页面访问量',
+            type: 'line',
+            data: this.dataInfo.pv
+          },
           {
             name: '系统访问用户',
             type: 'line',
-            data: dataList.systemAccessUser
+            data: this.dataInfo.uv
+          },
+          {
+            name: '商品页面访问量',
+            type: 'line',
+            data: this.dataInfo.goodsPv
           },
           {
             name: '商品访问用户',
             type: 'line',
-            data: dataList.goodsAccessUser
+            data: this.dataInfo.goodsUv
           },
           {
             name: '下单用户',
             type: 'line',
-            data: dataList.orderUser
+            data: this.dataInfo.orderUser
           },
           {
             name: '付费用户',
             type: 'line',
-            data: dataList.payUser
+            data: this.dataInfo.payeduser
           },
           {
             name: '付费金额',
             type: 'line',
-            data: dataList.payAmount
+            data: this.dataInfo.totalMoney
           }
         ]
         return optionSeriesLine
       },
       optionSeriesLineTwo() {
-        let dataList = {
-          allPayAmount: [],
-
-          averagePayAmount: []
-        }
-        for (let item of this.dataInfo.data) {
-          dataList.allPayAmount.push(item.allPayAmount / 100)
-          dataList.averagePayAmount.push(item.averagePayAmount / 100)
-        }
         let optionSeriesLineTwo = [
           {
-            name: '累计付费金额',
+            name: '当日新增用户',
             type: 'line',
-            data: dataList.allPayAmount
+            data: this.dataInfoTwo.newUsers
           },
           {
-            name: '客单价',
+            name: '老付费用户',
             type: 'line',
-            data: dataList.averagePayAmount
+            data:  this.dataInfoTwo.oldBuyer
+          },
+          {
+            name: '老未付费用户',
+            type: 'line',
+            data: this.dataInfoTwo.oldUNBuyer
           }
         ]
         return optionSeriesLineTwo
       }
     },
     mounted() {
-      this.getList()
+      this.listDayReportByUser()
+      this.listDayReportChartByBiz()
+      this.listTodayDayReport()
+      this.listSumDayReport()
     },
     methods: {
-      changeRadio (num) {
-
+      listTodayDayReport() {
+        this.isFetching = true
+        this.$api.statistics.listTodayDayReport()
+          .then(
+            response => {
+              this.dataListToday = response.data.resultData
+            })
+          .finally(() => {
+            this.isFetching = false
+          })
       },
-      changeSelectData() {
-        if (this.selectType == 1) {
-          this.getList()
+      listSumDayReport() {
+        this.isFetching = true
+        this.$api.statistics.listSumDayReport({
+          start: this.getStartTime ? new Date(this.getStartTime).getTime() : '',
+          end: this.getEndTime ? new Date(this.getEndTime).getTime() : ''
+        })
+          .then(
+            response => {
+              this.dataListSum = response.data.resultData
+            })
+          .finally(() => {
+            this.isFetching = false
+          })
+      },
+      changeRadio (num) {
+        switch (num) {
+          case 1:
+            this.listDayReportByUser()
+            break
+          case 2:
+            this.listDayReportChartByBiz()
+            break
         }
       },
-      changeDateTwo(data) {
+      changeSelectData() {
+        if (this.selectTypeOne == 1) {
+          this.listSumDayReport()
+        }
+      },
+      changeSelectDataTwo() {
+        if (this.selectTypeTwo == 1) {
+          this.listSumDayReport()
+        }
+      },
+      changeSelectDataThree() {
+        if (this.selectTypeThree == 1) {
+          this.listDayReportChartByBiz()
+        }
+      },
+      changeDateOne(data) {
         this.getStartTime = data.startTime
         this.getEndTime = data.endTime
-        this.getList()
+        this.listSumDayReport()
+      },
+      changeDateTwo(data) {
+        this.getStartTimeTwo = data.startTime
+        this.getEndTimeTwo = data.endTime
+        this.listDayReportByUser()
+      },
+      changeDateThree(data) {
+        this.getStartTimeThree = data.startTime
+        this.getEndTimeThree = data.endTime
+        this.listDayReportChartByBiz(data)
       },
       drawLine() {
         let self = this;
@@ -290,7 +346,15 @@
           legend: {
             data: [
               {
+                name: '系统页面访问量',
+                icon: 'circle'
+              },
+              {
                 name: '系统访问用户',
+                icon: 'circle'
+              },
+              {
+                name: '商品页面访问量',
                 icon: 'circle'
               },
               {
@@ -317,7 +381,7 @@
             axisTick: {
               alignWithLabel: true
             },
-            data: this.dateTypesLine
+            data: this.dataInfo.days
           },
           grid: {
             left: '6%',
@@ -328,7 +392,6 @@
             name: '单位（人）'
           },
           series: this.optionSeriesLine,
-          color: ['#49a9ee', '#98d87d', '#ffd86e', '#ff6600'],
           dataZoom: [
             {
               type: "slider"
@@ -360,11 +423,15 @@
           legend: {
             data: [
               {
-                name: '累计付费金额',
+                name: '当日新增用户',
                 icon: 'circle'
               },
               {
-                name: '客单价',
+                name: '老付费用户',
+                icon: 'circle'
+              },
+              {
+                name: '老未付费用户',
                 icon: 'circle'
               }
             ],
@@ -375,7 +442,7 @@
             axisTick: {
               alignWithLabel: true
             },
-            data: this.dateTypesLine
+            data: this.dataInfoTwo.days
           },
           grid: {
             left: '6%',
@@ -383,7 +450,7 @@
             right: '5%'
           },
           yAxis: {
-            name: '单位（元）'
+            name: '单位（人）'
           },
           series: this.optionSeriesLineTwo,
           color: ['#49a9ee', '#98d87d', '#ffd86e'],
@@ -399,7 +466,7 @@
         });
         myChart.hideLoading()
       },
-      getList() {
+      listDayReportByUser() {
         let myChart = echarts.init(this.$refs.echart);
         let params = {}
         myChart.showLoading({
@@ -409,25 +476,45 @@
           zlevel: 0
         })
 
-        if (this.selectType === 2) {
-          params.startDate = new Date(this.getStartTime).getTime()
-          params.endDate = new Date(this.getEndTime).getTime()
-        }
-
         this.isFetching = true
-        this.$api.dataCenter.getData(params)
+        this.$api.statistics.listDayReportByUser({
+          start: this.getStartTimeTwo ? new Date(this.getStartTimeTwo).getTime() : '',
+          end: this.getEndTimeTwo ? new Date(this.getEndTimeTwo).getTime() : '',
+          type: this.radioTypeOne
+        })
           .then(
             response => {
               this.dataInfo = response.data.resultData;
-              this.initData()
+              this.drawLine()
             })
           .finally(() => {
             this.isFetching = false
           })
       },
-      initData() {
-        this.drawLine()
-        this.drawLineTwo()
+      listDayReportChartByBiz(dateTime) {
+        let myChart = echarts.init(this.$refs.echartTwo);
+        let params = {}
+        myChart.showLoading({
+          text: '图表加载中...',
+          color: '#20a0ff',
+          textColor: '#000',
+          zlevel: 0
+        })
+
+        this.isFetching = true
+        this.$api.statistics.listDayReportChartByBiz({
+          start: this.getStartTimeThree ? new Date(this.getStartTimeThree).getTime() : '',
+          end: this.getEndTimeThree ? new Date(this.getEndTimeThree).getTime() : '',
+          filed: this.radioTypeTwo
+        })
+          .then(
+            response => {
+              this.dataInfoTwo = response.data.resultData;
+              this.drawLineTwo()
+            })
+          .finally(() => {
+            this.isFetching = false
+          })
       }
     }
   }
