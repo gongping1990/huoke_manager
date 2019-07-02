@@ -17,7 +17,7 @@
       v-model="isOpenModalPoetry"
       @on-cancel="closeModal('addInfoAdd')"
       width="700"
-      :title="addInfo.name">
+      :title="addInfo.name || '编辑'">
       <Form :model="addInfo" :label-width="70" class="ivu-form-item-required">
         <Form-item label="诗词封面" class="-c-form-item ivu-form-item-required" v-show="nowType === 1">
           <upload-img v-model="addInfo.coverphoto" :option="uploadOption"></upload-img>
@@ -26,20 +26,20 @@
           <Editor v-model="addInfo.content"></Editor>
         </FormItem>
         <FormItem label="上传视频" class="ivu-form-item-required"  v-show="nowType === 2">
-          <upload-video ref="childVideo" v-model="addInfo.videoUrl" :option="uploadVideoOption"></upload-video>
+          <upload-video ref="childVideo" v-model="detailInfo.videoUrl" :option="uploadVideoOption"></upload-video>
         </FormItem>
         <FormItem label="作业类型" v-if="nowType===3">
-          <Radio-group v-model="addInfo.workType">
+          <Radio-group v-model="detailInfo.type">
             <Radio :label=1>朗读</Radio>
             <Radio :label=2>书写</Radio>
           </Radio-group>
         </FormItem>
         <FormItem label="作业要求" v-if="nowType===3">
-          <Input type="textarea" :rows="4" v-model="addInfo.homeworkClaim" placeholder="请输入作业要求（字数不超过80字）"
+          <Input type="textarea" :rows="4" v-model="detailInfo.homeworkRequire" placeholder="请输入作业要求（字数不超过80字）"
                  :maxlength='80'></Input>
         </FormItem>
-        <FormItem label="朗诵内容" v-if="nowType===3 && addInfo.workType === 2">
-          <Input type="textarea" :rows="4" v-model="addInfo.homeworkClaim" placeholder="请输入朗诵内容（字数不超过180字）"
+        <FormItem label="朗诵内容" v-if="nowType===3 && detailInfo.type === 2">
+          <Input type="textarea" :rows="4" v-model="detailInfo.content" placeholder="请输入朗诵内容（字数不超过180字）"
                  :maxlength='180'></Input>
         </FormItem>
       </Form>
@@ -113,6 +113,7 @@
           content: '',
           coverphoto: '',
         },
+        detailInfo: '',
         sortNum: '',
         nowType: '',
         ruleValidateAdd: {
@@ -285,7 +286,9 @@
         this.isOpenModalPoetry = true
         this.addInfo = JSON.parse(JSON.stringify(data))
         this.addInfo.sortnum = +this.addInfo.sortnum
-        console.log(this.addInfo, 11)
+        if(type===2|| type===3) {
+          this.getLessonContent(data.id)
+        }
       },
       closeModal(name) {
         this.$refs[name].resetFields();
@@ -318,6 +321,7 @@
       getList() {
         this.isFetching = true
         this.$api.poem.getPoemLessonList({
+          type: 2,
           current: this.tab.page,
           size: this.tab.pageSize
         })
@@ -330,17 +334,68 @@
             this.isFetching = false
           })
       },
+      //分页查询
+      getLessonContent(data) {
+        this.isFetching = true
+        this.$api.poem.getLessonContent({
+          lessonId: data
+        })
+          .then(
+            response => {
+              this.detailInfo = response.data.resultData;
+            })
+          .finally(() => {
+            this.isFetching = false
+          })
+      },
       submitAdd(name) {
         this.$refs[name].validate((valid) => {
           if (valid) {
-            if (!this.addInfo.coverphoto && this.isOpenModalPoetry) {
+            if (!this.addInfo.coverphoto && this.isOpenModalPoetry && this.nowType =='1') {
               return this.$Message.error('请上传封面图片')
-            } else if ((!this.addInfo.content || this.addInfo.content == '<p><br></p>') && this.isOpenModalPoetry) {
+            } else if ((!this.addInfo.content || this.addInfo.content == '<p><br></p>') && this.isOpenModalPoetry && this.nowType =='1') {
               return this.$Message.error('请输入诗词内容')
+            } else if (!this.detailInfo.videoUrl && this.isOpenModalPoetry && this.nowType =='2'){
+              return this.$Message.error('请上传视频')
+            } else if (!this.detailInfo.type && this.isOpenModalPoetry && this.nowType =='3'){
+              return this.$Message.error('请选择作业类型')
+            } else if (!this.detailInfo.homeworkRequire && this.isOpenModalPoetry && this.nowType =='3'){
+              return this.$Message.error('请输入作业要求')
+            } else if (!this.detailInfo.content && this.isOpenModalPoetry && this.nowType =='3' && this.detailInfo.type == '2'){
+              return this.$Message.error('请输入朗读内容')
             }
 
-            let paramUrl = this.addInfo.id ? this.$api.poem.updatePoemLesson : this.$api.poem.addPoemLesson
-            paramUrl(this.addInfo)
+            let paramUrl
+
+            switch (+this.nowType) {
+              case 1:
+                paramUrl = this.addInfo.id ? this.$api.poem.updatePoemLesson ({
+                  ...this.addInfo,
+                  type: this.addInfo.id ? '' : 2
+                }) : this.$api.poem.addPoemLesson({
+                  ...this.addInfo,
+                  type: this.addInfo.id ? '' : 2
+                })
+                break
+              case 2:
+                paramUrl = this.$api.poem.editLessonContent({
+                  id: this.detailInfo.id,
+                  lessonId: this.detailInfo.lessonId,
+                  videoUrl: this.detailInfo.videoUrl
+                })
+                break
+              case 3:
+                paramUrl = this.$api.poem.editLessonContentByHomeWork({
+                  id: this.detailInfo.id,
+                  type: this.detailInfo.type,
+                  lessonId: this.detailInfo.lessonId,
+                  homeworkRequire: this.detailInfo.homeworkRequire,
+                  content: this.detailInfo.content
+                })
+                break
+            }
+
+            paramUrl
               .then(response => {
                 if (response.data.code == '200') {
                   this.$Message.success('操作成功');

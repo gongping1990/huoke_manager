@@ -496,6 +496,10 @@
                     title: '课程内容'
                   },
                   {
+                    route: 'gsw_new_courseInfo',
+                    title: '新课程信息'
+                  },
+                  {
                     route: 'new_courseContent',
                     title: '新课程内容'
                   }

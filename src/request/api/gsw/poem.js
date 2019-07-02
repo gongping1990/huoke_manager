@@ -135,6 +135,26 @@ const poem = {
   // 图表
   userStatisticsLineChart(params) {
     return axios.get('/poem/statistics/lineChart', {params: params})
+  },
+
+  // 图表
+  getNewCourseByDefult(params) {
+    return axios.get('/poem/course/getNewCourseByDefult', {params: params})
+  },
+
+  // 图表
+  getLessonContent(params) {
+    return axios.get('/poem/lesson/getLessonContent', {params: params})
+  },
+
+  // 新课时内容
+  editLessonContent(params) {
+    return axios.post('/poem/lesson/editLessonContent', qs.stringify(params))
+  },
+
+  // 新课时作业
+  editLessonContentByHomeWork(params) {
+    return axios.post('/poem/lesson/editLessonContentByHomeWork', qs.stringify(params))
   }
 }
 

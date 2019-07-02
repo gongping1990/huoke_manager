@@ -35,6 +35,7 @@
             @on-change="currentChange"></Page>
 
     </Card>
+
   </div>
 </template>
 
@@ -69,7 +70,9 @@
         selectInfo: '1',
         searchInfo: {},
         radioType: 0,
+        auditType: 1,
         isFetching: false,
+        isOpenModal: false,
         columns: [
           {
             title: '用户昵称',
@@ -86,6 +89,20 @@
             width: 190,
             render: (h, params) => {
               return h('div', [
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: '#5444E4'
+                  },
+                  on: {
+                    click: () => {
+                      this.openModal(params.row)
+                    }
+                  }
+                }, '编辑'),
                 h('Poptip', {
                   props: {
                     confirm: true,
@@ -181,16 +198,19 @@
           })
       },
       openModal(data) {
-        this.isOpenModal = true
-        if (data) {
-          this.addInfo = JSON.parse(JSON.stringify(data))
-          this.addInfo.sortnum = this.addInfo.sortnum.toString()
-        } else {
-          this.addInfo = {}
-        }
-        setTimeout(() => {
-          this.$refs.childImg.init()
-        }, 0)
+        this.$Modal.confirm({
+          title: '确认要通过审核吗？',
+          content: ' <Radio-group v-model="addInfo.workType">\n' +
+            '            <Radio :label=0>不通过</Radio>\n' +
+            '            <Radio :label=1>通过</Radio>\n' +
+            '          </Radio-group>',
+          onOk: () => {
+            this.changeAudit(data, 1)
+          },
+          onCancel: () => {
+            this.changeAudit(data, 2)
+          }
+        });
       },
       closeModal(name) {
         this.isOpenModal = false

@@ -183,6 +183,15 @@ export const gswRouter =[
           {name: '新课程内容'}
         ],
         component: () => import('@/view/gsw/courseManagement/new_courseContent')
+      },
+      {
+        path: '/gsw_new_courseInfo',
+        name: 'gsw_new_courseInfo',
+        meta: [
+          {name: '课程管理'},
+          {name: '新课程信息'}
+        ],
+        component: () => import('@/view/gsw/courseManagement/new_courseInfo')
       }
     ]
   },
