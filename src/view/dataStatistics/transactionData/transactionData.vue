@@ -230,6 +230,11 @@
             name: '付费金额',
             type: 'line',
             data: this.dataInfo.totalMoney
+          },
+          {
+            name: '客单价',
+            type: 'line',
+            data: this.dataInfo.userMoney
           }
         ]
         return optionSeriesLine
@@ -371,6 +376,10 @@
               },
               {
                 name: '付费金额',
+                icon: 'circle',
+              },
+              {
+                name: '客单价',
                 icon: 'circle',
               }
             ],
