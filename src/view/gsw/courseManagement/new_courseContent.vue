@@ -34,7 +34,7 @@
             <Radio :label=2>书写</Radio>
           </Radio-group>
         </FormItem>
-        <FormItem label="朗诵内容" v-if="nowType===3 && detailInfo.type === 2">
+        <FormItem label="朗诵内容" v-if="nowType===3 && detailInfo.type === 1">
           <Input type="textarea" :rows="4" v-model="detailInfo.content" placeholder="请输入朗诵内容（字数不超过180字）"
                  :maxlength='180'></Input>
         </FormItem>
@@ -332,6 +332,7 @@
           .then(
             response => {
               this.detailInfo = response.data.resultData;
+              this.detailInfo.type = this.detailInfo.type ? this.detailInfo.type : 2
             })
           .finally(() => {
             this.isFetching = false
