@@ -34,13 +34,13 @@
             <Radio :label=2>书写</Radio>
           </Radio-group>
         </FormItem>
-        <FormItem label="朗诵内容" v-if="nowType===3 && detailInfo.type === 1">
-          <Input type="textarea" :rows="4" v-model="detailInfo.content" placeholder="请输入朗诵内容（字数不超过180字）"
-                 :maxlength='180'></Input>
-        </FormItem>
         <FormItem label="作业要求" v-if="nowType===3">
           <Input type="textarea" :rows="4" v-model="detailInfo.homeworkRequire" placeholder="请输入作业要求（字数不超过80字）"
                  :maxlength='80'></Input>
+        </FormItem>
+        <FormItem label="朗诵内容" v-if="nowType===3 && detailInfo.type === 1">
+          <Input type="textarea" :rows="4" v-model="detailInfo.content" placeholder="请输入朗诵内容（字数不超过180字）"
+                 :maxlength='180'></Input>
         </FormItem>
       </Form>
       <div slot="footer" class="g-flex-j-sa" v-if="isOpenModalPoetry">
