@@ -164,12 +164,11 @@
     },
     methods: {
       changeRadio() {
-
-        if(this.radioType == 3) {
+        if (this.radioType == 3) {
           this.getCouponConfig()
         } else {
-          this.closeEdit('addInfo')
           this.getList()
+          this.isEdit = false
         }
       },
       closeEdit(name) {
@@ -229,23 +228,22 @@
           })
       },
       submitInfo(name) {
-        console.log(this.addInfo,1)
+        console.log(this.addInfo, 1)
         if (this.radioType == 3) {
           this.$api.poem.setCouponConfig({
             couponAmount: this.addInfo.couponAmount * 100,
             courseId: this.addInfo.courseId,
             expiredTimeHour: this.addInfo.expiredTimeHour,
           })
-            .then(
-              response => {
-                this.$Message.success('修改成功');
-                this.getCouponConfig(this.addInfo.courseId)
-                this.closeEdit(name)
-              })
+            .then(response => {
+              this.$Message.success('修改成功');
+              this.getCouponConfig(this.addInfo.courseId)
+              this.isEdit = false
+            })
             .finally(() => {
               this.isFetching = false
             })
-        } else  {
+        } else {
           this.$refs[name].validate((valid) => {
             if (valid) {
               if (!this.addInfo.coverphoto && this.radioType === '1') {
