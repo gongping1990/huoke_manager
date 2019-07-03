@@ -204,6 +204,14 @@ const poem = {
   replyHomework(params) {
     return axios.post('/poem/study/replyHomework', qs.stringify(params))
   },
+  // 作业
+  getCouponConfig(params) {
+    return axios.get('/poem/coupon/getCouponConfig', {params: params})
+  },
+  // 作业
+  setCouponConfig(params) {
+    return axios.post('/poem/coupon/setCouponConfig', params)
+  },
 }
 
 export default poem

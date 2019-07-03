@@ -98,13 +98,13 @@
           </div>
         </Form>
         <Form v-if="radioType==='3'" ref="addInfo" :model="addInfo" :label-width="90">
-          <FormItem label="优惠券面额" prop="alonePrice">
-            <InputNumber type="text" :disabled="!isEdit" v-model="addInfo.alonePrice" :min="0"
+          <FormItem label="优惠券面额">
+            <InputNumber type="text" :disabled="!isEdit" v-model="addInfo.couponAmount" :min="0"
                          placeholder="请输入优惠券面额（元）"></InputNumber>
             <span class="-c-tips">* 精确到小数点后2位，如99.99</span>
           </FormItem>
-          <FormItem label="有效期" prop="groupPrice">
-            <InputNumber type="text" :disabled="!isEdit" v-model="addInfo.groupPrice" :min="0"
+          <FormItem label="有效期">
+            <InputNumber type="text" :disabled="!isEdit" v-model="addInfo.expiredTimeHour" :min="0"
                          placeholder="请输入有效期（小时）"></InputNumber>
           </FormItem>
         </Form>
@@ -164,8 +164,13 @@
     },
     methods: {
       changeRadio() {
-        this.closeEdit('addInfo')
-        this.getList()
+
+        if(this.radioType == 3) {
+          this.getCouponConfig()
+        } else {
+          this.closeEdit('addInfo')
+          this.getList()
+        }
       },
       closeEdit(name) {
         this.getList()
@@ -209,39 +214,71 @@
             this.isFetching = false
           })
       },
-      submitInfo(name) {
-
-        this.$refs[name].validate((valid) => {
-          if (valid) {
-            if (!this.addInfo.coverphoto && this.radioType === '1') {
-              return this.$Message.error('请上传封面图片')
-            } else if (!this.addInfo.qrCode && this.radioType === '1') {
-              return this.$Message.error('请上传咨询二维码图片')
-            } else if (this.radioType === '2' && (!this.addInfo.aloneInfo || this.addInfo.aloneInfo == '<p><br></p>')) {
-              return this.$Message.error('请输入单独购买帮助信息')
-            } else if (this.radioType === '2' && (!this.addInfo.groupInfo || this.addInfo.groupInfo == '<p><br></p>')) {
-              return this.$Message.error('请输入团购购买帮助信息')
-            } else if (this.radioType === '2' && (!this.addInfo.launchInfo || this.addInfo.launchInfo == '<p><br></p>')) {
-              return this.$Message.error('请输入参加团购帮助信息')
-            } else if (this.radioType === '3' && (!this.addInfo.launchInfo || this.addInfo.launchInfo == '<p><br></p>')) {
-              return this.$Message.error('请输入优惠券面额')
-            } else if (this.radioType === '3' && (!this.addInfo.launchInfo || this.addInfo.launchInfo == '<p><br></p>')) {
-              return this.$Message.error('请输入有效期')
-            }
-            let paramsUrl = this.addInfo.id ? this.$api.poem.poemCourseUpdate : this.$api.poem.poemCourseAdd
-            paramsUrl({
-              ...this.addInfo,
-              type: 2
-            })
-              .then(response => {
-                if (response.data.code == '200') {
-                  this.$Message.success('修改成功');
-                  this.getList()
-                  this.closeEdit(name)
-                }
-              })
-          }
+      getCouponConfig(id) {
+        this.$api.poem.getCouponConfig({
+          courseId: id || this.addInfo.id
         })
+          .then(
+            response => {
+              this.addInfo = response.data.resultData
+              this.addInfo.couponAmount = +this.addInfo.couponAmount / 100
+              this.addInfo.expiredTimeHour = +this.addInfo.expiredTimeHour
+            })
+          .finally(() => {
+            this.isFetching = false
+          })
+      },
+      submitInfo(name) {
+        console.log(this.addInfo,1)
+        if (this.radioType == 3) {
+          this.$api.poem.setCouponConfig({
+            couponAmount: this.addInfo.couponAmount * 100,
+            courseId: this.addInfo.courseId,
+            expiredTimeHour: this.addInfo.expiredTimeHour,
+          })
+            .then(
+              response => {
+                this.$Message.success('修改成功');
+                this.getCouponConfig(this.addInfo.courseId)
+                this.closeEdit(name)
+              })
+            .finally(() => {
+              this.isFetching = false
+            })
+        } else  {
+          this.$refs[name].validate((valid) => {
+            if (valid) {
+              if (!this.addInfo.coverphoto && this.radioType === '1') {
+                return this.$Message.error('请上传封面图片')
+              } else if (!this.addInfo.qrCode && this.radioType === '1') {
+                return this.$Message.error('请上传咨询二维码图片')
+              } else if (this.radioType === '2' && (!this.addInfo.aloneInfo || this.addInfo.aloneInfo == '<p><br></p>')) {
+                return this.$Message.error('请输入单独购买帮助信息')
+              } else if (this.radioType === '2' && (!this.addInfo.groupInfo || this.addInfo.groupInfo == '<p><br></p>')) {
+                return this.$Message.error('请输入团购购买帮助信息')
+              } else if (this.radioType === '2' && (!this.addInfo.launchInfo || this.addInfo.launchInfo == '<p><br></p>')) {
+                return this.$Message.error('请输入参加团购帮助信息')
+              } else if (this.radioType === '3' && (!this.addInfo.launchInfo || this.addInfo.launchInfo == '<p><br></p>')) {
+                return this.$Message.error('请输入优惠券面额')
+              } else if (this.radioType === '3' && (!this.addInfo.launchInfo || this.addInfo.launchInfo == '<p><br></p>')) {
+                return this.$Message.error('请输入有效期')
+              }
+
+              let paramsUrl = this.addInfo.id ? this.$api.poem.poemCourseUpdate : this.$api.poem.poemCourseAdd
+              paramsUrl({
+                ...this.addInfo,
+                type: 2
+              })
+                .then(response => {
+                  if (response.data.code == '200') {
+                    this.$Message.success('修改成功');
+                    this.getList()
+                    this.closeEdit(name)
+                  }
+                })
+            }
+          })
+        }
       }
     }
   };
