@@ -228,8 +228,13 @@
           })
       },
       submitInfo(name) {
-        console.log(this.addInfo, 1)
+
         if (this.radioType == 3) {
+          if (this.radioType === '3' &&  !this.addInfo.couponAmount) {
+            return this.$Message.error('请输入优惠券面额')
+          } else if (this.radioType === '3' && !this.addInfo.expiredTimeHour) {
+            return this.$Message.error('请输入有效期')
+          }
           this.$api.poem.setCouponConfig({
             couponAmount: this.addInfo.couponAmount * 100,
             courseId: this.addInfo.courseId,
@@ -256,10 +261,6 @@
                 return this.$Message.error('请输入团购购买帮助信息')
               } else if (this.radioType === '2' && (!this.addInfo.launchInfo || this.addInfo.launchInfo == '<p><br></p>')) {
                 return this.$Message.error('请输入参加团购帮助信息')
-              } else if (this.radioType === '3' && (!this.addInfo.launchInfo || this.addInfo.launchInfo == '<p><br></p>')) {
-                return this.$Message.error('请输入优惠券面额')
-              } else if (this.radioType === '3' && (!this.addInfo.launchInfo || this.addInfo.launchInfo == '<p><br></p>')) {
-                return this.$Message.error('请输入有效期')
               }
 
               let paramsUrl = this.addInfo.id ? this.$api.poem.poemCourseUpdate : this.$api.poem.poemCourseAdd
