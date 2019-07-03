@@ -191,6 +191,19 @@ const poem = {
   sendOutGoods(params) {
     return axios.post('/poem/goods/sendOutGoods', qs.stringify(params))
   },
+
+  // 作业
+  listExistWorkByPage(params) {
+    return axios.get('/poem/study/listExistWorkByPage', {params: params})
+  },
+  // 作业
+  removeHomework(params) {
+    return axios.post('/poem/study/removeHomework', qs.stringify(params))
+  },
+  // 作业
+  replyHomework(params) {
+    return axios.post('/poem/study/replyHomework', qs.stringify(params))
+  },
 }
 
 export default poem

@@ -317,38 +317,6 @@
                     size: 'small'
                   },
                   style: {
-                    color: '#5444E4',
-                    display: (this.radioType === 2) || (this.radioType === 1 && params.row.praise) ? 'none' : 'inline-block',
-                    marginRight: '5px'
-                  },
-                  on: {
-                    click: () => {
-                      this.praiseItem(params.row)
-                    }
-                  }
-                }, '加入表扬'),
-                h('Button', {
-                  props: {
-                    type: 'text',
-                    size: 'small'
-                  },
-                  style: {
-                    color: '#5444E4',
-                    display: this.radioType !== 2 ? 'none' : 'inline-block',
-                    marginRight: '5px'
-                  },
-                  on: {
-                    click: () => {
-                      this.praiseItem(params.row)
-                    }
-                  }
-                }, '移出表扬'),
-                h('Button', {
-                  props: {
-                    type: 'text',
-                    size: 'small'
-                  },
-                  style: {
                     display: this.radioType === 2 ? 'none' : 'inline-block',
                     color: 'rgba(218, 55, 75)',
                     marginRight: '5px'
@@ -374,7 +342,7 @@
           title: '提示',
           content: '确认要删除吗？',
           onOk: () => {
-            this.$api.composition.removeHomework({
+            this.$api.poem.removeHomework({
               id: param.id
             }).then(
               response => {
@@ -437,7 +405,7 @@
           params.praise = true
         }
 
-        this.$api.composition.listHomeworkByPage(params)
+        this.$api.poem.listExistWorkByPage(params)
           .then(
             response => {
               this.dataList = response.data.resultData.records;
@@ -458,24 +426,6 @@
             this.isFetching = false
           })
       },
-      praiseItem(param) {
-        this.$Modal.confirm({
-          title: '提示',
-          content: this.radioType === 2 ? '确认要移出表扬吗？' : '确认要加入表扬吗',
-          onOk: () => {
-            this.$api.composition.praiseHomework({
-              id: param.id,
-              praise: this.radioType === 1
-            }).then(
-              response => {
-                if (response.data.code == "200") {
-                  this.$Message.success("操作成功");
-                  this.getList();
-                }
-              })
-          }
-        })
-      },
       submitInfo(name) {
         this.$refs[name].validate((valid) => {
           if (valid) {
@@ -484,7 +434,7 @@
             } else if (!this.addInfo.replyAudio) {
               return this.$Message.error('请上传批改音频')
             }
-            this.$api.composition.replyHomework(this.addInfo)
+            this.$api.poem.replyHomework(this.addInfo)
               .then(
                 response => {
                   if (response.data.code == '200') {
