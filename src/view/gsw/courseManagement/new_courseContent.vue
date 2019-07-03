@@ -355,7 +355,7 @@
           return this.$Message.error('请选择作业类型')
         } else if (!this.detailInfo.homeworkRequire && this.isOpenModalPoetry && this.nowType =='3'){
           return this.$Message.error('请输入作业要求')
-        } else if (!this.detailInfo.content && this.isOpenModalPoetry && this.nowType =='3' && this.detailInfo.type == '2'){
+        } else if (!this.detailInfo.content && this.isOpenModalPoetry && this.nowType =='3' && this.detailInfo.type == '1'){
           return this.$Message.error('请输入朗读内容')
         }
 
