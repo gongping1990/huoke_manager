@@ -6,7 +6,6 @@
           <Radio-group v-model="radioType" type="button" @on-change="getList(1)">
             <Radio :label=0>待批改</Radio>
             <Radio :label=1>已批改</Radio>
-            <Radio :label=2>表扬</Radio>
           </Radio-group>
         </Row>
         <Row class="g-t-left g-tab">

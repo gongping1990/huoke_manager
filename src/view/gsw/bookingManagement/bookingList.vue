@@ -103,6 +103,10 @@
             key: 'nickname'
           },
           {
+            title: '电话',
+            key: 'phone'
+          },
+          {
             title: '预约时间',
             render: (h, params) => {
               return h('div', dayjs(+params.row.gmtModified).format('YYYY-MM-DD HH:mm:ss'))
@@ -136,6 +140,10 @@
           {
             title: '用户昵称',
             key: 'nickname'
+          },
+          {
+            title: '电话',
+            key: 'phone'
           },
           {
             title: '预约时间',
