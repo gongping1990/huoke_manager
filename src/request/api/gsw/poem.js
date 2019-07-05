@@ -193,8 +193,8 @@ const poem = {
   },
 
   // 作业
-  listExistWorkByPage(params) {
-    return axios.get('/poem/study/listExistWorkByPage', {params: params})
+  listHomeworkByPage(params) {
+    return axios.get('/poem/study/listHomeworkByPage', {params: params})
   },
   // 作业
   removeHomework(params) {

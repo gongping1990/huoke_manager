@@ -43,6 +43,10 @@
     watch: {
       childData(_n, _o) {
         this.imgArray = _n || []
+      },
+      imgArray (_n,_o) {
+        this.$emit('changeUrl', _n)
+        console.log(_n,111)
       }
     },
     methods: {
@@ -62,8 +66,6 @@
         if (res.code === 200) {
           this.imgArray.push(res.resultData.url)
         }
-
-        console.log( this.imgArray,22)
       },
       handleSize() {
         this.$Message.info('文件超过限制')

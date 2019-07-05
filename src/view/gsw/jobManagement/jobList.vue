@@ -46,9 +46,9 @@
         @on-cancel="closeModal('addInfo')"
         width="750"
         title="批改作业">
-        <Form ref="addInfo" :model="addInfo" :rules="ruleValidate" :label-width="70" class="ivu-form-item-required">
+        <Form ref="addInfo" :model="addInfo" :label-width="70" class="ivu-form-item-required">
           <FormItem label="教师名称" prop="replyTeacher">
-            <Input type="text" v-model="addInfo.replyTeacher" placeholder="请输入消息内容"></Input>
+            <Input type="text" v-model="addInfo.replyTeacher" placeholder="请输入教师名称"></Input>
           </FormItem>
           <FormItem label="批改图片" prop="replyImg">
             <upload-img-multiple v-model="addInfo.replyImg" :option="uploadOption"></upload-img-multiple>
@@ -57,7 +57,7 @@
             <upload-audio ref="childAudio" v-model="addInfo.replyAudio" :option="uploadAudioOption"></upload-audio>
           </FormItem>
           <FormItem label="批改文案" prop="replyAudio">
-            <editor v-model="addInfo.aloneInfo"></editor>
+            <editor v-model="addInfo.replyText"></editor>
           </FormItem>
         </Form>
         <div slot="footer" class="-p-b-flex">
@@ -140,11 +140,6 @@
         isOpenModal: false,
         isEdit: false,
         addInfo: {},
-        ruleValidate: {
-          replyTeacher: [
-            {required: true, message: '请输入教师名称', trigger: 'blur'}
-          ]
-        },
         columns: [
           {
             title: '用户昵称',
@@ -153,25 +148,25 @@
           },
           {
             title: '作业要求',
-            key: 'nickname',
+            key: 'homeworkRequire',
             align: 'center'
           },
           {
             title: '作业图片',
             render: (h, params) => {
-              // return h('div', params.row.courseNames.map((item,index)=> {
-              //     return h('img', {
-              //       attrs: {
-              //         src: item.workImg
-              //       },
-              //       style: {
-              //         width: '50px',
-              //         height: '50px',
-              //         margin: '10px'
-              //       }
-              //     })
-              //   }
-              // ))
+              return h('div', params.row.workImg.map((item,index)=> {
+                  return h('img', {
+                    attrs: {
+                      src: item
+                    },
+                    style: {
+                      width: '50px',
+                      height: '50px',
+                      margin: '10px'
+                    }
+                  })
+                }
+              ))
             },
             align: 'center'
           },
@@ -245,18 +240,19 @@
           {
             title: '作业图片',
             render: (h, params) => {
-              return h('div', [
-                h('img', {
-                  attrs: {
-                    src: params.row.workImg
-                  },
-                  style: {
-                    width: '50px',
-                    height: '50px',
-                    margin: '10px'
-                  }
-                })
-              ])
+              return h('div', params.row.workImg.map((item,index)=> {
+                  return h('img', {
+                    attrs: {
+                      src: item
+                    },
+                    style: {
+                      width: '50px',
+                      height: '50px',
+                      margin: '10px'
+                    }
+                  })
+                }
+              ))
             },
             align: 'center'
           },
@@ -371,7 +367,6 @@
       },
       closeModal(name) {
         this.isOpenModal = false
-        this.$refs[name].resetFields()
       },
       currentChange(val) {
         this.tab.page = val;
@@ -405,46 +400,43 @@
           params.praise = true
         }
 
-        this.$api.poem.listExistWorkByPage(params)
+        this.$api.poem.listHomeworkByPage(params)
           .then(
             response => {
               this.dataList = response.data.resultData.records;
-              this.dataList[0].replyImg = [
-                'https://pub.file.k12.vip/2019/07/01/1145616579960729601.jpg',
-                'https://pub.file.k12.vip/2019/07/01/1145616579998478338.jpg',
-                'https://pub.file.k12.vip/2019/07/01/1145616579960729602.png',
-              ]
-              this.dataList[1].replyImg = [
-                "https://pub.file.k12.vip/2019/07/01/1145617457953255426.jpg",
-                "https://pub.file.k12.vip/2019/07/01/1145617469495980033.png",
-                "https://pub.file.k12.vip/2019/07/01/1145617482104057857.jpg"
-              ]
               this.total = response.data.resultData.total;
-              console.log(this.dataList,'数据')
+              for (let item of this.dataList) {
+                item.workImg = item.workImg.split(',')
+              }
             })
           .finally(() => {
             this.isFetching = false
           })
       },
       submitInfo(name) {
-        this.$refs[name].validate((valid) => {
-          if (valid) {
-            if (!this.addInfo.replyImg.length) {
-              return this.$Message.error('请上传批改图片')
-            } else if (!this.addInfo.replyAudio) {
-              return this.$Message.error('请上传批改音频')
-            }
-            this.$api.poem.replyHomework(this.addInfo)
-              .then(
-                response => {
-                  if (response.data.code == '200') {
-                    this.$Message.success('提交成功');
-                    this.getList()
-                    this.closeModal(name)
-                  }
-                })
-          }
+        if (!this.addInfo.replyTeacher) {
+          return this.$Message.error('请输入教师名称')
+        } else if (!this.addInfo.replyImg.length) {
+          return this.$Message.error('请上传批改图片')
+        } else if (!this.addInfo.replyAudio) {
+          return this.$Message.error('请上传批改音频')
+        }
+
+        this.$api.poem.replyHomework({
+          id: this.addInfo.id,
+          replyImg: `${this.addInfo.replyImg}`,
+          replyTeacher : this.addInfo.replyTeacher ,
+          replyText: this.addInfo.replyText,
+          replyAudio: this.addInfo.replyAudio
         })
+          .then(
+            response => {
+              if (response.data.code == '200') {
+                this.$Message.success('提交成功');
+                this.getList()
+                this.closeModal(name)
+              }
+            })
       }
     }
   };
