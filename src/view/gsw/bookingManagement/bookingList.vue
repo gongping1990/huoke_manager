@@ -103,10 +103,6 @@
             key: 'nickname'
           },
           {
-            title: '电话',
-            key: 'phone'
-          },
-          {
             title: '预约时间',
             render: (h, params) => {
               return h('div', dayjs(+params.row.gmtModified).format('YYYY-MM-DD HH:mm:ss'))
@@ -131,7 +127,7 @@
                       this.openModal(params.row)
                     }
                   }
-                }, '编辑')
+                }, '审核')
               ])
             }
           }
@@ -198,18 +194,21 @@
       },
       changeAudit(param, num) {
         console.log(param)
-        if (!this.addInfo.phone && this.auditType === 1) {
+        if (!num && !this.addInfo.phone && this.auditType === 1) {
           return this.$Message.error('请输入手机号码')
         }
 
         this.$api.poem.recordAudit({
           id: param.id || this.dataItem.id,
-          status: num || this.auditType
+          status: num || this.auditType,
+          phone: this.addInfo.phone
         }).then(
           response => {
             if (response.data.code == "200") {
               this.$Message.success("操作成功");
               this.getList();
+              this.isOpenModal = false
+              this.auditType = ''
             }
           })
       },
