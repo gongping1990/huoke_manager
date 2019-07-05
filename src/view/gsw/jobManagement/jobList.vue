@@ -46,8 +46,8 @@
         @on-cancel="closeModal('addInfo')"
         width="750"
         title="批改作业">
-        <Form ref="addInfo" :model="addInfo" :label-width="70" class="ivu-form-item-required">
-          <FormItem label="教师名称" prop="replyTeacher">
+        <Form ref="addInfo" :model="addInfo" :label-width="70" >
+          <FormItem label="教师名称" prop="replyTeacher" class="ivu-form-item-required">
             <Input type="text" v-model="addInfo.replyTeacher" placeholder="请输入教师名称"></Input>
           </FormItem>
           <FormItem label="批改图片" prop="replyImg">
@@ -416,10 +416,6 @@
       submitInfo(name) {
         if (!this.addInfo.replyTeacher) {
           return this.$Message.error('请输入教师名称')
-        } else if (!this.addInfo.replyImg.length) {
-          return this.$Message.error('请上传批改图片')
-        } else if (!this.addInfo.replyAudio) {
-          return this.$Message.error('请上传批改音频')
         }
 
         this.$api.poem.replyHomework({
