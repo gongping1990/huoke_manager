@@ -4,11 +4,11 @@ import qs from "querystring";
 const admin = {
   // 登录
   loginAdmin(params) {
-    return axios.post("/admin/login", qs.stringify(params));
+    return axios.post("/umg/admin/login", qs.stringify(params));
   },
   // 退出登录
   loginOut(params) {
-    return axios.get("/admin/logout", {params});
+    return axios.get("/umg/admin/logout", {params});
   },
   // 用户管理列表（设置）
   adminList(params) {
