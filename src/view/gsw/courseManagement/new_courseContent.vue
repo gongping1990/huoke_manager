@@ -28,6 +28,9 @@
         <FormItem label="上传视频" class="ivu-form-item-required"  v-show="nowType === 2">
           <upload-video ref="childVideo" v-model="detailInfo.videoUrl" :option="uploadVideoOption"></upload-video>
         </FormItem>
+        <FormItem label="视频图片" class="ivu-form-item-required"  v-show="nowType === 2">
+          <upload-img v-model="addInfo.videoImg" :option="uploadOption"></upload-img>
+        </FormItem>
         <FormItem label="作业类型" v-if="nowType===3">
           <Radio-group v-model="detailInfo.type">
             <Radio :label=1>朗读</Radio>
@@ -112,6 +115,7 @@
         addInfo: {
           content: '',
           coverphoto: '',
+          videoImg: '',
         },
         detailInfo: '',
         sortNum: '',
@@ -351,6 +355,8 @@
           return this.$Message.error('请输入诗词内容')
         } else if (!this.detailInfo.videoUrl && this.isOpenModalPoetry && this.nowType =='2'){
           return this.$Message.error('请上传视频')
+        } else if (!this.detailInfo.videoImg && this.isOpenModalPoetry && this.nowType =='2'){
+          return this.$Message.error('请上传视频封面图片')
         } else if (!this.detailInfo.type && this.isOpenModalPoetry && this.nowType =='3'){
           return this.$Message.error('请选择作业类型')
         } else if (!this.detailInfo.homeworkRequire && this.isOpenModalPoetry && this.nowType =='3'){

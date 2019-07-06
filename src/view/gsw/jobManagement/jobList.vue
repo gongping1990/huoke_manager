@@ -359,6 +359,7 @@
         this.isOpenModal = true
         if (data) {
           this.addInfo = JSON.parse(JSON.stringify(data))
+          this.addInfo.replyImg = this.addInfo.replyImg && this.addInfo.replyImg.split(',')
         } else {
           this.addInfo = {
             replyImg: []
