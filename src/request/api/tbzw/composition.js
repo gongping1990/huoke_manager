@@ -214,6 +214,11 @@ const composition = {
   // 表扬
   praiseHomework(params) {
     return axios.get('/composition/study/praise', {params: params})
+  },
+
+  // 表扬
+  updateListeningById(params) {
+    return axios.get('/composition/lesson/updateListeningById', {params: params})
   }
 }
 

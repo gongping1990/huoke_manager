@@ -199,6 +199,13 @@
             align: 'center'
           },
           {
+            title: '是否试听',
+            render: (h, params) => {
+              return h('div', params.row.listen ? '是' : '否')
+            },
+            align: 'center'
+          },
+          {
             title: '补充内容',
             align: 'center',
             width: 340,
@@ -313,6 +320,20 @@
                   },
                   on: {
                     click: () => {
+                      this.changeTryOut(params.row)
+                    }
+                  }
+                }, !params.row.listen ? '开启试听' : '关闭试听'),
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: '#5444E4'
+                  },
+                  on: {
+                    click: () => {
                       this.openModal(params.row)
                     }
                   }
@@ -359,6 +380,20 @@
       this.getTeacherList()
     },
     methods: {
+      changeTryOut(data) {
+        this.$api.composition.updateListeningById({
+          lessonId: data.id,
+          isListen: !data.listen
+        })
+          .then(
+            response => {
+              if (response.data.code == '200') {
+                this.$Message.success('更改成功')
+                this.getList()
+              }
+            })
+
+      },
       currentChange(val) {
         this.tab.page = val;
         this.getList();
