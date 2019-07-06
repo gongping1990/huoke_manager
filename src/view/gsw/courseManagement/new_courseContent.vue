@@ -29,7 +29,7 @@
           <upload-video ref="childVideo" v-model="detailInfo.videoUrl" :option="uploadVideoOption"></upload-video>
         </FormItem>
         <FormItem label="视频图片" class="ivu-form-item-required"  v-show="nowType === 2">
-          <upload-img v-model="addInfo.videoImg" :option="uploadOption"></upload-img>
+          <upload-img v-model="detailInfo.videoImg" :option="uploadOption"></upload-img>
         </FormItem>
         <FormItem label="作业类型" v-if="nowType===3">
           <Radio-group v-model="detailInfo.type">
@@ -381,7 +381,8 @@
             paramUrl = this.$api.poem.editLessonContent({
               id: this.detailInfo.id,
               lessonId: this.detailInfo.lessonId,
-              videoUrl: this.detailInfo.videoUrl
+              videoUrl: this.detailInfo.videoUrl,
+              videoImg: this.detailInfo.videoImg
             })
             break
           case 3:
