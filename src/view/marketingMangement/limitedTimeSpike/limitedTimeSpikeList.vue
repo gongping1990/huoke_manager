@@ -60,7 +60,7 @@
           </div>
         </FormItem>
         <FormItem label="秒杀价格" prop="priceYuan" class="ivu-form-item-required">
-          <InputNumber :disabled="isEdit" :min="0" v-model="addInfo.priceYuan" placeholder="请输入秒杀价格"></InputNumber>
+          <InputNumber   class="g-width" :disabled="isEdit" :min="0" v-model="addInfo.priceYuan" placeholder="请输入秒杀价格"></InputNumber>
         </FormItem>
         <FormItem label="最大限制" class="ivu-form-item-required">
           <Radio-group v-model="addInfo.limit">
@@ -69,7 +69,7 @@
           </Radio-group>
         </FormItem>
         <FormItem label="限制人数" prop="maxStock" v-if="addInfo.limit" class="ivu-form-item-required">
-          <InputNumber v-model="addInfo.maxStock" placeholder="请输入限制人数" :disabled="isEdit"></InputNumber>
+          <InputNumber  class="g-width" v-model="addInfo.maxStock" placeholder="请输入限制人数" :disabled="isEdit"></InputNumber>
         </FormItem>
         <FormItem label="有效期" class="ivu-form-item-required">
           <Row>

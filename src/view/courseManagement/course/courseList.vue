@@ -45,7 +45,7 @@
       title="编辑排序值">
       <Form :model="addInfo" :label-width="70" class="ivu-form-item-required">
         <FormItem label="排序值">
-          <InputNumber :max="99999" :min="1" v-model="sortNum" placeholder="请输入课程排序"></InputNumber>
+          <InputNumber  class="g-width" :max="99999" :min="1" v-model="sortNum" placeholder="请输入课程排序"></InputNumber>
         </FormItem>
       </Form>
       <div slot="footer" class="g-flex-j-sa">

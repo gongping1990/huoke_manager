@@ -14,17 +14,17 @@
             <Input type="text" :disabled="!isEdit" v-model="addInfo.name" placeholder="请输入课程名称"></Input>
           </FormItem>
           <FormItem label="单独购价格" prop="alonePrice">
-            <InputNumber type="text" :disabled="!isEdit" v-model="addInfo.alonePrice" :min="0"
+            <InputNumber type="text" :disabled="!isEdit" v-model="addInfo.alonePrice" :min="0"  class="g-width"
                          placeholder="请输入单独购价格（元）"></InputNumber>
             <span class="-c-tips">* 精确到小数点后2位，如99.99</span>
           </FormItem>
           <FormItem label="拼课价格" prop="groupPrice">
-            <InputNumber type="text" :disabled="!isEdit" v-model="addInfo.groupPrice" :min="0"
+            <InputNumber type="text" :disabled="!isEdit" v-model="addInfo.groupPrice" :min="0"  class="g-width"
                          placeholder="请输入拼课价格（元）"></InputNumber>
             <span class="-c-tips">* 精确到小数点后2位，如99.99</span>
           </FormItem>
           <FormItem label="咨询电话" prop="consultPhone">
-            <InputNumber type="text" :disabled="!isEdit" v-model="addInfo.consultPhone"
+            <InputNumber type="text" :disabled="!isEdit" v-model="addInfo.consultPhone"  class="g-width"
                          placeholder="请输入咨询电话"></InputNumber>
           </FormItem>
           <Form-item label="封面图片" class="-c-form-item ivu-form-item-required">

@@ -63,7 +63,7 @@
           </div>
         </Form-item>
         <FormItem label="排序值" prop="sortnum">
-          <InputNumber :max="999" :min="0" v-model="addInfo.sortnum" placeholder="请输入排序值"></InputNumber>
+          <InputNumber :max="999" :min="0" v-model="addInfo.sortnum" placeholder="请输入排序值"  class="g-width"></InputNumber>
         </FormItem>
       </Form>
       <div slot="footer" class="g-flex-j-sa">
