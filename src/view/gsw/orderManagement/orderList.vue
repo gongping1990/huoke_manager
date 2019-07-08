@@ -141,6 +141,20 @@
             align: 'center'
           },
           {
+            title: '优惠金额',
+            render: (h, params) => {
+              return h('div', params.row.couponAmount / 100)
+            },
+            align: 'center'
+          },
+          {
+            title: '实际支付',
+            render: (h, params) => {
+              return h('div', params.row.payAmount / 100)
+            },
+            align: 'center'
+          },
+          {
             title: '用户昵称',
             key: 'nickName',
             align: 'center'
