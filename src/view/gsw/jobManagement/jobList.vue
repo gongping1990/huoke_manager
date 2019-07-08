@@ -260,21 +260,32 @@
             align: 'center'
           },
           {
-            title: '作业图片',
+            title: '作业内容',
             render: (h, params) => {
-              return h('div', params.row.workImg.map((item, index) => {
-                  return h('img', {
-                    attrs: {
-                      src: item
-                    },
-                    style: {
-                      width: '50px',
-                      height: '50px',
-                      margin: '10px'
+              return h('div', params.row.workImg.length ? params.row.workImg.map((item, index) => {
+                return h('img', {
+                  attrs: {
+                    src: item
+                  },
+                  style: {
+                    width: '50px',
+                    height: '50px',
+                    margin: '10px'
+                  }
+                })
+              }) : [
+                h('div', {
+                  style: {
+                    color: '#5444E4',
+                    cursor: 'pointer'
+                  },
+                  on: {
+                    click: () => {
+                      this.openModalPlay(params.row)
                     }
-                  })
-                }
-              ))
+                  }
+                }, '播放音频')
+              ])
             },
             align: 'center'
           },
