@@ -46,7 +46,7 @@
         @on-cancel="closeModal('addInfo')"
         width="750"
         title="批改作业">
-        <Form ref="addInfo" :model="addInfo" :label-width="70" >
+        <Form ref="addInfo" :model="addInfo" :label-width="70">
           <FormItem label="教师名称" prop="replyTeacher" class="ivu-form-item-required">
             <Input type="text" v-model="addInfo.replyTeacher" placeholder="请输入教师名称"></Input>
           </FormItem>
@@ -64,6 +64,16 @@
           <Button @click="closeModal('addInfo')" ghost type="primary" style="width: 100px;">取消</Button>
           <div @click="submitInfo('addInfo')" class="g-primary-btn ">确认</div>
         </div>
+      </Modal>
+
+      <Modal
+        class="p-job"
+        v-model="isOpenModalPlay"
+        @on-cancel="closeModalPlay"
+        footer-hide
+        width="350"
+        title="播放">
+        <audio ref="playAudio" :src="addInfo.workAudio"  controls></audio>
       </Modal>
     </Card>
   </div>
@@ -138,6 +148,7 @@
         },
         isFetching: false,
         isOpenModal: false,
+        isOpenModalPlay: false,
         isEdit: false,
         addInfo: {},
         columns: [
@@ -152,21 +163,32 @@
             align: 'center'
           },
           {
-            title: '作业图片',
+            title: '作业内容',
             render: (h, params) => {
-              return h('div', params.row.workImg.map((item,index)=> {
-                  return h('img', {
-                    attrs: {
-                      src: item
-                    },
-                    style: {
-                      width: '50px',
-                      height: '50px',
-                      margin: '10px'
+              return h('div', params.row.workImg.length ? params.row.workImg.map((item, index) => {
+                return h('img', {
+                  attrs: {
+                    src: item
+                  },
+                  style: {
+                    width: '50px',
+                    height: '50px',
+                    margin: '10px'
+                  }
+                })
+              }) : [
+                h('div', {
+                  style: {
+                    color: '#5444E4',
+                    cursor: 'pointer'
+                  },
+                  on: {
+                    click: () => {
+                      this.openModalPlay(params.row)
                     }
-                  })
-                }
-              ))
+                  }
+                }, '播放音频')
+              ])
             },
             align: 'center'
           },
@@ -240,7 +262,7 @@
           {
             title: '作业图片',
             render: (h, params) => {
-              return h('div', params.row.workImg.map((item,index)=> {
+              return h('div', params.row.workImg.map((item, index) => {
                   return h('img', {
                     attrs: {
                       src: item
@@ -279,8 +301,8 @@
             title: '评价',
             render: (h, params) => {
               return h('div', [
-                h('div',this.evaluateColumn[params.row.evaluation]),
-                h('div',params.row.stumsg === null ? '' : `(${params.row.stumsg})`)
+                h('div', this.evaluateColumn[params.row.evaluation]),
+                h('div', params.row.stumsg === null ? '' : `(${params.row.stumsg})`)
               ])
             },
             align: 'center'
@@ -333,6 +355,14 @@
       this.getList()
     },
     methods: {
+      openModalPlay(data) {
+        this.addInfo = JSON.parse(JSON.stringify(data))
+        this.isOpenModalPlay = true
+      },
+      closeModalPlay() {
+        this.$refs.playAudio.load()
+        this.isOpenModalPlay = false
+      },
       delItem(param) {
         this.$Modal.confirm({
           title: '提示',
@@ -397,7 +427,7 @@
 
         if (this.radioType !== 2) {
           params.reply = this.radioType
-        } else  {
+        } else {
           params.praise = true
         }
 
@@ -407,7 +437,7 @@
               this.dataList = response.data.resultData.records;
               this.total = response.data.resultData.total;
               for (let item of this.dataList) {
-                item.workImg = item.workImg.split(',')
+                item.workImg = item.workImg ? item.workImg.split(',') : []
               }
             })
           .finally(() => {
@@ -417,14 +447,14 @@
       submitInfo(name) {
         if (!this.addInfo.replyTeacher) {
           return this.$Message.error('请输入教师名称')
-        } else if (this.addInfo.replyImg.length>3) {
+        } else if (this.addInfo.replyImg.length > 3) {
           return this.$Message.error('最多上传三张图片')
         }
 
         this.$api.poem.replyHomework({
           id: this.addInfo.id,
           replyImg: `${this.addInfo.replyImg}`,
-          replyTeacher : this.addInfo.replyTeacher ,
+          replyTeacher: this.addInfo.replyTeacher,
           replyText: this.addInfo.replyText,
           replyAudio: this.addInfo.replyAudio
         })
