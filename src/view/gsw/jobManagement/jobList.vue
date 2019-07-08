@@ -50,14 +50,14 @@
           <FormItem label="教师名称" prop="replyTeacher" class="ivu-form-item-required">
             <Input type="text" v-model="addInfo.replyTeacher" placeholder="请输入教师名称"></Input>
           </FormItem>
-          <FormItem label="批改图片" prop="replyImg">
+          <FormItem label="批改图片">
             <upload-img-multiple v-model="addInfo.replyImg" :option="uploadOption"></upload-img-multiple>
           </FormItem>
-          <FormItem label="批改音频" prop="replyAudio">
+          <FormItem label="批改音频">
             <upload-audio ref="childAudio" v-model="addInfo.replyAudio" :option="uploadAudioOption"></upload-audio>
           </FormItem>
-          <FormItem label="批改文案" prop="replyAudio">
-            <editor v-model="addInfo.replyText"></editor>
+          <FormItem label="批改文案">
+            <editor ref="editor" v-model="addInfo.replyText"></editor>{{addInfo.replyText}}
           </FormItem>
         </Form>
         <div slot="footer" class="-p-b-flex">
@@ -226,6 +226,7 @@
                   },
                   style: {
                     color: '#5444E4',
+                    display: params.row.type == 1 ? 'none' : 'inline-block',
                     marginRight: '5px'
                   },
                   on: {
@@ -402,8 +403,10 @@
           this.addInfo = JSON.parse(JSON.stringify(data))
           this.addInfo.replyImg = this.addInfo.replyImg && this.addInfo.replyImg.split(',')
         } else {
+          this.$refs.editor.created()
           this.addInfo = {
-            replyImg: []
+            replyImg: [],
+            replyText: ''
           }
         }
       },

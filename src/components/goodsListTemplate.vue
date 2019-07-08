@@ -120,7 +120,7 @@
         this.getList()
       },
       toExcel() {
-        let downUrl = `${getBaseUrl()}/dataCenter/exportData?goodsId=${this.form.state}&sort=${this.sortInfo ? (this.sortInfo.order == 'normal' ? '' : this.sortInfo.order) : ''}&sortStr=${this.sortInfo ? (this.sortInfo.order == 'normal' ? '' : this.sortInfo.keyNew) : ''}`
+        let downUrl = `${getBaseUrl()}/sch/dataCenter/exportData?goodsId=${this.form.state}&sort=${this.sortInfo ? (this.sortInfo.order == 'normal' ? '' : this.sortInfo.order) : ''}&sortStr=${this.sortInfo ? (this.sortInfo.order == 'normal' ? '' : this.sortInfo.keyNew) : ''}`
         window.open(downUrl, '_blank');
       },
       currentChangeRecord(val) {

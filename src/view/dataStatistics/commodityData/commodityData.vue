@@ -215,7 +215,7 @@
           times = `startDate=${new Date(this.getStartTime).getTime()}&endDate=${new Date(this.getEndTime).getTime()}`
         }
 
-        let downUrl = `${getBaseUrl()}/dataCenter/exportData?sort=${this.sortInfo ? (this.sortInfo.order == 'normal' ? '' : this.sortInfo.order) : ''}&sortStr=${this.sortInfo ? (this.sortInfo.order == 'normal' ? '' : this.sortInfo.keyNew) : ''}&${times}`
+        let downUrl = `${getBaseUrl()}/sch/dataCenter/exportData?sort=${this.sortInfo ? (this.sortInfo.order == 'normal' ? '' : this.sortInfo.order) : ''}&sortStr=${this.sortInfo ? (this.sortInfo.order == 'normal' ? '' : this.sortInfo.keyNew) : ''}&${times}`
 
         window.open(downUrl, '_blank');
       },

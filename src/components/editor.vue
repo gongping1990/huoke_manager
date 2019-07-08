@@ -118,6 +118,7 @@ export default {
   },
   watch: {
     value(n, o) {
+      console.log(1111)
       this.setHtml(n);
     }
   },
