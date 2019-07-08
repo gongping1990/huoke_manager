@@ -57,7 +57,7 @@
             <upload-audio ref="childAudio" v-model="addInfo.replyAudio" :option="uploadAudioOption"></upload-audio>
           </FormItem>
           <FormItem label="批改文案">
-            <editor ref="editor" v-model="addInfo.replyText"></editor>{{addInfo.replyText}}
+            <Input type="textarea" :rows="5" v-model="addInfo.replyText" placeholder="请输入批改文案"></Input>
           </FormItem>
         </Form>
         <div slot="footer" class="-p-b-flex">
@@ -403,7 +403,7 @@
           this.addInfo = JSON.parse(JSON.stringify(data))
           this.addInfo.replyImg = this.addInfo.replyImg && this.addInfo.replyImg.split(',')
         } else {
-          this.$refs.editor.created()
+          this.$refs.editor.clearHtml()
           this.addInfo = {
             replyImg: [],
             replyText: ''
