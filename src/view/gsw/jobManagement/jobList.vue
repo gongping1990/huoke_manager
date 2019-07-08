@@ -417,6 +417,8 @@
       submitInfo(name) {
         if (!this.addInfo.replyTeacher) {
           return this.$Message.error('请输入教师名称')
+        } else if (this.addInfo.replyImg.length>3) {
+          return this.$Message.error('最多上传三张图片')
         }
 
         this.$api.poem.replyHomework({
