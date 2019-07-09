@@ -33,6 +33,15 @@ export const hkxtRouter =[
           {name:'商品数据'}
         ],
         component: () => import('@/view/dataStatistics/commodityData/commodityData')
+      },
+      {
+        path: '/transactionDataOld',
+        name: 'transactionDataOld',
+        meta: [
+          {name:'数据统计'},
+          {name:'交易数据(老)'}
+        ],
+        component: () => import('@/view/dataStatistics/transactionData/transactionDataOld')
       }
     ]
   },

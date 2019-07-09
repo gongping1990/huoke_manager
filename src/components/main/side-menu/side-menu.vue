@@ -96,6 +96,10 @@
                     title: '交易数据'
                   },
                   {
+                    route: 'transactionDataOld',
+                    title: '交易数据(老)'
+                  },
+                  {
                     route: 'commodityData',
                     title: '商品数据'
                   }
