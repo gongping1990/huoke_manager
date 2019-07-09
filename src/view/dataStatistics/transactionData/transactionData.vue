@@ -181,6 +181,10 @@
             key: 'payeduser'
           },
           {
+            title: '已完成订单',
+            key: 'orderPayed'
+          },
+          {
             title: '付费金额',
             key: 'totalMoney'
           },
