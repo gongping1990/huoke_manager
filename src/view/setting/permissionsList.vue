@@ -27,7 +27,7 @@
           </Col>
           <Col :span="12" class="g-text-right">
             <Button type="text" class="-t-theme-color" @click="openModal(item1, '', true, 0)">添加子菜单</Button>
-            <Button type="text" class="-t-theme-color" @click="openModal(item1, '', false, 0)">编辑1</Button>
+            <Button type="text" class="-t-theme-color" @click="openModal(item1, '', false, 0)">编辑</Button>
             <Button type="text" class="-t-red-color" @click="delItem(item1)">删除</Button>
           </Col>
 
@@ -38,7 +38,7 @@
             </Col>
             <Col :span="12" class="g-text-right">
               <Button type="text" class="-t-theme-color" @click="openModalRole(item2)">添加权限</Button>
-              <Button type="text" class="-t-theme-color" @click="openModal(item2,item1,false,1)">编辑2</Button>
+              <Button type="text" class="-t-theme-color" @click="openModal(item2,item1,false,1)">编辑</Button>
               <Button type="text" class="-t-red-color" @click="delItem(item2)">删除</Button>
             </Col>
           </Col>
@@ -171,7 +171,7 @@
         this.isOpenModal = true
         this.nowIndex = {
           index: num,
-          name: data1.name
+          name: num == 1 ? data1.name : data.name
         }
 
         if (!bool) {
@@ -180,8 +180,10 @@
           this.addInfo = {}
         }
 
-        if (num) {
+        if(!num) {
           this.addInfo.pid = data.id
+        } else {
+          this.addInfo.pid = data1.id
         }
       },
       openModalRole(item) { //当前层级信息、第一层，true为新增，false为编辑、层级
