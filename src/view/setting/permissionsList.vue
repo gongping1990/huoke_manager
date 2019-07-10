@@ -80,12 +80,11 @@
       @on-cancel="closeModal('addInfo')"
       width="700"
       title="设置权限">
-      {{checkedCodes}}
       <Form ref="addInfo" :model="addInfo" :label-width="80" class="p-permissionsList-wrap">
         <FormItem label="权限接口" prop="path">
           <Checkbox-group v-model="checkedCodes" class=" -c-tab">
             <Checkbox class="-c-item" :label="item.code" v-for="(item, index) in dataList" :key="index">
-              {{item.desc}} — {{item.code}}
+              {{item.desc}} — {{item.path}}
             </Checkbox>
           </Checkbox-group>
         </FormItem>
