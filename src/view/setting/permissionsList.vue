@@ -26,7 +26,7 @@
             <div :class="{'-t-child-m-l': !item1.child.length}">{{item1.name}}</div>
           </Col>
           <Col :span="12" class="g-text-right">
-            <Button type="text" class="-t-theme-color" @click="openModal(item1, '', true, 0)">添加子菜单</Button>
+            <Button type="text" class="-t-theme-color" @click="openModal(item1, '', true, 3)">添加子菜单</Button>
             <Button type="text" class="-t-theme-color" @click="openModal(item1, '', false, 0)">编辑</Button>
             <Button type="text" class="-t-red-color" @click="delItem(item1)">删除</Button>
           </Col>
@@ -64,6 +64,9 @@
         <FormItem label="页面路径" prop="path">
           <Input type="text" v-model="addInfo.path" placeholder="请输入页面路径"></Input>
         </FormItem>
+        <FormItem label="页面图标" prop="icon" v-if="!nowIndex.name">
+          <Input type="text" v-model="addInfo.icon" placeholder="请输入页面路径"></Input>
+        </FormItem>
       </Form>
       <div slot="footer" class="g-flex-j-sa">
         <Button @click="closeModal('addInfo')" ghost type="primary" style="width: 100px;">取消</Button>
@@ -75,13 +78,15 @@
       class="p-permissionsList"
       v-model="isOpenRole"
       @on-cancel="closeModal('addInfo')"
-      width="500"
+      width="600"
       title="设置权限">
       <Form ref="addInfo" :model="addInfo" :label-width="80">
         <FormItem label="权限接口" prop="path">
-          <Select v-model="addInfo.codes" multiple>
-            <Option v-for="(item, index) in dataList" :value="item.code" :key="index">{{ item.desc}}</Option>
-          </Select>
+          <Checkbox-group v-model="addInfo.codes" class=" -c-tab">
+            <Checkbox class="-c-item" :label="item.code" v-for="(item, index) in dataList" :key="index">
+              {{item.desc}}
+            </Checkbox>
+          </Checkbox-group>
         </FormItem>
       </Form>
       <div slot="footer" class="g-flex-j-sa">
@@ -171,7 +176,7 @@
         this.isOpenModal = true
         this.nowIndex = {
           index: num,
-          name: num == 1 ? data1.name : data.name
+          name: num != 3 ? data1.name : data.name
         }
 
         if (!bool) {
@@ -269,6 +274,10 @@
 
 <style scoped lang="less">
   .p-permissionsList {
+
+    .-c-item{
+      display: block;
+    }
 
     .-t-add-icon {
       top: 36px;

@@ -84,6 +84,14 @@ const admin = {
   // 修改其他管理员信息
   roleRemove(params) {
     return axios.post("/umg/admin/menu/remove",qs.stringify(params));
+  },
+  // 修改其他管理员信息
+  updateRoleMenu(params) {
+    return axios.post("umg/admin/updateRoleMenu",qs.stringify(params));
+  },
+  // 修改其他管理员信息
+  listChecked(params) {
+    return axios.get("umg/admin/menu/listChecked",{params});
   }
 };
 

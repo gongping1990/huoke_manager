@@ -78,7 +78,7 @@
                       this.showRole(params.row)
                     }
                   }
-                }, '编辑'),
+                }, '编辑权限'),
                 h('Button', {
                   props: {
                     type: 'text',

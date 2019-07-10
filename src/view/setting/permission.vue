@@ -8,13 +8,15 @@
     <RadioGroup v-model="radioType" @on-change="getList" type="button">
       <Radio :label="item.id" v-for="(item,index) of systemList" :key="index">{{item.name}}</Radio>
     </RadioGroup>
-    <p class="p-permission-title -c-tab">权限模块</p>
-    <Checkbox-group v-model="checkCourseIds" class="p-permission-tree -c-tab" v-for="(list,index) of dataList"
-                    :key="index">
-      <Checkbox class="-c-item" :label="data.code" v-for="(data,index1) in list.permissions" :key="index1">
-        {{data.desc}}
+
+    <Checkbox-group v-model="checkCourseIds" class="p-permission-tree -c-tab" v-for="(list,index) of dataList" :key="index">
+      <div class="-name">{{list.name}}</div>
+      <Checkbox class="-c-item" :label="data.id" v-for="(data,index1) in list.child" :key="index1">
+        {{data.name}}
       </Checkbox>
     </Checkbox-group>
+
+    <div class="-c-tab g-t-center" v-if="!dataList.length">暂无权限列表</div>
 
     <div slot="footer" class="-p-s-footer">
       <Button @click="closeModal('addInfo')" ghost type="primary" style="width: 100px;">取消</Button>
@@ -48,21 +50,20 @@
       },
       getList() {
         this.isFetching = true
-        this.$api.admin.permissionsList({
-          roleId: this.roleId,
-          system: this.radioType
+        this.$api.admin.listChecked({
+          system: this.radioType,
+          roleId: this.roleId
         })
           .then(
             response => {
               this.dataList = response.data.resultData
-
-              for (let item of this.dataList[0].permissions) {
-                if(item.checked) {
-                  this.checkCourseIds.push(item.code)
-                }
-              }
-
-              console.log( this.checkCourseIds,11)
+              this.dataList.forEach(item=>{
+                item.child.forEach(data=>{
+                  if(data.checked) {
+                    this.checkCourseIds.push(data.id)
+                  }
+                })
+              })
             })
           .finally(() => {
             this.isFetching = false
@@ -81,9 +82,9 @@
       },
       submitAdmin(name) {
         let array = `${this.checkCourseIds}`
-        this.$api.admin.updateRolePerm({
+        this.$api.admin.updateRoleMenu({
           roleId: this.roleId,
-          codes: array
+          menuIds: array
         })
           .then(
             response => {
@@ -103,16 +104,17 @@
 
 <style lang="less" scoped>
   .p-permission {
-
+      height: 500px;
     &-title {
       font-size: 18px;
       font-weight: bold;
     }
+
     &-tree {
-      .-c-item {
-        display: inline-block;
-        width: 48%;
-        padding: 10px 0;
+      .-name{
+        font-size: 16px;
+        font-weight: bold;
+        margin-bottom: 10px;
       }
     }
     .-p-s-footer {
