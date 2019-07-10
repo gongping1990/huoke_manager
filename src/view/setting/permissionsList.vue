@@ -80,11 +80,12 @@
       @on-cancel="closeModal('addInfo')"
       width="700"
       title="设置权限">
-      <Form ref="addInfo" :model="addInfo" :label-width="80">
+      {{checkedCodes}}
+      <Form ref="addInfo" :model="addInfo" :label-width="80" class="p-permissionsList-wrap">
         <FormItem label="权限接口" prop="path">
-          <Checkbox-group v-model="addInfo.codes" class=" -c-tab">
+          <Checkbox-group v-model="checkedCodes" class=" -c-tab">
             <Checkbox class="-c-item" :label="item.code" v-for="(item, index) in dataList" :key="index">
-              {{item.desc}} — {{item.path}}
+              {{item.desc}} — {{item.code}}
             </Checkbox>
           </Checkbox-group>
         </FormItem>
@@ -110,6 +111,7 @@
         isSending: false,
         nowIndex: '',
         addInfo: {},
+        checkedCodes: [],
         storageInfo: [],
         dataList: [],
         systemList: [],
@@ -159,7 +161,7 @@
               response.data.resultData.forEach(item => {
                 this.firstChild.push({
                   ...item,
-                  isShowChild: false
+                  isShowChild: true
                 })
               });
             })
@@ -194,7 +196,7 @@
       openModalRole(item) { //当前层级信息、第一层，true为新增，false为编辑、层级
         this.isOpenRole = true
         this.addInfo = JSON.parse(JSON.stringify(item))
-        this.addInfo.codes = this.addInfo.permcodes
+        this.checkedCodes = this.addInfo.permcodes
         this.getPermissionList(item)
       },
       delItem(param) {
@@ -248,13 +250,13 @@
           })
       },
       submitRole(name) {
-        if (!this.addInfo.codes.length) {
+        if (!this.checkedCodes.length) {
           return this.$Message.error('请选择相应权限')
         }
         this.isSending = true
 
         this.$api.admin.updateMenuPerm({
-          codes : `${this.addInfo.codes}` ,
+          codes : `${this.checkedCodes}` ,
           menuId : this.addInfo.id
         }).then(
           response => {
@@ -274,6 +276,11 @@
 
 <style scoped lang="less">
   .p-permissionsList {
+
+    &-wrap {
+      height: 500px;
+      overflow: auto;
+    }
 
     .-c-item{
       display: block;
