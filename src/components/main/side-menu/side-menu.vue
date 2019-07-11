@@ -18,7 +18,9 @@
           <span>{{list.name}}</span>
         </template>
 
-        <Menu-item v-if="item.checked" :name="item.path" v-for="(item,index1 ) of list.child" :key="index1">{{item.name}}</Menu-item>
+        <Menu-item v-if="item.checked" :name="item.path" v-for="(item,index1 ) of list.child" :key="index1">
+          {{item.name}}
+        </Menu-item>
       </Submenu>
     </Menu>
     <div v-if="isOpenModal">
@@ -55,16 +57,17 @@
           '8': '8',
         },
         sideMenuList: [],
+        dataList: [],
         systemName: ''
       }
     },
-    computed: {
-    },
+    computed: {},
     watch: {
-      '$store.state.nowAdminType' (_n,_d) {
+      '$store.state.nowAdminType'(_n, _d) {
         this.systemName = this.systemList[_n]
-        this.initAdmin()
+        this.getList()
         this.$router.push('/')
+        this.$forceUpdate()
       }
     },
     mounted() {
@@ -78,26 +81,28 @@
       });
     },
     methods: {
-      initAdmin () {
+      initAdmin() {
         switch (+this.$store.state.nowAdminType) {
           case 1:
-            this.sideMenuList = this.dataList
-            console.log()
+            // this.dataList = this.dataList
             break
           case 2:
-            this.sideMenuList = [
+            this.dataList = [
               {
                 path: 'dataStatistics',
                 name: '数据统计',
                 ico: 'ios-stats',
+                checked: true,
                 child: [
                   {
                     path: 'userData2',
-                    name: '用户数据'
+                    name: '用户数据',
+                    checked: true
                   },
                   {
                     path: 'productData',
-                    name: '产品数据'
+                    name: '产品数据',
+                    checked: true
                   }
                 ]
               },
@@ -105,14 +110,17 @@
                 path: 'study',
                 name: '同步学习',
                 ico: 'ios-school',
+                checked: true,
                 child: [
                   {
                     path: 'subject',
-                    name: '学科管理'
+                    name: '学科管理',
+                    checked: true
                   },
                   {
                     path: 'teachingList',
-                    name: '教材管理'
+                    name: '教材管理',
+                    checked: true
                   }
                 ]
               },
@@ -123,9 +131,11 @@
                 child: [
                   {
                     path: 'hkyw_orderList',
-                    name: '订单列表'
+                    name: '订单列表',
+                    checked: true
                   }
-                ]
+                ],
+                checked: true
               },
               {
                 path: 'user',
@@ -134,9 +144,11 @@
                 child: [
                   {
                     path: 'userList2',
-                    name: '用户列表'
+                    name: '用户列表',
+                    checked: true
                   }
-                ]
+                ],
+                checked: true
               },
               {
                 path: 'feedback',
@@ -145,14 +157,16 @@
                 child: [
                   {
                     path: 'userFeedback2',
-                    name: '用户反馈'
+                    name: '用户反馈',
+                    checked: true
                   }
-                ]
+                ],
+                checked: true
               }
             ]
             break
           case 4:
-            this.sideMenuList = [
+            this.dataList = [
               {
                 path: 'dataStatistics',
                 name: '数据统计',
@@ -160,9 +174,11 @@
                 child: [
                   {
                     path: 'columnData',
-                    name: '栏目数据'
+                    name: '栏目数据',
+                    checked: true
                   }
-                ]
+                ],
+                checked: true
               },
               {
                 path: 'content',
@@ -171,9 +187,11 @@
                 child: [
                   {
                     path: 'column',
-                    name: '栏目管理'
+                    name: '栏目管理',
+                    checked: true
                   }
-                ]
+                ],
+                checked: true
               },
               {
                 path: 'operate',
@@ -182,9 +200,11 @@
                 child: [
                   {
                     path: 'zlkBannerList',
-                    name: 'banner管理'
+                    name: 'banner管理',
+                    checked: true
                   }
-                ]
+                ],
+                checked: true
               },
               {
                 path: 'user',
@@ -193,14 +213,16 @@
                 child: [
                   {
                     path: 'zlkUserList',
-                    name: '用户列表'
+                    name: '用户列表',
+                    checked: true
                   }
-                ]
+                ],
+                checked: true
               }
             ]
             break
           case 5:
-            this.sideMenuList = [
+            this.dataList = [
               {
                 path: 'content',
                 name: '内容管理',
@@ -208,13 +230,16 @@
                 child: [
                   {
                     path: 'teaching',
-                    name: '教材列表'
+                    name: '教材列表',
+                    checked: true
                   },
                   {
                     path: 'teacher',
-                    name: '教师列表'
+                    name: '教师列表',
+                    checked: true
                   }
-                ]
+                ],
+                checked: true
               },
               {
                 path: 'operate',
@@ -223,13 +248,16 @@
                 child: [
                   {
                     path: 'ldBannerList',
-                    name: 'banner管理'
+                    name: 'banner管理',
+                    checked: true
                   },
                   {
                     path: 'contentOperation',
-                    name: '内容运营'
+                    name: '内容运营',
+                    checked: true
                   }
-                ]
+                ],
+                checked: true
               },
               {
                 path: 'user',
@@ -238,14 +266,16 @@
                 child: [
                   {
                     path: 'ldUserList',
-                    name: '用户列表'
+                    name: '用户列表',
+                    checked: true
                   }
-                ]
+                ],
+                checked: true
               }
             ]
             break
           case 7:
-            this.sideMenuList = [
+            this.dataList = [
               {
                 path: 'dataStatistics',
                 name: '数据统计',
@@ -253,17 +283,21 @@
                 child: [
                   {
                     path: 'gsw_userData',
-                    name: '交易数据'
+                    name: '交易数据',
+                    checked: true
                   },
                   {
                     path: 'gsw_retainData',
-                    name: '留存数据'
+                    name: '留存数据',
+                    checked: true
                   },
                   {
                     path: 'gsw_channel',
-                    name: '渠道管理'
+                    name: '渠道管理',
+                    checked: true
                   }
-                ]
+                ],
+                checked: true
               },
               {
                 path: 'course',
@@ -272,21 +306,26 @@
                 child: [
                   {
                     path: 'gsw_courseInfo',
-                    name: '课程信息'
+                    name: '课程信息',
+                    checked: true
                   },
                   {
                     path: 'courseContent',
-                    name: '课程内容'
+                    name: '课程内容',
+                    checked: true
                   },
                   {
                     path: 'gsw_new_courseInfo',
-                    name: '新课程信息'
+                    name: '新课程信息',
+                    checked: true
                   },
                   {
                     path: 'new_courseContent',
-                    name: '新课程内容'
+                    name: '新课程内容',
+                    checked: true
                   }
-                ]
+                ],
+                checked: true
               },
               {
                 path: 'booking',
@@ -295,9 +334,11 @@
                 child: [
                   {
                     path: 'gsw_bookingList',
-                    name: '预约列表'
+                    name: '预约列表',
+                    checked: true
                   }
-                ]
+                ],
+                checked: true
               },
               {
                 path: 'task',
@@ -306,9 +347,11 @@
                 child: [
                   {
                     path: 'gsw_job',
-                    name: '作业列表'
+                    name: '作业列表',
+                    checked: true
                   }
-                ]
+                ],
+                checked: true
               },
               {
                 path: 'orderManager',
@@ -317,13 +360,16 @@
                 child: [
                   {
                     path: 'gsw_orderList',
-                    name: '订单列表'
+                    name: '订单列表',
+                    checked: true
                   },
                   {
                     path: 'gsw_deliverGoods',
-                    name: '发货管理'
+                    name: '发货管理',
+                    checked: true
                   }
-                ]
+                ],
+                checked: true
               },
               {
                 path: 'operate',
@@ -332,17 +378,21 @@
                 child: [
                   {
                     path: 'gsw_wheelMessage',
-                    name: '消息列表'
+                    name: '消息列表',
+                    checked: true
                   },
                   {
                     path: 'gsw_patchRecord',
-                    name: '补卡记录'
+                    name: '补卡记录',
+                    checked: true
                   },
                   {
                     path: 'gsw_qrcode',
-                    name: '群二维码'
+                    name: '群二维码',
+                    checked: true
                   }
-                ]
+                ],
+                checked: true
               },
               {
                 path: 'user',
@@ -351,28 +401,34 @@
                 child: [
                   {
                     path: 'gswUserList',
-                    name: '用户列表'
+                    name: '用户列表',
+                    checked: true
                   }
-                ]
+                ],
+                checked: true
               }
             ]
             break
           case 8:
-            this.sideMenuList = [
+            this.dataList = [
               {
                 path: 'dataStatistics',
+                checked: true,
                 name: '数据统计',
                 ico: 'ios-stats',
                 child: [
                   {
+                    checked: true,
                     path: 'tbzw_userData',
                     name: '交易数据'
                   },
                   {
+                    checked: true,
                     path: 'tbzw_retainData',
                     name: '留存数据'
                   },
                   {
+                    checked: true,
                     path: 'tbzw_channel',
                     name: '渠道管理'
                   }
@@ -382,16 +438,20 @@
                 path: 'course',
                 name: '课程管理',
                 ico: 'ios-school',
+                checked: true,
                 child: [
                   {
+                    checked: true,
                     path: 'tbzw_courseInfo',
                     name: '课程信息'
                   },
                   {
+                    checked: true,
                     path: 'tbzw_courseContent',
                     name: '课程内容'
                   },
                   {
+                    checked: true,
                     path: 'tbzw_teacher',
                     name: '教师信息'
                   }
@@ -401,8 +461,10 @@
                 path: 'booking',
                 name: '预约管理',
                 ico: 'md-cafe',
+                checked: true,
                 child: [
                   {
+                    checked: true,
                     path: 'tbzw_bookingList',
                     name: '预约列表'
                   }
@@ -412,8 +474,10 @@
                 path: 'task',
                 name: '作业管理',
                 ico: 'md-bookmarks',
+                checked: true,
                 child: [
                   {
+                    checked: true,
                     path: 'tbzw_job',
                     name: '作业列表'
                   }
@@ -423,12 +487,15 @@
                 path: 'orderManager',
                 name: '订单管理',
                 ico: 'ios-document',
+                checked: true,
                 child: [
                   {
+                    checked: true,
                     path: 'tbzw_orderList',
                     name: '订单列表'
                   },
                   {
+                    checked: true,
                     path: 'tbzw_deliverGoods',
                     name: '发货管理'
                   }
@@ -438,23 +505,28 @@
                 path: 'operate',
                 name: '运营管理',
                 ico: 'md-trophy',
+                checked: true,
                 child: [
                   {
+                    checked: true,
                     path: 'tbzw_wheelMessage',
                     name: '轮播消息'
                   },
                   {
+                    checked: true,
                     path: 'tbzw_qrcode',
                     name: '群二维码'
                   }
                 ]
               },
               {
+                checked: true,
                 path: 'user',
                 name: '用户管理',
                 ico: 'ios-contacts',
                 child: [
                   {
+                    checked: true,
                     path: 'tbzw_userList',
                     name: '用户列表'
                   }
@@ -463,8 +535,9 @@
             ]
             break
         }
+        console.log(this.dataList, '007')
       },
-      getAdminList () {
+      getAdminList() {
         let nowId = this.$store.state.nowAdminType
         this.systemName = this.systemList[nowId]
       },
@@ -476,7 +549,11 @@
           .then(
             response => {
               this.dataList = response.data.resultData
-              this.initAdmin()
+              if (!this.dataList.length) {
+                this.initAdmin()
+              }
+
+              this.sideMenuList = this.dataList
             })
           .finally(() => {
             this.isFetching = false
