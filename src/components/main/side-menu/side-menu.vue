@@ -12,13 +12,13 @@
           {{systemName}} <Icon type="md-swap"/>
         </span>
       </div>
-      <Submenu :name="list.path" class="-left-li" v-for="(list,index) of sideMenuList" :key="index">
+      <Submenu :name="list.path" class="-left-li" v-for="(list,index) of sideMenuList" :key="index" v-if="list.checked">
         <template slot="title">
-          <Icon :type="list.icon" class="hk-menu-icon"/>
-          <span>{{list.title}}</span>
+          <Icon :type="list.ico" class="hk-menu-icon"/>
+          <span>{{list.name}}</span>
         </template>
 
-        <Menu-item :name="item.route" v-for="(item,index1 ) of list.child" :key="index1">{{item.title}}</Menu-item>
+        <Menu-item v-if="item.checked" :name="item.path" v-for="(item,index1 ) of list.child" :key="index1">{{item.name}}</Menu-item>
       </Submenu>
     </Menu>
     <div v-if="isOpenModal">
@@ -68,8 +68,8 @@
       }
     },
     mounted() {
+      this.getList()
       this.getAdminList()
-      this.initAdmin()
       this.$nextTick(() => {
         if (this.$refs.sideMenu) {
           this.$refs.sideMenu.updateOpened();
@@ -81,286 +81,71 @@
       initAdmin () {
         switch (+this.$store.state.nowAdminType) {
           case 1:
-            this.sideMenuList = [
-              {
-                path: 'dataStatistics',
-                title: '数据统计',
-                icon: 'ios-stats',
-                child: [
-                  {
-                    route: 'userData',
-                    title: '用户数据'
-                  },
-                  {
-                    route: 'transactionData',
-                    title: '交易数据'
-                  },
-                  {
-                    route: 'transactionDataOld',
-                    title: '交易数据(老)'
-                  },
-                  {
-                    route: 'commodityData',
-                    title: '商品数据'
-                  }
-                ]
-              },
-              {
-                path: 'market',
-                title: '营销管理',
-                icon: 'logo-usd',
-                child: [
-                  {
-                    route: 'aloneBuy',
-                    title: '单独购'
-                  },
-                  {
-                    route: 'groupLesson',
-                    title: '拼课'
-                  },
-                  {
-                    route: 'friendHelp',
-                    title: '好友助力'
-                  },
-                  {
-                    route: 'limitedTimeSpikeList',
-                    title: '限时秒杀'
-                  },
-                  {
-                    route: 'active',
-                    title: '新人礼包'
-                  },
-                  {
-                    route: 'coupon',
-                    title: '优惠券'
-                  },
-                  {
-                    route: 'coursePackages',
-                    title: '课程套餐'
-                  }
-                ]
-              },
-              {
-                path: 'orderManager',
-                title: '订单管理',
-                icon: 'ios-document',
-                child: [
-                  {
-                    route: 'orderList',
-                    title: '订单列表'
-                  }
-                ]
-              },
-              {
-                path: 'course',
-                title: '课程管理',
-                icon: 'ios-book',
-                child: [
-                  {
-                    route: 'courseType',
-                    title: '课程分类'
-                  },
-                  {
-                    route: 'courseList',
-                    title: '课程列表'
-                  }
-                ]
-              },
-              {
-                path: 'operate',
-                title: '运营管理',
-                icon: 'md-trophy',
-                child: [
-                  {
-                    route: 'topBar',
-                    title: 'topBar管理'
-                  },
-                  {
-                    route: 'bannerList',
-                    title: 'banner管理'
-                  },
-                  {
-                    route: 'trusteeship',
-                    title: '托管管理'
-                  },
-                  {
-                    route: 'channelManagement',
-                    title: '渠道管理'
-                  },
-                  {
-                    route: 'operationalLocation',
-                    title: '运营位管理'
-                  },
-                  {
-                    route: 'capsule',
-                    title: '胶囊位管理'
-                  },
-                  {
-                    route: 'pushWindow',
-                    title: '活动推送'
-                  },
-                  {
-                    route: 'homeRecommend',
-                    title: '首页推荐'
-                  },
-                  {
-                    route: 'setMeal',
-                    title: '套餐管理'
-                  }
-                ]
-              },
-              {
-                path: 'message',
-                title: '消息管理',
-                icon: 'ios-chatbubbles',
-                child: [
-                  {
-                    route: 'wechat_news',
-                    title: '微信推送消息'
-                  },
-                  {
-                    route: 'custom_wechat_news',
-                    title: '自定义微信消息'
-                  },
-                  {
-                    route: 'custom_wechat_news_other',
-                    title: '自定义微信消息(第三方)'
-                  },
-                  {
-                    route: 'sms_news',
-                    title: '短信推送消息'
-                  },
-                  {
-                    route: 'custom_sms_news',
-                    title: '自定义短信消息'
-                  }
-                ]
-              },
-              {
-                path: 'user',
-                title: '用户管理',
-                icon: 'ios-contacts',
-                child: [
-                  {
-                    route: 'userList',
-                    title: '用户列表'
-                  },
-                  {
-                    route: 'virtualUser',
-                    title: '虚拟用户'
-                  },
-                  {
-                    route: 'virtualUser',
-                    title: '虚拟用户'
-                  }
-                ]
-              },
-              {
-                path: 'feedback',
-                title: '用户反馈',
-                icon: 'ios-help-circle',
-                child: [
-                  {
-                    route: 'userFeedback',
-                    title: '用户反馈'
-                  },
-                  {
-                    route: 'messageManagement',
-                    title: '评价管理'
-                  },
-                  {
-                    route: 'customerService',
-                    title: '客服管理'
-                  }
-                ]
-              },
-              {
-                path: 'setting',
-                title: '设置',
-                icon: 'md-settings',
-                child: [
-                  {
-                    route: 'user-setting',
-                    title: '用户管理'
-                  },
-                  {
-                    route: 'user-role',
-                    title: '角色管理'
-                  },
-                  {
-                    route: 'user-info',
-                    title: '个人资料'
-                  },
-                  {
-                    route: 'user-permission',
-                    title: '权限列表'
-                  }
-                ]
-              }
-            ]
+            this.sideMenuList = this.dataList
+            console.log()
             break
           case 2:
             this.sideMenuList = [
               {
                 path: 'dataStatistics',
-                title: '数据统计',
-                icon: 'ios-stats',
+                name: '数据统计',
+                ico: 'ios-stats',
                 child: [
                   {
-                    route: 'userData2',
-                    title: '用户数据'
+                    path: 'userData2',
+                    name: '用户数据'
                   },
                   {
-                    route: 'productData',
-                    title: '产品数据'
+                    path: 'productData',
+                    name: '产品数据'
                   }
                 ]
               },
               {
                 path: 'study',
-                title: '同步学习',
-                icon: 'ios-school',
+                name: '同步学习',
+                ico: 'ios-school',
                 child: [
                   {
-                    route: 'subject',
-                    title: '学科管理'
+                    path: 'subject',
+                    name: '学科管理'
                   },
                   {
-                    route: 'teachingList',
-                    title: '教材管理'
+                    path: 'teachingList',
+                    name: '教材管理'
                   }
                 ]
               },
               {
                 path: 'orderManager',
-                title: '订单管理',
-                icon: 'ios-document',
+                name: '订单管理',
+                ico: 'ios-document',
                 child: [
                   {
-                    route: 'hkyw_orderList',
-                    title: '订单列表'
+                    path: 'hkyw_orderList',
+                    name: '订单列表'
                   }
                 ]
               },
               {
                 path: 'user',
-                title: '用户管理',
-                icon: 'ios-contacts',
+                name: '用户管理',
+                ico: 'ios-contacts',
                 child: [
                   {
-                    route: 'userList2',
-                    title: '用户列表'
+                    path: 'userList2',
+                    name: '用户列表'
                   }
                 ]
               },
               {
                 path: 'feedback',
-                title: '留言管理',
-                icon: 'ios-help-circle',
+                name: '留言管理',
+                ico: 'ios-help-circle',
                 child: [
                   {
-                    route: 'userFeedback2',
-                    title: '用户反馈'
+                    path: 'userFeedback2',
+                    name: '用户反馈'
                   }
                 ]
               }
@@ -370,45 +155,45 @@
             this.sideMenuList = [
               {
                 path: 'dataStatistics',
-                title: '数据统计',
-                icon: 'ios-stats',
+                name: '数据统计',
+                ico: 'ios-stats',
                 child: [
                   {
-                    route: 'columnData',
-                    title: '栏目数据'
+                    path: 'columnData',
+                    name: '栏目数据'
                   }
                 ]
               },
               {
                 path: 'content',
-                title: '内容管理',
-                icon: 'ios-school',
+                name: '内容管理',
+                ico: 'ios-school',
                 child: [
                   {
-                    route: 'column',
-                    title: '栏目管理'
+                    path: 'column',
+                    name: '栏目管理'
                   }
                 ]
               },
               {
                 path: 'operate',
-                title: '运营管理',
-                icon: 'md-trophy',
+                name: '运营管理',
+                ico: 'md-trophy',
                 child: [
                   {
-                    route: 'zlkBannerList',
-                    title: 'banner管理'
+                    path: 'zlkBannerList',
+                    name: 'banner管理'
                   }
                 ]
               },
               {
                 path: 'user',
-                title: '用户管理',
-                icon: 'ios-contacts',
+                name: '用户管理',
+                ico: 'ios-contacts',
                 child: [
                   {
-                    route: 'zlkUserList',
-                    title: '用户列表'
+                    path: 'zlkUserList',
+                    name: '用户列表'
                   }
                 ]
               }
@@ -418,42 +203,42 @@
             this.sideMenuList = [
               {
                 path: 'content',
-                title: '内容管理',
-                icon: 'ios-school',
+                name: '内容管理',
+                ico: 'ios-school',
                 child: [
                   {
-                    route: 'teaching',
-                    title: '教材列表'
+                    path: 'teaching',
+                    name: '教材列表'
                   },
                   {
-                    route: 'teacher',
-                    title: '教师列表'
+                    path: 'teacher',
+                    name: '教师列表'
                   }
                 ]
               },
               {
                 path: 'operate',
-                title: '运营管理',
-                icon: 'md-trophy',
+                name: '运营管理',
+                ico: 'md-trophy',
                 child: [
                   {
-                    route: 'ldBannerList',
-                    title: 'banner管理'
+                    path: 'ldBannerList',
+                    name: 'banner管理'
                   },
                   {
-                    route: 'contentOperation',
-                    title: '内容运营'
+                    path: 'contentOperation',
+                    name: '内容运营'
                   }
                 ]
               },
               {
                 path: 'user',
-                title: '用户管理',
-                icon: 'ios-contacts',
+                name: '用户管理',
+                ico: 'ios-contacts',
                 child: [
                   {
-                    route: 'ldUserList',
-                    title: '用户列表'
+                    path: 'ldUserList',
+                    name: '用户列表'
                   }
                 ]
               }
@@ -463,110 +248,110 @@
             this.sideMenuList = [
               {
                 path: 'dataStatistics',
-                title: '数据统计',
-                icon: 'ios-stats',
+                name: '数据统计',
+                ico: 'ios-stats',
                 child: [
                   {
-                    route: 'gsw_userData',
-                    title: '交易数据'
+                    path: 'gsw_userData',
+                    name: '交易数据'
                   },
                   {
-                    route: 'gsw_retainData',
-                    title: '留存数据'
+                    path: 'gsw_retainData',
+                    name: '留存数据'
                   },
                   {
-                    route: 'gsw_channel',
-                    title: '渠道管理'
+                    path: 'gsw_channel',
+                    name: '渠道管理'
                   }
                 ]
               },
               {
                 path: 'course',
-                title: '课程管理',
-                icon: 'ios-school',
+                name: '课程管理',
+                ico: 'ios-school',
                 child: [
                   {
-                    route: 'gsw_courseInfo',
-                    title: '课程信息'
+                    path: 'gsw_courseInfo',
+                    name: '课程信息'
                   },
                   {
-                    route: 'courseContent',
-                    title: '课程内容'
+                    path: 'courseContent',
+                    name: '课程内容'
                   },
                   {
-                    route: 'gsw_new_courseInfo',
-                    title: '新课程信息'
+                    path: 'gsw_new_courseInfo',
+                    name: '新课程信息'
                   },
                   {
-                    route: 'new_courseContent',
-                    title: '新课程内容'
+                    path: 'new_courseContent',
+                    name: '新课程内容'
                   }
                 ]
               },
               {
                 path: 'booking',
-                title: '预约管理',
-                icon: 'md-cafe',
+                name: '预约管理',
+                ico: 'md-cafe',
                 child: [
                   {
-                    route: 'gsw_bookingList',
-                    title: '预约列表'
+                    path: 'gsw_bookingList',
+                    name: '预约列表'
                   }
                 ]
               },
               {
                 path: 'task',
-                title: '作业管理',
-                icon: 'md-bookmarks',
+                name: '作业管理',
+                ico: 'md-bookmarks',
                 child: [
                   {
-                    route: 'gsw_job',
-                    title: '作业列表'
+                    path: 'gsw_job',
+                    name: '作业列表'
                   }
                 ]
               },
               {
                 path: 'orderManager',
-                title: '订单管理',
-                icon: 'ios-document',
+                name: '订单管理',
+                ico: 'ios-document',
                 child: [
                   {
-                    route: 'gsw_orderList',
-                    title: '订单列表'
+                    path: 'gsw_orderList',
+                    name: '订单列表'
                   },
                   {
-                    route: 'gsw_deliverGoods',
-                    title: '发货管理'
+                    path: 'gsw_deliverGoods',
+                    name: '发货管理'
                   }
                 ]
               },
               {
                 path: 'operate',
-                title: '运营管理',
-                icon: 'md-trophy',
+                name: '运营管理',
+                ico: 'md-trophy',
                 child: [
                   {
-                    route: 'gsw_wheelMessage',
-                    title: '消息列表'
+                    path: 'gsw_wheelMessage',
+                    name: '消息列表'
                   },
                   {
-                    route: 'gsw_patchRecord',
-                    title: '补卡记录'
+                    path: 'gsw_patchRecord',
+                    name: '补卡记录'
                   },
                   {
-                    route: 'gsw_qrcode',
-                    title: '群二维码'
+                    path: 'gsw_qrcode',
+                    name: '群二维码'
                   }
                 ]
               },
               {
                 path: 'user',
-                title: '用户管理',
-                icon: 'ios-contacts',
+                name: '用户管理',
+                ico: 'ios-contacts',
                 child: [
                   {
-                    route: 'gswUserList',
-                    title: '用户列表'
+                    path: 'gswUserList',
+                    name: '用户列表'
                   }
                 ]
               }
@@ -576,102 +361,102 @@
             this.sideMenuList = [
               {
                 path: 'dataStatistics',
-                title: '数据统计',
-                icon: 'ios-stats',
+                name: '数据统计',
+                ico: 'ios-stats',
                 child: [
                   {
-                    route: 'tbzw_userData',
-                    title: '交易数据'
+                    path: 'tbzw_userData',
+                    name: '交易数据'
                   },
                   {
-                    route: 'tbzw_retainData',
-                    title: '留存数据'
+                    path: 'tbzw_retainData',
+                    name: '留存数据'
                   },
                   {
-                    route: 'tbzw_channel',
-                    title: '渠道管理'
+                    path: 'tbzw_channel',
+                    name: '渠道管理'
                   }
                 ]
               },
               {
                 path: 'course',
-                title: '课程管理',
-                icon: 'ios-school',
+                name: '课程管理',
+                ico: 'ios-school',
                 child: [
                   {
-                    route: 'tbzw_courseInfo',
-                    title: '课程信息'
+                    path: 'tbzw_courseInfo',
+                    name: '课程信息'
                   },
                   {
-                    route: 'tbzw_courseContent',
-                    title: '课程内容'
+                    path: 'tbzw_courseContent',
+                    name: '课程内容'
                   },
                   {
-                    route: 'tbzw_teacher',
-                    title: '教师信息'
+                    path: 'tbzw_teacher',
+                    name: '教师信息'
                   }
                 ]
               },
               {
                 path: 'booking',
-                title: '预约管理',
-                icon: 'md-cafe',
+                name: '预约管理',
+                ico: 'md-cafe',
                 child: [
                   {
-                    route: 'tbzw_bookingList',
-                    title: '预约列表'
+                    path: 'tbzw_bookingList',
+                    name: '预约列表'
                   }
                 ]
               },
               {
                 path: 'task',
-                title: '作业管理',
-                icon: 'md-bookmarks',
+                name: '作业管理',
+                ico: 'md-bookmarks',
                 child: [
                   {
-                    route: 'tbzw_job',
-                    title: '作业列表'
+                    path: 'tbzw_job',
+                    name: '作业列表'
                   }
                 ]
               },
               {
                 path: 'orderManager',
-                title: '订单管理',
-                icon: 'ios-document',
+                name: '订单管理',
+                ico: 'ios-document',
                 child: [
                   {
-                    route: 'tbzw_orderList',
-                    title: '订单列表'
+                    path: 'tbzw_orderList',
+                    name: '订单列表'
                   },
                   {
-                    route: 'tbzw_deliverGoods',
-                    title: '发货管理'
+                    path: 'tbzw_deliverGoods',
+                    name: '发货管理'
                   }
                 ]
               },
               {
                 path: 'operate',
-                title: '运营管理',
-                icon: 'md-trophy',
+                name: '运营管理',
+                ico: 'md-trophy',
                 child: [
                   {
-                    route: 'tbzw_wheelMessage',
-                    title: '轮播消息'
+                    path: 'tbzw_wheelMessage',
+                    name: '轮播消息'
                   },
                   {
-                    route: 'tbzw_qrcode',
-                    title: '群二维码'
+                    path: 'tbzw_qrcode',
+                    name: '群二维码'
                   }
                 ]
               },
               {
                 path: 'user',
-                title: '用户管理',
-                icon: 'ios-contacts',
+                name: '用户管理',
+                ico: 'ios-contacts',
                 child: [
                   {
-                    route: 'tbzw_userList',
-                    title: '用户列表'
+                    path: 'tbzw_userList',
+                    name: '用户列表'
                   }
                 ]
               }
@@ -685,21 +470,13 @@
       },
       getList() {
         this.isFetching = true
-        this.$api.admin.permissionsList({
-          roleId: this.roleId,
+        this.$api.admin.listByUserPerm({
           system: this.systemIdList[this.$store.state.nowAdminType]
         })
           .then(
             response => {
               this.dataList = response.data.resultData
-
-              for (let item of this.dataList[0].permissions) {
-                if(item.checked) {
-                  this.checkCourseIds.push(item.code)
-                }
-              }
-
-              console.log( this.checkCourseIds,11)
+              this.initAdmin()
             })
           .finally(() => {
             this.isFetching = false
