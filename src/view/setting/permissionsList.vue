@@ -234,7 +234,7 @@
         param = this.addInfo.id ? this.$api.admin.roleUpdate : this.$api.admin.roleAdd
         param({
           id: this.addInfo.id,
-          system: this.$store.state.nowAdminType,
+          system: this.radioType,
           name: this.addInfo.name,
           type: this.nowIndex.index == 0 ? 0 : 1,
           path: this.addInfo.path,
