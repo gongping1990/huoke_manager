@@ -73,7 +73,7 @@
         footer-hide
         width="350"
         title="播放">
-        <audio ref="playAudio" :src="addInfo.workAudio"  controls></audio>
+        <audio ref="playAudio" :src="playAudioUrl" controls></audio>
       </Modal>
     </Card>
   </div>
@@ -151,6 +151,7 @@
         isOpenModalPlay: false,
         isEdit: false,
         addInfo: {},
+        playAudioUrl: '',
         columns: [
           {
             title: '用户昵称',
@@ -164,27 +165,58 @@
           },
           {
             title: '作业内容',
+            width: 300,
             render: (h, params) => {
-              return h('div', params.row.workImg.length ? params.row.workImg.map((item, index) => {
-                return h('img', {
-                  attrs: {
-                    src: item
-                  },
+              return h('div', {
+                style: {
+                  display: 'flex',
+                  justifyContent: 'space-around'
+                }
+              }, params.row.workImg.length ? params.row.workImg.map((item, index) => {
+                return h('div', {
                   style: {
-                    width: '50px',
-                    height: '50px',
-                    margin: '10px'
+                    position: 'relative',
                   }
-                })
+                }, [
+                  h('img', {
+                    attrs: {
+                      src: item
+                    },
+                    style: {
+                      width: '50px',
+                      height: '50px',
+                      margin: '10px'
+                    }
+                  }), h('Icon', {
+                    props: {
+                      type: 'md-download'
+                    },
+                    style: {
+                      position: 'absolute',
+                      bottom: '15px',
+                      right: '10px',
+                      fontSize: '16px',
+                      background: 'rgba(0,0,0,0.7)',
+                      color: '#ffffff',
+                      cursor: 'pointer'
+                    },
+                    on: {
+                      click: () => {
+                        window.open(item)
+                      }
+                    }
+                  })
+                ])
               }) : [
                 h('div', {
                   style: {
+                    textAlign: 'center',
                     color: '#5444E4',
                     cursor: 'pointer'
                   },
                   on: {
                     click: () => {
-                      this.openModalPlay(params.row)
+                      this.openModalPlay(params.row.workAudio)
                     }
                   }
                 }, '播放音频')
@@ -225,22 +257,6 @@
                     size: 'small'
                   },
                   style: {
-                    color: '#5444E4',
-                    display: params.row.type == 1 ? 'none' : 'inline-block',
-                    marginRight: '5px'
-                  },
-                  on: {
-                    click: () => {
-                      window.open(params.row.workImg)
-                    }
-                  }
-                }, '下载'),
-                h('Button', {
-                  props: {
-                    type: 'text',
-                    size: 'small'
-                  },
-                  style: {
                     color: 'rgba(218, 55, 75)',
                     marginRight: '5px'
                   },
@@ -262,27 +278,58 @@
           },
           {
             title: '作业内容',
+            width: 300,
             render: (h, params) => {
-              return h('div', params.row.workImg.length ? params.row.workImg.map((item, index) => {
-                return h('img', {
-                  attrs: {
-                    src: item
-                  },
+              return h('div', {
+                style: {
+                  display: 'flex',
+                  justifyContent: 'space-around'
+                }
+              }, params.row.workImg.length ? params.row.workImg.map((item, index) => {
+                return h('div', {
                   style: {
-                    width: '50px',
-                    height: '50px',
-                    margin: '10px'
+                    position: 'relative',
                   }
-                })
+                }, [
+                  h('img', {
+                    attrs: {
+                      src: item
+                    },
+                    style: {
+                      width: '50px',
+                      height: '50px',
+                      margin: '10px'
+                    }
+                  }), h('Icon', {
+                    props: {
+                      type: 'md-download'
+                    },
+                    style: {
+                      position: 'absolute',
+                      bottom: '15px',
+                      right: '10px',
+                      fontSize: '16px',
+                      background: 'rgba(0,0,0,0.7)',
+                      color: '#ffffff',
+                      cursor: 'pointer'
+                    },
+                    on: {
+                      click: () => {
+                        window.open(item)
+                      }
+                    }
+                  })
+                ])
               }) : [
                 h('div', {
                   style: {
+                    textAlign: 'center',
                     color: '#5444E4',
                     cursor: 'pointer'
                   },
                   on: {
                     click: () => {
-                      this.openModalPlay(params.row)
+                      this.openModalPlay(params.row.workAudio)
                     }
                   }
                 }, '播放音频')
@@ -300,6 +347,67 @@
           {
             title: '老师名称',
             key: 'replyTeacher',
+            align: 'center'
+          },
+          {
+            title: '批改内容',
+            width: 300,
+            render: (h, params) => {
+              return h('div', {
+                style: {
+                  display: 'flex',
+                  justifyContent: 'space-around'
+                }
+              }, params.row.replyImg.length ? params.row.replyImg.map((item, index) => {
+                return h('div', {
+                  style: {
+                    position: 'relative',
+                  }
+                }, [
+                  h('img', {
+                    attrs: {
+                      src: item
+                    },
+                    style: {
+                      width: '50px',
+                      height: '50px',
+                      margin: '10px'
+                    }
+                  }), h('Icon', {
+                    props: {
+                      type: 'md-download'
+                    },
+                    style: {
+                      position: 'absolute',
+                      bottom: '15px',
+                      right: '10px',
+                      fontSize: '16px',
+                      background: 'rgba(0,0,0,0.7)',
+                      color: '#ffffff',
+                      cursor: 'pointer'
+                    },
+                    on: {
+                      click: () => {
+                        window.open(item)
+                      }
+                    }
+                  })
+                ])
+              }) : [
+                h('div', {
+                  style: {
+                    textAlign: 'center',
+                    color: '#5444E4',
+                    cursor: 'pointer'
+                  },
+                  on: {
+                    click: () => {
+                      this.openModalPlay(params.row.replyAudioAuthorUrl)
+                    }
+                  }
+                }, '播放音频')
+              ])
+            },
             align: 'center'
           },
           {
@@ -368,7 +476,7 @@
     },
     methods: {
       openModalPlay(data) {
-        this.addInfo = JSON.parse(JSON.stringify(data))
+        this.playAudioUrl = data
         this.isOpenModalPlay = true
       },
       closeModalPlay() {
@@ -401,7 +509,6 @@
         this.isOpenModal = true
         if (data) {
           this.addInfo = JSON.parse(JSON.stringify(data))
-          this.addInfo.replyImg = this.addInfo.replyImg && this.addInfo.replyImg.split(',')
         } else {
           this.$refs.editor.clearHtml()
           this.addInfo = {
@@ -452,6 +559,7 @@
               this.total = response.data.resultData.total;
               for (let item of this.dataList) {
                 item.workImg = item.workImg ? item.workImg.split(',') : []
+                item.replyImg = item.replyImg ? item.replyImg.split(',') : []
               }
             })
           .finally(() => {
