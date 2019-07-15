@@ -72,12 +72,7 @@
     mounted() {
       this.getList()
       this.getAdminList()
-      this.$nextTick(() => {
-        if (this.$refs.sideMenu) {
-          this.$refs.sideMenu.updateOpened();
-          this.$refs.sideMenu.updateActiveName()
-        }
-      });
+
     },
     methods: {
       getAdminList() {
@@ -92,6 +87,12 @@
           .then(
             response => {
               this.sideMenuList = response.data.resultData
+              this.$nextTick(() => {
+                if (this.$refs.sideMenu) {
+                  this.$refs.sideMenu.updateOpened();
+                  this.$refs.sideMenu.updateActiveName()
+                }
+              });
             })
           .finally(() => {
             this.isFetching = false
