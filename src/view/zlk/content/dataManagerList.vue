@@ -98,29 +98,7 @@
             </div>
           </Form-item>
           <Form-item label="资料预览" class="ivu-form-item-required">
-            <Upload
-              :action="baseUrl"
-              :multiple="true"
-              :show-upload-list="false"
-              :max-size="500"
-              :before-upload="beforeUpload"
-              :on-success="handleSuccess"
-              :on-exceeded-size="handleSize"
-              :on-error="handleErr">
-              <div class="g-course-add-style">
-                <span>+</span>
-                <span>上传图片</span>
-              </div>
-            </Upload>
-            <div class="-c-course-wrap" v-if="imgUrl.length">
-              <draggable v-model="imgUrl">
-                <div class="-c-course-item" v-for="(item, index) of imgUrl" :key="index">
-                  <img :src="item">
-                  <div class="-i-del" @click="delImg(1,index)">删除</div>
-                </div>
-              </draggable>
-            </div>
-            <div class="-c-tips">只能上传jpg/png文件，且不超过500kb，支持多张上传</div>
+            <upload-img-multiple v-model="imgUrl" :option="uploadOption"></upload-img-multiple>
           </Form-item>
         </Form>
         <div slot="footer" class="-p-b-flex">
@@ -153,16 +131,19 @@
 <script>
   import dayjs from 'dayjs'
   import draggable from 'vuedraggable'
-  import {getBaseUrl} from '@/libs/index'
   import Loading from "../../../components/loading";
   import Operation from "iview/src/components/transfer/operation";
+  import UploadImgMultiple from "../../../components/uploadImgMultiple";
 
   export default {
     name: 'dataManagerList',
-    components: {Operation, Loading, draggable},
+    components: {UploadImgMultiple, Operation, Loading, draggable},
     data() {
       return {
-        baseUrl: `${getBaseUrl()}/sch/common/uploadPublicFile`, // 公有 （图片）
+        uploadOption: {
+          tipText: '只能上传jpg/png文件，且不超过500kb',
+          size: 500
+        },
         baseUrlVa: `http://hkupload.prod.k12.vip/common/uploadPrivateFile`, //私有地址 （音视频）
         tab: {
           page: 1,
@@ -394,21 +375,6 @@
       },
       beforeUploadFile() {
         this.isUploading = true
-      },
-      beforeUpload(file) {
-        let imgType = ['jpeg', 'png']
-        if (file.type.indexOf(imgType[0]) == -1 && file.type.indexOf(imgType[1]) == -1) {
-          this.$Message.error('上传文件类型错误')
-          return false;
-        }
-        this.isUploading = true
-        return true
-      },
-      handleSuccess(res) {
-        if (res.code === 200) {
-          this.isUploading = false
-          this.imgUrl.push(res.resultData.url)
-        }
       },
       handleSuccessFile(res) {
         if (res.code === 200) {
