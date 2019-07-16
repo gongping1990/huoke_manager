@@ -115,6 +115,8 @@
       }
     }
     .-left-title {
+      display: flex;
+      align-items: center;
       padding: 14px 24px;
       .-title-name {
         display: inline-block;
@@ -127,8 +129,6 @@
     }
     .-left-li {
       text-align: left;
-      display: flex;
-      align-items: center;
     }
     .hk-menu-icon {
       vertical-align: initial;
