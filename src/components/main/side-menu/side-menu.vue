@@ -117,7 +117,7 @@
     .-left-title {
       display: flex;
       align-items: center;
-      padding: 14px 24px;
+      padding: 14px 10px 14px 24px;
       .-title-name {
         display: inline-block;
         width: 130px;
