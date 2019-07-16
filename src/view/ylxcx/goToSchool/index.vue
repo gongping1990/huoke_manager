@@ -379,7 +379,7 @@
     methods: {
       getProvincesList() {
         this.isFetching = true
-        this.$api.banner.provincesList()
+        this.$api.ylxcx_banner.provincesList()
           .then(
             response => {
               this.provincesList = response.data.resultData;

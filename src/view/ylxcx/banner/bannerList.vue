@@ -35,27 +35,7 @@
         :title="addInfo.id ? '编辑banner' : '创建banner'">
         <Form ref="addInfo" :model="addInfo" :rules="ruleValidate" :label-width="90">
           <Form-item label="banner图片" prop="url" class="ivu-form-item-required">
-            <Upload
-              v-if="!addInfo.url"
-              :action="baseUrl"
-              :show-upload-list="false"
-              :max-size="200"
-              :before-upload="beforeUpload"
-              :on-success="handleSuccess"
-              :on-exceeded-size="handleSize"
-              :on-error="handleErr">
-              <div class="g-course-add-style">
-                <span>+</span>
-                <span>上传banner图片</span>
-              </div>
-            </Upload>
-            <div class="-c-course-wrap" v-if="addInfo.url">
-              <div class="-c-course-item">
-                <img :src="addInfo.url">
-                <div class="-i-del" @click="delImg()">删除</div>
-              </div>
-            </div>
-            <span class="-c-tips" v-else>只能上传jpg/png文件，且不超过200kb，图片尺寸为960px*360px</span>
+            <upload-img v-model="addInfo.url" :option="uploadOption"></upload-img>
           </Form-item>
           <FormItem label="名称" prop="name">
             <Input type="text" v-model="addInfo.name" placeholder="请输入名称"></Input>
@@ -112,15 +92,18 @@
 
 <script>
   import dayjs from 'dayjs'
-  import {getBaseUrl} from '@/libs/index'
   import DatePickerTemplate from "@/components/datePickerTemplate";
+  import UploadImg from "../../../components/uploadImg";
 
   export default {
     name: 'bannerList',
-    components: {DatePickerTemplate},
+    components: {UploadImg, DatePickerTemplate},
     data() {
       return {
-        baseUrl: `${getBaseUrl()}/sch/common/uploadPublicFile`,
+        uploadOption: {
+          tipText: '只能上传jpg/png文件，且不超过500kb',
+          size: 500
+        },
         tab: {
           page: 1,
           currentPage: 1,
@@ -279,9 +262,6 @@
         this.searchInfo.toDate = data.endTime
         this.getList(1)
       },
-      delImg() {
-        this.addInfo.url = ''
-      },
       openModal(data) {
         this.isOpenModal = true
         if (data) {
@@ -307,25 +287,6 @@
         this.isOpenModal = false
         this.$refs[name].resetFields()
       },
-      beforeUpload(file) {
-        let imgType = ['jpeg', 'png']
-        if (file.type.indexOf(imgType[0]) == -1 && file.type.indexOf(imgType[1]) == -1) {
-          this.$Message.error('上传文件类型错误')
-          return false;
-        }
-        return true
-      },
-      handleSuccess(res, file) {
-        if (res.code === 200) {
-          this.addInfo.url = res.resultData.url
-        }
-      },
-      handleSize() {
-        this.$Message.info('文件超过限制')
-      },
-      handleErr() {
-        this.$Message.error('上传失败，请重新上传')
-      },
       currentChange(val) {
         this.tab.page = val;
         this.getList();
@@ -336,7 +297,7 @@
         if(num) {
           this.tab.currentPage = 1
         }
-        this.$api.operation.operationalLocationList({
+        this.$api.ylxcx_operation.operationalLocationList({
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
           subId: this.$route.query.id,
@@ -358,7 +319,7 @@
           title: '提示',
           content: '确认要删除吗？',
           onOk: () => {
-            this.$api.operation.delOperation({
+            this.$api.ylxcx_operation.delOperation({
               id: param.id
             }).then(
               response => {
@@ -389,7 +350,7 @@
         this.$refs[name].validate((valid) => {
           if (valid) {
             this.isSending = true
-            let promiseDate = this.addInfo.id ? this.$api.operation.updateOperation(this.addInfo) : this.$api.operation.addOperation(this.addInfo)
+            let promiseDate = this.addInfo.id ? this.$api.ylxcx_operation.updateOperation(this.addInfo) : this.$api.ylxcx_operation.addOperation(this.addInfo)
             promiseDate
               .then(
                 response => {
@@ -409,7 +370,7 @@
         if (!this.sortNum) {
           return this.$Message.error('请输入排序值')
         }
-        this.$api.operation.updateSortNum({
+        this.$api.ylxcx_operation.updateSortNum({
           id: this.addInfo.id,
           sortnum: this.sortNum
         }).then(response => {

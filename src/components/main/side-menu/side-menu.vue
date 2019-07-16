@@ -120,7 +120,7 @@
       padding: 14px 24px;
       .-title-name {
         display: inline-block;
-        width: 120px;
+        width: 130px;
         text-overflow: ellipsis;
         white-space: nowrap;
         overflow: hidden;
