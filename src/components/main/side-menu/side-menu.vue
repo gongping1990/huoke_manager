@@ -40,24 +40,7 @@
       return {
         openNowName: this.openName,
         isOpenModal: false,
-        systemList: {
-          '1': '获课学堂',
-          '2': '获课语文',
-          '4': '资料库',
-          '5': '获课朗读',
-          '6': '小学学习库',
-          '7': '古诗文',
-          '8': '同步作文',
-        },
-        systemIdList: {
-          '1': '1',
-          '2': '2',
-          '4': '4',
-          '5': '5',
-          '6': '6',
-          '7': '7',
-          '8': '8',
-        },
+        systemList: [],
         sideMenuList: [],
         systemName: ''
       }
@@ -65,26 +48,30 @@
     computed: {},
     watch: {
       '$store.state.nowAdminType'(_n, _d) {
-        this.systemName = this.systemList[_n]
+        this.systemName = this.systemList[_n].name
         this.getList()
         this.$router.push('/')
         this.$forceUpdate()
       }
     },
     mounted() {
-      this.getList()
-      this.getAdminList()
-
+      this.getRoleList()
     },
     methods: {
-      getAdminList() {
+      getRoleList() {
         let nowId = this.$store.state.nowAdminType
-        this.systemName = this.systemList[nowId]
+        this.$api.admin.listBizSystem()
+          .then(
+            response => {
+              this.systemList = response.data.resultData;
+              this.systemName = this.systemList[nowId].name
+              this.getList()
+            })
       },
       getList() {
         this.isFetching = true
         this.$api.admin.listByUserPerm({
-          system: this.systemIdList[this.$store.state.nowAdminType]
+          system: this.systemList[this.$store.state.nowAdminType].id
         })
           .then(
             response => {
@@ -130,11 +117,18 @@
     .-left-title {
       padding: 14px 24px;
       .-title-name {
+        display: inline-block;
+        width: 120px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
         color: #5444E4;
       }
     }
     .-left-li {
       text-align: left;
+      display: flex;
+      align-items: center;
     }
     .hk-menu-icon {
       vertical-align: initial;
