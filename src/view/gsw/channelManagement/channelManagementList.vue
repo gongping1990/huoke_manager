@@ -3,7 +3,16 @@
     <input type="text" v-model="copy_url" class="copy-input" ref="copyInput">
 
     <Card>
-      <div class="g-add-btn " @click="openModal()">
+      <Row class="g-search">
+        <Row class="g-t-left">
+          <Radio-group v-model="radioType" type="button" @on-change="getList(1)">
+            <Radio label='1'>老课程</Radio>
+            <Radio label='2'>新课程</Radio>
+          </Radio-group>
+        </Row>
+      </Row>
+
+      <div class="g-add-btn g-add-top" @click="openModal()">
         <Icon class="-btn-icon" color="#fff" type="ios-add" size="24"/>
       </div>
 
@@ -64,6 +73,7 @@
           type: 'datetime'
         },
         copy_url: '',
+        radioType: '1',
         detailList: [],
         dataList: [],
         selectInfo: '1',
@@ -236,7 +246,8 @@
           this.addInfo = JSON.parse(JSON.stringify(data))
         } else {
           this.addInfo = {
-            name: ''
+            name: '',
+            type: this.radioType
           }
         }
       },
@@ -266,7 +277,8 @@
 
         this.$api.poem.listByChannel({
           current: num ? num : this.tab.page,
-          size: this.tab.pageSize
+          size: this.tab.pageSize,
+          type: this.radioType
         })
           .then(
             response => {
@@ -288,7 +300,7 @@
                 response => {
                   if (response.data.code == '200') {
                     this.$Message.success('提交成功');
-                    this.getList()
+                    this.getList(1)
                     this.closeModal(name)
                   }
                 })
