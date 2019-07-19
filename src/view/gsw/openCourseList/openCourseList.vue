@@ -26,7 +26,8 @@
         title="添加学习营">
         <Form ref="addInfo" :model="addInfo" :label-width="90">
           <Form-item label="开营日期" class="ivu-form-item-required">
-            <Date-picker style="width: 100%" type="date" placeholder="选择日期" v-model="addInfo.opentime"></Date-picker>
+            <Date-picker style="width: 100%" :options="dateOption" type="date" placeholder="选择日期"
+                         v-model="addInfo.opentime"></Date-picker>
           </Form-item>
         </Form>
         <div slot="footer" class="-p-b-flex">
@@ -57,6 +58,11 @@
         isOpenModal: false,
         isSending: false,
         addInfo: {},
+        dateOption: {
+          disabledDate(date) {
+            return date && (new Date(date).getTime() <= new Date().getTime() - 24 * 3600 * 1000);
+          }
+        },
         columns: [
           {
             title: '期数',
@@ -73,7 +79,7 @@
           },
           {
             title: '创建时间',
-            key:'gmtCreate',
+            key: 'gmtCreate',
             align: 'center'
           },
           {
@@ -127,7 +133,7 @@
         this.$api.gswActive.listActiveConfig({
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
-          type : this.radioType,
+          type: this.radioType,
         })
           .then(
             response => {
@@ -157,7 +163,7 @@
       },
       submitInfo() {
         if (!this.addInfo.opentime) {
-          return  this.$Message.error("请选择开营时间");
+          return this.$Message.error("请选择开营时间");
         }
         if (this.isSending) return
         this.isSending = true
