@@ -42,8 +42,7 @@
                  :maxlength='80'></Input>
         </FormItem>
         <FormItem label="朗诵内容" v-if="nowType===3 && detailInfo.type === 1">
-          <Input type="textarea" :rows="4" v-model="detailInfo.content" placeholder="请输入朗诵内容（字数不超过180字）"
-                 :maxlength='180'></Input>
+          <Editor v-model="detailInfo.content"></Editor>
         </FormItem>
       </Form>
       <div slot="footer" class="g-flex-j-sa" v-if="isOpenModalPoetry">

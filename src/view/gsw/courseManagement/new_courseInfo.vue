@@ -18,11 +18,7 @@
                          placeholder="请输入单独购价格（元）"></InputNumber>
             <span class="-c-tips">* 精确到小数点后2位，如99.99</span>
           </FormItem>
-          <FormItem label="拼课价格" prop="groupPrice">
-            <InputNumber type="text" :disabled="!isEdit" v-model="addInfo.groupPrice" :min="0"  class="g-width"
-                         placeholder="请输入拼课价格（元）"></InputNumber>
-            <span class="-c-tips">* 精确到小数点后2位，如99.99</span>
-          </FormItem>
+
           <FormItem label="咨询电话" prop="consultPhone">
             <InputNumber type="text" :disabled="!isEdit" v-model="addInfo.consultPhone"  class="g-width"
                          placeholder="请输入咨询电话"></InputNumber>
@@ -65,6 +61,26 @@
             </div>
             <div class="-c-tips">图片尺寸不低于960px*360px 图片大小：500K以内</div>
           </Form-item>
+          <FormItem label="拼课是否启用">
+            <Radio-group v-model="addInfo.useGroup">
+              <Radio :label=0 :disabled="!isEdit">不启用</Radio>
+              <Radio :label=1 :disabled="!isEdit">启用</Radio>
+            </Radio-group>
+          </FormItem>
+          <FormItem label="拼课人数" prop="groupNum">
+            <InputNumber type="text" :disabled="!isEdit" v-model="addInfo.groupNum" :min="0"  class="g-width"
+                         placeholder="请输入拼课人数"></InputNumber>
+          </FormItem>
+          <FormItem label="拼课价格" prop="groupPrice">
+            <InputNumber type="text" :disabled="!isEdit" v-model="addInfo.groupPrice" :min="0"  class="g-width"
+                         placeholder="请输入拼课价格（元）"></InputNumber>
+            <span class="-c-tips">* 精确到小数点后2位，如99.99</span>
+          </FormItem>
+          <FormItem label="拼课时限" prop="deadline">
+            <InputNumber type="text" :disabled="!isEdit" v-model="addInfo.deadline" :min="0"  class="g-width"
+                         placeholder="请输入拼课时限（小时）"></InputNumber>
+            <span class="-c-tips">* 小时</span>
+          </FormItem>
         </Form>
         <Form v-if="radioType==='2'" ref="addInfo" :model="addInfo" :label-width="80">
           <FormItem label="单独购买帮助信息" v-if="isEdit" prop="aloneInfo">
@@ -97,7 +113,13 @@
             </Card>
           </div>
         </Form>
-        <Form v-if="radioType==='3'" ref="addInfo" :model="addInfo" :label-width="90">
+        <Form v-if="radioType==='3'" ref="addInfo" :model="addInfo" :label-width="90" class="ivu-form-item-required">
+          <FormItem label="是否启用">
+            <Radio-group v-model="addInfo.enabled">
+              <Radio :label=0 :disabled="!isEdit">不启用</Radio>
+              <Radio :label=1 :disabled="!isEdit">启用</Radio>
+            </Radio-group>
+          </FormItem>
           <FormItem label="优惠券面额">
             <InputNumber type="text" :disabled="!isEdit" v-model="addInfo.couponAmount" :min="0"
                          placeholder="请输入优惠券面额（元）"></InputNumber>
@@ -207,6 +229,7 @@
                 this.addInfo.alonePrice = +this.addInfo.alonePrice
                 this.addInfo.groupPrice = +this.addInfo.groupPrice
                 this.addInfo.consultPhone = +this.addInfo.consultPhone
+                this.addInfo.useGroup = this.addInfo.useGroup ? 1 : 0
               }
             })
           .finally(() => {
@@ -222,6 +245,7 @@
               this.addInfo = response.data.resultData
               this.addInfo.couponAmount = +this.addInfo.couponAmount / 100
               this.addInfo.expiredTimeHour = +this.addInfo.expiredTimeHour
+              this.addInfo.enabled =  this.addInfo.enabled ? 1 : 0
             })
           .finally(() => {
             this.isFetching = false
@@ -239,6 +263,7 @@
             couponAmount: this.addInfo.couponAmount * 100,
             courseId: this.addInfo.courseId,
             expiredTimeHour: this.addInfo.expiredTimeHour,
+            enabled: this.addInfo.enabled === 1,
           })
             .then(response => {
               this.$Message.success('修改成功');
@@ -266,7 +291,8 @@
               let paramsUrl = this.addInfo.id ? this.$api.poem.poemCourseUpdate : this.$api.poem.poemCourseAdd
               paramsUrl({
                 ...this.addInfo,
-                type: 2
+                type: 2,
+                useGroup: this.addInfo.useGroup === 1
               })
                 .then(response => {
                   if (response.data.code == '200') {

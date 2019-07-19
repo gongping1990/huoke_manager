@@ -26,6 +26,7 @@ import ldBanner from "./hkld/banner";
 import ldUser from "./hkld/user";
 import ldCourse from "./hkld/course";
 import gswUser from "./gsw/user";
+import gswActive from "./gsw/active";
 import poem from "./gsw/poem";
 import gswOrder from "./gsw/order";
 import materia from "./zlk/materia";
@@ -75,6 +76,7 @@ export default {
   ldCourse,
   gswUser,
   gswOrder,
+  gswActive,
   zlkBanner,
   tbzwUser,
   hkywUser,

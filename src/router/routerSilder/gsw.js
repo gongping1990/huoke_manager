@@ -80,6 +80,19 @@ export const gswRouter =[
           }
         ],
         component: () => import('@/view/gsw/qrcode/qrcodeList')
+      },
+      {
+        path: '/gsw_openCourse',
+        name: 'gsw_openCourse',
+        meta: [
+          {
+            name: '运营管理'
+          },
+          {
+            name: '开营管理'
+          }
+        ],
+        component: () => import('@/view/gsw/openCourseList/openCourseList')
       }
     ]
   },

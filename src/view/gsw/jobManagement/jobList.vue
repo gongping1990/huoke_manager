@@ -5,11 +5,12 @@
         <Row class="g-t-left g-tab">
           <Radio-group v-model="radioType" type="button" @on-change="getList(1)">
             <Radio :label=0>待批改</Radio>
-            <Radio :label=1>已批改</Radio>
+            <Radio :label=1>不合格</Radio>
+            <Radio :label=3>已批改</Radio>
           </Radio-group>
         </Row>
         <Row class="g-t-left g-tab">
-          <Col :span="3" class="g-t-left" v-if="radioType!==0">
+          <Col :span="3" class="g-t-left" v-if="radioType===3">
             <div class="g-flex-a-j-center">
               <div class="-search-select-text">用户评价：</div>
               <Select v-model="searchInfo.evaluate" @on-change="getList(1)" class="-search-selectOne">
@@ -34,7 +35,7 @@
         </Row>
       </Row>
 
-      <Table :loading="isFetching" :columns="radioType===0 ? columns : columnsTwo" :data="dataList"></Table>
+      <Table :loading="isFetching" :columns="columsType[radioType]" :data="dataList"></Table>
 
       <Page class="-p-text-right" :total="total" size="small" show-elevator :page-size="tab.pageSize"
             :current.sync="tab.currentPage"
@@ -47,16 +48,22 @@
         width="750"
         title="批改作业">
         <Form ref="addInfo" :model="addInfo" :label-width="70">
+          <FormItem label="是否合格">
+            <Radio-group v-model="addInfo.isPassed">
+              <Radio :label=1>合格</Radio>
+              <Radio :label=0>不合格</Radio>
+            </Radio-group>
+          </FormItem>
           <FormItem label="教师名称" prop="replyTeacher" class="ivu-form-item-required">
             <Input type="text" v-model="addInfo.replyTeacher" placeholder="请输入教师名称"></Input>
           </FormItem>
-          <FormItem label="批改图片">
+          <FormItem label="批改图片" v-if="addInfo.isPassed === 1">
             <upload-img-multiple v-model="addInfo.replyImg" :option="uploadOption"></upload-img-multiple>
           </FormItem>
-          <FormItem label="批改音频">
+          <FormItem label="批改音频" v-if="addInfo.isPassed === 1">
             <upload-audio ref="childAudio" v-model="addInfo.replyAudio" :option="uploadAudioOption"></upload-audio>
           </FormItem>
-          <FormItem label="批改文案">
+          <FormItem label="批改文案" v-if="addInfo.isPassed === 1">
             <Input type="textarea" :rows="5" v-model="addInfo.replyText" placeholder="请输入批改文案"></Input>
           </FormItem>
         </Form>
@@ -84,12 +91,11 @@
   import UploadAudio from "../../../components/uploadAudio";
   import DatePickerTemplate from "../../../components/datePickerTemplate";
   import dayjs from 'dayjs'
-  import Editor from "../../../components/editor";
   import UploadImgMultiple from "../../../components/uploadImgMultiple";
 
   export default {
     name: 'jobList',
-    components: {UploadImgMultiple, Editor, DatePickerTemplate, UploadAudio},
+    components: {UploadImgMultiple, DatePickerTemplate, UploadAudio},
     data() {
       return {
         tab: {
@@ -440,7 +446,6 @@
                   },
                   style: {
                     color: '#5444E4',
-                    display: this.radioType === 3 ? 'none' : 'inline-block',
                     marginRight: '5px'
                   },
                   on: {
@@ -455,7 +460,132 @@
                     size: 'small'
                   },
                   style: {
-                    display: this.radioType === 2 ? 'none' : 'inline-block',
+                    color: 'rgba(218, 55, 75)',
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.delItem(params.row)
+                    }
+                  }
+                }, '删除')
+              ])
+            }
+          }
+        ],
+        columnsThree: [
+          {
+            title: '用户昵称',
+            key: 'nickname',
+            align: 'center'
+          },
+          {
+            title: '作业要求',
+            key: 'homeworkRequire',
+            align: 'center'
+          },
+          {
+            title: '作业内容',
+            width: 300,
+            render: (h, params) => {
+              return h('div', {
+                style: {
+                  display: 'flex',
+                  justifyContent: 'space-around'
+                }
+              }, params.row.workImg.length ? params.row.workImg.map((item, index) => {
+                return h('div', {
+                  style: {
+                    position: 'relative',
+                  }
+                }, [
+                  h('img', {
+                    attrs: {
+                      src: item
+                    },
+                    style: {
+                      width: '50px',
+                      height: '50px',
+                      margin: '10px'
+                    }
+                  }), h('Icon', {
+                    props: {
+                      type: 'md-download'
+                    },
+                    style: {
+                      position: 'absolute',
+                      bottom: '15px',
+                      right: '10px',
+                      fontSize: '16px',
+                      background: 'rgba(0,0,0,0.7)',
+                      color: '#ffffff',
+                      cursor: 'pointer'
+                    },
+                    on: {
+                      click: () => {
+                        window.open(item)
+                      }
+                    }
+                  })
+                ])
+              }) : [
+                h('div', {
+                  style: {
+                    textAlign: 'center',
+                    color: '#5444E4',
+                    cursor: 'pointer'
+                  },
+                  on: {
+                    click: () => {
+                      this.openModalPlay(params.row.workAudio)
+                    }
+                  }
+                }, '播放音频')
+              ])
+            },
+            align: 'center'
+          },
+          {
+            title: '提交时间',
+            render: (h, params) => {
+              return h('div', dayjs(+params.row.workTime).format('YYYY-MM-DD HH:mm:ss'))
+            },
+            align: 'center'
+          },
+          {
+            title: '状态',
+            render: (h, params) => {
+              return h('div', params.row.status==1 ? '待重做' : '已重做')
+            },
+            align: 'center'
+          },
+          {
+            title: '操作',
+            width: 200,
+            align: 'left',
+            render: (h, params) => {
+              return h('div', [
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: '#5444E4',
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.openModal(params.row)
+                    }
+                  }
+                }, '批改'),
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
                     color: 'rgba(218, 55, 75)',
                     marginRight: '5px'
                   },
@@ -470,6 +600,15 @@
           }
         ],
       };
+    },
+    computed: {
+      columsType() {
+        return {
+          '0': this.columns,
+          '3': this.columnsTwo,
+          '1': this.columnsThree,
+        }
+      }
     },
     mounted() {
       this.getList()
@@ -509,8 +648,8 @@
         this.isOpenModal = true
         if (data) {
           this.addInfo = JSON.parse(JSON.stringify(data))
+          this.addInfo.isPassed = this.radioType != 1 ? 1 : 0
         } else {
-          this.$refs.editor.clearHtml()
           this.addInfo = {
             replyImg: [],
             replyText: ''
@@ -533,7 +672,8 @@
           grade: 3,
           evaluation: this.searchInfo.evaluate == '-1' ? '' : this.searchInfo.evaluate,
           starttime: this.getStartTime ? new Date(this.getStartTime).getTime() : "",
-          endtime: this.getEndTime ? new Date(this.getEndTime).getTime() : ""
+          endtime: this.getEndTime ? new Date(this.getEndTime).getTime() : "",
+          status: this.radioType
         }
 
         if (this.selectInfo == '1' && this.searchInfo) {
@@ -544,12 +684,6 @@
 
         if (num) {
           this.tab.currentPage = 1
-        }
-
-        if (this.radioType !== 2) {
-          params.reply = this.radioType
-        } else {
-          params.praise = true
         }
 
         this.$api.poem.listHomeworkByPage(params)
@@ -578,7 +712,8 @@
           replyImg: `${this.addInfo.replyImg}`,
           replyTeacher: this.addInfo.replyTeacher,
           replyText: this.addInfo.replyText,
-          replyAudio: this.addInfo.replyAudio
+          replyAudio: this.addInfo.replyAudio,
+          isPassed: this.addInfo.isPassed == 1
         })
           .then(
             response => {
