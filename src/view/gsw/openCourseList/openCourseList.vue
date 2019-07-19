@@ -23,7 +23,7 @@
         v-model="isOpenModal"
         @on-cancel="closeModal('addInfo')"
         width="500"
-        :title="addInfo.id ? '编辑消息' : '创建消息'">
+        title="添加学习营">
         <Form ref="addInfo" :model="addInfo" :label-width="90">
           <Form-item label="开营日期" class="ivu-form-item-required">
             <Date-picker style="width: 100%" type="date" placeholder="选择日期" v-model="addInfo.opentime"></Date-picker>
@@ -156,9 +156,11 @@
         })
       },
       submitInfo() {
+        if (!this.addInfo.opentime) {
+          return  this.$Message.error("请选择开营时间");
+        }
         if (this.isSending) return
         this.isSending = true
-        console.log(this.addInfo.opentime)
         this.$api.gswActive.addActiveConfig({
           opentime: dayjs(this.addInfo.opentime).format("YYYY-MM-DD"),
           type: this.radioType

@@ -280,6 +280,10 @@
                 return this.$Message.error('请上传封面图片')
               } else if (!this.addInfo.qrCode && this.radioType === '1') {
                 return this.$Message.error('请上传咨询二维码图片')
+              } else if (!this.addInfo.groupNum && this.radioType === '1' && this.addInfo.useGroup == 1) {
+                return this.$Message.error('请输入拼课人数')
+              } else if (!this.addInfo.deadline && this.radioType === '1' && this.addInfo.useGroup == 1) {
+                return this.$Message.error('请输入拼课时限')
               } else if (this.radioType === '2' && (!this.addInfo.aloneInfo || this.addInfo.aloneInfo == '<p><br></p>')) {
                 return this.$Message.error('请输入单独购买帮助信息')
               } else if (this.radioType === '2' && (!this.addInfo.groupInfo || this.addInfo.groupInfo == '<p><br></p>')) {

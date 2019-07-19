@@ -49,7 +49,7 @@
         title="批改作业">
         <Form ref="addInfo" :model="addInfo" :label-width="70">
           <FormItem label="是否合格">
-            <Radio-group v-model="addInfo.isPassed">
+            <Radio-group v-model="addInfo.isPassed" @on-change="changePassed">
               <Radio :label=1>合格</Radio>
               <Radio :label=0>不合格</Radio>
             </Radio-group>
@@ -614,6 +614,9 @@
       this.getList()
     },
     methods: {
+      changePassed () {
+        this.$forceUpdate()
+      },
       openModalPlay(data) {
         this.playAudioUrl = data
         this.isOpenModalPlay = true
