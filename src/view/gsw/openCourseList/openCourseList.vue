@@ -18,6 +18,7 @@
             :current.sync="tab.currentPage"
             @on-change="currentChange"></Page>
 
+
       <Modal
         class="p-openCourse"
         v-model="isOpenModal"
