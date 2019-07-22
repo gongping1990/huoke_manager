@@ -556,6 +556,10 @@
                   {
                     route: 'gsw_qrcode',
                     title: '群二维码'
+                  },
+                  {
+                    route: 'gsw_openCourse',
+                    title: '开营管理'
                   }
                 ]
               },
