@@ -5,9 +5,9 @@ import {tbzwRouter} from './routerSilder/tbzw'
 import {gswRouter} from './routerSilder/gsw'
 import {zlkRouter} from './routerSilder/zlk'
 import {ldRouter} from './routerSilder/ld'
-import {wzjhRouter} from './routerSilder/wzjh'
-import {ylxcxRouter} from './routerSilder/ylxcx'
-import {yhzxRouter} from './routerSilder/yhzx'
+// import {wzjhRouter} from './routerSilder/wzjh'
+// import {ylxcxRouter} from './routerSilder/ylxcx'
+// import {yhzxRouter} from './routerSilder/yhzx'
 // import err404 from '@/pages/404'
 //otherRouter
 // import home from '@/pages/home'
@@ -144,7 +144,7 @@ export const routers = [
   ...zlkRouter,
   ...ldRouter,
   ...hkywRouter,
-  ...wzjhRouter,
-  ...ylxcxRouter,
-  ...yhzxRouter
+  // ...wzjhRouter,
+  // ...ylxcxRouter,
+  // ...yhzxRouter
 ]
