@@ -3,16 +3,16 @@
     class="p-switchingSystem"
     v-model="isOpenModal"
     @on-cancel="closeModal()"
-    width="500"
+    width="300"
     title="切换系统">
     <Form ref="changePswForm" :label-width="70">
       <FormItem label="当前系统" prop="password">
         {{systemName}}
       </FormItem>
       <FormItem label="切换系统" prop="password">
-        <Radio-group v-model="radioType" type="button">
-          <Radio v-for="(item,index) of adminType" :key="index" :label= item.id>{{item.name}}</Radio>
-        </Radio-group>
+        <Select v-model="radioType">
+          <Option v-for="(item,index) of adminType" :key="index" :label=item.name :value=item.id></Option>
+        </Select>
       </FormItem>
     </Form>
     <div slot="footer" class="g-flex-j-sa">
@@ -30,32 +30,26 @@
       return {
         isOpenModal: false,
         systemName: '',
-        systemList: {
-          '1': '获课学堂',
-          '2': '获课语文',
-          '4': '资料库',
-          '5': '获课朗读',
-          '7': '古诗文',
-          '8': '同步作文',
-        },
-        radioType: localStorage.nowSystem,
-        adminType: ''
+        radioType: +localStorage.nowSystem,
+        adminType: []
       }
     },
     mounted() {
-      this.getAdminList()
+      this.getRoleList()
       this.isOpenModal = true
     },
     methods: {
       closeModal() {
         this.$emit('closePwdModal')
       },
-      getAdminList () {
+      getRoleList() {
         let nowId = localStorage.nowSystem
-        this.$axios.get("../static/adminList.json").then(response => {
-          this.adminType = response.data.resultData
-          this.systemName = this.systemList[nowId]
-        });
+        this.$api.admin.listBizSystem()
+          .then(
+            response => {
+              this.adminType = response.data.resultData;
+              this.systemName = this.adminType[nowId].name
+            })
       },
       submitPwd() {
         this.$store.commit('changeSystem', this.radioType)
@@ -69,7 +63,7 @@
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 
-  .p-switchingSystem{
+  .p-switchingSystem {
     position: absolute;
     display: flex;
     align-items: center;
@@ -78,6 +72,6 @@
     bottom: 0;
     left: 0;
     right: 0;
-    background-color: rgba(255,255,255,0.3)
+    background-color: rgba(255, 255, 255, 0.3)
   }
 </style>

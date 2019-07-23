@@ -7,6 +7,9 @@ const mutations = {
   },
   changeSystem (state,payload) {
     state.nowAdminType = payload
+  },
+  changeArticeList (state, payload) {
+    state.articeStorage = payload.data
   }
 }
 

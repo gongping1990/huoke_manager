@@ -92,6 +92,10 @@ const admin = {
   // 修改其他管理员信息
   listChecked(params) {
     return axios.get("umg/admin/menu/listChecked",{params});
+  },
+  // 修改其他管理员信息
+  listByUserPerm(params) {
+    return axios.get("umg/admin/menu/listByUserPerm",{params});
   }
 };
 

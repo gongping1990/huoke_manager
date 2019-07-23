@@ -39,6 +39,10 @@ import hkywDataCenter from "./hkyw/dataCenter";
 import book from "./hkyw/book";
 import slide from "./hkyw/slide";
 import mission from "./hkyw/mission";
+import wzjh from "./wzjh/wzjh";
+import ylxcx_appInfo from "./ylxcx/appInfo";
+import ylxcx_banner from "./ylxcx/banner";
+import ylxcx_operation from "./ylxcx/operation";
 
 export default {
   banner,
@@ -81,5 +85,9 @@ export default {
   tbzwUser,
   hkywUser,
   hkywOrder,
-  hkywDataCenter
+  hkywDataCenter,
+  wzjh,
+  ylxcx_appInfo,
+  ylxcx_banner,
+  ylxcx_operation
 }

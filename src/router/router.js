@@ -5,9 +5,9 @@ import {tbzwRouter} from './routerSilder/tbzw'
 import {gswRouter} from './routerSilder/gsw'
 import {zlkRouter} from './routerSilder/zlk'
 import {ldRouter} from './routerSilder/ld'
-// import {wzjhRouter} from './routerSilder/wzjh'
-// import {ylxcxRouter} from './routerSilder/ylxcx'
-// import {yhzxRouter} from './routerSilder/yhzx'
+import {wzjhRouter} from './routerSilder/wzjh'
+import {ylxcxRouter} from './routerSilder/ylxcx'
+import {yhzxRouter} from './routerSilder/yhzx'
 // import err404 from '@/pages/404'
 //otherRouter
 // import home from '@/pages/home'
@@ -127,6 +127,56 @@ export const otherRouter = {
         {name: '资料管理'}
       ],
       component: () => import('@/view/zlk/content/dataManagerList')
+    },
+    {
+      path: '/bannerList',
+      name: 'bannerList',
+      meta: [
+        {name: '内容管理'},
+        {name: '学科管理', url: 'subject'},
+        {name: 'banner管理'},
+      ],
+      component: () => import('@/view/wzjh/banner/bannerList')
+    },
+    {
+      path: '/teachMain',
+      name: 'teachMain',
+      meta: [
+        {name: '内容管理'},
+        {name: '同步学习', url: 'synchronousLearning'},
+        {name: '栏目管理'}
+      ],
+      component: () => import('@/view/wzjh/content/synchronousLearning/teachMain')
+    },
+    {
+      path: '/articleManager',
+      name: 'articleManager',
+      meta: [
+        {name: '内容管理'},
+        {name: '同步学习', url: 'synchronousLearning'},
+        {name: '文章管理'}
+      ],
+      component: () => import('@/view/wzjh/content/synchronousLearning/articleManager')
+    },
+    {
+      path: '/articleManagerTwo',
+      name: 'articleManagerTwo',
+      meta: [
+        {name: '内容管理'},
+        {name: '学习资源', url: 'learningResource'},
+        {name: '文章管理'}
+      ],
+      component: () => import('@/view/wzjh/content/synchronousLearning/articleManager')
+    },
+    {
+      path: '/subColumn',
+      name: 'subColumn',
+      meta: [
+        {name: '内容管理'},
+        {name: '学习资源', url: 'learningResource'},
+        {name: '子栏目管理'}
+      ],
+      component: () => import('@/view/wzjh/content/learningResource/learningResource')
     }
   ]
 };
@@ -144,7 +194,7 @@ export const routers = [
   ...zlkRouter,
   ...ldRouter,
   ...hkywRouter,
-  // ...wzjhRouter,
-  // ...ylxcxRouter,
-  // ...yhzxRouter
+  ...wzjhRouter,
+  ...ylxcxRouter,
+  ...yhzxRouter
 ]

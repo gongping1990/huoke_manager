@@ -14,18 +14,22 @@
 
       <Row class="-t-wrap">
         <Col :span="24" class="-t-top">
-          <Col :span="12">菜单名称</Col>
-          <Col :span="12">操作</Col>
+          <Col :span="8">菜单名称</Col>
+          <Col :span="8">路由</Col>
+          <Col :span="8">操作</Col>
         </Col>
         <Col :span="24" v-for="(item1,index) of firstChild" :key="index" class="-t-item -t-border">
-          <Col :span="12" class="-t-child-padding g-flex-a-j-center">
+          <Col :span="8" class="-t-child-padding g-flex-a-j-center">
             <div @click="openArrow(item1)" class="g-cursor" v-if="item1.child.length">
               <Icon v-if="!item1.isShowChild" type="md-arrow-dropright" size="20"/>
               <Icon v-else type="md-arrow-dropdown" size="20"/>
             </div>
             <div :class="{'-t-child-m-l': !item1.child.length}">{{item1.name}}</div>
           </Col>
-          <Col :span="12" class="g-text-right">
+          <Col :span="8" class="-t-child-padding-two g-flex-a-j-center">
+            <div :class="{'-t-child-m-l': !item1.child.length}">/{{item1.path}}</div>
+          </Col>
+          <Col :span="8" class="g-text-right">
             <Button type="text" class="-t-theme-color" @click="openModal(item1, '', true, 3)">添加子菜单</Button>
             <Button type="text" class="-t-theme-color" @click="openModal(item1, '', false, 0)">编辑</Button>
             <Button type="text" class="-t-red-color" @click="delItem(item1)">删除</Button>
@@ -33,10 +37,13 @@
 
           <Col :span="24" v-show="item1.isShowChild && item1.child" v-for="(item2,index2) of item1.child"
                :key="index2" class="-t-item -t-border">
-            <Col :span="12" class="-t-child-padding-two g-flex-a-j-center">
+            <Col :span="8" class="-t-child-padding-two g-flex-a-j-center">
               <div :class="{'-t-child-m-l': !item2.child.length}">{{item2.name}}</div>
             </Col>
-            <Col :span="12" class="g-text-right">
+            <Col :span="8" class="-t-child-padding-two g-flex-a-j-center">
+              <div :class="{'-t-child-m-l': !item2.child.length}">/{{item2.path}}</div>
+            </Col>
+            <Col :span="8" class="g-text-right">
               <Button type="text" class="-t-theme-color" @click="openModalRole(item2)">添加权限</Button>
               <Button type="text" class="-t-theme-color" @click="openModal(item2,item1,false,1)">编辑</Button>
               <Button type="text" class="-t-red-color" @click="delItem(item2)">删除</Button>
@@ -64,8 +71,8 @@
         <FormItem label="页面路径" prop="path">
           <Input type="text" v-model="addInfo.path" placeholder="请输入页面路径"></Input>
         </FormItem>
-        <FormItem label="页面图标" prop="icon" v-if="!nowIndex.name">
-          <Input type="text" v-model="addInfo.icon" placeholder="请输入页面路径"></Input>
+        <FormItem label="页面图标" prop="ico" v-if="!nowIndex.name">
+          <Input type="text" v-model="addInfo.ico" placeholder="请输入页面路径"></Input>
         </FormItem>
       </Form>
       <div slot="footer" class="g-flex-j-sa">
@@ -78,13 +85,13 @@
       class="p-permissionsList"
       v-model="isOpenRole"
       @on-cancel="closeModal('addInfo')"
-      width="600"
+      width="700"
       title="设置权限">
-      <Form ref="addInfo" :model="addInfo" :label-width="80">
+      <Form ref="addInfo" :model="addInfo" :label-width="80" class="p-permissionsList-wrap">
         <FormItem label="权限接口" prop="path">
-          <Checkbox-group v-model="addInfo.codes" class=" -c-tab">
+          <Checkbox-group v-model="checkedCodes" class=" -c-tab">
             <Checkbox class="-c-item" :label="item.code" v-for="(item, index) in dataList" :key="index">
-              {{item.desc}}
+              {{item.desc}} — {{item.path}}
             </Checkbox>
           </Checkbox-group>
         </FormItem>
@@ -110,6 +117,7 @@
         isSending: false,
         nowIndex: '',
         addInfo: {},
+        checkedCodes: [],
         storageInfo: [],
         dataList: [],
         systemList: [],
@@ -159,7 +167,7 @@
               response.data.resultData.forEach(item => {
                 this.firstChild.push({
                   ...item,
-                  isShowChild: false
+                  isShowChild: true
                 })
               });
             })
@@ -185,16 +193,12 @@
           this.addInfo = {}
         }
 
-        if(!num) {
-          this.addInfo.pid = data.id
-        } else {
-          this.addInfo.pid = data1.id
-        }
+        this.addInfo.pid = data.id
       },
       openModalRole(item) { //当前层级信息、第一层，true为新增，false为编辑、层级
         this.isOpenRole = true
         this.addInfo = JSON.parse(JSON.stringify(item))
-        this.addInfo.codes = this.addInfo.permcodes
+        this.checkedCodes = this.addInfo.permcodes
         this.getPermissionList(item)
       },
       delItem(param) {
@@ -230,10 +234,11 @@
         param = this.addInfo.id ? this.$api.admin.roleUpdate : this.$api.admin.roleAdd
         param({
           id: this.addInfo.id,
-          system: this.$store.state.nowAdminType,
+          system: this.radioType,
           name: this.addInfo.name,
-          type:  this.nowIndex ? 0 : 1,
+          type: this.nowIndex.index == 0 ? 0 : 1,
           path: this.addInfo.path,
+          ico: this.addInfo.ico,
           pid: this.addInfo.pid
         }).then(
           response => {
@@ -248,13 +253,13 @@
           })
       },
       submitRole(name) {
-        if (!this.addInfo.codes.length) {
+        if (!this.checkedCodes.length) {
           return this.$Message.error('请选择相应权限')
         }
         this.isSending = true
 
         this.$api.admin.updateMenuPerm({
-          codes : `${this.addInfo.codes}` ,
+          codes : `${this.checkedCodes}` ,
           menuId : this.addInfo.id
         }).then(
           response => {
@@ -274,6 +279,11 @@
 
 <style scoped lang="less">
   .p-permissionsList {
+
+    &-wrap {
+      height: 500px;
+      overflow: auto;
+    }
 
     .-c-item{
       display: block;

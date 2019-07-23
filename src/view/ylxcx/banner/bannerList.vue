@@ -37,8 +37,8 @@
           <Form-item label="banner图片" prop="url" class="ivu-form-item-required">
             <upload-img v-model="addInfo.url" :option="uploadOption"></upload-img>
           </Form-item>
-          <FormItem label="活动名称" prop="name">
-            <Input type="text" v-model="addInfo.name" placeholder="请输入活动名称"></Input>
+          <FormItem label="名称" prop="name">
+            <Input type="text" v-model="addInfo.name" placeholder="请输入名称"></Input>
           </FormItem>
           <FormItem label="排序值" prop="sortnum">
             <Input type="text" v-model="addInfo.sortnum" placeholder="请输入排序值"></Input>
@@ -51,7 +51,6 @@
               <Col span="11">
                 <Form-item prop="getStartTime">
                   <Date-picker style="width: 100%" type="datetime" placeholder="选择开始日期"
-                               @on-change="changeStartClick"
                                v-model="getStartTime" :options="dateStartOption"></Date-picker>
                 </Form-item>
               </Col>
@@ -94,10 +93,10 @@
 <script>
   import dayjs from 'dayjs'
   import DatePickerTemplate from "@/components/datePickerTemplate";
-  import UploadImg from "../../../../components/uploadImg";
+  import UploadImg from "../../../components/uploadImg";
 
   export default {
-    name: 'zlkBannerList',
+    name: 'bannerList',
     components: {UploadImg, DatePickerTemplate},
     data() {
       return {
@@ -138,7 +137,7 @@
         },
         ruleValidate: {
           name: [
-            {required: true, message: '请输入活动名称', trigger: 'blur'},
+            {required: true, message: '请输入名称', trigger: 'blur'},
             {type: 'string', max: 20, message: '活动名称长度为20字', trigger: 'blur'}
           ],
           sortnum: [
@@ -164,7 +163,7 @@
                     src: params.row.url
                   },
                   style: {
-                    width: '100px',
+                    width: '200px',
                     margin: '10px'
                   }
                 })
@@ -179,7 +178,7 @@
             render: (h, params) => {
               return h('div', {
                 style: {
-                  color: '#5444E4',
+                  color: params.row.sortnum == '-1' ? '' : '#5444E4',
                   cursor: 'pointer'
                 },
                 on: {
@@ -187,7 +186,7 @@
                     this.openModalSort(params.row)
                   }
                 }
-              }, params.row.sortnum)
+              }, params.row.sortnum == '-1' ? '已过期' : params.row.sortnum)
             },
             align: 'center'
           },
@@ -198,7 +197,7 @@
           {
             title: '有效期时间',
             render: (h, params) => {
-              return h('span', `${dayjs(params.row.beginTime).format('YYYY-MM-DD HH:mm:ss')} - ${dayjs(params.row.endTime).format('YYYY-MM-DD HH:mm:ss')}`)
+              return h('span', `${params.row.showTime} - ${params.row.hideTime}`)
             },
             width: 300,
             align: 'center'
@@ -258,13 +257,6 @@
       this.getList()
     },
     methods: {
-      changeStartClick (date) {
-        let s = new Date(date).getTime()
-        let e = new Date(this.getEndTime).getTime()
-        if (s > e) {
-          this.getEndTime = ''
-        }
-      },
       changeDate (data) {
         this.searchInfo.fromDate = data.startTime
         this.searchInfo.toDate = data.endTime
@@ -274,8 +266,8 @@
         this.isOpenModal = true
         if (data) {
           this.addInfo = JSON.parse(JSON.stringify(data))
-          this.getStartTime = new Date(this.addInfo.beginTime)
-          this.getEndTime = new Date(this.addInfo.endTime)
+          this.getStartTime = new Date(this.addInfo.showTime)
+          this.getEndTime = new Date(this.addInfo.hideTime)
           this.addInfo.sortnum = this.addInfo.sortnum.toString()
         } else {
           this.getStartTime = ''
@@ -286,6 +278,7 @@
         }
       },
       openModalSort(data) {
+        if(data.sortnum == '-1') return
         this.isOpenModalSort = true
         this.addInfo = JSON.parse(JSON.stringify(data))
         this.sortNum = this.addInfo.sortnum
@@ -304,12 +297,13 @@
         if(num) {
           this.tab.currentPage = 1
         }
-        this.$api.zlkBanner.zlkBannerList({
+        this.$api.ylxcx_operation.operationalLocationList({
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
-          name: this.searchInfo.nickname|| '',
-          beginTime: this.searchInfo.fromDate ? new Date(this.searchInfo.fromDate).getTime() : '',
-          endTime:  this.searchInfo.toDate  ? new Date(this.searchInfo.toDate).getTime() : ''
+          subId: this.$route.query.id,
+          name: this.searchInfo.nickname,
+          fromDate: this.searchInfo.fromDate ? dayjs(this.searchInfo.fromDate).format("YYYY/MM/DD HH:mm:ss") : '',
+          toDate:  this.searchInfo.toDate  ? dayjs(this.searchInfo.toDate).format("YYYY/MM/DD HH:mm:ss") : ''
         })
           .then(
             response => {
@@ -323,9 +317,9 @@
       delItem(param) {
         this.$Modal.confirm({
           title: '提示',
-          content: '确认要删除banner图片吗？',
+          content: '确认要删除吗？',
           onOk: () => {
-            this.$api.zlkBanner.zlkDelBanner({
+            this.$api.ylxcx_operation.delOperation({
               id: param.id
             }).then(
               response => {
@@ -349,12 +343,14 @@
         }
 
         if (this.isSending) return
-        this.addInfo.beginTime = new Date(this.getStartTime).getTime()
-        this.addInfo.endTime = new Date(this.getEndTime).getTime()
+        this.addInfo.showTime = dayjs(this.getStartTime).format("YYYY/MM/DD HH:mm:ss")
+        this.addInfo.hideTime = dayjs(this.getEndTime).format("YYYY/MM/DD HH:mm:ss")
+        this.addInfo.subId = this.$route.query.id
+
         this.$refs[name].validate((valid) => {
           if (valid) {
             this.isSending = true
-            let promiseDate = this.addInfo.id ? this.$api.zlkBanner.zlkUpdateBanner(this.addInfo) : this.$api.zlkBanner.zlkAddBanner(this.addInfo)
+            let promiseDate = this.addInfo.id ? this.$api.ylxcx_operation.updateOperation(this.addInfo) : this.$api.ylxcx_operation.addOperation(this.addInfo)
             promiseDate
               .then(
                 response => {
@@ -374,7 +370,7 @@
         if (!this.sortNum) {
           return this.$Message.error('请输入排序值')
         }
-        this.$api.materia.updateSortNumBanner({
+        this.$api.ylxcx_operation.updateSortNum({
           id: this.addInfo.id,
           sortnum: this.sortNum
         }).then(response => {

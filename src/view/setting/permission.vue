@@ -9,12 +9,17 @@
       <Radio :label="item.id" v-for="(item,index) of systemList" :key="index">{{item.name}}</Radio>
     </RadioGroup>
 
-    <Checkbox-group v-model="checkCourseIds" class="p-permission-tree -c-tab" v-for="(list,index) of dataList" :key="index">
+    <div class="p-permission-tree -c-tab" v-for="(list,index) of dataList" :key="index">
       <div class="-name">{{list.name}}</div>
-      <Checkbox class="-c-item" :label="data.id" v-for="(data,index1) in list.child" :key="index1">
-        {{data.name}}
-      </Checkbox>
-    </Checkbox-group>
+      <div class="g-flex-a-j-center">
+        <div class="-c-item" :label="data.id" v-for="(data,index1) in list.child" :key="index1">
+          <span class="-c-item-check" :class="{'-c-item-active': data.checked}" @click="changeChecked(data)">
+             <Icon v-if="data.checked" type="ios-checkmark" color="#ffffff" size="18"/>
+          </span>
+          <span class="-c-item-name">{{data.name}}</span>
+        </div>
+      </div>
+    </div>
 
     <div class="-c-tab g-t-center" v-if="!dataList.length">暂无权限列表</div>
 
@@ -44,6 +49,10 @@
       this.getRoleList()
     },
     methods: {
+      changeChecked (data) {
+        data.checked = !data.checked
+        this.$forceUpdate()
+      },
       closeModal() {
         this.isOpenModal = false
         this.$emit('changeModal', false)
@@ -57,13 +66,6 @@
           .then(
             response => {
               this.dataList = response.data.resultData
-              this.dataList.forEach(item=>{
-                item.child.forEach(data=>{
-                  if(data.checked) {
-                    this.checkCourseIds.push(data.id)
-                  }
-                })
-              })
             })
           .finally(() => {
             this.isFetching = false
@@ -81,7 +83,16 @@
           })
       },
       submitAdmin(name) {
-        let array = `${this.checkCourseIds}`
+        let array = ''
+        for (let item of this.dataList) {
+          for (let data of item.child) {
+            if(data.checked) {
+              this.checkCourseIds.push(data.id)
+            }
+          }
+        }
+        array = `${this.checkCourseIds}`
+
         this.$api.admin.updateRoleMenu({
           roleId: this.roleId,
           menuIds: array
@@ -115,6 +126,29 @@
         font-size: 16px;
         font-weight: bold;
         margin-bottom: 10px;
+      }
+
+      .-c-item {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        margin: 10px 15px 10px 0;
+
+        &-check {
+          display: inline-block;
+          width: 15px;
+          height: 15px;
+          border: 1px solid #dcdee2;
+          margin-right: 6px;
+        }
+
+        &-active {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          border-color: #2f54eb;
+          background-color: #2f54eb;
+        }
       }
     }
     .-p-s-footer {
