@@ -10,6 +10,9 @@ const mutations = {
   },
   changeArticeList (state, payload) {
     state.articeStorage = payload.data
+  },
+  changeUserInfo (state, payload) {
+    state.userInfo = payload
   }
 }
 

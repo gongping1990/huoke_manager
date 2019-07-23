@@ -87,8 +87,10 @@
                 if (res.data.code == 200) {
                   this.$router.push("/home");
                   this.$Message.success('登录成功');
+                  this.$store.commit('changeUserInfo', res.data.resultData)
                   localStorage.nowSystem = '1'
                   localStorage.isLoginSuccess = true
+                  localStorage.nickname = res.data.resultData.nickname
                 }
               })
           }

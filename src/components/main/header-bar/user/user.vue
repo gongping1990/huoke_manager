@@ -1,9 +1,10 @@
 <template>
   <div class="user-avator-dropdown">
-    <Dropdown @on-click="handleClick">
+    <Dropdown @on-click="handleClick" placement="bottom-end">
       <Avatar :src="userAvator"/>
+      <span class="user-name">欢迎您~{{userName}}</span>
       <Icon :size="18" type="md-arrow-dropdown"></Icon>
-      <DropdownMenu slot="list">
+      <DropdownMenu slot="list" >
         <DropdownItem name="logout">退出登录</DropdownItem>
       </DropdownMenu>
     </Dropdown>
@@ -17,6 +18,11 @@
       userAvator: {
         type: String,
         default: require('@/assets/images/userImg.png')
+      }
+    },
+    data() {
+      return {
+        userName: localStorage.nickname
       }
     },
     methods: {
@@ -44,6 +50,11 @@
       cursor: pointer;
       display: inline-block;
       vertical-align: middle;
+
+      .user-name {
+        padding: 0 10px;
+        color: #5444E4;
+      }
     }
   }
 </style>

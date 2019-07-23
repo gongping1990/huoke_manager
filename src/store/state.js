@@ -8,7 +8,8 @@ const store = {
   userStorageList:[],
   isChangeBaseUrl: false,
   nowAdminType: localStorage.nowSystem || '1',
-  articeStorage: []
+  articeStorage: [],
+  userInfo: ''
 }
 
 export default store
