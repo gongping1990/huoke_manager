@@ -97,6 +97,10 @@
             key: 'nickname'
           },
           {
+            title: '手机号码',
+            key: 'phone'
+          },
+          {
             title: '创建时间',
             key: 'createDate'
           },
