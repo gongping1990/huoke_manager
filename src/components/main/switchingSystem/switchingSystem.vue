@@ -11,7 +11,7 @@
       </FormItem>
       <FormItem label="切换系统" prop="password">
         <Select v-model="radioType">
-          <Option v-for="(item,index) of adminType" :key="index" :label=item.name :value=item.id></Option>
+          <Option v-for="(item,index) of adminType" :key="index" :label=item.name :value=item.sort></Option>
         </Select>
       </FormItem>
     </Form>
