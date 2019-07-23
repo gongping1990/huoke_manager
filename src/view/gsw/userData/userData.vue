@@ -93,7 +93,7 @@
     components: {DatePickerTemplate},
     data() {
       return {
-        radioType: '1',
+        radioType: '0',
         selectTypeTwo: 1,
         selectTypeThree: 1,
         dateOptionOne: {
@@ -211,10 +211,9 @@
           .then(
             response => {
               this.channelList = response.data.resultData.records;
-              this.radioType = this.channelList.length && this.channelList[0].id
-              this.channelList.push({
+              this.channelList.unshift({
                 id: '0',
-                name: '其他渠道'
+                name: '全部'
               })
               this.getList()
               this.getTodayInfo()
@@ -401,10 +400,11 @@
       min-width: 70px;
     }
     .-search-selectOne {
-      width: 100px;
+      width: 250px;
       border: 1px solid #dcdee2;
       border-radius: 4px;
       margin-right: 20px;
+      text-align: left;
     }
 
     .date-time {

@@ -37,9 +37,12 @@ const errorHandle = (status, err) => {
       break;
     // 401: 未登录状态，跳转登录页
     case 401:
+      tip('未授权，不能访问该资源');
+      break
     case 402:
-    case 403:
       toLogin();
+      break
+    case 403:
       break;
     // 404请求不存在
     case 404:
