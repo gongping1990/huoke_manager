@@ -178,7 +178,7 @@
                   display: 'flex',
                   justifyContent: 'space-around'
                 }
-              }, params.row.workImg.length ? params.row.workImg.map((item, index) => {
+              }, params.row.workImgSrc.length ? params.row.workImgSrc.map((item, index) => {
                 return h('div', {
                   style: {
                     position: 'relative',
@@ -208,7 +208,7 @@
                     },
                     on: {
                       click: () => {
-                        window.open(item)
+                       window.open(item.split('?')[0])
                       }
                     }
                   })
@@ -291,7 +291,7 @@
                   display: 'flex',
                   justifyContent: 'space-around'
                 }
-              }, params.row.workImg.length ? params.row.workImg.map((item, index) => {
+              }, params.row.workImgSrc.length ? params.row.workImgSrc.map((item, index) => {
                 return h('div', {
                   style: {
                     position: 'relative',
@@ -321,7 +321,7 @@
                     },
                     on: {
                       click: () => {
-                        window.open(item)
+                       window.open(item.split('?')[0])
                       }
                     }
                   })
@@ -394,7 +394,7 @@
                     },
                     on: {
                       click: () => {
-                        window.open(item)
+                       window.open(item.split('?')[0])
                       }
                     }
                   })
@@ -493,7 +493,7 @@
                   display: 'flex',
                   justifyContent: 'space-around'
                 }
-              }, params.row.workImg.length ? params.row.workImg.map((item, index) => {
+              }, params.row.workImgSrc.length ? params.row.workImgSrc.map((item, index) => {
                 return h('div', {
                   style: {
                     position: 'relative',
@@ -523,7 +523,7 @@
                     },
                     on: {
                       click: () => {
-                        window.open(item)
+                       window.open(item.split('?')[0])
                       }
                     }
                   })
@@ -695,9 +695,10 @@
               this.dataList = response.data.resultData.records;
               this.total = response.data.resultData.total;
               for (let item of this.dataList) {
-                item.workImg = item.workImg ? item.workImg.split(',') : []
+                item.workImgSrc = item.workImgSrc ? item.workImgSrc.split(',') : []
                 item.replyImg = item.replyImg ? item.replyImg.split(',') : []
               }
+              console.log(this.dataList,1)
             })
           .finally(() => {
             this.isFetching = false
