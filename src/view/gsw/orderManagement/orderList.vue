@@ -15,6 +15,7 @@
             <Select v-model="selectInfo" class="-search-select">
               <Option value="0">订单号</Option>
               <Option value="1">用户昵称</Option>
+              <Option value="2">手机号码</Option>
             </Select>
             <span class="-search-center">|</span>
             <Input v-model="searchInfo.antistop" class="-search-input" placeholder="请输入关键字" icon="ios-search"
@@ -57,6 +58,10 @@
         <div class="-p-o-flex">
           <FormItem label="创建时间" class="-p-o-width">{{orderInfo.gmtCreate | timeFormatter}}</FormItem>
           <FormItem label="支付时间" class="-p-o-width">{{orderInfo.timeEnd}}</FormItem>
+        </div>
+        <div class="-p-o-flex">
+          <FormItem label="手机号码" class="-p-o-width">{{orderInfo.phone}}</FormItem>
+          <FormItem  class="-p-o-width"></FormItem>
         </div>
       </Form>
       <div slot="footer" class="-p-o-footer">
@@ -160,6 +165,11 @@
             align: 'center'
           },
           {
+            title: '手机号码',
+            key: 'phone',
+            align: 'center'
+          },
+          {
             title: '订单状态',
             render: (h, params) => {
               return h('div', this.orderType[params.row.orderMode-1])
@@ -260,6 +270,8 @@
           params.id = this.searchInfo.antistop
         } else if (this.selectInfo == '1' && this.searchInfo.antistop) {
           params.nickName = this.searchInfo.antistop
+        } else if (this.selectInfo == '2' && this.searchInfo.antistop) {
+          params.phone = this.searchInfo.antistop
         }
 
         return params
