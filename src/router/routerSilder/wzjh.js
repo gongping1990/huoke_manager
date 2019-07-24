@@ -8,8 +8,8 @@ export const wzjhRouter =[
     component: Main,
     children: [
       {
-        path: '/userData',
-        name: 'userData',
+        path: '/wzjh_userData',
+        name: 'wzjh_userData',
         meta: [
           {name: '数据中心'},
           {name: '访问数据'},
@@ -17,8 +17,8 @@ export const wzjhRouter =[
         component: () => import('@/view/wzjh/userData2/userData2')
       },
       {
-        path: '/retainData',
-        name: 'retainData',
+        path: '/wzjh_retainData',
+        name: 'wzjh_retainData',
         meta: [
           {name: '数据中心'},
           {name: '留存数据'},
@@ -26,8 +26,8 @@ export const wzjhRouter =[
         component: () => import('@/view/wzjh/retainData/retainData')
       },
       {
-        path: '/columnData',
-        name: 'columnData',
+        path: '/wzjh_columnData',
+        name: 'wzjh_columnData',
         title: '栏目数据',
         meta: [
           {name: '数据中心'},
@@ -36,8 +36,8 @@ export const wzjhRouter =[
         component: () => import('@/view/wzjh/columnData/columnData')
       },
       {
-        path: '/articleData',
-        name: 'articleData',
+        path: '/wzjh_articleData',
+        name: 'wzjh_articleData',
         meta: [
           {name: '数据中心'},
           {name: '文章数据'},
@@ -45,8 +45,8 @@ export const wzjhRouter =[
         component: () => import('@/view/wzjh/articleData/articleData')
       },
       {
-        path: '/channelManagement',
-        name: 'channelManagement',
+        path: '/wzjh_channelManagement',
+        name: 'wzjh_channelManagement',
         meta: [
           {name: '数据中心'},
           {name: '渠道管理'},
@@ -71,8 +71,8 @@ export const wzjhRouter =[
         component: () => import('@/view/wzjh/content/subject/subject')
       },
       {
-        path: '/synchronousLearning',
-        name: 'synchronousLearning',
+        path: '/wzjh_synchronousLearning',
+        name: 'wzjh_synchronousLearning',
         meta: [
           {name: '内容管理'},
           {name: '同步学习'},
@@ -80,8 +80,8 @@ export const wzjhRouter =[
         component: () => import('@/view/wzjh/content/synchronousLearning/teachingList')
       },
       {
-        path: '/learningResource',
-        name: 'learningResource',
+        path: '/wzjh_learningResource',
+        name: 'wzjh_learningResource',
         meta: [
           {name: '内容管理'},
           {name: '学习资源'},
