@@ -8,8 +8,8 @@ export const zlkRouter =[
     component: Main,
     children: [
       {
-        path: '/columnData',
-        name: 'columnData',
+        path: '/zlk_columnData',
+        name: 'zlk_columnData',
         meta: [
           {name: '数据统计'},
           {name: '栏目数据'}
@@ -46,8 +46,8 @@ export const zlkRouter =[
     component: Main,
     children: [
       {
-        path: '/column',
-        name: 'column',
+        path: '/zlk_column',
+        name: 'zlk_column',
         meta: [
           {name: '内容管理'},
           {name: '栏目管理'}
