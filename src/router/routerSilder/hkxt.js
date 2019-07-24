@@ -374,6 +374,19 @@ export const hkxtRouter =[
           }
         ],
         component: () => import('@/view/courseManagement/course/courseList')
+      },
+      {
+        path: '/cooperationList',
+        name: 'cooperationList',
+        meta: [
+          {
+            name: '课程管理'
+          },
+          {
+            name: '合作列表'
+          }
+        ],
+        component: () => import('@/view/courseManagement/cooperation/cooperationList')
       }
     ]
   },
