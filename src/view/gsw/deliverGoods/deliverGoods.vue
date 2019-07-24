@@ -19,10 +19,11 @@
                    @on-click="getList(1)"></Input>
           </div>
         </Col>
-        <Col :span="15" class="g-flex-a-j-center -date-search">
+        <Col :span="14" class="g-flex-a-j-center -date-search">
           <date-picker-template :dataInfo="dateOption" @changeDate="changeDate"></date-picker-template>
         </Col>
-        <Col :span="3" class="g-text-right">
+        <Col :span="5" class="g-flex-a-j-center -p-d-wrap">
+          <Button type="primary" ghost class="-p-modal-btn -btn" @click="openExcel">导入发货信息</Button>
           <Button type="primary" ghost class="-p-modal-btn" @click="toExcel">导出表格</Button>
         </Col>
 
@@ -58,6 +59,27 @@
         <div @click="submitInfo('addInfo')" class="g-primary-btn "> {{isSending ? '提交中...' : '确 认'}}</div>
       </div>
     </Modal>
+
+    <Modal
+      class="p-deliverGoods"
+      v-model="isOpenExcel"
+      :mask-closable = "false"
+      @on-cancel="isOpenExcel = false"
+      width="500"
+      title="导入发货信息">
+      <div>
+        <div class="g-flex-a-j-center -d-modal">
+          <Button @click="openExcel()" ghost type="primary" style="width: 100px;">下载模板</Button>
+          <upload-file v-model="addInfo.replyImg" :option="uploadOption"></upload-file>
+        </div>
+        <div class="-c-tip g-t-center">* 仅支持.xls、xlsx文件</div>
+      </div>
+
+      <div slot="footer" class="g-flex-j-sa">
+        <Button @click="openExcel()" ghost type="primary" style="width: 100px;">取消</Button>
+        <div @click="submitExecl()" class="g-primary-btn ">确认</div>
+      </div>
+    </Modal>
   </div>
 </template>
 
@@ -65,12 +87,16 @@
   import dayjs from 'dayjs'
   import {getBaseUrl} from "@/libs/index";
   import DatePickerTemplate from "../../../components/datePickerTemplate";
+  import UploadFile from "../../../components/uploadFile";
 
   export default {
     name: 'deliverGoods',
-    components: {DatePickerTemplate},
+    components: {UploadFile, DatePickerTemplate},
     data() {
       return {
+        uploadOption: {
+          format: ['xls', 'xlsx']
+        },
         tab: {
           page: 1,
           currentPage: 1,
@@ -90,6 +116,7 @@
         total: 0,
         radioType: 0,
         isFetching: false,
+        isOpenExcel: false,
         isOpenModal: false,
         isSending: false,
         addInfo: {},
@@ -210,6 +237,9 @@
       this.getList()
     },
     methods: {
+      openExcel () {
+        this.isOpenExcel = !this.isOpenExcel
+      },
       toExcel() {
         let params = {
           send: this.radioType,
@@ -273,6 +303,9 @@
           })
       },
 
+      submitExecl () {
+
+      },
       submitInfo(name) {
         this.$refs[name].validate((valid) => {
           if (valid) {
@@ -301,6 +334,18 @@
 
 <style lang="less" scoped>
   .p-deliverGoods {
+
+    .-d-modal {
+      justify-content: space-around;
+    }
+
+    .-p-d-wrap {
+      justify-content: flex-end;
+      .-btn {
+        margin-right: 16px;
+      }
+    }
+
     .date-time {
       width: 100%;
       border: 1px solid #dcdee2;
@@ -308,8 +353,9 @@
       min-width: 155px;
     }
 
-    .-date-search {
-      margin-left: 20px;
+    .-c-tip {
+      margin-top: 30px;
+      color: #39f
     }
 
     .-c-tab {
