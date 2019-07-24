@@ -49,7 +49,7 @@
   export default {
     name: 'checkCourse',
     components: {Loading},
-    props: ['isShowModal', 'checkCourseList', 'isUpdate', 'isRadioModal', 'courseType','goodsType'],// 显示，父组件带进列表，是否是编辑，单选/多选，课程类别（单独购接口/课程接口）, 订单类别
+    props: ['isShowModal', 'checkCourseList', 'isUpdate', 'isRadioModal', 'courseType','goodsType', 'isSort'],// 显示，父组件带进列表，是否是编辑，单选/多选，课程类别（单独购接口/课程接口）, 订单类别, 是否真实销量排序(1为不排序)
     data() {
       return {
         searchInfo: '',
@@ -103,7 +103,7 @@
           size: this.size,
           name: this.searchInfo,
           type: this.goodsType,
-          saleSort: true  //需要有真实销量 需添加该字段
+          saleSort: this.isSort != '1'  //需要有真实销量 需添加该字段
         }).then(
           res => {
             this.courseList = res.data.resultData.records;

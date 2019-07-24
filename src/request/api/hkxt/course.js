@@ -30,8 +30,8 @@ const course = {
     return axios.get('/prep/course/listAllEdition')
   },
   // 课程类别列表
-  courseTypeList() {
-    return axios.get('/sch/course/category/queryPage')
+  courseTypeList(params) {
+    return axios.get('/sch/course/category/queryPage', {params: params})
   },
   // 课程类别列表创建
   addCourseType(params) {

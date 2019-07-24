@@ -115,7 +115,7 @@
           <div class="-c-course-wrap" v-if="addInfo.sharedimgUrl">
             <div class="-c-course-item">
               <img :src="addInfo.sharedimgUrl">
-              <div class="-i-del" @click="sharedimgUrl= ''">删除</div>
+              <div class="-i-del" @click="addInfo.sharedimgUrl= ''">删除</div>
             </div>
           </div>
         </Form-item>
