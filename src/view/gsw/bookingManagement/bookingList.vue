@@ -2,7 +2,7 @@
   <div class="p-booking">
     <Card>
       <Row class="g-search">
-        <Row class="g-t-left g-tab">
+        <Row class="g-t-left">
           <Radio-group v-model="radioType" type="button" @on-change="getList(1)">
             <Radio :label=0>待审核</Radio>
             <Radio :label=1>已通过</Radio>

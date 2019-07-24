@@ -1,7 +1,13 @@
 <template>
   <div class="p-patchRecord">
     <Card>
-      <Row class="g-search">
+      <Row class="g-t-left ">
+        <Radio-group v-model="radioType" type="button" @on-change="getList(1)">
+          <Radio label='1116634427162689538'>老课程</Radio>
+          <Radio label='1148165277549838337'>新课程</Radio>
+        </Radio-group>
+      </Row>
+      <Row class="g-search g-tab">
         <Col :span="5">
           <div class="-search">
             <Select v-model="selectInfo" class="-search-select">
@@ -66,6 +72,7 @@
           pageSize: 10
         },
         dataList: [],
+        radioType: '1116634427162689538',
         selectInfo: '1',
         searchInfo: {},
         userInfo: '',
@@ -170,7 +177,9 @@
         }
         this.$api.poem.listRepairCard({
           current: num ? num : this.tab.page,
-          phone: this.searchInfo.phone
+          size: this.tab.pageSize,
+          phone: this.searchInfo.phone,
+          courseId: this.radioType
         })
           .then(
             response => {
@@ -207,6 +216,9 @@
 
 <style lang="less" scoped>
   .p-patchRecord {
+    .g-add-top {
+      top: 96px;
+    }
 
     .-c-tips {
       color: #39f

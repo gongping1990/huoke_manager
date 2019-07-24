@@ -2,7 +2,7 @@
   <div class="p-job">
     <Card>
       <Row class="g-search">
-        <Row class="g-t-left g-tab">
+        <Row class="g-t-left ">
           <Radio-group v-model="radioType" type="button" @on-change="getList(1)">
             <Radio :label=0>待批改</Radio>
             <Radio :label=1>不合格</Radio>
