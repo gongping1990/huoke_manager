@@ -164,8 +164,8 @@ export const hkxtRouter =[
         component: () => import('@/view/operate/topBar/topBar')
       },
       {
-        path: '/bannerList',
-        name: 'bannerList',
+        path: '/hkxt_bannerList',
+        name: 'hkxt_bannerList',
         meta: [
           {
             name: '运营管理'
