@@ -14,7 +14,7 @@ export const gswRouter =[
           {name: '数据统计'},
           {name: '渠道管理'}
         ],
-        component: () => import('@/view/gsw/channelManagement/channelManagementList')
+        component: () => import('@/view/gsw/channelManagement/channeFirst')
       },
       {
         path: '/gsw_retainData',

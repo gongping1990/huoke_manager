@@ -196,7 +196,8 @@
           if (valid) {
             this.$api.poem.repairCard({
               date: dayjs(this.addInfo.date).format('YYYY-MM-DD'),
-              phone: this.addInfo.phone
+              phone: this.addInfo.phone,
+              courseId: this.radioType
             })
               .then(
                 response => {

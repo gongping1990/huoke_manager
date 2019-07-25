@@ -177,7 +177,17 @@ export const otherRouter = {
         {name: '子栏目管理'}
       ],
       component: () => import('@/view/wzjh/content/learningResource/learningResource')
-    }
+    },
+    {
+      path: '/gsw_secondChannel',
+      name: 'gsw_secondChannel',
+      meta: [
+        {name: '数据统计'},
+        {name: '渠道管理', url: 'gsw_channel'},
+        {name: '二级渠道管理'}
+      ],
+      component: () => import('@/view/gsw/channelManagement/channelSecond')
+    },
   ]
 };
 
