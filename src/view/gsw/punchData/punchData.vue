@@ -25,14 +25,20 @@
       <Table v-if="dataType==='1'" class="-c-tab" :loading="isFetching" :columns="columns" :data="dataList"></Table>
 
       <Row v-else class="-c-tab">
+        <!--<div class="-p-tab">-->
+          <!--<Col v-for="(list,index) of dataList" :key="index">-->
+            <!--<div class="-p-tab-tr">{{list.name}}</div>-->
+            <!--<div class="-p-tab-tb" v-for="(item,index1) of list.list" :key="index1">-->
+              <!--{{item.date}}-->
+            <!--</div>-->
+          <!--</Col>-->
+        <!--</div>-->
         <div class="-p-tab">
-          <Col v-for="(list,index) of dataList" :key="index" >
-            <div class="-p-tab-tr">{{list.name}}</div>
-            <div v-for="(item,index1) of list.list" :key="index1">
-              {{item.date}}
-            </div>
-          </Col>
+          <div v-for="(list,index) of dataList" :key="index" class="-p-tab-tr" :class="{'-p-tab-first': index == 0}">
+            <div class="-p-tab-tb" v-for="(item,index1) of list" :key="index1">{{item}}</div>
+          </div>
         </div>
+
       </Row>
 
       <Page class="g-text-right" :total="total" size="small" show-elevator :page-size="tab.pageSize"
@@ -360,7 +366,109 @@
                       date: '10.2%'
                     }
                   ]
-                }
+                },
+                {
+                  name: '风',
+                  list: [
+                    {
+                      date: '598'
+                    },
+                    {
+                      date: '632'
+                    },
+                    {
+                      date: '4589'
+                    },
+                    {
+                      date: '1202'
+                    },
+                    {
+                      date: '636'
+                    },
+                    {
+                      date: '987'
+                    },
+                    {
+                      date: '997'
+                    },
+                    {
+                      date: '10.2%'
+                    }
+                  ]
+                },
+                {
+                  name: '风',
+                  list: [
+                    {
+                      date: '598'
+                    },
+                    {
+                      date: '632'
+                    },
+                    {
+                      date: '4589'
+                    },
+                    {
+                      date: '1202'
+                    },
+                    {
+                      date: '636'
+                    },
+                    {
+                      date: '987'
+                    },
+                    {
+                      date: '997'
+                    },
+                    {
+                      date: '10.2%'
+                    }
+                  ]
+                },
+                {
+                  name: '风',
+                  list: [
+                    {
+                      date: '598'
+                    },
+                    {
+                      date: '632'
+                    },
+                    {
+                      date: '4589'
+                    },
+                    {
+                      date: '1202'
+                    },
+                    {
+                      date: '636'
+                    },
+                    {
+                      date: '987'
+                    },
+                    {
+                      date: '997'
+                    },
+                    {
+                      date: '10.2%'
+                    }
+                  ]
+                },
+              ]
+
+              this.dataList = [
+                ['日期','江南','长歌行','卢乐阁','雪','百里香','咏柳','真心自我','枫桥夜泊','哈哈','风'],
+                ['2019/10/01','598','896','635','5566','121','3434','4354','121','0','66'],
+                ['2019/10/01','598','896','635','5566','121','3434','4354','121','0','66'],
+                ['2019/10/01','598','896','635','5566','121','3434','4354','121','0','66'],
+                ['2019/10/01','598','896','635','5566','121','3434','4354','121','0','66'],
+                ['2019/10/01','598','896','635','5566','121','3434','4354','121','0','66'],
+                ['2019/10/01','598','896','635','5566','121','3434','4354','121','0','66'],
+                ['2019/10/01','598','896','635','5566','121','3434','4354','121','0','66'],
+                ['2019/10/01','598','896','635','5566','121','3434','4354','121','0','66'],
+                ['课时打卡总数','11','22','33','44','55','66','77','88','99','10'],
+                ['购买后已排课课总人数','598','896','635','5566','121','3434','4354','121','0','66'],
+                ['比率','23%','11%','10%','5.5%','36.9%','0.2%','0.03%','0.04%','10%','11%'],
               ]
             })
           .finally(() => {
@@ -375,12 +483,53 @@
 <style lang="less" scoped>
   .p-punchData {
     .-p-tab {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      /*display: flex;*/
+      position: relative;
+      border: 1px solid #dcdee2;
+      /*justify-content: space-between;*/
+      /*align-items: center;*/
+
+      width: inherit;
+      height: 100%;
+      max-width: 100%;
+      overflow: hidden;
+      color: #515a6e;
+      font-size: 12px;
+      box-sizing: border-box;
 
       &-tr {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        padding: 0 20px;
+        line-height: 40px;
+        height: 40px;
+        white-space: nowrap;
+        overflow: hidden;
+        border-bottom: 1px solid #e8eaec;
+        text-align: center;
+        /*max-width: 100px;*/
+        :first-child {
+            width: 330px;
+        }
+      }
 
+      &-first {
+        background-color: #f8f8f9;
+        font-weight: bold;
+
+        .-p-tab-tb {
+          width: 200px;
+        }
+
+      }
+
+      &-tb {
+        padding: 0 20px;
+        vertical-align: middle;
+        border-bottom: 1px solid #e8eaec;
+        line-height: 40px;
+        width: 120px;
       }
     }
 
