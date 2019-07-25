@@ -77,7 +77,7 @@
     name: 'userData2',
     data() {
       return {
-        radioType: '1',
+        radioType: '0',
         isFetching: false,
         dataInfo: '',
         titleList: [],
@@ -217,7 +217,11 @@
           .then(
             response => {
               this.channelList = response.data.resultData.records;
-              this.radioType = this.channelList.length && this.channelList[0].id
+              // this.radioType = this.channelList.length && this.channelList[0].id
+              this.channelList.unshift({
+                id: '0',
+                name: '全部'
+              })
               this.getList()
             })
           .finally(() => {
@@ -352,7 +356,7 @@
           },
           grid: {
             left: '6%',
-            top: '13%',
+            top: '20%',
             right: '5%'
           },
           yAxis: {
