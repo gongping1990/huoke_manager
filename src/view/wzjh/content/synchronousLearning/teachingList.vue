@@ -115,6 +115,18 @@
           {
             name: '三年级',
             key: '3'
+          },
+          {
+            name: '四年级',
+            key: '4'
+          },
+          {
+            name: '五年级',
+            key: '5'
+          },
+          {
+            name: '六年级',
+            key: '6'
           }
         ],
         semesterList: [

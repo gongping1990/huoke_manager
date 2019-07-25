@@ -9,11 +9,8 @@
             <Radio :label=1 :disabled="!isShowEdit">启用</Radio>
           </Radio-group>
         </Form-item>
-        <FormItem label="top文案" prop="content">
-          <Input type="text" v-model="addInfo.content" placeholder="请输入top文案" :disabled="!isShowEdit"></Input>
-        </FormItem>
-        <FormItem label="top按键文案" prop="buttonCon">
-          <Input type="text" v-model="addInfo.buttonCon" placeholder="请输入top按键文案" :disabled="!isShowEdit"></Input>
+        <FormItem label="图片上传">
+          <upload-img v-model="addInfo.topImg" :option="uploadOption" :isDisabled="!isShowEdit"></upload-img>
         </FormItem>
         <FormItem label="跳转链接" prop="url">
           <Input type="text" v-model="addInfo.url" placeholder="请输入跳转链接" :disabled="!isShowEdit"></Input>
@@ -33,12 +30,17 @@
 
 <script>
   import Loading from "@/components/loading";
+  import UploadImg from "../../../components/uploadImg";
 
   export default {
     name: 'customerService',
-    components: {Loading},
+    components: {UploadImg, Loading},
     data() {
       return {
+        uploadOption: {
+          tipText: '只能上传jpg/png文件，且不超过500kb',
+          size: 500
+        },
         isID: '',
         isShowEdit: false,
         isSending: false,
@@ -47,14 +49,6 @@
           enable: 0
         },
         ruleValidate: {
-          content: [
-            {required: true, message: '请输入top文案', trigger: 'blur'},
-            { type: 'string', max: 15, message: '文案不能超过15字', trigger: 'blur' }
-          ],
-          buttonCon: [
-            {required: true, message: '请输入top按键文案', trigger: 'blur'},
-            { type: 'string', max: 5, message: '按键文案不能超过5字', trigger: 'blur' }
-          ],
           url: [
             {required: true, message: '请输入跳转链接', trigger: 'blur'},
           ]
@@ -88,6 +82,10 @@
         this.$refs[name].validate((valid, data) => {
           if (valid) {
             this.isSending = true
+
+            if (!this.addInfo.topImg) {
+              return this.$Message.error('请上传图片')
+            }
             this.$api.banner.updateTopbar({
               ...this.addInfo,
               enable: this.addInfo.enable != '0'
