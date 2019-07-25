@@ -510,7 +510,7 @@
         text-align: center;
         /*max-width: 100px;*/
         :first-child {
-            width: 330px;
+            width: 220px!important;
         }
       }
 
@@ -518,9 +518,9 @@
         background-color: #f8f8f9;
         font-weight: bold;
 
-        .-p-tab-tb {
-          width: 200px;
-        }
+        /*.-p-tab-tb {*/
+          /*width: 200px;*/
+        /*}*/
 
       }
 
