@@ -33,6 +33,15 @@ export const gswRouter =[
           {name: '交易数据'}
         ],
         component: () => import('@/view/gsw/userData/userData')
+      },
+      {
+        path: '/gsw_punchData',
+        name: 'gsw_punchData',
+        meta: [
+          {name: '数据统计'},
+          {name: '打卡数据'}
+        ],
+        component: () => import('@/view/gsw/punchData/punchData')
       }
     ]
   },

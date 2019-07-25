@@ -9,11 +9,8 @@
       :on-success="handleSuccessPlay"
       :on-exceeded-size="handleSize"
       :on-error="handleErr">
-      <Button ghost type="primary" class="-btn" v-if="!fileDownUrl" :loading="isFetching">{{isFetching ? '上传中...' : '上传文件'}}</Button>
-      <div v-else class="g-primary-btn ">重新上传</div>
+      <Button ghost type="primary" class="-btn" :loading="isFetching">{{isFetching ? '上传中...' : '上传文件'}}</Button>
     </Upload>
-
-    <span class="-c-tips" v-if="fileDownUrl">已上传文件：{{fileName}}</span>
 
   </div>
 </template>
@@ -79,6 +76,8 @@
           .then(
             response => {
               if (response.data.code == '200') {
+                this.$Message.success('上传成功')
+                this.$emit('successFile')
                 this.audioPlayAddress = response.data.resultData
               }
             })
@@ -106,9 +105,6 @@
       width: 100px;
     }
     .-c-tips {
-      position: absolute;
-      right: 62px;
-      bottom: 98px;
       color: #39f
     }
     .-c-course-wrap-file {

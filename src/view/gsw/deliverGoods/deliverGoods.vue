@@ -67,14 +67,17 @@
       @on-cancel="isOpenExcel = false"
       width="500"
       title="导入发货信息">
-      <div>
+      <div v-if="!isSuccessFile">
         <div class="g-flex-a-j-center -d-modal">
           <Button @click="openExcel()" ghost type="primary" style="width: 100px;">下载模板</Button>
-          <upload-file v-model="addInfo.replyImg" :option="uploadOption"></upload-file>
+          <upload-file v-model="addInfo.replyImg" :option="uploadOption" @successFile="isSuccessFile = true"></upload-file>
         </div>
         <div class="-c-tip g-t-center">* 仅支持.xls、xlsx文件</div>
       </div>
-
+      <div v-else>
+        <div class="g-t-center">正确数据已全部导入，共有<span class="g-error">95</span>条数据存在问题，请下载表格，校验后重新上传</div>
+        <div class="-p-btn-error g-primary-btn ">导出错误信息</div>
+      </div>
       <div slot="footer" class="g-flex-j-sa">
         <Button @click="openExcel()" ghost type="primary" style="width: 100px;">取消</Button>
         <div @click="submitExecl()" class="g-primary-btn ">确认</div>
@@ -117,6 +120,7 @@
         radioType: 0,
         isFetching: false,
         isOpenExcel: false,
+        isSuccessFile: false,
         isOpenModal: false,
         isSending: false,
         addInfo: {},
@@ -335,6 +339,9 @@
 <style lang="less" scoped>
   .p-deliverGoods {
 
+    .-p-btn-error {
+      margin: 16px auto 0;
+    }
     .-d-modal {
       justify-content: space-around;
     }
@@ -354,7 +361,7 @@
     }
 
     .-c-tip {
-      margin-top: 30px;
+      margin-top: 10px;
       color: #39f
     }
 
