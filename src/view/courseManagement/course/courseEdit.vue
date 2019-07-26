@@ -96,7 +96,7 @@
         </Form-item>
 
         <Form-item label="课程简介" class="-c-form-item -c-border">
-          <editor v-model="addInfo.introduction" :uploadImgServer="baseUrl" style="width: 900px"></editor>
+          <editor ref="editor" v-model="addInfo.introduction" :uploadImgServer="baseUrl" style="width: 900px"></editor>
         </Form-item>
 
         <Form-item label="分享海报" prop="poster" class="-c-form-item ivu-form-item-required">
@@ -465,12 +465,12 @@ console.log(this.addInfo,11)
           .then(
             response => {
               if (response.data.code == '200') {
-                let getPass = false
                 this.addInfo = response.data.resultData
                 this.playUrl = this.addInfo.playUrl
                 this.addInfo.sortnum = +this.addInfo.sortnum
                 this.addInfo.lessonNum = +this.addInfo.lessonNum
                 this.addInfo.firstpayTime = this.addInfo.firstpayTime && new Date(this.addInfo.firstpayTime)
+                this.$refs.editor && this.$refs.editor.setHtml(this.addInfo.introduction)
                 if(this.addInfo.ageFoot == '99' && this.addInfo.ageHead=='0') {
                   this.ageType = 1
                 } else {

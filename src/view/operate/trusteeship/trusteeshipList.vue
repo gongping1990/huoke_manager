@@ -70,7 +70,7 @@
           <span class="-c-tips" v-else>只能上传jpg/png文件，且不超过1M，图片尺寸为960px*360px</span>
         </Form-item>
         <Form-item label="页面代码" prop="content" class="ivu-form-item-required" v-else>
-          <editor v-model="addInfo.content" ref="editorWang"></editor>
+          <editor  v-model="addInfo.content" ref="editor"></editor>
         </Form-item>
         <!--<FormItem label="链接" prop="link" v-if="radioType == '2'">-->
           <!--<Input :rows="5" v-model="addInfo.link" placeholder="请输入链接"></Input>-->
@@ -332,6 +332,7 @@
         this.getList();
       },
       openModal(data) {
+        this.$refs.editor && this.$refs.editor.setHtml(data.content)
         this.isOpenModal = true
         if(data) {
           this.addInfo = JSON.parse(JSON.stringify(data))

@@ -67,7 +67,7 @@
         </div>
       </Form-item>
       <Form-item label="课时文稿" class="-c-form-item -c-border">
-        <editor v-model="addInfo.document" :uploadImgServer="baseUrl" style="width: 580px"></editor>
+        <editor ref="editor" v-model="addInfo.document" :uploadImgServer="baseUrl" style="width: 580px"></editor>
       </Form-item>
     </Form>
     <div slot="footer" class="-p-s-footer">
@@ -189,6 +189,7 @@
             response => {
               if (response.data.code == '200') {
                 this.addInfo = response.data.resultData
+                this.$refs.editor && this.$refs.editor.setHtml(this.addInfo.document)
                 this.addInfo.initReadNum = +this.addInfo.initReadNum
                 this.addInfo.sequence = +this.addInfo.sequence
                 this.addInfo.disabled = this.addInfo.disabled ? 1 : 0
