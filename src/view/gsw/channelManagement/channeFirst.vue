@@ -170,7 +170,7 @@
             },
             {
               title: '操作',
-              width: 250,
+              width: 100,
               align: 'center',
               render: (h, params) => {
                 return h('div', [
@@ -222,7 +222,7 @@
             },
             {
               title: '操作',
-              width: 250,
+              width: 100,
               align: 'center',
               render: (h, params) => {
                 return h('div', [

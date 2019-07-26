@@ -108,7 +108,7 @@
     },
     methods: {
       toExcel() {
-        let downUrl = `http://prep.prod.k12.vip/statistics/exportUserKeepData`
+        let downUrl = `http://huoke.prod.k12.vip/prep/statistics/exportUserKeepData`
         window.open(downUrl, '_blank');
       },
       currentChange(val) {

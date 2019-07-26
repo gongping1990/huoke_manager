@@ -4,12 +4,20 @@
 
     <Card>
       <Row class="g-search">
-        <Row class="g-t-left">
-          <Radio-group v-model="radioType" type="button" @on-change="getList(1)">
-            <Radio label='1'>老课程</Radio>
-            <Radio label='2'>新课程</Radio>
-          </Radio-group>
-        </Row>
+        <Col :span="5">
+          <div class="-search">
+            <Select v-model="selectInfo" class="-search-select">
+              <Option value="1">活动名称</Option>
+            </Select>
+            <span class="-search-center">|</span>
+            <Input v-model="searchInfo.nickname" class="-search-input" placeholder="请输入关键字" icon="ios-search"
+                   @on-click="getList(1)"></Input>
+          </div>
+        </Col>
+        <Col :span="15" class="g-flex-a-j-center">
+          <date-picker-template :dataInfo="dateOption" @changeDate="changeDate"></date-picker-template>
+          <Button  ghost type="primary" style="width: 100px;">导出数据</Button>
+        </Col>
       </Row>
 
       <div class="g-add-btn g-add-top" @click="openModal()">
@@ -58,7 +66,7 @@
   import DatePickerTemplate from "../../../components/datePickerTemplate";
 
   export default {
-    name: 'channelManagement',
+    name: 'putInChannel',
     components: {DatePickerTemplate},
     data() {
       return {
@@ -69,7 +77,7 @@
           pageSize: 10
         },
         dateOption: {
-          name: '创建时间',
+          name: '投放日期',
           type: 'datetime'
         },
         copy_url: '',
@@ -93,60 +101,6 @@
             {type: 'string', max: 20, message: '渠道名称长度为20字', trigger: 'blur'}
           ]
         },
-        columns: [
-          {
-            title: '名称',
-            key: 'name',
-            align: 'center'
-          },
-          {
-            title: '创建时间',
-            render: (h, params) => {
-              return h('span', `${params.row.gmtCreate}`)
-            },
-            width: 300,
-            align: 'center'
-          },
-          {
-            title: '操作',
-            width: 250,
-            align: 'center',
-            render: (h, params) => {
-              return h('div', [
-                h('Button', {
-                  props: {
-                    type: 'text',
-                    size: 'small'
-                  },
-                  style: {
-                    color: '#5444E4',
-                    marginRight: '5px'
-                  },
-                  on: {
-                    click: () => {
-                      this.openModal(params.row)
-                    }
-                  }
-                }, '编辑'),
-                h('Button', {
-                  props: {
-                    type: 'text',
-                    size: 'small'
-                  },
-                  style: {
-                    color: '#5444E4',
-                    marginRight: '5px'
-                  },
-                  on: {
-                    click: () => {
-                      this.toDetail(params.row)
-                    }
-                  }
-                }, '详情')
-              ])
-            }
-          }
-        ],
         columnsModal: [
           {
             title: '学科名称',
@@ -215,6 +169,224 @@
           }
         ]
       };
+    },
+    computed: {
+      columns() {
+        let array = []
+
+        if (this.$route.query.type == '1') {
+          array = [
+            {
+              title: '投放信息',
+              key: 'name',
+              align: 'center'
+            },
+            {
+              title: '投放人',
+              key: 'name',
+              align: 'center'
+            },
+            {
+              title: '活动名称',
+              key: 'name',
+              align: 'center'
+            },
+            {
+              title: '累计页面访问量',
+              key: 'name',
+              align: 'center'
+            },
+            {
+              title: '累计访问用户',
+              key: 'name',
+              align: 'center'
+            },
+            {
+              title: '累计试听申请用户',
+              key: 'name',
+              align: 'center'
+            },
+            {
+              title: '累计付试听通过用户',
+              key: 'name',
+              align: 'center'
+            },
+            {
+              title: '累计试听后付费用户',
+              key: 'name',
+              align: 'center'
+            },
+            {
+              title: '累计付费金额',
+              key: 'name',
+              align: 'center'
+            },
+            {
+              title: '创建时间',
+              render: (h, params) => {
+                return h('span', `${params.row.gmtCreate}`)
+              },
+              width: 150,
+              align: 'center'
+            },
+            {
+              title: '操作',
+              width: 250,
+              align: 'center',
+              render: (h, params) => {
+                return h('div', [
+                  h('Button', {
+                    props: {
+                      type: 'text',
+                      size: 'small'
+                    },
+                    style: {
+                      color: '#5444E4',
+                      marginRight: '5px'
+                    },
+                    on: {
+                      click: () => {
+                        this.toDetail(params.row)
+                      }
+                    }
+                  }, '推广链接'),
+                  h('Button', {
+                    props: {
+                      type: 'text',
+                      size: 'small'
+                    },
+                    style: {
+                      color: '#5444E4',
+                      marginRight: '5px'
+                    },
+                    on: {
+                      click: () => {
+                        this.toDetail(params.row)
+                      }
+                    }
+                  }, '数据详情'),
+                  h('Button', {
+                    props: {
+                      type: 'text',
+                      size: 'small'
+                    },
+                    style: {
+                      color: '#5444E4',
+                      marginRight: '5px'
+                    },
+                    on: {
+                      click: () => {
+                        this.openModal(params.row)
+                      }
+                    }
+                  }, '编辑'),
+                ])
+              }
+            }
+          ]
+        } else {
+          array = [
+            {
+              title: '投放信息',
+              key: 'name',
+              align: 'center'
+            },
+            {
+              title: '投放人',
+              key: 'name',
+              align: 'center'
+            },
+            {
+              title: '活动名称',
+              key: 'name',
+              align: 'center'
+            },
+            {
+              title: '累计页面访问量',
+              key: 'name',
+              align: 'center'
+            },
+            {
+              title: '累计访问用户',
+              key: 'name',
+              align: 'center'
+            },
+            {
+              title: '累计付费用户',
+              key: 'name',
+              align: 'center'
+            },
+            {
+              title: '累计付费金额',
+              key: 'name',
+              align: 'center'
+            },
+            {
+              title: '创建时间',
+              render: (h, params) => {
+                return h('span', `${params.row.gmtCreate}`)
+              },
+              width: 120,
+              align: 'center'
+            },
+            {
+              title: '操作',
+              width: 250,
+              align: 'center',
+              render: (h, params) => {
+                return h('div', [
+                  h('Button', {
+                    props: {
+                      type: 'text',
+                      size: 'small'
+                    },
+                    style: {
+                      color: '#5444E4',
+                      marginRight: '5px'
+                    },
+                    on: {
+                      click: () => {
+                        this.toDetail(params.row)
+                      }
+                    }
+                  }, '推广链接'),
+                  h('Button', {
+                    props: {
+                      type: 'text',
+                      size: 'small'
+                    },
+                    style: {
+                      color: '#5444E4',
+                      marginRight: '5px'
+                    },
+                    on: {
+                      click: () => {
+                        this.toDetail(params.row)
+                      }
+                    }
+                  }, '数据详情'),
+                  h('Button', {
+                    props: {
+                      type: 'text',
+                      size: 'small'
+                    },
+                    style: {
+                      color: '#5444E4',
+                      marginRight: '5px'
+                    },
+                    on: {
+                      click: () => {
+                        this.openModal(params.row)
+                      }
+                    }
+                  }, '编辑'),
+                ])
+              }
+            }
+          ]
+        }
+        return array
+      }
     },
     mounted() {
       this.getList()

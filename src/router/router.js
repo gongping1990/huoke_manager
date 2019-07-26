@@ -188,6 +188,17 @@ export const otherRouter = {
       ],
       component: () => import('@/view/gsw/channelManagement/channelSecond')
     },
+    {
+      path: '/gsw_putInChannel',
+      name: 'gsw_putInChannel',
+      meta: [
+        {name: '数据统计'},
+        {name: '渠道管理', url: 'gsw_channel'},
+        {name: '二级渠道管理', url: 'gsw_secondChannel'},
+        {name: '投放记录'}
+      ],
+      component: () => import('@/view/gsw/channelManagement/putInChannel')
+    },
   ]
 };
 

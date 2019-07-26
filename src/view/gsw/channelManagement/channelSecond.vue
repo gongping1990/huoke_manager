@@ -32,7 +32,7 @@
         :title="addInfo.id ? '编辑渠道' : '新增渠道'">
         <Form ref="addInfo" :model="addInfo" :rules="ruleValidate" :label-width="90">
           <FormItem label="一级渠道">
-           {{firstChannelName}}
+            {{firstChannelName}}
           </FormItem>
           <FormItem label="渠道名称" prop="name">
             <Input type="text" v-model="addInfo.name" placeholder="请输入渠道名称"></Input>
@@ -57,7 +57,7 @@
         width="700"
         title="渠道价值">
         <div class="g-text-right">
-          <Button  @click="openVersion()" ghost type="primary" style="width: 100px;">添加价值版本</Button>
+          <Button @click="openVersion()" ghost type="primary" style="width: 100px;">添加价值版本</Button>
         </div>
 
         <Table class="-c-tab" :loading="isFetching" :columns="columnsModal" :data="detailList"></Table>
@@ -69,7 +69,7 @@
         @on-cancel="isOpenValueVersion = false"
         width="700"
         :title="versionInfo.id ? '编辑价值版本' : '新增价值版本'">
-        <Form ref="addInfo" :model="versionInfo" :label-width="90">
+        <Form ref="addInfo" :model="versionInfo" :label-width="100">
           <FormItem label="价值有效期">
             <Row>
               <Col span="11">
@@ -88,12 +88,17 @@
             </Row>
             <div class="-c-tips">* 添加后，有效期开始时间不能更改，结束时间只能增加，不能减少</div>
           </FormItem>
-          <FormItem label="投放位置（头条）">
-            <div>
-
-            </div>
-            <Input type="text" v-model="versionInfo.name" placeholder="请输入渠道名称"></Input>
-            <Input type="text" v-model="versionInfo.name" placeholder="请输入渠道名称"></Input>
+          <FormItem :label="item.name" v-for="(item,index) of positionList" :key="index">
+            <Row class="-p-item">
+              <Col :span="12" class="-p-item">
+                <span class="-p-item-text">预估曝光量：</span>
+                <Input type="text" v-model="item.num" placeholder="请输入预估曝光量"></Input>
+              </Col>
+              <Col :span="12" class="-p-item">
+                <span class="-p-item-text">预估价值：</span>
+                <Input type="text" v-model="item.prize" placeholder="请输入预估价值"></Input>
+              </Col>
+            </Row>
           </FormItem>
 
         </Form>
@@ -125,6 +130,7 @@
         detailList: [],
         adminList: [],
         dataList: [],
+        positionList: [],
         statusList: {
           '0': '未开始',
           '1': '进行中',
@@ -229,7 +235,7 @@
       };
     },
     computed: {
-      columns () {
+      columns() {
         let array = []
 
         if (this.$route.query.type == '1') {
@@ -321,7 +327,7 @@
                     },
                     on: {
                       click: () => {
-                        this.toSecondJump(params.row)
+                        this.toPutJump(params.row)
                       }
                     }
                   }, '投放记录'),
@@ -378,10 +384,40 @@
                     },
                     on: {
                       click: () => {
-                        this.toSecondJump(params.row)
+                        this.toDetail(params.row)
                       }
                     }
-                  }, '二级渠道'),
+                  }, '价值'),
+                  h('Button', {
+                    props: {
+                      type: 'text',
+                      size: 'small'
+                    },
+                    style: {
+                      color: '#5444E4',
+                      marginRight: '5px'
+                    },
+                    on: {
+                      click: () => {
+                        this.openModal(params.row)
+                      }
+                    }
+                  }, '编辑'),
+                  h('Button', {
+                    props: {
+                      type: 'text',
+                      size: 'small'
+                    },
+                    style: {
+                      color: '#5444E4',
+                      marginRight: '5px'
+                    },
+                    on: {
+                      click: () => {
+                        this.toPutJump(params.row)
+                      }
+                    }
+                  }, '投放记录'),
                 ])
               }
             }
@@ -401,8 +437,72 @@
     },
     mounted() {
       this.getList()
+
+      switch (+this.$route.query.type) {
+        case 1:
+          this.positionList = [
+            {
+              name: '位置（头条）',
+              num: '',
+              prize: ''
+            },
+            {
+              name: '位置（次条）',
+              num: '',
+              prize: ''
+            },
+            {
+              name: '位置（3号）',
+              num: '',
+              prize: ''
+            },
+            {
+              name: '位置（4号）',
+              num: '',
+              prize: ''
+            },
+            {
+              name: '位置（5号）',
+              num: '',
+              prize: ''
+            }
+          ]
+          break
+        case 2:
+          this.positionList = [
+            {
+              name: '位置（1号）',
+              num: '',
+              prize: ''
+            }
+          ]
+          break
+        case 3:
+          this.positionList = [
+            {
+              name: '位置（朋友圈）',
+              num: '',
+              prize: ''
+            },
+            {
+              name: '位置（消息群发）',
+              num: '',
+              prize: ''
+            }
+          ]
+          break
+      }
     },
     methods: {
+      toPutJump (data) {
+        this.$router.push({
+          path: '/gsw_putInChannel',
+          query: {
+            id: data.id,
+            type: this.$route.query.type
+          }
+        })
+      },
       delItem(param) {
         this.$Modal.confirm({
           title: '提示',
@@ -424,7 +524,7 @@
         this.isOpenModalCopy = true
         this.getChannelDetail(data)
       },
-      openVersion (data) {
+      openVersion(data) {
         this.isOpenValueVersion = true
         if (data) {
           this.versionInfo = JSON.parse(JSON.stringify(data))
@@ -453,7 +553,7 @@
         this.tab.page = val;
         this.getList();
       },
-      getChannelDetail (data) {
+      getChannelDetail(data) {
         this.$api.poem.listByChannelDetails({
           channelId: data.id
         }).then(
@@ -504,7 +604,7 @@
           }
         })
       },
-      submitInfoVersion () {
+      submitInfoVersion() {
 
       }
     }
@@ -524,7 +624,7 @@
       margin-right: 20px;
     }
 
-    .copy-input{
+    .copy-input {
       position: absolute;
       opacity: 0;
     }
@@ -551,14 +651,16 @@
       margin: 20px 0;
     }
 
-    .date-time {
-      width: 100%;
-      border: 1px solid #dcdee2;
-      border-radius: 4px;
-      min-width: 155px;
-    }
-    .-date-search {
-      margin-left: 20px;
+    .-p-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      &-text {
+        text-align: right;
+        width: 100px;
+      }
+
     }
   }
 </style>

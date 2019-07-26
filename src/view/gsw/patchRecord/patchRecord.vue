@@ -46,6 +46,12 @@
           <FormItem label="补卡日期" prop="recordTime">
             <Date-picker class="date-time" placeholder="选择开始日期" v-model="addInfo.date"></Date-picker>
           </FormItem>
+          <FormItem label="强制补卡" prop="force">
+            <Radio-group v-model="addInfo.force">
+              <Radio label='1'>是</Radio>
+              <Radio label='0'>否</Radio>
+            </Radio-group>
+          </FormItem>
         </Form>
         <div slot="footer" class="-p-b-flex">
           <Button @click="closeModal('addInfo')" ghost type="primary" style="width: 100px;">取消</Button>
@@ -179,6 +185,7 @@
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
           phone: this.searchInfo.phone,
+          force: this.searchInfo.force === '1',
           courseId: this.radioType
         })
           .then(
