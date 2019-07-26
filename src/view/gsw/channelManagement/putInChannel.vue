@@ -34,11 +34,45 @@
         class="p-channel"
         v-model="isOpenModal"
         @on-cancel="closeModal('addInfo')"
-        width="350"
-        :title="addInfo.id ? '编辑渠道' : '新增渠道'">
+        width="500"
+        :title="addInfo.id ? '编辑投放记录' : '新增投放记录'">
         <Form ref="addInfo" :model="addInfo" :rules="ruleValidate" :label-width="90">
-          <FormItem label="渠道名称" prop="name">
-            <Input type="text" v-model="addInfo.name" placeholder="请输入渠道名称"></Input>
+          <FormItem label="当前选中">
+            {{$route.query.name}}-{{$route.query.secondName}}
+          </FormItem>
+          <FormItem label="活动名称" prop="name">
+            <Input type="text" v-model="addInfo.name" placeholder="请输入活动名称"></Input>
+          </FormItem>
+          <FormItem label="投放位置" prop="position">
+            <Select v-model="addInfo.position">
+              <Option v-for="(item,index) in adminList" :label="item.name" :value="item.id" :key="index"></Option>
+            </Select>
+          </FormItem>
+          <FormItem label="投放日期" prop="date">
+            <Date-picker style="width: 100%" type="datetime" placeholder="选择日期"
+                         v-model="addInfo.date"></Date-picker>
+          </FormItem>
+          <FormItem label="预估曝光量">
+            {{addInfo.num || 0}}
+          </FormItem>
+          <FormItem label="预估价值">
+            {{addInfo.prize || 0}}
+          </FormItem>
+          <FormItem label="选择页面" prop="page">
+            <Radio-group v-model="addInfo.page">
+              <Radio label='1'>试听页面</Radio>
+              <Radio label='2'>购买页面</Radio>
+            </Radio-group>
+          </FormItem>
+          <FormItem label="投放方式" prop="mode">
+            <Select v-model="addInfo.mode">
+              <Option v-for="(item,index) in deliveryModeList" :label="item.name" :value="item.id" :key="index"></Option>
+            </Select>
+          </FormItem>
+          <FormItem label="投放人员" prop="personne">
+            <Select v-model="addInfo.personne">
+              <Option v-for="(item,index) in deliveryPersonnelList" :label="item.name" :value="item.id" :key="index"></Option>
+            </Select>
           </FormItem>
         </Form>
         <div slot="footer" class="-p-b-flex">
@@ -56,6 +90,8 @@
         title="复制链接">
         <Table class="-c-tab" :loading="isFetching" :columns="columnsModal" :data="detailList"></Table>
       </Modal>
+
+      <put-in-list-template v-model="isOpenDataModal" :id="putInId" :list="dataList"></put-in-list-template>
     </Card>
   </div>
 </template>
@@ -64,10 +100,11 @@
   import dayjs from 'dayjs'
   import {getBaseUrl} from '@/libs/index'
   import DatePickerTemplate from "../../../components/datePickerTemplate";
+  import PutInListTemplate from "./putInListTemplate";
 
   export default {
     name: 'putInChannel',
-    components: {DatePickerTemplate},
+    components: {PutInListTemplate, DatePickerTemplate},
     data() {
       return {
         baseUrl: `${getBaseUrl()}/sch/common/uploadPublicFile`,
@@ -84,6 +121,27 @@
         radioType: '1',
         detailList: [],
         dataList: [],
+        adminList: [],
+        deliveryModeList: [
+          {
+            id: '1',
+            name: '软文'
+          },
+          {
+            id: '2',
+            name: '海报'
+          },
+          {
+            id: '3',
+            name: '链接'
+          },
+          {
+            id: '4',
+            name: '其他'
+          }
+        ],
+        deliveryPersonnelList: [],
+        putInId: '',
         selectInfo: '1',
         searchInfo: {
           fromDate: '',
@@ -94,12 +152,29 @@
         isOpenModal: false,
         isOpenModalCopy: false,
         isSending: false,
+        isOpenDataModal: false,
         addInfo: {},
         ruleValidate: {
           name: [
-            {required: true, message: '请输入渠道名称', trigger: 'blur'},
-            {type: 'string', max: 20, message: '渠道名称长度为20字', trigger: 'blur'}
-          ]
+            {required: true, message: '请输入活动名称', trigger: 'blur'},
+            {type: 'string', max: 20, message: '活动名称长度为20字', trigger: 'blur'}
+          ],
+          position: [
+            {required: true, message: '请选择投放位置', trigger: 'change'},
+          ],
+          date: [
+            {required: true, type: 'date', message: '请选择投放日期', trigger: 'change'},
+          ],
+          mode: [
+            {required: true, message: '请选择投放方式', trigger: 'change'},
+          ],
+          page: [
+            {required: true, message: '请选择投放页面', trigger: 'change'},
+          ],
+          personne: [
+            {required: true, message: '请选择投放人员', trigger: 'change'},
+          ],
+
         },
         columnsModal: [
           {
@@ -261,7 +336,7 @@
                     },
                     on: {
                       click: () => {
-                        this.toDetail(params.row)
+                        this.openDataModal(params.row)
                       }
                     }
                   }, '数据详情'),
@@ -361,7 +436,7 @@
                     },
                     on: {
                       click: () => {
-                        this.toDetail(params.row)
+                        this.openDataModal(params.row)
                       }
                     }
                   }, '数据详情'),
@@ -411,6 +486,10 @@
       toDetail(data) {
         this.isOpenModalCopy = true
         this.getChannelDetail(data)
+      },
+      openDataModal () {
+        console.log(1111)
+          this.isOpenDataModal = true
       },
       openModal(data) {
         this.isOpenModal = true

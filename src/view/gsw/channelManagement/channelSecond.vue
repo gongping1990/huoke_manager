@@ -499,7 +499,9 @@
           path: '/gsw_putInChannel',
           query: {
             id: data.id,
-            type: this.$route.query.type
+            type: this.$route.query.type,
+            name: this.$route.query.name,
+            secondName: data.name,
           }
         })
       },

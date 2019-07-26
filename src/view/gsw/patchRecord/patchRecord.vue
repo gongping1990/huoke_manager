@@ -186,7 +186,6 @@
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
           phone: this.searchInfo.phone,
-          force: this.searchInfo.force === '1',
           courseId: this.radioType
         })
           .then(
@@ -205,7 +204,8 @@
             this.$api.poem.repairCard({
               date: dayjs(this.addInfo.date).format('YYYY-MM-DD'),
               phone: this.addInfo.phone,
-              courseId: this.radioType
+              courseId: this.radioType,
+              force: this.addInfo.force === '1',
             })
               .then(
                 response => {
