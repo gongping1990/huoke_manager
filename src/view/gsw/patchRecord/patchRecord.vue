@@ -169,6 +169,7 @@
       },
       openModal() {
         this.isOpenModal = true
+        this.addInfo.date = ''
       },
       closeModal(name) {
         this.isOpenModal = false
