@@ -39,7 +39,7 @@
           </div>
         </Form-item>
         <FormItem label="诗词内容">
-          <Editor v-model="addInfo.content"></Editor>
+          <Editor ref="editor" v-model="addInfo.content"></Editor>
         </FormItem>
       </Form>
       <div slot="footer" class="g-flex-j-sa" v-if="isOpenModalPoetry">
@@ -247,6 +247,7 @@
         this.getList();
       },
       openModal(data) {
+        this.$refs.editor && this.$refs.editor.setHtml(data.content)
         this.isOpenModalAdd = true
         if (data) {
           this.addInfo = JSON.parse(JSON.stringify(data))
