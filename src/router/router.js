@@ -123,7 +123,7 @@ export const otherRouter = {
       name: 'dataManagerList',
       meta: [
         {name: '内容管理'},
-        {name: '栏目管理', url: 'column'},
+        {name: '栏目管理', url: 'zlk_column'},
         {name: '资料管理'}
       ],
       component: () => import('@/view/zlk/content/dataManagerList')
@@ -133,7 +133,7 @@ export const otherRouter = {
       name: 'bannerList',
       meta: [
         {name: '内容管理'},
-        {name: '学科管理', url: 'subject'},
+        {name: '学科管理', url: 'wzjh_subject'},
         {name: 'banner管理'},
       ],
       component: () => import('@/view/wzjh/banner/bannerList')
@@ -143,7 +143,7 @@ export const otherRouter = {
       name: 'teachMain',
       meta: [
         {name: '内容管理'},
-        {name: '同步学习', url: 'synchronousLearning'},
+        {name: '同步学习', url: 'wzjh_synchronousLearning'},
         {name: '栏目管理'}
       ],
       component: () => import('@/view/wzjh/content/synchronousLearning/teachMain')
@@ -153,7 +153,7 @@ export const otherRouter = {
       name: 'articleManager',
       meta: [
         {name: '内容管理'},
-        {name: '同步学习', url: 'synchronousLearning'},
+        {name: '同步学习', url: 'wzjh_synchronousLearning'},
         {name: '文章管理'}
       ],
       component: () => import('@/view/wzjh/content/synchronousLearning/articleManager')
@@ -163,7 +163,7 @@ export const otherRouter = {
       name: 'articleManagerTwo',
       meta: [
         {name: '内容管理'},
-        {name: '学习资源', url: 'learningResource'},
+        {name: '学习资源', url: 'wzjh_learningResource'},
         {name: '文章管理'}
       ],
       component: () => import('@/view/wzjh/content/synchronousLearning/articleManager')
@@ -173,7 +173,7 @@ export const otherRouter = {
       name: 'subColumn',
       meta: [
         {name: '内容管理'},
-        {name: '学习资源', url: 'learningResource'},
+        {name: '学习资源', url: 'wzjh_learningResource'},
         {name: '子栏目管理'}
       ],
       component: () => import('@/view/wzjh/content/learningResource/learningResource')
