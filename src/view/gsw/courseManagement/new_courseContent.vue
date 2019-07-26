@@ -23,7 +23,7 @@
           <upload-img v-model="addInfo.coverphoto" :option="uploadOption"></upload-img>
         </Form-item>
         <FormItem label="诗词内容" v-if="nowType === 1">
-          <Editor v-model="addInfo.content"></Editor>
+          <Editor ref="editor" v-model="addInfo.content"></Editor>
         </FormItem>
         <FormItem label="上传视频" class="ivu-form-item-required"  v-show="nowType === 2">
           <upload-video ref="childVideo" v-model="detailInfo.videoUrl" :option="uploadVideoOption"></upload-video>
@@ -42,7 +42,7 @@
                  :maxlength='80'></Input>
         </FormItem>
         <FormItem label="朗诵内容" v-if="nowType===3 && detailInfo.type === 1">
-          <Editor v-model="detailInfo.content"></Editor>
+          <Editor ref="editor" v-model="detailInfo.content"></Editor>
         </FormItem>
       </Form>
       <div slot="footer" class="g-flex-j-sa" v-if="isOpenModalPoetry">
@@ -274,6 +274,7 @@
         }
       },
       openModalPoetry(data, type) {
+        this.$refs.editor && this.$refs.editor.setHtml(data.content)
         this.nowType = type
         this.addInfo.content = ''
         this.isOpenModalPoetry = true
@@ -336,6 +337,7 @@
             response => {
               this.detailInfo = response.data.resultData;
               this.detailInfo.type = this.detailInfo.type ? this.detailInfo.type : 2
+              this.$refs.editor && this.$refs.editor.setHtml(this.detailInfo.content)
             })
           .finally(() => {
             this.isFetching = false
