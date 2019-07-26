@@ -16,15 +16,16 @@
 </template>
 
 <script>
+  import {getBaseUrl} from '@/libs/index'
 
   export default {
     name: 'uploadFile',
     props: ['option', 'childData'],
     data() {
       return {
-        baseUrlVa: `http://hkupload.prod.k12.vip/common/uploadPrivateFile`, //私有地址 （音视频）
+        baseUrlVa: `${getBaseUrl()}/poem/goods/uploadGoodsExcel`,
         audioPlayAddress: '',
-        fileDownUrl: '',
+        fileDown: '',
         fileType: this.option.format,
         fileName: '',
         isFetching: false
@@ -36,12 +37,13 @@
     },
     watch: {
       childData(_n, _o) {
-        this.fileDownUrl = _n
-        this.getAvUrl(_n)
+        this.fileDown = _n
       },
 
-      fileDownUrl(_n, _o) {
-        this.$emit('changeUrl', _n)
+      fileDown(_n, _o) {
+        let objs = _n
+        objs.isSucess = true
+        this.$emit('changeUrl', objs)
       }
     },
     methods: {
@@ -63,27 +65,8 @@
       handleSuccessPlay(res) {
         if (res.code === 200) {
           this.isFetching = false
-          this.fileDownUrl = res.resultData.url
-          this.getAvUrl(res.resultData.url)
+          this.fileDown = res.resultData
         }
-      },
-      getAvUrl(data) {
-        if (this.isFetching) return
-        this.isFetching = true
-        this.$api.common.getAVUrl({
-          key: data
-        })
-          .then(
-            response => {
-              if (response.data.code == '200') {
-                this.$Message.success('上传成功')
-                this.$emit('successFile')
-                this.audioPlayAddress = response.data.resultData
-              }
-            })
-          .finally(() => {
-            this.isFetching = false
-          });
       },
       handleSize() {
         this.isFetching = false

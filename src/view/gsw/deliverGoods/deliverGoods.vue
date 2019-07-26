@@ -67,20 +67,22 @@
       @on-cancel="isOpenExcel = false"
       width="500"
       title="导入发货信息">
-      <div v-if="!isSuccessFile">
+      <div v-if="!downInfo.isSucess">
         <div class="g-flex-a-j-center -d-modal">
-          <Button @click="openExcel()" ghost type="primary" style="width: 100px;">下载模板</Button>
-          <upload-file v-model="addInfo.replyImg" :option="uploadOption" @successFile="isSuccessFile = true"></upload-file>
+          <Button @click="downExcel(1)" ghost type="primary" style="width: 100px;">下载模板</Button>
+          <upload-file v-model="downInfo" :option="uploadOption"></upload-file>
         </div>
         <div class="-c-tip g-t-center">* 仅支持.xls、xlsx文件</div>
       </div>
       <div v-else>
-        <div class="g-t-center">正确数据已全部导入，共有<span class="g-error">95</span>条数据存在问题，请下载表格，校验后重新上传</div>
-        <div class="-p-btn-error g-primary-btn ">导出错误信息</div>
+        <div class="g-t-center" v-if="downInfo.data.length">
+          正确数据已全部导入，共有<span class="g-error">{{downInfo.data.length}}</span>条数据存在问题，请下载表格，校验后重新上传
+        </div>
+        <div class="-p-btn-error g-primary-btn" v-if="downInfo.data.length" @click="downExcel(2)">导出错误信息</div>
+        <div class="g-t-center" v-if="!downInfo.data.length">数据已全部导入成功</div>
       </div>
       <div slot="footer" class="g-flex-j-sa">
-        <Button @click="openExcel()" ghost type="primary" style="width: 100px;">取消</Button>
-        <div @click="submitExecl()" class="g-primary-btn ">确认</div>
+        <div @click="openExcel()" class="g-primary-btn ">确认</div>
       </div>
     </Modal>
   </div>
@@ -115,12 +117,16 @@
           type: 'datetime'
         },
         selectInfo: '1',
+        downInfo: {
+          data: [],
+          errorId: '',
+          isSucess: false
+        },
         dataList: [],
         total: 0,
         radioType: 0,
         isFetching: false,
         isOpenExcel: false,
-        isSuccessFile: false,
         isOpenModal: false,
         isSending: false,
         addInfo: {},
@@ -241,6 +247,15 @@
       this.getList()
     },
     methods: {
+      downExcel (num) {
+        let downGoodsExcel
+        if(num === 1) {
+          downGoodsExcel = `${getBaseUrl()}/poem/goods/downGoodsExcel`
+        } else {
+          downGoodsExcel = `${getBaseUrl()}/poem/goods/downErrorExcel?errorId=${this.downInfo.errorId}`
+        }
+        window.open(downGoodsExcel, '_blank')
+      },
       openExcel () {
         this.isOpenExcel = !this.isOpenExcel
       },
