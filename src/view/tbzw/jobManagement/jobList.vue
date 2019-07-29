@@ -62,7 +62,7 @@
           <FormItem label="批改图片" prop="replyImg">
             <upload-img v-model="addInfo.replyImg" :option="uploadOption"></upload-img>
           </FormItem>
-          <FormItem label="批改音频" prop="replyAudio">
+          <FormItem label="批改音频">
             <upload-audio ref="childAudio" v-model="addInfo.replyAudio" :option="uploadAudioOption"></upload-audio>
           </FormItem>
         </Form>
@@ -94,8 +94,8 @@
           pageSize: 10
         },
         uploadOption: {
-          tipText: '只能上传jpg/png文件，且不超过200kb',
-          size: 200
+          tipText: '只能上传jpg/png文件，且不超过500kb',
+          size: 500
         },
         uploadAudioOption: {
           tipText: '音频格式：mp3、wma、arm 音频大小：150M以内',
@@ -469,8 +469,6 @@
           if (valid) {
             if (!this.addInfo.replyImg) {
               return this.$Message.error('请上传批改图片')
-            } else if (!this.addInfo.replyAudio) {
-              return this.$Message.error('请上传批改音频')
             }
             this.$api.composition.replyHomework(this.addInfo)
               .then(
