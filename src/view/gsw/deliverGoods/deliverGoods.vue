@@ -24,6 +24,7 @@
         </Col>
         <Col :span="5" class="g-flex-a-j-center -p-d-wrap">
           <Button type="primary" ghost class="-p-modal-btn -btn" @click="openExcel">导入发货信息</Button>
+          <Button type="primary" ghost class="-p-modal-btn -btn" @click="downExcel(2)">导出错误记录</Button>
           <Button type="primary" ghost class="-p-modal-btn" @click="toExcel">导出表格</Button>
         </Col>
 

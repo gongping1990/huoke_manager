@@ -3,8 +3,8 @@
     <Card>
       <Row class="g-t-left ">
         <Radio-group v-model="courseType" type="button" @on-change="getList(1)">
-          <Radio label='1'>老课程</Radio>
-          <Radio label='2'>新课程</Radio>
+          <Radio label='1116634427162689538'>老课程</Radio>
+          <Radio label='1148165277549838337'>新课程</Radio>
         </Radio-group>
       </Row>
       <Row class="g-t-left g-tab">
@@ -25,14 +25,6 @@
       <Table v-if="dataType==='1'" class="-c-tab" :loading="isFetching" :columns="columns" :data="dataList"></Table>
 
       <Row v-else class="-c-tab">
-        <!--<div class="-p-tab">-->
-          <!--<Col v-for="(list,index) of dataList" :key="index">-->
-            <!--<div class="-p-tab-tr">{{list.name}}</div>-->
-            <!--<div class="-p-tab-tb" v-for="(item,index1) of list.list" :key="index1">-->
-              <!--{{item.date}}-->
-            <!--</div>-->
-          <!--</Col>-->
-        <!--</div>-->
         <div class="-p-tab">
           <div v-for="(list,index) of dataList" :key="index" class="-p-tab-tr" :class="{'-p-tab-first': index == 0}">
             <div class="-p-tab-tb" v-for="(item,index1) of list" :key="index1">{{item}}</div>
@@ -66,8 +58,8 @@
         },
         dataList: [],
         coursePageList: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
-        courseType: '1',
-        dataType: '2',
+        courseType: '1116634427162689538',
+        dataType: '1',
         total: 0,
         isFetching: false,
         columns: [
@@ -79,32 +71,32 @@
           {
             title: '打卡人数',
             align: 'center',
-            key: 'createTime'
+            key: 'cardNum'
           },
           {
             title: '付费人数',
             align: 'center',
-            key: 'createTime'
+            key: 'payNum'
           },
           {
             title: '付费打卡比例',
             align: 'center',
-            key: 'createTime'
+            key: 'payCardRatio'
           },
           {
             title: '新增打卡人数（当日初次打卡）',
             align: 'center',
-            key: 'createTime'
+            key: 'newCardNum'
           },
           {
             title: '新增打卡比例',
             align: 'center',
-            key: 'createTime'
+            key: 'newCardRatio'
           },
           {
             title: '全部课时每日打卡比例',
             align: 'center',
-            key: 'createTime'
+            key: 'allLessonCardRatio'
           }
         ],
       };
@@ -121,33 +113,30 @@
       //分页查询
       getList(num) {
         this.isFetching = true
+        let paramUrl = ''
         if (num) {
           this.tab.currentPage = 1
+          this.dataList = []
         }
-        this.$api.poem.listRepairCard({
-          current: num ? num : this.tab.page,
-          size: this.tab.pageSize,
-          courseId: this.radioType
-        })
+        if (this.dataType === '1') {
+          paramUrl = this.$api.gswUserCardStatics.getUserCaardStaticsDay({
+            current: num ? num : this.tab.page,
+            size: this.tab.pageSize,
+            courseId: this.courseType
+          })
+        } else {
+          paramUrl = this.$api.gswUserCardStatics.getUserCardStaticsLesson({
+            current: num ? num : this.tab.page,
+            size: this.tab.pageSize,
+            courseId: this.courseType,
+            lessonPage: '1'
+          })
+        }
+        paramUrl
           .then(
             response => {
               this.dataList = response.data.resultData.records || [];
               this.total = response.data.resultData.total;
-
-              this.dataList = [
-                ['日期','江南','长歌行','卢乐阁','雪','百里香','咏柳','真心自我','枫桥夜泊','哈哈','风'],
-                ['2019/10/01','598','896','635','5566','121','3434','4354','121','0','66'],
-                ['2019/10/01','598','896','635','5566','121','3434','4354','121','0','66'],
-                ['2019/10/01','598','896','635','5566','121','3434','4354','121','0','66'],
-                ['2019/10/01','598','896','635','5566','121','3434','4354','121','0','66'],
-                ['2019/10/01','598','896','635','5566','121','3434','4354','121','0','66'],
-                ['2019/10/01','598','896','635','5566','121','3434','4354','121','0','66'],
-                ['2019/10/01','598','896','635','5566','121','3434','4354','121','0','66'],
-                ['2019/10/01','598','896','635','5566','121','3434','4354','121','0','66'],
-                ['课时打卡总数','11','22','33','44','55','66','77','88','99','10'],
-                ['购买后课总人数','598','896','635','5566','121','3434','4354','121','0','66'],
-                ['比率','23%','11%','10%','5.5%','36.9%','0.2%','0.03%','0.04%','10%','11%'],
-              ]
             })
           .finally(() => {
             this.isFetching = false
