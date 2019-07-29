@@ -25,10 +25,10 @@
         <FormItem label="诗词内容" v-if="nowType === 1">
           <Editor ref="editor" v-model="addInfo.content"></Editor>
         </FormItem>
-        <FormItem label="上传视频" class="ivu-form-item-required"  v-show="nowType === 2">
+        <FormItem label="上传视频" class="ivu-form-item-required" v-show="nowType === 2">
           <upload-video ref="childVideo" v-model="detailInfo.videoUrl" :option="uploadVideoOption"></upload-video>
         </FormItem>
-        <FormItem label="视频图片" class="ivu-form-item-required"  v-show="nowType === 2">
+        <FormItem label="视频图片" class="ivu-form-item-required" v-show="nowType === 2">
           <upload-img v-model="detailInfo.videoImg" :option="uploadOption"></upload-img>
         </FormItem>
         <FormItem label="作业类型" v-if="nowType===3">
@@ -43,6 +43,10 @@
         </FormItem>
         <FormItem label="朗诵内容" v-if="nowType===3 && detailInfo.type === 1">
           <Editor ref="editor" v-model="detailInfo.content"></Editor>
+        </FormItem>
+        <FormItem v-if="nowType === 4">
+          <choice-question ref="childOne" :type="2" @submitChoice="submitChoice"
+                           :childList="choiceList"></choice-question>
         </FormItem>
       </Form>
       <div slot="footer" class="g-flex-j-sa" v-if="isOpenModalPoetry">
@@ -84,10 +88,11 @@
   import UploadAudio from "../../../components/uploadAudio";
   import UploadVideo from "../../../components/uploadVideo";
   import UploadImg from "../../../components/uploadImg";
+  import ChoiceQuestion from "../../tbzw/courseManagement/choiceQuestion";
 
   export default {
     name: 'courseList',
-    components: {UploadImg, UploadVideo, UploadAudio, Editor},
+    components: {ChoiceQuestion, UploadImg, UploadVideo, UploadAudio, Editor},
     data() {
       return {
         baseUrl: `${getBaseUrl()}/sch/common/uploadPublicFile`, // 公有 （图片）
@@ -105,6 +110,7 @@
           format: ['mp4', 'wmv', 'rmvb', 'avi']
         },
         dataList: [],
+        choiceList: [],
         total: 0,
         isFetching: false,
         isOpenModalAdd: false,
@@ -145,7 +151,7 @@
           {
             title: '操作',
             align: 'center',
-            width: 340,
+            width: 400,
             render: (h, params) => {
               return h('div', [
                 h('Button', {
@@ -200,10 +206,24 @@
                   },
                   on: {
                     click: () => {
-                      this.openModalPoetry(params.row,3)
+                      this.openModalPoetry(params.row, 3)
                     }
                   }
                 }, '作业'),
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: '#5444E4'
+                  },
+                  on: {
+                    click: () => {
+                      this.openModalPoetry(params.row, 4)
+                    }
+                  }
+                }, '课后练习'),
                 h('Button', {
                   props: {
                     type: 'text',
@@ -242,6 +262,9 @@
       this.getList()
     },
     methods: {
+      submitChoice(data) {
+        this.choiceList = data || []
+      },
       changeTryOut(data) {
         this.$api.poem.changeLessonStatus({
           lessonId: data.id,
@@ -280,14 +303,18 @@
         this.isOpenModalPoetry = true
         this.addInfo = JSON.parse(JSON.stringify(data))
         this.addInfo.sortnum = +this.addInfo.sortnum
-        if(type===2|| type===3) {
+        if (type === 2 || type === 3) {
           this.getLessonContent(data.id)
+        }
+
+        if (type === 4) {
+          this.getListByLessonQuestion(data)
         }
       },
       closeModal(name) {
         this.isOpenModalAdd = false
         this.isOpenModalPoetry = false
-        if(this.nowType === 2){
+        if (this.nowType === 2) {
           setTimeout(() => {
             this.$refs.childVideo.load()
           }, 0)
@@ -309,6 +336,19 @@
               })
           }
         })
+      },
+      getListByLessonQuestion(data) {
+        this.$api.poem.listQuestion({
+          lessonId: data.id
+        })
+          .then(
+            response => {
+              this.choiceList = response.data.resultData;
+
+              setTimeout(() => {
+                this.$refs.childOne.init()
+              }, 0)
+            })
       },
       //分页查询
       getList() {
@@ -344,25 +384,25 @@
           })
       },
       submitAdd(name) {
-        if (!this.addInfo.name && this.isOpenModalAdd && this.nowType =='4') {
+        if (!this.addInfo.name && this.isOpenModalAdd && this.nowType == '4') {
           return this.$Message.error('请输入诗词名称')
-        } else if (!this.addInfo.author && this.isOpenModalAdd && this.nowType =='4') {
+        } else if (!this.addInfo.author && this.isOpenModalAdd && this.nowType == '4') {
           return this.$Message.error('请输入作者')
-        } else if (!this.addInfo.sortnum && this.isOpenModalAdd && this.nowType =='4') {
+        } else if (!this.addInfo.sortnum && this.isOpenModalAdd && this.nowType == '4') {
           return this.$Message.error('请输入排序值')
-        } else if (!this.addInfo.coverphoto && this.isOpenModalPoetry && this.nowType =='1') {
+        } else if (!this.addInfo.coverphoto && this.isOpenModalPoetry && this.nowType == '1') {
           return this.$Message.error('请上传封面图片')
-        } else if ((!this.addInfo.content || this.addInfo.content == '<p><br></p>') && this.isOpenModalPoetry && this.nowType =='1') {
+        } else if ((!this.addInfo.content || this.addInfo.content == '<p><br></p>') && this.isOpenModalPoetry && this.nowType == '1') {
           return this.$Message.error('请输入诗词内容')
-        } else if (!this.detailInfo.videoUrl && this.isOpenModalPoetry && this.nowType =='2'){
+        } else if (!this.detailInfo.videoUrl && this.isOpenModalPoetry && this.nowType == '2') {
           return this.$Message.error('请上传视频')
-        } else if (!this.detailInfo.videoImg && this.isOpenModalPoetry && this.nowType =='2'){
+        } else if (!this.detailInfo.videoImg && this.isOpenModalPoetry && this.nowType == '2') {
           return this.$Message.error('请上传视频封面图片')
-        } else if (!this.detailInfo.type && this.isOpenModalPoetry && this.nowType =='3'){
+        } else if (!this.detailInfo.type && this.isOpenModalPoetry && this.nowType == '3') {
           return this.$Message.error('请选择作业类型')
-        } else if (!this.detailInfo.homeworkRequire && this.isOpenModalPoetry && this.nowType =='3'){
+        } else if (!this.detailInfo.homeworkRequire && this.isOpenModalPoetry && this.nowType == '3') {
           return this.$Message.error('请输入作业要求')
-        } else if (!this.detailInfo.content && this.isOpenModalPoetry && this.nowType =='3' && this.detailInfo.type == '1'){
+        } else if (!this.detailInfo.content && this.isOpenModalPoetry && this.nowType == '3' && this.detailInfo.type == '1') {
           return this.$Message.error('请输入朗读内容')
         }
 
@@ -370,7 +410,7 @@
 
         switch (+this.nowType) {
           case 1:
-            paramUrl = this.addInfo.id ? this.$api.poem.updatePoemLesson ({
+            paramUrl = this.addInfo.id ? this.$api.poem.updatePoemLesson({
               ...this.addInfo,
               type: this.addInfo.id ? '' : 2
             }) : this.$api.poem.addPoemLesson({
@@ -396,13 +436,7 @@
             })
             break
           case 4:
-            paramUrl = this.addInfo.id ? this.$api.poem.updatePoemLesson ({
-              ...this.addInfo,
-              type: this.addInfo.id ? '' : 2
-            }) : this.$api.poem.addPoemLesson({
-              ...this.addInfo,
-              type: this.addInfo.id ? '' : 2
-            })
+            paramUrl = this.$api.poem.saveQuestion(this.choiceList)
             break
         }
 

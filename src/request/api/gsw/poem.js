@@ -212,6 +212,14 @@ const poem = {
   setCouponConfig(params) {
     return axios.post('/poem/coupon/setCouponConfig', params)
   },
+
+  listQuestion(params) {
+    return axios.get('/poem/lesson/listQuestion', {params: params})
+  },
+
+  saveQuestion(params) {
+    return axios.post('/poem/lesson/saveQuestion', qs.stringify(params))
+  },
 }
 
 export default poem

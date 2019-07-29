@@ -61,6 +61,28 @@
             </div>
             <div class="-c-tips">图片尺寸不低于960px*360px 图片大小：500K以内</div>
           </Form-item>
+          <Form-item label="试听课banner" class="-c-form-item ivu-form-item-required">
+            <Upload
+              v-if="isEdit"
+              style="display: inline-block"
+              :action="baseUrl"
+              :show-upload-list="false"
+              :max-size="500"
+              :on-success="handleSuccessBannerpic"
+              :on-exceeded-size="handleSize"
+              :on-error="handleErr">
+              <Button ghost type="primary">上传图片</Button>
+            </Upload>
+            <div class="-c-course-wrap" v-if="addInfo.bannerpic">
+              <div class="-c-course-item">
+                <img :src="addInfo.bannerpic">
+              </div>
+            </div>
+            <div class="-c-tips">图片尺寸不低于960px*360px 图片大小：500K以内</div>
+          </Form-item>
+          <FormItem label="小程序链接">
+            <Input type="text" :disabled="!isEdit" v-model="addInfo.appletlinks" placeholder="请输入小程序链接"></Input>
+          </FormItem>
           <FormItem label="拼课是否启用">
             <Radio-group v-model="addInfo.useGroup">
               <Radio :label=0 :disabled="!isEdit">不启用</Radio>
