@@ -253,7 +253,7 @@
         if(num === 1) {
           downGoodsExcel = `${getBaseUrl()}/poem/goods/downGoodsExcel`
         } else {
-          downGoodsExcel = `${getBaseUrl()}/poem/goods/downErrorExcel?errorId=${this.downInfo.errorId}`
+          downGoodsExcel = `${getBaseUrl()}/poem/goods/downErrorExcel`
         }
         window.open(downGoodsExcel, '_blank')
       },
