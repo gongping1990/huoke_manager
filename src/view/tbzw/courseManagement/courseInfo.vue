@@ -12,6 +12,10 @@
           <FormItem label="课程名称" prop="name">
             <Input type="text" :disabled="!isEdit" v-model="addInfo.name" placeholder="请输入课程名称"></Input>
           </FormItem>
+          <FormItem label="课时节数" prop="lessonNum">
+            <InputNumber style="width: 100%;" type="text" :disabled="!isEdit" v-model="addInfo.lessonNum" :min="0"
+                         placeholder="请输入课时节数"></InputNumber>
+          </FormItem>
           <FormItem label="单独购价格" prop="alonePrice">
             <InputNumber  style="width: 100%;" type="text" :disabled="!isEdit" v-model="addInfo.alonePrice" :min="0"
                          placeholder="请输入单独购价格（元）"></InputNumber>
@@ -107,6 +111,7 @@
           name: '',
           alonePrice: null,
           groupPrice: null,
+          lessonNum: null,
           consultPhone: null,
           aloneInfo: '',
           groupInfo: '',
@@ -119,6 +124,9 @@
         ruleValidateOne: {
           name: [
             {required: true, message: '请输入课程名称', trigger: 'blur'},
+          ],
+          lessonNum: [
+            {required: true, type: 'number', message: '请输入课时节数', trigger: 'blur'},
           ],
           alonePrice: [
             {required: true, type: 'number', message: '请输入单独购价格', trigger: 'blur'},
@@ -184,6 +192,7 @@
                 this.addInfo.alonePrice = +this.addInfo.alonePrice
                 this.addInfo.groupPrice = +this.addInfo.groupPrice
                 this.addInfo.groupTime = +this.addInfo.groupTime
+                this.addInfo.lessonNum = +this.addInfo.lessonNum
                 this.addInfo.consultPhone = +this.addInfo.consultPhone
               }
             })
