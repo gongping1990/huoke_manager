@@ -303,7 +303,7 @@
         this.isOpenModalPoetry = true
         this.addInfo = JSON.parse(JSON.stringify(data))
         this.addInfo.sortnum = +this.addInfo.sortnum
-        if (type === 2 || type === 3) {
+        if (type === 2 || type === 3 || type === 4) {
           this.getLessonContent(data.id)
         }
 
@@ -436,7 +436,68 @@
             })
             break
           case 4:
-            paramUrl = this.$api.poem.saveQuestion(this.choiceList)
+            let isCheckName = true
+            let isCheckOptionBool = false
+            let isCheckoptionJsonLength = true
+            let isCheckOptionOK = false
+            let checkOptionStatus = []
+            let checkOptionBoolStatus = []
+            let choiceDataList = []
+
+            this.choiceList.forEach(item => {
+
+              if (!item.name) {
+                isCheckName = false
+              }
+
+              if (!item.optionJson.length) {
+                isCheckoptionJsonLength = false
+              }
+
+              if (item.optionJson.length) {
+                isCheckOptionBool = item.optionJson.some(list => {
+                  return list.isChecked == true
+                })
+
+                isCheckOptionOK = item.optionJson.every(list => {
+                  return list.value != ''
+                })
+
+                checkOptionStatus.push(isCheckOptionOK)
+                checkOptionBoolStatus.push(isCheckOptionBool)
+              }
+
+              isCheckOptionBool = checkOptionBoolStatus.every(list => {
+                return list
+              })
+
+              isCheckOptionOK = checkOptionStatus.every(list => {
+                return list
+              })
+            })
+
+            if (!isCheckName) {
+              return this.$Message.error('请输入题目')
+            } else if (!this.choiceList.length) {
+              return this.$Message.error('请新增题目')
+            } else if (!isCheckoptionJsonLength) {
+              return this.$Message.error('请新增选项')
+            } else if (!isCheckOptionBool) {
+              return this.$Message.error('请选择一个正确的答案')
+            } else if (!isCheckOptionOK) {
+              return this.$Message.error('选择题不能有空选项')
+            }
+
+            choiceDataList = JSON.parse(JSON.stringify(this.choiceList))
+
+            choiceDataList.forEach(item => {
+              item.optionJson = JSON.stringify(item.optionJson)
+            })
+
+            paramUrl = this.$api.poem.saveQuestion({
+              lessonId: this.detailInfo.lessonId,
+              questionList: choiceDataList,
+            })
             break
         }
 
