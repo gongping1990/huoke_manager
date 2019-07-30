@@ -111,6 +111,19 @@ export const gswRouter =[
           }
         ],
         component: () => import('@/view/gsw/openCourseList/openCourseList')
+      },
+      {
+        path: '/gsw_flashScreen',
+        name: 'gsw_flashScreen',
+        meta: [
+          {
+            name: '运营管理'
+          },
+          {
+            name: '闪屏管理'
+          }
+        ],
+        component: () => import('@/view/gsw/flashScreen/flashScreen')
       }
     ]
   },

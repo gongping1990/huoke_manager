@@ -2,7 +2,7 @@
   <div class="p-punchData">
     <Card>
       <Row class="g-t-left ">
-        <Radio-group v-model="courseType" type="button" @on-change="getList(1)">
+        <Radio-group v-model="courseType" type="button" @on-change="changeCourse">
           <Radio label='1116634427162689538'>老课程</Radio>
           <Radio label='1148165277549838337'>新课程</Radio>
         </Radio-group>
@@ -16,7 +16,7 @@
         </Col>
         <Col :span="12" class="g-text-right" v-if="dataType==='2'">
           <span>课时分页：</span>
-          <Select v-model="tab.coursePage" style="width: 100px" class="g-t-center">
+          <Select v-model="tab.coursePage" style="width: 100px" class="g-t-center" @on-change="getList(1)">
             <Option v-for="(item,index) in coursePageList" :label="`第${item}页`" :value="item" :key="index"></Option>
           </Select>
         </Col>
@@ -57,7 +57,7 @@
           pageSize: 10
         },
         dataList: [],
-        coursePageList: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+        coursePageList: [],
         courseType: '1116634427162689538',
         dataType: '1',
         total: 0,
@@ -105,11 +105,14 @@
       this.getList()
     },
     methods: {
+      changeCourse () {
+        this.tab.coursePage = 1
+        this.getList(1)
+      },
       currentChange(val) {
         this.tab.page = val;
         this.getList();
       },
-
       //分页查询
       getList(num) {
         this.isFetching = true
@@ -129,14 +132,24 @@
             current: num ? num : this.tab.page,
             size: this.tab.pageSize,
             courseId: this.courseType,
-            lessonPage: '1'
+            lessonPage: this.tab.coursePage
           })
         }
         paramUrl
           .then(
             response => {
+              let totalLength = ''
+              let pageList = []
               this.dataList = response.data.resultData.records || [];
               this.total = response.data.resultData.total;
+
+              totalLength = Math.ceil(response.data.resultData.lessonTotal / 10)
+
+              for (var i = 0; i < totalLength; i++) {
+                pageList.push(i + 1)
+              }
+
+              this.coursePageList = pageList
             })
           .finally(() => {
             this.isFetching = false
@@ -177,7 +190,7 @@
         text-align: center;
         /*max-width: 100px;*/
         :first-child {
-            width: 220px!important;
+          width: 220px !important;
         }
       }
 
@@ -186,7 +199,7 @@
         font-weight: bold;
 
         /*.-p-tab-tb {*/
-          /*width: 200px;*/
+        /*width: 200px;*/
         /*}*/
 
       }
@@ -203,7 +216,6 @@
     .-c-tips {
       color: #39f
     }
-
 
     .-p-b-flex {
       display: flex;

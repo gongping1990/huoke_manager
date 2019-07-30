@@ -218,7 +218,7 @@ const poem = {
   },
 
   saveQuestion(params) {
-    return axios.post('/poem/lesson/saveQuestion', qs.stringify(params))
+    return axios.post('/poem/lesson/saveQuestion', params)
   },
 }
 
