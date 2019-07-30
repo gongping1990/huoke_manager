@@ -296,6 +296,32 @@ export const gswRouter =[
     ]
   },
   {
+    path: '/product',
+    name: 'product',
+    title: '产品管理',
+    component: Main,
+    children: [
+      {
+        path: '/gsw_InstallationPackage',
+        name: 'gsw_InstallationPackage',
+        meta: [
+          {name: '产品管理'},
+          {name: '安装包管理'}
+        ],
+        component: () => import('@/view/gsw/installationPackage/installationPackage')
+      },
+      {
+        path: '/gsw_upgrade',
+        name: 'gsw_upgrade',
+        meta: [
+          {name: '产品管理'},
+          {name: '升级管理'}
+        ],
+        component: () => import('@/view/gsw/upgrade/upgrade')
+      }
+    ]
+  },
+  {
     path: '/creditMall',
     name: 'creditMall',
     title: '学分商城',

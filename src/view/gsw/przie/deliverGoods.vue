@@ -125,18 +125,19 @@
                   'text-align': 'left'
                 }
               },[
-                h('div',`名称：${params.row.recipient.name}`),
-                h('div',`电话：${params.row.recipient.telephone}`),
-                h('div',`地址：${params.row.recipient.areas}`),
-                h('div',`详情：${params.row.recipient.address}`)
+                h('div',`名称：${params.row.name}`),
+                h('div',`电话：${params.row.telephone}`),
+                h('div',`地址：${params.row.areas}`),
+                h('div',`详情：${params.row.address}`)
               ])
             },
             align: 'center'
           },
           {
             title: '创建时间',
-            key: 'sendGmtCreate',
-            align: 'center'
+            render: (h, params) => {
+              return h('div', dayjs(+params.row.gmtCreate).format('YYYY-MM-DD HH:mm:ss'))
+            }
           },
           {
             title: '操作',
@@ -180,18 +181,19 @@
                   'text-align': 'left'
                 }
               },[
-                h('div',`名称：${params.row.recipient.name}`),
-                h('div',`电话：${params.row.recipient.telephone}`),
-                h('div',`地址：${params.row.recipient.areas}`),
-                h('div',`详情：${params.row.recipient.address}`)
+                h('div',`名称：${params.row.name}`),
+                h('div',`电话：${params.row.telephone}`),
+                h('div',`地址：${params.row.areas}`),
+                h('div',`详情：${params.row.address}`)
               ])
             },
             align: 'center'
           },
           {
             title: '创建时间',
-            key: 'sendGmtCreate',
-            align: 'center'
+            render: (h, params) => {
+              return h('div', dayjs(+params.row.gmtCreate).format('YYYY-MM-DD HH:mm:ss'))
+            }
           },
           {
             title: '发货信息',
@@ -201,9 +203,9 @@
                   'text-align': 'left'
                 }
               },[
-                h('div',`发货人：${params.row.sendinfo.sender}`),
-                h('div',`物流单号：${params.row.sendinfo.logisticsOddNum}`),
-                h('div',`物流公司：${params.row.sendinfo.logisticsCompany}`)
+                h('div',`发货人：${params.row.sender}`),
+                h('div',`物流单号：${params.row.logisticsOddNum}`),
+                h('div',`物流公司：${params.row.logisticsCompany}`)
               ])
             },
             align: 'center'
@@ -254,7 +256,7 @@
         this.$api.gswPrzie.getAdminConvertOrder({
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
-          convertPrizeOrderStatus: this.radioType,
+          send: this.radioType == 10,
           nickName: this.searchInfo.nickname,
           startTime: startTime,
           endTime: endTime

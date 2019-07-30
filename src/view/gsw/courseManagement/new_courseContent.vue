@@ -344,7 +344,9 @@
           .then(
             response => {
               this.choiceList = response.data.resultData;
-
+              this.choiceList.forEach(list => {
+                list.optionJson = JSON.parse(list.optionJson)
+              })
               setTimeout(() => {
                 this.$refs.childOne.init()
               }, 0)

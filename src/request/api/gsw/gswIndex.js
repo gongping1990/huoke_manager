@@ -5,6 +5,8 @@ import gswOrder from "./order";
 import gswUserCardStatics from "./userCardStatics";
 import gswOperational from "./operational";
 import gswPrzie from "./przie";
+import gswProduct from "./product";
+import gswChannel from "./channel";
 
 export const gswIndex = {
   poem,
@@ -13,5 +15,7 @@ export const gswIndex = {
   gswUserCardStatics,
   gswActive,
   gswOperational,
-  gswPrzie
+  gswPrzie,
+  gswProduct,
+  gswChannel
 }

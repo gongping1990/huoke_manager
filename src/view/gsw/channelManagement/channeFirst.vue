@@ -3,7 +3,7 @@
     <Card>
       <Row class="g-search">
         <Row class="g-t-left">
-          <Radio-group v-model="channelType" type="button" @on-change="getList(1)">
+          <Radio-group v-model="channelType" type="button" @on-change="changeChannel">
             <Radio label='1'>渠道管理</Radio>
             <Radio label='2'>渠道用户</Radio>
           </Radio-group>
@@ -13,9 +13,9 @@
             <Radio label='1'>试听课</Radio>
             <Radio label='2'>正式课</Radio>
           </Radio-group>
-          <Radio-group v-else v-model="radioType" type="button" @on-change="getList(1)">
-            <Radio label='1'>渠道管理员</Radio>
-            <Radio label='2'>投放人员</Radio>
+          <Radio-group v-else v-model="radioTypeUser" type="button" @on-change="getUserList(1)">
+            <Radio label='0'>渠道管理员</Radio>
+            <Radio label='1'>投放人员</Radio>
           </Radio-group>
         </Row>
       </Row>
@@ -67,6 +67,7 @@
           pageSize: 10
         },
         channelType: '1',
+        radioTypeUser: '0',
         radioType: '1',
         dataList: [],
         total: 0,
@@ -140,32 +141,32 @@
             },
             {
               title: '累计页面访问量',
-              key: 'name',
+              key: 'pv',
               align: 'center'
             },
             {
               title: '累计访问用户',
-              key: 'name',
+              key: 'uv',
               align: 'center'
             },
             {
               title: '累计试听申请用户',
-              key: 'name',
+              key: 'tryapplyuv',
               align: 'center'
             },
             {
               title: '累计付试听通过用户',
-              key: 'name',
+              key: 'trypasseduv',
               align: 'center'
             },
             {
               title: '累计试听后付费用户',
-              key: 'name',
+              key: 'payeduv',
               align: 'center'
             },
             {
               title: '累计付费金额',
-              key: 'name',
+              key: 'payedmoney',
               align: 'center'
             },
             {
@@ -202,22 +203,22 @@
             },
             {
               title: '累计页面访问量',
-              key: 'name',
+              key: 'pv',
               align: 'center'
             },
             {
               title: '累计访问用户',
-              key: 'name',
+              key: 'uv',
               align: 'center'
             },
             {
               title: '累计付费用户',
-              key: 'name',
+              key: 'payeduv',
               align: 'center'
             },
             {
               title: '累计付费金额',
-              key: 'name',
+              key: 'payedmoney',
               align: 'center'
             },
             {
@@ -253,6 +254,13 @@
       this.getList()
     },
     methods: {
+      changeChannel () {
+        if (this.channelType === '1') {
+          this.getList(1)
+        } else {
+          this.getUserList(1)
+        }
+      },
       toSecondJump (data) {
         this.$router.push({
           path: '/gsw_secondChannel',
@@ -269,7 +277,7 @@
         } else {
           this.addInfo = {
             name: '',
-            type: this.radioType
+            type: this.radioTypeUser
           }
         }
       },
@@ -281,6 +289,23 @@
         this.tab.page = val;
         this.getList();
       },
+      delItem(param) {
+        this.$Modal.confirm({
+          title: '提示',
+          content: '确认要删除吗？',
+          onOk: () => {
+            this.$api.gswChannel.managerRemove({
+              id: param.id
+            }).then(
+              response => {
+                if (response.data.code == "200") {
+                  this.$Message.success("操作成功");
+                  this.getUserList();
+                }
+              })
+          }
+        })
+      },
       //分页查询
       getList(num) {
         this.isFetching = true
@@ -288,10 +313,29 @@
           this.tab.currentPage = 1
         }
 
-        this.$api.poem.listByChannel({
+        this.$api.gswChannel.listPChannelTypeCount({
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
-          type: this.radioType
+          productId: this.radioType
+        })
+          .then(
+            response => {
+              this.dataList = response.data.resultData
+            })
+          .finally(() => {
+            this.isFetching = false
+          })
+      },
+      getUserList(num) {
+        this.isFetching = true
+        if (num) {
+          this.tab.currentPage = 1
+        }
+
+        this.$api.gswChannel.managerList({
+          current: num ? num : this.tab.page,
+          size: this.tab.pageSize,
+          type: this.radioTypeUser
         })
           .then(
             response => {
@@ -307,13 +351,13 @@
         this.$refs[name].validate((valid) => {
           if (valid) {
             this.isSending = true
-            let promiseDate = this.addInfo.id ? this.$api.poem.updateChannel(this.addInfo) : this.$api.poem.addChannel(this.addInfo)
+            let promiseDate = this.addInfo.id ? this.$api.gswChannel.managerUpdate(this.addInfo) : this.$api.gswChannel.managerAdd(this.addInfo)
             promiseDate
               .then(
                 response => {
                   if (response.data.code == '200') {
                     this.$Message.success('提交成功');
-                    this.getList(1)
+                    this.getUserList(1)
                     this.closeModal(name)
                   }
                 })
