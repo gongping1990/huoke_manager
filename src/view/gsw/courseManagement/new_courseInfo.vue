@@ -240,6 +240,12 @@
           this.addInfo.qrCode = res.resultData.url
         }
       },
+      handleSuccessBannerpic(res) {
+        if (res.code === 200) {
+          this.$Message.success('上传成功')
+          this.addInfo.bannerpic = res.resultData.url
+        }
+      },
       //分页查询
       getList() {
         this.isFetching = true

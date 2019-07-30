@@ -4,6 +4,7 @@ import poem from "./poem";
 import gswOrder from "./order";
 import gswUserCardStatics from "./userCardStatics";
 import gswOperational from "./operational";
+import gswPrzie from "./przie";
 
 export const gswIndex = {
   poem,
@@ -11,5 +12,6 @@ export const gswIndex = {
   gswOrder,
   gswUserCardStatics,
   gswActive,
-  gswOperational
+  gswOperational,
+  gswPrzie
 }

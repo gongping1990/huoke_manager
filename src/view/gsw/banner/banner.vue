@@ -1,7 +1,13 @@
 <template>
-  <div class="p-flashScreen">
+  <div class="p-banner">
     <Card>
-      <Row class="g-search">
+      <Row class="g-t-left">
+        <Radio-group v-model="radioType" type="button" @on-change="getList(1)">
+          <Radio :label=3>未试听</Radio>
+          <Radio :label=4>未购买</Radio>
+        </Radio-group>
+      </Row>
+      <Row class="g-search -c-tab">
         <Col :span="5">
           <div class="-search">
             <Select v-model="selectInfo" class="-search-select">
@@ -17,7 +23,7 @@
         </Col>
       </Row>
 
-      <div class="g-add-btn -t-add-icon g-add-top" @click="openModal()">
+      <div class="g-add-btn g-add-top" @click="openModal()">
         <Icon class="-btn-icon" color="#fff" type="ios-add" size="24"/>
       </div>
 
@@ -28,17 +34,22 @@
             @on-change="currentChange"></Page>
 
       <Modal
-        class="p-flashScreen"
+        class="p-banner"
         v-model="isOpenModal"
         @on-cancel="closeModal('addInfo')"
         width="500"
-        :title="addInfo.id ? '编辑闪屏' : '创建闪屏'">
+        :title="addInfo.id ? '编辑banner' : '创建banner'">
         <Form ref="addInfo" :model="addInfo" :rules="ruleValidate" :label-width="90">
-          <Form-item label="闪屏图片" prop="url" class="ivu-form-item-required">
+          <Form-item label="弹窗图片" prop="url" class="ivu-form-item-required">
             <upload-img :isDisabled="addInfo.id!=''" v-model="addInfo.url" :option="uploadOption"></upload-img>
           </Form-item>
           <FormItem label="活动名称" prop="name">
             <Input type="text" v-model="addInfo.name" placeholder="请输入活动名称"></Input>
+          </FormItem>
+          <FormItem label="排序值" prop="sortnum">
+            <Select v-model="addInfo.sortnum">{{addInfo.sortnum}}
+              <Option v-for="(item,index) of 9" :key="index" :value="item" :label="item"></Option>
+            </Select>
           </FormItem>
           <FormItem label="链接地址" prop="href">
             <Input type="text" v-model="addInfo.href" placeholder="请输入链接地址"></Input>
@@ -68,7 +79,7 @@
       </Modal>
 
       <Modal
-        class="p-flashScreen"
+        class="p-banner"
         v-model="isOpenModalData"
         @on-cancel="isOpenModalData = false"
         width="500"
@@ -83,7 +94,7 @@
         <Page class="g-text-right" :total="totalDetail" size="small" show-elevator :page-size="tabDetail.pageSize"
               :current.sync="tabDetail.currentPage"
               @on-change="detailCurrentChange"></Page>
-        <div slot="footer" class="p-flashScreen-btn">
+        <div slot="footer" class="p-banner-btn">
           <div @click="isOpenModalData = false" class="g-primary-btn"> 确 认</div>
         </div>
       </Modal>
@@ -98,11 +109,10 @@
   import UploadImg from "../../../components/uploadImg";
 
   export default {
-    name: 'flashScreen',
+    name: 'banner',
     components: {UploadImg, DatePickerTemplate},
     data() {
       return {
-        baseUrl: `${getBaseUrl()}/sch/common/uploadPublicFile`,
         tab: {
           page: 1,
           currentPage: 1,
@@ -123,6 +133,7 @@
         },
         dataList: [],
         detailList: [],
+        radioType: 3,
         operationalId: '',
         selectInfo: '1',
         searchInfo: {},
@@ -185,6 +196,10 @@
             },
             width: 100,
             align: 'center'
+          },
+          {
+            title: '排序值',
+            key: 'sortnum'
           },
           {
             title: '链接地址',
@@ -334,6 +349,7 @@
           this.getEndTime = ''
           this.addInfo = {
             id: '',
+            sortnum: '',
             url: ''
           }
         }
@@ -376,7 +392,7 @@
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
           name: this.searchInfo.nickname,
-          type: 0,
+          type: this.radioType,
           showTime: this.getStartTime ? dayjs(this.getStartTime).format("YYYY/MM/DD HH:mm:ss") : '',
           hideTime: this.getEndTime ? dayjs(this.getEndTime).format("YYYY/MM/DD HH:mm:ss") : ''
         })
@@ -425,7 +441,7 @@
       },
       submitInfo(name) {
         if (!this.addInfo.url) {
-          return this.$Message.error('请上传闪屏图片')
+          return this.$Message.error('请上传图片')
         } else if (!this.addInfo.showTime) {
           return this.$Message.error('请输入开始时间')
         } else if (!this.addInfo.hideTime) {
@@ -445,7 +461,8 @@
               name : this.addInfo.name,
               href : this.addInfo.href,
               url : this.addInfo.url,
-              type: 0
+              sortnum : this.addInfo.sortnum,
+              type: this.radioType
             })
               .then(
                 response => {
@@ -467,7 +484,11 @@
 
 
 <style lang="less" scoped>
-  .p-flashScreen {
+  .p-banner {
+    .g-add-top {
+      top: 90px;
+    }
+
     .-c-tips {
       color: #39f
     }

@@ -124,6 +124,45 @@ export const gswRouter =[
           }
         ],
         component: () => import('@/view/gsw/flashScreen/flashScreen')
+      },
+      {
+        path: '/gsw_marketingWindow',
+        name: 'gsw_marketingWindow',
+        meta: [
+          {
+            name: '运营管理'
+          },
+          {
+            name: '营销弹窗'
+          }
+        ],
+        component: () => import('@/view/gsw/marketingWindow/marketingWindow')
+      },
+      {
+        path: '/gsw_banner',
+        name: 'gsw_banner',
+        meta: [
+          {
+            name: '运营管理'
+          },
+          {
+            name: 'banner管理'
+          }
+        ],
+        component: () => import('@/view/gsw/banner/banner')
+      },
+      {
+        path: '/gsw_banner',
+        name: 'gsw_banner',
+        meta: [
+          {
+            name: '运营管理'
+          },
+          {
+            name: 'banner管理'
+          }
+        ],
+        component: () => import('@/view/gsw/marketingWindow/marketingWindow')
       }
     ]
   },
@@ -253,6 +292,32 @@ export const gswRouter =[
           {name: '用户列表'}
         ],
         component: () => import('@/view/gsw/user/userList')
+      }
+    ]
+  },
+  {
+    path: '/creditMall',
+    name: 'creditMall',
+    title: '学分商城',
+    component: Main,
+    children: [
+      {
+        path: '/gsw_prizeManager',
+        name: 'gsw_prizeManager',
+        meta: [
+          {name: '学分商城'},
+          {name: '奖品管理'}
+        ],
+        component: () => import('@/view/gsw/przie/prizeList')
+      },
+      {
+        path: '/gsw_mall_deliverGoods',
+        name: 'gsw_mall_deliverGoods',
+        meta: [
+          {name: '学分商城'},
+          {name: '发货管理'}
+        ],
+        component: () => import('@/view/gsw/przie/deliverGoods')
       }
     ]
   }
