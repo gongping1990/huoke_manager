@@ -23,7 +23,7 @@
     props: ['option', 'childData'],
     data() {
       return {
-        baseUrlVa: `${getBaseUrl()}/poem/goods/uploadGoodsExcel`,
+        baseUrlVa: `${getBaseUrl()}/poem/goods/uploadGoodsExcel?userId=${localStorage.userId}`,
         audioPlayAddress: '',
         fileDown: '',
         fileType: this.option.format,

@@ -20,7 +20,7 @@ const gswChannel = {
   listPChannelCount(params) {
     return axios.post("/poem/channel/listPChannelCount", qs.stringify(params));
   },
-  channerClose(params) {
+  channerPriceClose(params) {
     return axios.post("/poem/channel/price/close", qs.stringify(params));
   },
   channerPriceGet(params) {

@@ -91,6 +91,7 @@
                   localStorage.nowSystem = '1'
                   localStorage.isLoginSuccess = true
                   localStorage.nickname = res.data.resultData.nickname
+                  localStorage.userId = res.data.resultData.id
                 }
               })
           }

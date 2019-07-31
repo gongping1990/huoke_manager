@@ -55,7 +55,7 @@
         v-model="isOpenModalCopy"
         footer-hide
         @on-cancel="isOpenModalCopy = false"
-        width="700"
+        width="800"
         title="渠道价值">
         <div class="g-text-right">
           <Button @click="openVersion()" ghost type="primary" style="width: 100px;">添加价值版本</Button>
@@ -72,14 +72,14 @@
         class="p-channel"
         v-model="isOpenValueVersion"
         @on-cancel="isOpenValueVersion = false"
-        width="700"
-        :title="versionInfo.id ? '编辑价值版本' : '新增价值版本'">
+        width="800"
+        :title="versionInfo.version ? '编辑价值版本' : '新增价值版本'">
         <Form ref="addInfo" :model="versionInfo" :label-width="100" class="ivu-form-item-required">
           <FormItem label="价值有效期">
             <Row>
               <Col span="11">
                 <Form-item prop="getStartTime">
-                  <Date-picker style="width: 100%" type="datetime" placeholder="选择开始日期" :disabled="versionInfo.id!=''"
+                  <Date-picker style="width: 100%" type="datetime" placeholder="选择开始日期" :disabled="versionInfo.version!=''"
                                v-model="versionInfo.getStartTime" :options="dateStartOption"></Date-picker>
                 </Form-item>
               </Col>
@@ -144,8 +144,8 @@
         statusList: {
           '0': '未开始',
           '1': '进行中',
-          '2': '已结束',
-          '3': '已过期'
+          '2': '已过期',
+          '3': '已结束'
         },
         total: 0,
         totalModal: 0,
@@ -178,29 +178,44 @@
         columnsModal: [
           {
             title: '投放位置',
-            key: 'subjectName',
+            render: (h,params)=> {
+              return h('div', params.row.place.map(item=>{
+                return h('div',item)
+              }))
+            },
             align: 'center'
           },
           {
             title: '预估曝光量',
-            key: 'channelurl',
+            render: (h,params)=> {
+              return h('div', params.row.shownum.map(item=>{
+                return h('div',item)
+              }))
+            },
             align: 'center'
           },
           {
             title: '预估价值',
-            key: 'channelurl',
+            render: (h,params)=> {
+              return h('div', params.row.price.map(item=>{
+                return h('div',item)
+              }))
+            },
             align: 'center'
           },
           {
             title: '有效期',
             render: (h, params) => {
-              return h('div', dayjs(+params.row.workTime).format('YYYY-MM-DD HH:mm:ss'))
+              return h('div', `${dayjs(+params.row.startTime).format('YYYY-MM-DD')} - ${dayjs(+params.row.endTime).format('YYYY-MM-DD')}`)
             },
+            width: 180,
             align: 'center'
           },
           {
             title: '状态',
-            key: 'channelurl',
+            render: (h, params)=>{
+              return h('div', this.statusList[params.row.status])
+            },
             align: 'center'
           },
           {
@@ -215,6 +230,7 @@
                     size: 'small'
                   },
                   style: {
+                    display: (params.row.status == '0' || params.row.status == '1') ? 'inline-block' : 'none',
                     color: '#5444E4',
                     marginRight: '5px'
                   },
@@ -230,6 +246,7 @@
                     size: 'small'
                   },
                   style: {
+                    display: (params.row.status == '0' || params.row.status == '1') ? 'inline-block' : 'none',
                     color: '#5444E4',
                     marginRight: '5px'
                   },
@@ -523,13 +540,14 @@
           title: '提示',
           content: '确认要结束吗？结束后，今日内仍将继续有效',
           onOk: () => {
-            this.$api.materia.delMaterial({
-              id: param.id
+            this.$api.gswChannel.channerPriceClose({
+              chid: param.chid,
+              version: param.version
             }).then(
               response => {
                 if (response.data.code == "200") {
                   this.$Message.success("操作成功");
-                  this.getList();
+                  this.getChannelPrice();
                 }
               })
           }
@@ -544,9 +562,12 @@
         this.isOpenValueVersion = true
         if (data) {
           this.versionInfo = JSON.parse(JSON.stringify(data))
+          this.versionInfo.getStartTime = new Date(+this.versionInfo.startTime)
+          this.versionInfo.getEndTime = new Date(+this.versionInfo.endTime)
+          this.positionList = this.versionInfo.item
         } else {
           this.versionInfo = {
-            id: ''
+            version: ''
           }
         }
       },
@@ -581,6 +602,18 @@
         }).then(
           response => {
             this.detailList = response.data.resultData.records;
+            for (let list of this.detailList) {
+              list.place = []
+              list.price = []
+              list.shownum = []
+              for (let item of list.item) {
+                list.place.push(item.place)
+                list.price.push(item.price)
+                list.shownum.push(item.shownum)
+              }
+            }
+
+            console.log(this.detailList,1)
           }
         )
       },
@@ -669,8 +702,9 @@
         })
           .then(
             response => {
-              this.dataList = response.data.resultData.records;
-              this.total = response.data.resultData.total;
+              this.$Message.success('提交成功');
+              this.getChannelPrice(1)
+              this.isOpenValueVersion = false
             })
           .finally(() => {
             this.isFetching = false
