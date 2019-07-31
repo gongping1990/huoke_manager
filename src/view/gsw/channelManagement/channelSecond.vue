@@ -466,63 +466,65 @@
     mounted() {
       this.getList()
       this.getUserList()
-
-      switch (+this.$route.query.columnType) {
-        case 0:
-          this.positionList = [
-            {
-              place: '1',
-              shownum: '',
-              price: ''
-            },
-            {
-              place: '2',
-              shownum: '',
-              price: ''
-            },
-            {
-              place: '3',
-              shownum: '',
-              price: ''
-            },
-            {
-              place: '4',
-              shownum: '',
-              price: ''
-            },
-            {
-              place: '5',
-              shownum: '',
-              price: ''
-            }
-          ]
-          break
-        case 1:
-          this.positionList = [
-            {
-              place: '1',
-              shownum: '',
-              price: ''
-            }
-          ]
-          break
-        case 2:
-          this.positionList = [
-            {
-              place: '1',
-              shownum: '',
-              price: ''
-            },
-            {
-              place: '2',
-              shownum: '',
-              price: ''
-            }
-          ]
-          break
-      }
+      this.initData()
     },
     methods: {
+      initData () {
+        switch (+this.$route.query.columnType) {
+          case 0:
+            this.positionList = [
+              {
+                place: '1',
+                shownum: '',
+                price: ''
+              },
+              {
+                place: '2',
+                shownum: '',
+                price: ''
+              },
+              {
+                place: '3',
+                shownum: '',
+                price: ''
+              },
+              {
+                place: '4',
+                shownum: '',
+                price: ''
+              },
+              {
+                place: '5',
+                shownum: '',
+                price: ''
+              }
+            ]
+            break
+          case 1:
+            this.positionList = [
+              {
+                place: '1',
+                shownum: '',
+                price: ''
+              }
+            ]
+            break
+          case 2:
+            this.positionList = [
+              {
+                place: '1',
+                shownum: '',
+                price: ''
+              },
+              {
+                place: '2',
+                shownum: '',
+                price: ''
+              }
+            ]
+            break
+        }
+      },
       toPutJump (data) {
         this.$router.push({
           path: '/gsw_putInChannel',
@@ -569,6 +571,7 @@
           this.versionInfo = {
             version: ''
           }
+          this.initData()
         }
       },
       openModal(data) {
@@ -696,6 +699,7 @@
 
         this.$api.gswChannel.channerPriceUpdate({
           chid: this.priceId,
+          version: this.versionInfo.version,
           startTime: new Date(this.versionInfo.getStartTime).getTime(),
           endTime: new Date(this.versionInfo.getEndTime).getTime(),
           item: this.positionList
