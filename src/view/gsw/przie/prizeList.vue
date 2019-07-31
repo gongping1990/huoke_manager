@@ -232,8 +232,8 @@
           }
         }
 
-        this.$refs.editor && this.$refs.editor.setHtml(this.addInfo.details)
-        this.$refs.editorTwo && this.$refs.editorTwo.setHtml(this.addInfo.directions)
+        this.$refs.editor && this.$refs.editor.setHtml(this.addInfo.directions)
+        this.$refs.editorTwo && this.$refs.editorTwo.setHtml(this.addInfo.details)
         this.$forceUpdate()
       },
       closeModal(name) {
