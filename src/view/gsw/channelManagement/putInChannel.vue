@@ -16,7 +16,7 @@
         </Col>
         <Col :span="15" class="g-flex-a-j-center">
           <date-picker-template :dataInfo="dateOption" @changeDate="changeDate"></date-picker-template>
-          <Button  ghost type="primary" style="width: 100px;">导出数据</Button>
+          <Button ghost type="primary" style="width: 100px;">导出数据</Button>
         </Col>
       </Row>
 
@@ -43,35 +43,37 @@
           <FormItem label="活动名称" prop="name">
             <Input type="text" v-model="addInfo.name" placeholder="请输入活动名称"></Input>
           </FormItem>
-          <FormItem label="投放位置" prop="position">
-            <Select v-model="addInfo.position">
-              <Option v-for="(item,index) in adminList" :label="item.name" :value="item.id" :key="index"></Option>
+          <FormItem label="投放位置" prop="place">
+            <Select v-model="addInfo.place" @on-change="channerPriceGet">
+              <Option v-for="(item,index) in adminList" :label="item.place" :value="item.place" :key="index"></Option>
             </Select>
           </FormItem>
-          <FormItem label="投放日期" prop="date">
-            <Date-picker style="width: 100%" type="datetime" placeholder="选择日期"
-                         v-model="addInfo.date"></Date-picker>
+          <FormItem label="投放日期" prop="startDate">
+            <Date-picker style="width: 100%" type="datetime" placeholder="选择日期" :disabled="!addInfo.place"
+                         v-model="addInfo.startDate" @on-change="channerPriceGet"></Date-picker>
           </FormItem>
           <FormItem label="预估曝光量">
-            {{addInfo.num || 0}}
+            {{priceInfo.shownum || 0}}
           </FormItem>
           <FormItem label="预估价值">
-            {{addInfo.prize || 0}}
+            {{priceInfo.price || 0}}
           </FormItem>
           <FormItem label="选择页面" prop="page">
             <Radio-group v-model="addInfo.page">
-              <Radio label='1'>试听页面</Radio>
-              <Radio label='2'>购买页面</Radio>
+              <Radio label='1' disabled>试听页面</Radio>
+              <Radio label='2' disabled>购买页面</Radio>
             </Radio-group>
           </FormItem>
-          <FormItem label="投放方式" prop="mode">
-            <Select v-model="addInfo.mode">
-              <Option v-for="(item,index) in deliveryModeList" :label="item.name" :value="item.id" :key="index"></Option>
+          <FormItem label="投放方式" prop="showType">
+            <Select v-model="addInfo.showType">
+              <Option v-for="(item,index) in deliveryModeList" :label="item.name" :value="item.id"
+                      :key="index"></Option>
             </Select>
           </FormItem>
-          <FormItem label="投放人员" prop="personne">
-            <Select v-model="addInfo.personne">
-              <Option v-for="(item,index) in deliveryPersonnelList" :label="item.name" :value="item.id" :key="index"></Option>
+          <FormItem label="投放人员" prop="optuid">
+            <Select v-model="addInfo.optuid">
+              <Option v-for="(item,index) in deliveryPersonnelList" :label="item.name" :value="item.id"
+                      :key="index"></Option>
             </Select>
           </FormItem>
         </Form>
@@ -118,7 +120,6 @@
           type: 'datetime'
         },
         copy_url: '',
-        radioType: '1',
         detailList: [],
         dataList: [],
         adminList: [],
@@ -136,7 +137,7 @@
             name: '链接'
           },
           {
-            id: '4',
+            id: '0',
             name: '其他'
           }
         ],
@@ -154,24 +155,25 @@
         isSending: false,
         isOpenDataModal: false,
         addInfo: {},
+        priceInfo: '',
         ruleValidate: {
           name: [
             {required: true, message: '请输入活动名称', trigger: 'blur'},
             {type: 'string', max: 20, message: '活动名称长度为20字', trigger: 'blur'}
           ],
-          position: [
+          place: [
             {required: true, message: '请选择投放位置', trigger: 'change'},
           ],
-          date: [
+          startDate: [
             {required: true, type: 'date', message: '请选择投放日期', trigger: 'change'},
           ],
-          mode: [
+          showType: [
             {required: true, message: '请选择投放方式', trigger: 'change'},
           ],
           page: [
             {required: true, message: '请选择投放页面', trigger: 'change'},
           ],
-          personne: [
+          optuid: [
             {required: true, message: '请选择投放人员', trigger: 'change'},
           ],
 
@@ -242,7 +244,14 @@
               ])
             }
           }
-        ]
+        ],
+        infoList: {
+          '0': '投放日期',
+          '1': '投放位置',
+          '2': '投放方式',
+          '3': '预估曝光量',
+          '4': '预估价值',
+        }
       };
     },
     computed: {
@@ -253,53 +262,57 @@
           array = [
             {
               title: '投放信息',
-              key: 'name',
-              align: 'center'
+              render: (h,params)=>{
+                return h('div',params.row.info.map((item,index)=>{
+                  return h('div',`${this.infoList[index]}：${item}`)
+                }))
+              },
+              width: 120
             },
             {
               title: '投放人',
-              key: 'name',
+              key: 'uname',
               align: 'center'
             },
             {
               title: '活动名称',
-              key: 'name',
+              key: 'showname',
               align: 'center'
             },
             {
               title: '累计页面访问量',
-              key: 'name',
+              key: 'pv',
               align: 'center'
             },
             {
               title: '累计访问用户',
-              key: 'name',
+              key: 'uv',
               align: 'center'
             },
             {
               title: '累计试听申请用户',
-              key: 'name',
+              key: 'tryapplyuv',
               align: 'center'
             },
             {
               title: '累计付试听通过用户',
-              key: 'name',
+              key: 'trypasseduv',
               align: 'center'
             },
             {
               title: '累计试听后付费用户',
-              key: 'name',
+              key: 'payeduv',
               align: 'center'
             },
             {
               title: '累计付费金额',
-              key: 'name',
+              key: 'paymoney',
               align: 'center'
             },
             {
               title: '创建时间',
               render: (h, params) => {
-                return h('span', `${params.row.gmtCreate}`)
+                return h('span', `${dayjs(+params.row.createTime).format('YYYY-MM-DD HH:mm:ss')}`)
               },
               width: 150,
               align: 'center'
@@ -465,8 +478,49 @@
     },
     mounted() {
       this.getList()
+
     },
     methods: {
+      initData() {
+        switch (+this.$route.query.columnType) {
+          case 0:
+            this.adminList = [
+              {
+                place: '1'
+              },
+              {
+                place: '2'
+              },
+              {
+                place: '3'
+              },
+              {
+                place: '4'
+              },
+              {
+                place: '5'
+              }
+            ]
+            break
+          case 1:
+            this.adminList = [
+              {
+                place: '1'
+              }
+            ]
+            break
+          case 2:
+            this.adminList = [
+              {
+                place: '1'
+              },
+              {
+                place: '2'
+              }
+            ]
+            break
+        }
+      },
       copyUrlFn(row) {
         this.copy_url = row.channelurl;
         setTimeout(() => {
@@ -475,7 +529,7 @@
           this.$Message.success('复制成功');
         }, 500);
       },
-      download (data) {
+      download(data) {
         window.open(data.channelqrcode, '_blank');
       },
       changeDate(data) {
@@ -485,22 +539,24 @@
       },
       toDetail(data) {
         this.isOpenModalCopy = true
-        this.getChannelDetail(data)
       },
-      openDataModal () {
+      openDataModal() {
         console.log(1111)
-          this.isOpenDataModal = true
+        this.isOpenDataModal = true
       },
       openModal(data) {
+        this.priceInfo = ''
+        this.initData()
+        this.gswChannelUser()
         this.isOpenModal = true
         if (data) {
           this.addInfo = JSON.parse(JSON.stringify(data))
         } else {
           this.addInfo = {
-            name: '',
-            type: this.radioType
+            name: ''
           }
         }
+        this.addInfo.page = this.$route.query.type
       },
       closeModal(name) {
         this.isOpenModal = false
@@ -510,12 +566,26 @@
         this.tab.page = val;
         this.getList();
       },
-      getChannelDetail (data) {
-        this.$api.gswChannel.listByChannelDetails({
-          channelId: data.id
+      channerPriceGet() {
+        if(!this.addInfo.startDate) return
+        this.$api.gswChannel.channerPriceGet({
+          chid: this.$route.query.id,
+          date: new Date(this.addInfo.startDate).getTime(),
+          place: this.addInfo.place
         }).then(
           response => {
-            this.detailList = response.data.resultData;
+            this.priceInfo = response.data.resultData;
+          }
+        )
+      },
+      gswChannelUser() {
+        this.$api.gswChannel.managerList({
+          current: 1,
+          size: 1000,
+          type: 1
+        }).then(
+          response => {
+            this.deliveryPersonnelList = response.data.resultData.records;
           }
         )
       },
@@ -545,9 +615,21 @@
         if (this.isSending) return
         this.$refs[name].validate((valid) => {
           if (valid) {
+            if (!this.priceInfo.shownum || !this.priceInfo.price) {
+              return this.$Message.error('无效投放，请重新选择日期')
+            }
             this.isSending = true
-            let promiseDate = this.addInfo.id ? this.$api.gswChannel.updateChannel(this.addInfo) : this.$api.gswChannel.addChannel(this.addInfo)
-            promiseDate
+            let promiseDate = this.addInfo.id ? this.$api.gswChannel.channerAdUpdate : this.$api.gswChannel.channerAdAdd
+            promiseDate({
+              chid: this.$route.query.id,
+              productId: this.$route.query.type,
+              place: this.addInfo.place,
+              name: this.addInfo.name,
+              href: this.addInfo.page == '1' ? 'http://poem.k12.vip/subscribe' : 'http://poem.k12.vip/newDetail',
+              optuid: this.addInfo.optuid,
+              showType: this.addInfo.showType,
+              startDate: new Date(this.addInfo.startDate).getTime(),
+            })
               .then(
                 response => {
                   if (response.data.code == '200') {
@@ -569,7 +651,7 @@
 
 <style lang="less" scoped>
   .p-channel {
-    .copy-input{
+    .copy-input {
       position: absolute;
       opacity: 0;
     }

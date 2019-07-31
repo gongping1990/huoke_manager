@@ -41,6 +41,9 @@ const gswChannel = {
   channerAdAdd(params) {
     return axios.post("/poem/channel/ad/add", qs.stringify(params));
   },
+  channerAdUpdate(params) {
+    return axios.post("/poem/channel/ad/update", qs.stringify(params));
+  },
   channerAdList(params) {
     return axios.post("/poem/channel/ad/list", qs.stringify(params));
   },
