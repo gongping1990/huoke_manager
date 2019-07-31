@@ -266,6 +266,7 @@
           path: '/gsw_secondChannel',
           query: {
             type: this.radioType,
+            columnType: data.type,
             name: data.name
           }
         })

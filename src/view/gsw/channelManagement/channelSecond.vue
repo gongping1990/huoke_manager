@@ -7,6 +7,7 @@
             <div class="g-flex-a-j-center">
               <div class="-search-select-text">管理人员：</div>
               <Select v-model="selectInfoOne" @on-change="getList(1)" class="-search-selectOne">
+                <Option value="0">全部</Option>
                 <Option v-for="(item,index) in adminList" :label="item.name" :value="item.id" :key="index"></Option>
               </Select>
             </div>
@@ -37,8 +38,8 @@
           <FormItem label="渠道名称" prop="name">
             <Input type="text" v-model="addInfo.name" placeholder="请输入渠道名称"></Input>
           </FormItem>
-          <FormItem label="渠道管理员" prop="userId">
-            <Select v-model="addInfo.userId">
+          <FormItem label="渠道管理员" prop="managerId">
+            <Select v-model="addInfo.managerId">
               <Option v-for="(item,index) in adminList" :label="item.name" :value="item.id" :key="index"></Option>
             </Select>
           </FormItem>
@@ -61,6 +62,10 @@
         </div>
 
         <Table class="-c-tab" :loading="isFetching" :columns="columnsModal" :data="detailList"></Table>
+
+        <Page class="-p-text-right" :total="totalModal" size="small" show-elevator :page-size="tabModal.pageSize"
+              :current.sync="tabModal.currentPage"
+              @on-change="currentChangeModal"></Page>
       </Modal>
 
       <Modal
@@ -123,9 +128,14 @@
           currentPage: 1,
           pageSize: 10
         },
-        copy_url: '',
+        tabModal: {
+          page: 1,
+          currentPage: 1,
+          pageSize: 10
+        },
         radioType: '1',
-        selectInfoOne: '',
+        selectInfoOne: '0',
+        priceId: '',
         firstChannelName: this.$route.query.name,
         detailList: [],
         adminList: [],
@@ -138,6 +148,7 @@
           '3': '已过期'
         },
         total: 0,
+        totalModal: 0,
         isFetching: false,
         isOpenModal: false,
         isOpenModalCopy: false,
@@ -160,7 +171,7 @@
             {required: true, message: '请输入渠道名称', trigger: 'blur'},
             {type: 'string', max: 20, message: '渠道名称长度为20字', trigger: 'blur'}
           ],
-          userId: [
+          managerId: [
             {required: true, message: '请选择渠道管理员', trigger: 'change'},
           ]
         },
@@ -247,37 +258,37 @@
             },
             {
               title: '管理人员',
-              key: 'name',
+              key: 'uname',
               align: 'center'
             },
             {
               title: '累计页面访问量',
-              key: 'name',
+              key: 'pv',
               align: 'center'
             },
             {
               title: '累计访问用户',
-              key: 'name',
+              key: 'uv',
               align: 'center'
             },
             {
               title: '累计试听申请用户',
-              key: 'name',
+              key: 'tryapplyuv',
               align: 'center'
             },
             {
               title: '累计付试听通过用户',
-              key: 'name',
+              key: 'trypasseduv',
               align: 'center'
             },
             {
               title: '累计试听后付费用户',
-              key: 'name',
+              key: 'payeduv',
               align: 'center'
             },
             {
               title: '累计付费金额',
-              key: 'name',
+              key: 'payedmoney',
               align: 'center'
             },
             {
@@ -344,27 +355,27 @@
             },
             {
               title: '管理人员',
-              key: 'name',
+              key: 'uname',
               align: 'center'
             },
             {
               title: '累计页面访问量',
-              key: 'name',
+              key: 'pv',
               align: 'center'
             },
             {
               title: '累计访问用户',
-              key: 'name',
+              key: 'uv',
               align: 'center'
             },
             {
               title: '累计付费用户',
-              key: 'name',
+              key: 'payeduv',
               align: 'center'
             },
             {
               title: '累计付费金额',
-              key: 'name',
+              key: 'payedmoney',
               align: 'center'
             },
             {
@@ -437,6 +448,7 @@
     },
     mounted() {
       this.getList()
+      this.getUserList()
 
       switch (+this.$route.query.type) {
         case 1:
@@ -523,8 +535,9 @@
         })
       },
       toDetail(data) {
+        this.priceId = data.chid
         this.isOpenModalCopy = true
-        this.getChannelDetail(data)
+        this.getChannelPrice()
       },
       openVersion(data) {
         this.isOpenValueVersion = true
@@ -542,8 +555,7 @@
           this.addInfo = JSON.parse(JSON.stringify(data))
         } else {
           this.addInfo = {
-            name: '',
-            type: this.radioType
+            name: ''
           }
         }
       },
@@ -555,14 +567,32 @@
         this.tab.page = val;
         this.getList();
       },
-      getChannelDetail(data) {
-        this.$api.poem.listByChannelDetails({
-          channelId: data.id
+      currentChangeModal(val) {
+        this.tabModal.page = val;
+        this.getChannelPrice();
+      },
+      getChannelPrice() {
+        this.$api.gswChannel.channerPriceList({
+          current: this.tabModal.page,
+          size: this.tabModal.pageSize,
+          chid: this.priceId,
+          productId: this.$route.query.columnType
         }).then(
           response => {
             this.detailList = response.data.resultData;
           }
         )
+      },
+      getUserList() {
+        this.$api.gswChannel.managerList({
+          current: this.tab.page,
+          size: 1000,
+          type: 0
+        })
+          .then(
+            response => {
+              this.adminList = response.data.resultData.records;
+            })
       },
       //分页查询
       getList(num) {
@@ -571,10 +601,12 @@
           this.tab.currentPage = 1
         }
 
-        this.$api.poem.listByChannel({
+        this.$api.gswChannel.listPChannelCount({
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
-          type: this.radioType
+          managerId: this.selectInfoOne == '0' ? '' : this.selectInfoOne,
+          type: this.$route.query.columnType,
+          productId: this.$route.query.type
         })
           .then(
             response => {
@@ -590,7 +622,8 @@
         this.$refs[name].validate((valid) => {
           if (valid) {
             this.isSending = true
-            let promiseDate = this.addInfo.id ? this.$api.poem.updateChannel(this.addInfo) : this.$api.poem.addChannel(this.addInfo)
+            this.addInfo.type = this.$route.query.columnType
+            let promiseDate = this.addInfo.id ? this.$api.gswChannel.channerUpdate(this.addInfo) : this.$api.gswChannel.channerAdd(this.addInfo)
             promiseDate
               .then(
                 response => {

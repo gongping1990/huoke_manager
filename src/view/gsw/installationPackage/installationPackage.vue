@@ -78,7 +78,7 @@
           },
           {
             title: '安卓安装包',
-            key: 'androidPackage',
+            key: 'filename',
             align: 'center'
           },
           {
@@ -108,7 +108,7 @@
                     size: 'small'
                   },
                   style: {
-                    color: 'rgba(218, 55, 75)',
+                    color: '#5444E4',
                     marginRight: '5px'
                   },
                   on: {

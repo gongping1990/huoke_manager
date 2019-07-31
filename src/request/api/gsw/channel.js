@@ -23,8 +23,14 @@ const gswChannel = {
   channerClose(params) {
     return axios.post("/poem/channel/price/close", qs.stringify(params));
   },
+  channerPriceGet(params) {
+    return axios.post("/poem/channel/price/get", qs.stringify(params));
+  },
   channerPriceUpdate(params) {
     return axios.post("/poem/channel/price/update", qs.stringify(params));
+  },
+  channerPriceList(params) {
+    return axios.post("/poem/channel/price/list", qs.stringify(params));
   },
   channerAdd(params) {
     return axios.post("/poem/channel/add", qs.stringify(params));

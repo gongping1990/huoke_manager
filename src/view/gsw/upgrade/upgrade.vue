@@ -20,7 +20,7 @@
         <Form ref="addInfo" :model="addInfo" :rules="ruleValidate" :label-width="90">
           <FormItem label="选择版本" prop="id">
             <Select v-model="addInfo.id" >
-              <Option v-for="(item,index) in versionList" :label="item.name" :value="item.id" :key="index"></Option>
+              <Option v-for="(item,index) in versionList" :label="item.version" :value="item.id" :key="index"></Option>
             </Select>
             <div class="-c-tips">更新仅对装机低于发布版本的设备有效</div>
           </FormItem>
@@ -62,13 +62,10 @@
         dataList: [],
         versionList: [],
         total: 0,
-        radioType:1,
         isFetching: false,
         isOpenModal: false,
         isSending: false,
-        addInfo: {
-          force: 0
-        },
+        addInfo: {},
         ruleValidate: {
           id: [
             {required: true, message: '请选择版本号', trigger: 'change'}
@@ -80,28 +77,31 @@
         columns: [
           {
             title: '版本号',
-            key: 'name'
+            key: 'version'
           },
           {
             title: '是否强制',
-            key: 'scanNum',
+            render: (h, params)=>{
+              return h('span',params.row.force ? '是' : '否')
+            },
             align: 'center'
           },
           {
             title: '更新说明',
-            key: 'scanNum',
+            key: 'updateNotes',
             align: 'center'
           },
           {
             title: '状态',
-            key: 'scanNum',
+            render: (h, params)=>{
+              return h('div', params.row.finished ? `已结束（${params.row.finishTime}）` : '生效中')
+            },
             align: 'center'
           },
           {
             title: '创建时间',
-            render: (h, params) => {
-              return h('div', dayjs(+params.row.gmtCreate).format('YYYY-MM-DD HH:mm:ss'))
-            }
+            key:'gmtCreate',
+            align: 'center'
           },
           {
             title: '操作',
@@ -115,6 +115,7 @@
                     size: 'small'
                   },
                   style: {
+                    display: params.row.finished ? 'none' : 'inline-block',
                     color: 'rgba(218, 55, 75)',
                     marginRight: '5px'
                   },
@@ -135,12 +136,15 @@
     },
     methods: {
       openModal(data) {
+        this.getVersionList()
         this.isOpenModal = true
         if (data) {
           this.addInfo = JSON.parse(JSON.stringify(data))
           this.addInfo.endTime = new Date(+this.addInfo.endTime)
         } else {
-          this.addInfo = {}
+          this.addInfo = {
+            force: 0
+          }
         }
       },
       closeModal(name) {
@@ -151,6 +155,16 @@
         this.tab.page = val;
         this.getList();
       },
+      getVersionList() {
+        this.$api.gswProduct.listPackageByProduct({
+          current: this.tab.page,
+          size: 1000
+        })
+          .then(
+            response => {
+              this.versionList = response.data.resultData.records
+            })
+      },
       //分页查询
       getList(num) {
         this.isFetching = true
@@ -159,8 +173,7 @@
         }
         this.$api.gswProduct.listReleaseByProduct({
           current: num ? num : this.tab.page,
-          size: this.tab.pageSize,
-          normal: this.radioType === 1
+          size: this.tab.pageSize
         })
           .then(
             response => {
@@ -192,15 +205,11 @@
         if (this.isSending) return
         this.$refs[name].validate((valid) => {
           if (valid) {
-            if (!this.addInfo.qrcode) {
-              return this.$Message.error('请上传二维码')
-            }
             this.isSending = true
-            this.$api.gswProduct.saveQrcode({
+            this.$api.gswProduct.addRelease({
               id: this.addInfo.id,
-              name: this.addInfo.name,
-              qrcode: this.addInfo.qrcode,
-              endTime: new Date(this.addInfo.endTime).getTime()
+              force: this.addInfo.force,
+              updateNotes : this.addInfo.updateNotes
             })
               .then(
                 response => {
