@@ -80,7 +80,7 @@
             </div>
             <div class="-c-tips">图片尺寸不低于960px*360px 图片大小：500K以内</div>
           </Form-item>
-          <FormItem label="小程序链接">
+          <FormItem label="小程序链接" prop="appletlinks">
             <Input type="text" :disabled="!isEdit" v-model="addInfo.appletlinks" placeholder="请输入小程序链接"></Input>
           </FormItem>
           <FormItem label="拼课是否启用">
@@ -193,6 +193,9 @@
           ],
           alonePrice: [
             {required: true, type: 'number', message: '请输入单独购价格', trigger: 'blur'},
+          ],
+          appletlinks: [
+            {required: true, message: '请输入小程序链接', trigger: 'blur'},
           ],
           groupPrice: [
             {required: true, type: 'number', message: '请输入拼课价格', trigger: 'blur'},
