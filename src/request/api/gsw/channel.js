@@ -27,7 +27,7 @@ const gswChannel = {
     return axios.post("/poem/channel/price/get", qs.stringify(params));
   },
   channerPriceUpdate(params) {
-    return axios.post("/poem/channel/price/update", qs.stringify(params));
+    return axios.post("/poem/channel/price/update", params);
   },
   channerPriceList(params) {
     return axios.post("/poem/channel/price/list", qs.stringify(params));

@@ -30,7 +30,7 @@
         v-model="isOpenModal"
         @on-cancel="closeModal('addInfo')"
         width="350"
-        :title="addInfo.id ? '编辑渠道' : '新增渠道'">
+        :title="addInfo.chid ? '编辑渠道' : '新增渠道'">
         <Form ref="addInfo" :model="addInfo" :rules="ruleValidate" :label-width="90">
           <FormItem label="一级渠道">
             {{firstChannelName}}
@@ -74,7 +74,7 @@
         @on-cancel="isOpenValueVersion = false"
         width="700"
         :title="versionInfo.id ? '编辑价值版本' : '新增价值版本'">
-        <Form ref="addInfo" :model="versionInfo" :label-width="100">
+        <Form ref="addInfo" :model="versionInfo" :label-width="100" class="ivu-form-item-required">
           <FormItem label="价值有效期">
             <Row>
               <Col span="11">
@@ -93,15 +93,15 @@
             </Row>
             <div class="-c-tips">* 添加后，有效期开始时间不能更改，结束时间只能增加，不能减少</div>
           </FormItem>
-          <FormItem :label="item.name" v-for="(item,index) of positionList" :key="index">
+          <FormItem :label="'位置'+ item.place" v-for="(item,index) of positionList" :key="index">
             <Row class="-p-item">
               <Col :span="12" class="-p-item">
                 <span class="-p-item-text">预估曝光量：</span>
-                <Input type="text" v-model="item.num" placeholder="请输入预估曝光量"></Input>
+                <Input type="text" v-model="item.shownum" placeholder="请输入预估曝光量"></Input>
               </Col>
               <Col :span="12" class="-p-item">
                 <span class="-p-item-text">预估价值：</span>
-                <Input type="text" v-model="item.prize" placeholder="请输入预估价值"></Input>
+                <Input type="text" v-model="item.price" placeholder="请输入预估价值"></Input>
               </Col>
             </Row>
           </FormItem>
@@ -450,56 +450,56 @@
       this.getList()
       this.getUserList()
 
-      switch (+this.$route.query.type) {
+      switch (+this.$route.query.columnType) {
+        case 0:
+          this.positionList = [
+            {
+              place: '1',
+              shownum: '',
+              price: ''
+            },
+            {
+              place: '2',
+              shownum: '',
+              price: ''
+            },
+            {
+              place: '3',
+              shownum: '',
+              price: ''
+            },
+            {
+              place: '4',
+              shownum: '',
+              price: ''
+            },
+            {
+              place: '5',
+              shownum: '',
+              price: ''
+            }
+          ]
+          break
         case 1:
           this.positionList = [
             {
-              name: '位置（头条）',
-              num: '',
-              prize: ''
-            },
-            {
-              name: '位置（次条）',
-              num: '',
-              prize: ''
-            },
-            {
-              name: '位置（3号）',
-              num: '',
-              prize: ''
-            },
-            {
-              name: '位置（4号）',
-              num: '',
-              prize: ''
-            },
-            {
-              name: '位置（5号）',
-              num: '',
-              prize: ''
+              place: '1',
+              shownum: '',
+              price: ''
             }
           ]
           break
         case 2:
           this.positionList = [
             {
-              name: '位置（1号）',
-              num: '',
-              prize: ''
-            }
-          ]
-          break
-        case 3:
-          this.positionList = [
-            {
-              name: '位置（朋友圈）',
-              num: '',
-              prize: ''
+              place: '1',
+              shownum: '',
+              price: ''
             },
             {
-              name: '位置（消息群发）',
-              num: '',
-              prize: ''
+              place: '2',
+              shownum: '',
+              price: ''
             }
           ]
           break
@@ -510,9 +510,10 @@
         this.$router.push({
           path: '/gsw_putInChannel',
           query: {
-            id: data.id,
+            id: data.chid,
             type: this.$route.query.type,
             name: this.$route.query.name,
+            columnType: this.$route.query.columnType,
             secondName: data.name,
           }
         })
@@ -576,10 +577,10 @@
           current: this.tabModal.page,
           size: this.tabModal.pageSize,
           chid: this.priceId,
-          productId: this.$route.query.columnType
+          productId: this.$route.query.type
         }).then(
           response => {
-            this.detailList = response.data.resultData;
+            this.detailList = response.data.resultData.records;
           }
         )
       },
@@ -592,6 +593,7 @@
           .then(
             response => {
               this.adminList = response.data.resultData.records;
+              this.totalModal = response.data.resultData.total;
             })
       },
       //分页查询
@@ -623,8 +625,13 @@
           if (valid) {
             this.isSending = true
             this.addInfo.type = this.$route.query.columnType
-            let promiseDate = this.addInfo.id ? this.$api.gswChannel.channerUpdate(this.addInfo) : this.$api.gswChannel.channerAdd(this.addInfo)
-            promiseDate
+            let promiseDate = this.addInfo.chid ? this.$api.gswChannel.channerUpdate : this.$api.gswChannel.channerAdd
+            promiseDate({
+              id: this.addInfo.chid,
+              type: this.$route.query.columnType,
+              name: this.addInfo.name,
+              managerId: this.addInfo.managerId
+            })
               .then(
                 response => {
                   if (response.data.code == '200') {
@@ -640,7 +647,34 @@
         })
       },
       submitInfoVersion() {
+        let isCheckOption = true
 
+        isCheckOption = this.positionList.every(item=>{
+          return item.shownum != '' && item.price!=''
+        })
+
+        if (!this.versionInfo.getStartTime) {
+          return this.$Message.error('请输入开始时间')
+        } else if (!this.versionInfo.getEndTime) {
+          return this.$Message.error('请输入结束时间')
+        } else if (!isCheckOption) {
+          return this.$Message.error('请输入完整的投放位置')
+        }
+
+        this.$api.gswChannel.channerPriceUpdate({
+          chid: this.priceId,
+          startTime: new Date(this.versionInfo.getStartTime).getTime(),
+          endTime: new Date(this.versionInfo.getEndTime).getTime(),
+          item: this.positionList
+        })
+          .then(
+            response => {
+              this.dataList = response.data.resultData.records;
+              this.total = response.data.resultData.total;
+            })
+          .finally(() => {
+            this.isFetching = false
+          })
       }
     }
   };

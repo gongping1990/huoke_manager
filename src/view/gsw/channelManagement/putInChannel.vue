@@ -511,7 +511,7 @@
         this.getList();
       },
       getChannelDetail (data) {
-        this.$api.poem.listByChannelDetails({
+        this.$api.gswChannel.listByChannelDetails({
           channelId: data.id
         }).then(
           response => {
@@ -526,10 +526,11 @@
           this.tab.currentPage = 1
         }
 
-        this.$api.poem.listByChannel({
+        this.$api.gswChannel.channerAdList({
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
-          type: this.radioType
+          chid: this.$route.query.id,
+          productId: this.$route.query.type
         })
           .then(
             response => {
@@ -545,7 +546,7 @@
         this.$refs[name].validate((valid) => {
           if (valid) {
             this.isSending = true
-            let promiseDate = this.addInfo.id ? this.$api.poem.updateChannel(this.addInfo) : this.$api.poem.addChannel(this.addInfo)
+            let promiseDate = this.addInfo.id ? this.$api.gswChannel.updateChannel(this.addInfo) : this.$api.gswChannel.addChannel(this.addInfo)
             promiseDate
               .then(
                 response => {
