@@ -281,7 +281,7 @@
         this.$api.gswOrder.newSourceOrder({
           userId: this.addInfo.userId,
           phone: this.addInfo.phone,
-          payAmount: this.addInfo.payAmount,
+          payAmount: this.addInfo.payAmount*100,
           activeConfigId: this.addInfo.activeConfigId
         })
           .then(response => {
