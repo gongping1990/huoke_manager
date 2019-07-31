@@ -45,7 +45,7 @@
           <Editor ref="editor" v-model="detailInfo.content"></Editor>
         </FormItem>
         <FormItem v-if="nowType === 4">
-          <choice-question ref="childOne" :type="2" @submitChoice="submitChoice"
+          <choice-question ref="childOne" :type="2" @submitChoice="submitChoice" :adminType="7"
                            :childList="choiceList"></choice-question>
         </FormItem>
       </Form>

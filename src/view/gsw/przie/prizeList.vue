@@ -32,8 +32,8 @@
         </FormItem>
         <FormItem label="奖品性质" prop="prizeType">
           <Radio-group v-model="addInfo.prizeType">
-            <Radio label='0'>实物</Radio>
-            <Radio label='1'>虚拟</Radio>
+            <Radio label='0' disabled>实物</Radio>
+            <Radio label='1' disabled>虚拟</Radio>
           </Radio-group>
         </FormItem>
         <Form-item label="奖品封面" class="-c-form-item ivu-form-item-required">

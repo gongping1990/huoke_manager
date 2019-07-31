@@ -223,6 +223,9 @@ const poem = {
   // 作业
   fourActiveConfig(params) {
     return axios.get('/poem/active/fourActiveConfig', {params: params})
+  },
+  deleteQuestion(params) {
+    return axios.get('/poem/lesson/deleteQuestion', {params: params})
   }
 }
 

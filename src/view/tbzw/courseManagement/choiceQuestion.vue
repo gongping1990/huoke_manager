@@ -36,9 +36,11 @@
 </template>
 
 <script>
+  import admin from "../../../request/api/hkxt/admin";
+
   export default {
     name: "choiceQuestion",
-    props: ['type', 'childList'],
+    props: ['type', 'childList', 'adminType'],
     data() {
       return {
         choiceList: [],
@@ -88,15 +90,27 @@
             title: '提示',
             content: '确认要删除吗？',
             onOk: () => {
-              this.$api.composition.removeLessonQuestion({
-                questionId: list.id
-              }).then(
-                response => {
-                  if (response.data.code == "200") {
-                    this.$Message.error('删除成功')
-                    this.choiceList.splice(listIndex, 1)
-                  }
-                })
+              if (this.adminType == 7) {
+                this.$api.poem.deleteQuestion({
+                  lessonId: list.id
+                }).then(
+                  response => {
+                    if (response.data.code == "200") {
+                      this.$Message.error('删除成功')
+                      this.choiceList.splice(listIndex, 1)
+                    }
+                  })
+              } else {
+                this.$api.composition.removeLessonQuestion({
+                  questionId: list.id
+                }).then(
+                  response => {
+                    if (response.data.code == "200") {
+                      this.$Message.error('删除成功')
+                      this.choiceList.splice(listIndex, 1)
+                    }
+                  })
+              }
             }
           })
         } else {
