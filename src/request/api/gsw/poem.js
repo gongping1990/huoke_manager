@@ -220,6 +220,10 @@ const poem = {
   saveQuestion(params) {
     return axios.post('/poem/lesson/saveQuestion', params)
   },
+  // 作业
+  fourActiveConfig(params) {
+    return axios.get('/poem/active/fourActiveConfig', {params: params})
+  }
 }
 
 export default poem

@@ -12,8 +12,8 @@
           <FormItem label="课程名称" prop="name">
             <Input type="text" :disabled="!isEdit" v-model="addInfo.name" placeholder="请输入课程名称"></Input>
           </FormItem>
-          <FormItem label="课时节数" prop="lessonNum">
-            <Input type="text" :disabled="!isEdit" v-model="addInfo.lessonNum" placeholder="请输入课时节数"></Input>
+          <FormItem label="课时节数" prop="lessonDescribe">
+            <Input type="text" :disabled="!isEdit" v-model="addInfo.lessonDescribe" placeholder="请输入课时节数"></Input>
           </FormItem>
           <FormItem label="单独购价格" prop="alonePrice">
             <InputNumber  style="width: 100%;" type="text" :disabled="!isEdit" v-model="addInfo.alonePrice" :min="0"
@@ -110,7 +110,7 @@
           name: '',
           alonePrice: null,
           groupPrice: null,
-          lessonNum: '',
+          lessonDescribe: '',
           consultPhone: null,
           aloneInfo: '',
           groupInfo: '',
@@ -124,7 +124,7 @@
           name: [
             {required: true, message: '请输入课程名称', trigger: 'blur'},
           ],
-          lessonNum: [
+          lessonDescribe: [
             {required: true, message: '请输入课时节数', trigger: 'blur'},
           ],
           alonePrice: [

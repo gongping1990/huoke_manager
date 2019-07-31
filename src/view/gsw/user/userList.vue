@@ -6,7 +6,7 @@
           <div class="g-flex-a-j-center">
             <div class="-search-select-text-two">电话号码：</div>
             <Select v-model="searchInfo.hasPhone" @on-change="getList(1)" class="-search-selectOne">
-              <Option v-for="item of phoneList" :label=item.name :value=item.id :key="item.id" ></Option>
+              <Option v-for="item of phoneList" :label=item.name :value=item.id :key="item.id"></Option>
             </Select>
           </div>
         </Col>
@@ -14,7 +14,7 @@
           <div class="g-flex-a-j-center">
             <div class="-search-select-text-two">是否付费：</div>
             <Select v-model="searchInfo.payed" @on-change="getList(1)" class="-search-selectOne">
-              <Option v-for="item of payedList" :label=item.name :value=item.id :key="item.id" ></Option>
+              <Option v-for="item of payedList" :label=item.name :value=item.id :key="item.id"></Option>
             </Select>
           </div>
         </Col>
@@ -22,7 +22,7 @@
           <div class="g-flex-a-j-center">
             <div class="-search-select-text-two">公众号：</div>
             <Select v-model="searchInfo.subscripbe" @on-change="getList(1)" class="-search-selectOne">
-              <Option v-for="item of subscripbeList" :label=item.name :value=item.id :key="item.id" ></Option>
+              <Option v-for="item of subscripbeList" :label=item.name :value=item.id :key="item.id"></Option>
             </Select>
           </div>
         </Col>
@@ -46,6 +46,32 @@
             @on-change="currentChange"></Page>
 
     </Card>
+
+    <Modal
+      class="p-user"
+      v-model="isOpenModal"
+      @on-cancel="isOpenModal = false"
+      width="500"
+      title="开通课程">
+      <Form ref="addInfo" :model="addInfo" :label-width="90" class="ivu-form-item-required">
+        <FormItem label="电话号码" prop="name">
+          <Input type="text" v-model="addInfo.phone" :disabled="addInfo.isPhone" placeholder="请输入手机号码"></Input>
+        </FormItem>
+        <FormItem label="支付金额" prop="endTime">
+          <Input type="text" v-model="addInfo.payAmount" placeholder="请输入支付金额"></Input>
+        </FormItem>
+        <FormItem label="开课日期">
+          <Select v-model="addInfo.activeConfigId">
+            <Option v-for="(item, index) of courseTimeList" :key="index" :value="item.id"
+                    :label="item.opentime"></Option>
+          </Select>
+        </FormItem>
+      </Form>
+      <div slot="footer" class="-p-b-flex">
+        <Button @click="isOpenModal = false" ghost type="primary" style="width: 100px;">取消</Button>
+        <div @click="submitInfo('addInfo')" class="g-primary-btn ">确 认</div>
+      </div>
+    </Modal>
   </div>
 </template>
 
@@ -107,9 +133,12 @@
           }
         ],
         selectInfo: '1',
+        addInfo: {},
         dataList: [],
+        courseTimeList: [],
         total: 0,
         isFetching: false,
+        isOpenModal: false,
         columns: [
           {
             title: '用户头像/昵称',
@@ -141,8 +170,8 @@
           },
           {
             title: '关注公众号',
-            render: (h,params)=>{
-              return h('div',params.row.subscripbe ? '是' : '否')
+            render: (h, params) => {
+              return h('div', params.row.subscripbe ? '是' : '否')
             }
           },
           {
@@ -185,7 +214,22 @@
                       this.toChangeStatus(params.row)
                     }
                   }
-                }, params.row.disabled ? '启用' : '禁用')
+                }, params.row.disabled ? '启用' : '禁用'),
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: '#5444E4',
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.openModal(params.row)
+                    }
+                  }
+                }, '开通课程')
               ])
             }
           }
@@ -196,6 +240,17 @@
       this.getList()
     },
     methods: {
+      openModal(data) {
+        this.isOpenModal = true
+        this.addInfo = JSON.parse(JSON.stringify(data))
+        if (this.addInfo.phone) {
+          this.addInfo.isPhone = true
+        } else {
+          this.addInfo.isPhone = false
+        }
+
+        this.getTimeList()
+      },
       toChangeStatus(params) {
 
         this.$api.gswUser.gswChangeStatus({
@@ -212,6 +267,28 @@
       currentChange(val) {
         this.tab.page = val;
         this.getList();
+      },
+      getTimeList() {
+        this.$api.poem.fourActiveConfig({
+          type: 2
+        })
+          .then(
+            response => {
+              this.courseTimeList = response.data.resultData;
+            })
+      },
+      submitInfo() {
+        this.$api.gswOrder.newSourceOrder({
+          userId: this.addInfo.userId,
+          phone: this.addInfo.phone,
+          payAmount: this.addInfo.payAmount,
+          activeConfigId: this.addInfo.activeConfigId
+        })
+          .then(response => {
+            this.$Message.success('添加成功')
+            this.isOpenModal = false
+            this.getList()
+          })
       },
       //分页查询
       getList(num) {
@@ -258,6 +335,12 @@
       border: 1px solid #dcdee2;
       border-radius: 4px;
       margin-right: 20px;
+    }
+
+    .-p-b-flex {
+      display: flex;
+      padding: 0 20px;
+      justify-content: space-between;
     }
 
     .-p-text-right {
