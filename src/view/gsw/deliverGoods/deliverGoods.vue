@@ -258,6 +258,7 @@
         window.open(downGoodsExcel, '_blank')
       },
       openExcel () {
+        this.downInfo.isSucess = false
         this.isOpenExcel = !this.isOpenExcel
       },
       toExcel() {
