@@ -44,61 +44,61 @@
             title: '日期',
             fixed: 'left',
             width: 150,
-            key: 'date',
+            key: 'day',
             align: 'center'
           },
           {
             title: '页面访问量',
-            key: 'pvCount',
+            key: 'pv',
             width: 120,
             align: 'center'
           },
           {
             title: '访问用户',
-            key: 'uvCount',
+            key: 'uv',
             width: 110,
             align: 'center'
           },
           {
-            title: '试听申请用',
-            key: 'uvCount',
+            title: '试听申请用户',
+            key: 'tryapplyuv',
             width: 150,
             align: 'center'
           },
           {
             title: '试听转化率',
-            key: 'uvCount',
+            key: 'tryapplyrate',
             width: 120,
             align: 'center'
           },
           {
             title: '付试听通过用户',
-            key: 'payUser',
+            key: 'trypasseduv',
             width: 150,
             align: 'center'
           },
           {
             title: '试听通过率',
-            key: 'payUser',
+            key: 'trypassedrate',
             width: 120,
             align: 'center'
           },
           {
             title: '试听后付费用户',
             width: 150,
-            key: 'payUser',
+            key: 'payeduv',
             align: 'center'
           },
           {
             title: '试听付费率',
             width: 120,
-            key: 'payUser',
+            key: 'payedrate',
             align: 'center'
           },
           {
             title: '付费金额',
             width: 110,
-            key: 'percentConversion',
+            key: 'payedmoney',
             align: 'center'
           }
         ]
