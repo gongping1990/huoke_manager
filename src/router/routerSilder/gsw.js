@@ -263,8 +263,8 @@ export const gswRouter =[
         component: () => import('@/view/gsw/courseManagement/courseInfo')
       },
       {
-        path: '/courseContent',
-        name: 'courseContent',
+        path: '/gsw_courseContent',
+        name: 'gsw_courseContent',
         meta: [
           {name: '课程管理'},
           {name: '课程内容'}
@@ -272,8 +272,8 @@ export const gswRouter =[
         component: () => import('@/view/gsw/courseManagement/courseContent')
       },
       {
-        path: '/new_courseContent',
-        name: 'new_courseContent',
+        path: '/gsw_new_courseContent',
+        name: 'gsw_new_courseContent',
         meta: [
           {name: '课程管理'},
           {name: '新课程内容'}
@@ -288,6 +288,15 @@ export const gswRouter =[
           {name: '新课程信息'}
         ],
         component: () => import('@/view/gsw/courseManagement/new_courseInfo')
+      },
+      {
+        path: '/gsw_experienceClass',
+        name: 'gsw_experienceClass',
+        meta: [
+          {name: '课程管理'},
+          {name: '新课程体验课'}
+        ],
+        component: () => import('@/view/gsw/courseManagement/experienceClass')
       }
     ]
   },

@@ -226,6 +226,9 @@ const poem = {
   },
   deleteQuestion(params) {
     return axios.get('/poem/lesson/deleteQuestion', {params: params})
+  },
+  getNewCourseLessonList(params) {
+    return axios.get('/poem/lesson/getNewCourseLessonList', {params: params})
   }
 }
 

@@ -96,7 +96,7 @@
                 }).then(
                   response => {
                     if (response.data.code == "200") {
-                      this.$Message.error('删除成功')
+                      this.$Message.success('删除成功')
                       this.choiceList.splice(listIndex, 1)
                     }
                   })
@@ -106,7 +106,7 @@
                 }).then(
                   response => {
                     if (response.data.code == "200") {
-                      this.$Message.error('删除成功')
+                      this.$Message.success('删除成功')
                       this.choiceList.splice(listIndex, 1)
                     }
                   })

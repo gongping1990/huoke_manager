@@ -21,14 +21,27 @@
                      @on-click="getList(1)"></Input>
             </div>
           </Col>
-          <Col :span="16" class="g-flex-a-j-center">
+          <Col :span="19" class="-p-b-flex">
             <date-picker-template :dataInfo="dateOption" @changeDate="changeDate"></date-picker-template>
-
+            <Button @click="openModal()" ghost type="primary" style="width: 100px;" v-if="radioType!=1">通过</Button>
+            <Poptip
+              v-else
+              confirm
+              title="确认选中项重置为不通过"
+              @on-ok="changeAudit(2)"
+              placement="right-end"
+              ok-text="确认"
+              cancel-text="取消">
+              <Button ghost type="primary" style="width: 100px;">不通过</Button>
+            </Poptip>
           </Col>
         </Row>
       </Row>
 
-      <Table :loading="isFetching" :columns="radioType === 0 ? columns : columnsTwo" :data="dataList"></Table>
+      <Table :loading="isFetching"
+             :columns="radioType === 0 ? columns : columnsTwo"
+             :data="dataList" ref="selection"
+             @on-selection-change="changeSelectTab"></Table>
 
       <Page class="-p-text-right" :total="total" size="small" show-elevator :page-size="tab.pageSize"
             :current.sync="tab.currentPage"
@@ -44,44 +57,36 @@
       title="确认要通过审核吗？">
       <Form ref="addInfo" :model="addInfo" :label-width="70">
         <FormItem label="审核" prop="name">
-          <Radio-group v-model="auditType" @on-change="getList(1)">
+          <Radio-group v-model="auditType">
             <Radio :label=2>不通过</Radio>
             <Radio :label=1>通过</Radio>
           </Radio-group>
         </FormItem>
-        <FormItem label="手机号码" prop="name" v-if="auditType === 1">
-          <Input type="text" v-model="addInfo.phone" placeholder="请输入手机号码"></Input>
+        <FormItem label="开课日期" prop="name" v-if="auditType === 1">
+          <Date-picker style="width: 100%" :options="dateOption" type="date" placeholder="选择日期" v-model="addInfo.opentime"></Date-picker>
         </FormItem>
       </Form>
       <div slot="footer" class="-p-s-footer">
         <Button @click="openModal()" ghost type="primary" style="width: 100px;">取消</Button>
-        <div @click="changeAudit('','')" class="g-primary-btn ">确 认</div>
+        <div @click="changeAudit('')" class="g-primary-btn ">确 认</div>
       </div>
     </Modal>
   </div>
 </template>
 
 <script>
-  import {getBaseUrl} from '@/libs/index'
-  import UploadImg from "../../../components/uploadImg";
   import DatePickerTemplate from "../../../components/datePickerTemplate";
   import dayjs from 'dayjs'
 
   export default {
     name: 'bookingList',
-    components: {DatePickerTemplate, UploadImg},
+    components: {DatePickerTemplate},
     data() {
       return {
-        baseUrl: `${getBaseUrl()}/sch/common/uploadPublicFile`,
         tab: {
           page: 1,
           currentPage: 1,
           pageSize: 10
-        },
-        uploadOption: {
-          tipText: '只能上传jpg/png文件，且不超过200kb',
-          url: '',
-          size: 200
         },
         dateOption: {
           name: '预约时间',
@@ -97,7 +102,13 @@
         auditType: 1,
         isFetching: false,
         isOpenModal: false,
+        checkAll: [],
         columns: [
+          {
+            type: 'selection',
+            width: 60,
+            align: 'center'
+          },
           {
             title: '用户昵称',
             key: 'nickname'
@@ -134,11 +145,20 @@
         ],
         columnsTwo: [
           {
+            type: 'selection',
+            width: 60,
+            align: 'center'
+          },
+          {
             title: '用户昵称',
             key: 'nickname'
           },
           {
             title: '电话',
+            key: 'phone'
+          },
+          {
+            title: '领课节数',
             key: 'phone'
           },
           {
@@ -148,36 +168,15 @@
             }
           },
           {
-            title: '最新审核时间',
+            title: '开课时间',
             render: (h, params) => {
               return h('div', dayjs(+params.row.auditTime).format('YYYY-MM-DD HH:mm:ss'))
             }
           },
           {
-            title: '操作',
-            width: 190,
+            title: '最新审核时间',
             render: (h, params) => {
-              return h('div', [
-                h('Poptip', {
-                  props: {
-                    confirm: true,
-                    title: '确认重置为不通过？'
-                  },
-                  style: {
-                    display: this.radioType === 2 ? 'none' : 'inline-block',
-                    cursor: 'pointer',
-                    color: '#5444E4',
-                    marginRight: '5px'
-                  },
-                  on: {
-                    'on-ok': () => {
-                      this.changeAudit(params.row, 2)
-                    },
-                    'on-cancel': () => {
-                    }
-                  }
-                }, '不通过')
-              ])
+              return h('div', dayjs(+params.row.auditTime).format('YYYY-MM-DD HH:mm:ss'))
             }
           }
         ],
@@ -187,15 +186,20 @@
       this.getList()
     },
     methods: {
+      changeSelectTab(data) {
+        for (let item of data) {
+          this.checkAll.push(item.id)
+        }
+      },
       changeDate(data) {
         this.searchInfo.getStartTime = data.startTime
         this.searchInfo.getEndTime = data.endTime
         this.getList(1)
       },
-      changeAudit(param, num) {
+      changeAudit(num) {
         console.log(param)
         if (!num && !this.addInfo.phone && this.auditType === 1) {
-          return this.$Message.error('请输入手机号码')
+          return this.$Message.error('请选择开课日期')
         }
 
         this.$api.poem.recordAudit({
@@ -242,6 +246,23 @@
           .finally(() => {
             this.isFetching = false
           })
+      },
+      noPass(param) {
+        this.$Modal.confirm({
+          title: '提示',
+          content: '确认要删除吗？',
+          onOk: () => {
+            this.$api.poem.removeBroadcast({
+              id: param.id
+            }).then(
+              response => {
+                if (response.data.code == "200") {
+                  this.$Message.success("操作成功");
+                  this.getList();
+                }
+              })
+          }
+        })
       },
       delItem(param) {
         this.$Modal.confirm({
@@ -292,43 +313,8 @@
       color: #39f
     }
 
-    .-c-course-wrap {
-      display: inline-block;
-      .-c-course-item {
-        position: relative;
-        display: inline-block;
-        /*height: 70px;*/
-        overflow: hidden;
-
-        img {
-          width: 140px;
-          height: 70px;
-        }
-
-        .-i-text {
-          display: -webkit-box;
-          -webkit-box-orient: vertical;
-          /*-webkit-line-clamp: 1;*/
-          line-height: normal;
-        }
-
-        .-i-del {
-          position: absolute;
-          top: 0;
-          right: 0;
-          color: #ffff;
-          background-color: rgba(0, 0, 0, 0.4);
-          line-height: normal;
-          cursor: pointer;
-          padding: 4px;
-          border-radius: 4px;
-        }
-      }
-    }
-
     .-p-b-flex {
       display: flex;
-      padding: 0 20px;
       justify-content: space-between;
     }
 

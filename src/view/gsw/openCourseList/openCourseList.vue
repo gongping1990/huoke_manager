@@ -1,14 +1,7 @@
 <template>
   <div class="p-openCourse">
     <Card>
-      <Row class="g-t-left">
-        <Radio-group v-model="radioType" type="button" @on-change="getList(1)">
-          <Radio :label=1>试听</Radio>
-          <Radio :label=2>购课</Radio>
-        </Radio-group>
-      </Row>
-
-      <div class="g-add-btn g-add-top" @click="openModal()">
+      <div class="g-add-btn" @click="openModal()">
         <Icon class="-btn-icon" color="#fff" type="ios-add" size="24"/>
       </div>
 
@@ -134,7 +127,7 @@
         this.$api.gswActive.listActiveConfig({
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
-          type: this.radioType,
+          type: 2
         })
           .then(
             response => {

@@ -26,7 +26,7 @@
         @on-cancel="closeModal('addInfo')"
         width="500"
         :title="addInfo.id ? '编辑二维码' : '创建二维码'">
-        <Form ref="addInfo" :model="addInfo" :rules="ruleValidate" :label-width="90">
+        <Form ref="addInfo" :model="addInfo" :rules="ruleValidate" :label-width="110">
           <FormItem label="二维码名称" prop="name">
             <Input type="text" v-model="addInfo.name" placeholder="请输入消息内容"></Input>
           </FormItem>
@@ -36,6 +36,9 @@
           </FormItem>
           <FormItem label="二维码">
             <upload-img v-model="addInfo.qrcode" :option="uploadOption"></upload-img>
+          </FormItem>
+          <FormItem label="预定扫码次数" prop="sacnNumTarget">
+            <Input type="text" v-model="addInfo.sacnNumTarget" placeholder="请输入预定扫码次数"></Input>
           </FormItem>
         </Form>
         <div slot="footer" class="-p-b-flex">
@@ -80,6 +83,9 @@
           ],
           endTime: [
             {required: true, type: 'date', message: '请选择有效期', trigger: 'change'},
+          ],
+          sacnNumTarget: [
+            {required: true, message: '请输入预定扫码次数', trigger: 'blur'},
           ]
         },
         columns: [
@@ -103,6 +109,11 @@
                 })
               ])
             }
+          },
+          {
+            title: '预定扫码次数',
+            key: 'sacnNumTarget',
+            align: 'center'
           },
           {
             title: '扫码次数',

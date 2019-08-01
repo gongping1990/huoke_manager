@@ -181,6 +181,10 @@
             }
           },
           {
+            title: '新课程进度',
+            key: 'creatTime'
+          },
+          {
             title: '创建时间',
             key: 'creatTime'
           },

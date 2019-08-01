@@ -7,6 +7,8 @@ import gswOperational from "./operational";
 import gswPrzie from "./przie";
 import gswProduct from "./product";
 import gswChannel from "./channel";
+import gswExperience from "./experience";
+import gswReservat from "./reservat";
 
 export const gswIndex = {
   poem,
@@ -17,5 +19,7 @@ export const gswIndex = {
   gswOperational,
   gswPrzie,
   gswProduct,
-  gswChannel
+  gswChannel,
+  gswExperience,
+  gswReservat
 }
