@@ -44,7 +44,7 @@
         <FormItem label="朗诵内容" v-if="nowType===3 && detailInfo.type === 1">
           <Editor ref="editor" v-model="detailInfo.content"></Editor>
         </FormItem>
-        <FormItem v-if="nowType === 4">
+        <FormItem v-if="nowType === 5">
           <choice-question ref="childOne" :type="2" @submitChoice="submitChoice" :adminType="7"
                            :childList="choiceList"></choice-question>
         </FormItem>
@@ -220,7 +220,7 @@
                   },
                   on: {
                     click: () => {
-                      this.openModalPoetry(params.row, 4)
+                      this.openModalPoetry(params.row, 5)
                     }
                   }
                 }, '课后练习'),
@@ -303,11 +303,11 @@
         this.isOpenModalPoetry = true
         this.addInfo = JSON.parse(JSON.stringify(data))
         this.addInfo.sortnum = +this.addInfo.sortnum
-        if (type === 2 || type === 3 || type === 4) {
+        if (type === 2 || type === 3 || type === 5) {
           this.getLessonContent(data.id)
         }
 
-        if (type === 4) {
+        if (type === 5) {
           this.getListByLessonQuestion(data)
         }
       },
@@ -408,7 +408,7 @@
           return this.$Message.error('请输入朗读内容')
         }
 
-        let paramUrl
+        let paramUrl = ''
 
         switch (+this.nowType) {
           case 1:
@@ -438,6 +438,15 @@
             })
             break
           case 4:
+            paramUrl = this.addInfo.id ? this.$api.poem.updatePoemLesson({
+              ...this.addInfo,
+              type: this.addInfo.id ? '' : 2
+            }) : this.$api.poem.addPoemLesson({
+              ...this.addInfo,
+              type: this.addInfo.id ? '' : 2
+            })
+            break
+          case 5:
             let isCheckName = true
             let isCheckOptionBool = false
             let isCheckoptionJsonLength = true
@@ -501,6 +510,7 @@
               questionList: choiceDataList,
             })
             break
+
         }
 
         paramUrl
