@@ -42,7 +42,7 @@
       };
     },
     mounted() {
-      // this.getList()
+      this.getList()
       this.getCourseList()
     },
     methods: {
@@ -67,7 +67,10 @@
         this.$api.gswExperience.getExperienceConfigList()
           .then(
             response => {
-              this.addInfo.courseList = response.data.resultData
+              this.addInfo.courseList = []
+              for (let item of response.data.resultData) {
+                this.addInfo.courseList.push(item.lessonId)
+              }
             })
           .finally(() => {
             this.isFetching = false
@@ -87,7 +90,7 @@
                   }
               }
             }
-            console.log(array,1)
+            console.log(array,this.addInfo.courseList,1)
             this.$api.gswExperience.saveExperienceConfig({
               list: array
             })
