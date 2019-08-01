@@ -48,6 +48,7 @@
     methods: {
       closeEdit(name) {
         this.$refs[name].resetFields();
+        this.getList()
         this.isEdit = false
       },
       //分页查询
