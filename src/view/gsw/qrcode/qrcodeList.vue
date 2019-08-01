@@ -37,8 +37,8 @@
           <FormItem label="二维码">
             <upload-img v-model="addInfo.qrcode" :option="uploadOption"></upload-img>
           </FormItem>
-          <FormItem label="预定扫码次数" prop="sacnNumTarget">
-            <Input type="text" v-model="addInfo.sacnNumTarget" placeholder="请输入预定扫码次数"></Input>
+          <FormItem label="预定扫码次数" prop="scanNumTarget">
+            <Input type="text" v-model="addInfo.scanNumTarget" placeholder="请输入预定扫码次数"></Input>
           </FormItem>
         </Form>
         <div slot="footer" class="-p-b-flex">
@@ -84,7 +84,7 @@
           endTime: [
             {required: true, type: 'date', message: '请选择有效期', trigger: 'change'},
           ],
-          sacnNumTarget: [
+          scanNumTarget: [
             {required: true, message: '请输入预定扫码次数', trigger: 'blur'},
           ]
         },
@@ -112,7 +112,7 @@
           },
           {
             title: '预定扫码次数',
-            key: 'sacnNumTarget',
+            key: 'scanNumTarget',
             align: 'center'
           },
           {
@@ -244,6 +244,7 @@
               id: this.addInfo.id,
               name: this.addInfo.name,
               qrcode: this.addInfo.qrcode,
+              scanNumTarget: this.addInfo.scanNumTarget,
               endTime: new Date(this.addInfo.endTime).getTime()
             })
               .then(
