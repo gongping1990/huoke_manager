@@ -52,7 +52,7 @@
     <Modal
       class="p-booking"
       v-model="isOpenModal"
-      @on-cancel="openModal()"
+      @on-cancel="isOpenModal =false"
       width="350"
       title="确认要通过审核吗？">
       <Form ref="addInfo" :model="addInfo" :label-width="70">
@@ -62,12 +62,12 @@
             <Radio :label=1>通过</Radio>
           </Radio-group>
         </FormItem>
-        <FormItem label="开课日期" prop="name" v-if="auditType === 1">
-          <Date-picker style="width: 100%" :options="dateOption" type="date" placeholder="选择日期" v-model="addInfo.opentime"></Date-picker>
+        <FormItem label="开课日期" prop="activeTime" v-if="auditType === 1">
+          <Date-picker style="width: 100%" :options="dateOption" type="date" placeholder="选择日期" v-model="addInfo.activeTime"></Date-picker>
         </FormItem>
       </Form>
       <div slot="footer" class="-p-s-footer">
-        <Button @click="openModal()" ghost type="primary" style="width: 100px;">取消</Button>
+        <Button @click="isOpenModal = false" ghost type="primary" style="width: 100px;">取消</Button>
         <div @click="changeAudit('')" class="g-primary-btn ">确 认</div>
       </div>
     </Modal>
@@ -120,27 +120,8 @@
             }
           },
           {
-            title: '操作',
-            width: 190,
-            align: 'center',
-            render: (h, params) => {
-              return h('div', [
-                h('Button', {
-                  props: {
-                    type: 'text',
-                    size: 'small'
-                  },
-                  style: {
-                    color: '#5444E4'
-                  },
-                  on: {
-                    click: () => {
-                      this.openModal(params.row)
-                    }
-                  }
-                }, '审核')
-              ])
-            }
+            title: '领课节数',
+            key: 'nickname'
           }
         ],
         columnsTwo: [
@@ -197,15 +178,16 @@
         this.getList(1)
       },
       changeAudit(num) {
-        console.log(param)
-        if (!num && !this.addInfo.phone && this.auditType === 1) {
+        if (!num && !this.addInfo.activeTime && this.auditType === 1) {
           return this.$Message.error('请选择开课日期')
+        } else if (!this.checkAll.length){
+          return this.$Message.error('请选择需要操作的用户')
         }
 
-        this.$api.poem.recordAudit({
-          id: param.id || this.dataItem.id,
-          status: num || this.auditType,
-          phone: this.addInfo.phone
+        this.$api.gswReservat.auditBatch({
+          ids: this.checkAll,
+          auditStatus: this.auditType,
+          activeTime: this.addInfo.phone
         }).then(
           response => {
             if (response.data.code == "200") {
@@ -246,23 +228,6 @@
           .finally(() => {
             this.isFetching = false
           })
-      },
-      noPass(param) {
-        this.$Modal.confirm({
-          title: '提示',
-          content: '确认要删除吗？',
-          onOk: () => {
-            this.$api.poem.removeBroadcast({
-              id: param.id
-            }).then(
-              response => {
-                if (response.data.code == "200") {
-                  this.$Message.success("操作成功");
-                  this.getList();
-                }
-              })
-          }
-        })
       },
       delItem(param) {
         this.$Modal.confirm({

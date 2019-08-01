@@ -38,7 +38,8 @@
             <upload-img v-model="addInfo.qrcode" :option="uploadOption"></upload-img>
           </FormItem>
           <FormItem label="预定扫码次数" prop="scanNumTarget">
-            <Input type="text" v-model="addInfo.scanNumTarget" placeholder="请输入预定扫码次数"></Input>
+            <InputNumber class="g-width" :max="999" :min="0" v-model="addInfo.scanNumTarget"
+                         placeholder="请输入预定扫码次数"></InputNumber>
           </FormItem>
         </Form>
         <div slot="footer" class="-p-b-flex">
@@ -72,7 +73,7 @@
         },
         dataList: [],
         total: 0,
-        radioType:1,
+        radioType: 1,
         isFetching: false,
         isOpenModal: false,
         isSending: false,
@@ -85,7 +86,7 @@
             {required: true, type: 'date', message: '请选择有效期', trigger: 'change'},
           ],
           scanNumTarget: [
-            {required: true, message: '请输入预定扫码次数', trigger: 'blur'},
+            {required: true, type:'number', message: '请输入预定扫码次数', trigger: 'blur'},
           ]
         },
         columns: [
@@ -184,7 +185,9 @@
           this.addInfo = JSON.parse(JSON.stringify(data))
           this.addInfo.endTime = new Date(+this.addInfo.endTime)
         } else {
-          this.addInfo = {}
+          this.addInfo = {
+            scanNumTarget: null
+          }
         }
       },
       closeModal(name) {
