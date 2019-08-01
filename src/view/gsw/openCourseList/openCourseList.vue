@@ -163,7 +163,7 @@
         this.isSending = true
         this.$api.gswActive.addActiveConfig({
           opentime: dayjs(this.addInfo.opentime).format("YYYY-MM-DD"),
-          type: this.radioType
+          type: 2
         })
           .then(
             response => {
