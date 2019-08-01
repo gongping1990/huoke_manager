@@ -12,7 +12,7 @@
 
         <Row class="g-t-left g-tab">
           <Col :span="5">
-            <div class="-search">
+            <div class="-search" style="margin-bottom: 16px">
               <Select v-model="selectInfo" class="-search-select">
                 <Option value="1">用户昵称</Option>
               </Select>
@@ -21,8 +21,10 @@
                      @on-click="getList(1)"></Input>
             </div>
           </Col>
-          <Col :span="19" class="-p-b-flex">
+          <Col :span="24" class="-p-b-flex">
             <date-picker-template :dataInfo="dateOption" @changeDate="changeDate"></date-picker-template>
+            <date-picker-template :dataInfo="dateOptionTwo" v-if="radioType!=0"
+                                  @changeDate="changeDateTwo"></date-picker-template>
             <Button @click="openModal()" ghost type="primary" style="width: 100px;" v-if="radioType!=1">通过</Button>
             <Poptip
               v-else
@@ -63,7 +65,8 @@
           </Radio-group>
         </FormItem>
         <FormItem label="开课日期" prop="activeTime" v-if="auditType === 1">
-          <Date-picker style="width: 100%" :options="dateOption" type="date" placeholder="选择日期" v-model="addInfo.activeTime"></Date-picker>
+          <Date-picker style="width: 100%" :options="dateOption" type="date" placeholder="选择日期"
+                       v-model="addInfo.activeTime"></Date-picker>
         </FormItem>
       </Form>
       <div slot="footer" class="-p-s-footer">
@@ -90,6 +93,10 @@
         },
         dateOption: {
           name: '预约时间',
+          type: 'datetime'
+        },
+        dateOptionTwo: {
+          name: '开课时间',
           type: 'datetime'
         },
         dataList: [],
@@ -121,7 +128,7 @@
           },
           {
             title: '领课节数',
-            key: 'nickname'
+            key: 'lessonCount'
           }
         ],
         columnsTwo: [
@@ -140,7 +147,7 @@
           },
           {
             title: '领课节数',
-            key: 'phone'
+            key: 'lessonCount'
           },
           {
             title: '预约时间',
@@ -150,9 +157,7 @@
           },
           {
             title: '开课时间',
-            render: (h, params) => {
-              return h('div', dayjs(+params.row.auditTime).format('YYYY-MM-DD HH:mm:ss'))
-            }
+            key: 'reserveTime'
           },
           {
             title: '最新审核时间',
@@ -168,37 +173,51 @@
     },
     methods: {
       changeSelectTab(data) {
+        this.checkAll = []
         for (let item of data) {
           this.checkAll.push(item.id)
         }
+        console.log(this.checkAll, 1)
       },
       changeDate(data) {
         this.searchInfo.getStartTime = data.startTime
         this.searchInfo.getEndTime = data.endTime
         this.getList(1)
       },
+      changeDateTwo(data) {
+        this.searchInfo.reserveTimeStart = data.startTime
+        this.searchInfo.reserveTimeEnd = data.endTime
+        this.getList(1)
+      },
       changeAudit(num) {
         if (!num && !this.addInfo.activeTime && this.auditType === 1) {
           return this.$Message.error('请选择开课日期')
-        } else if (!this.checkAll.length){
+        } else if (!this.checkAll.length) {
           return this.$Message.error('请选择需要操作的用户')
         }
 
         this.$api.gswReservat.auditBatch({
           ids: this.checkAll,
-          auditStatus: this.auditType,
-          activeTime: this.addInfo.phone
+          auditStatus: num || this.auditType,
+          activeTime: new Date(this.addInfo.activeTime).getTime()
         }).then(
           response => {
             if (response.data.code == "200") {
-              this.$Message.success("操作成功");
+
+              if (!num) {
+                this.$Message.success(`审核成功，其中有${response.data.resultData}个用户已购买课程，自动跳过审核`);
+              } else {
+                this.$Message.success("操作成功");
+              }
               this.getList();
               this.isOpenModal = false
-              this.auditType = ''
+              this.auditType = 1
+              this.checkAll = []
             }
           })
       },
       openModal(data) {
+        this.addInfo.activeTime = ''
         this.dataItem = data
         this.isOpenModal = !this.isOpenModal
       },
@@ -212,13 +231,19 @@
         if (num) {
           this.tab.currentPage = 1
         }
+        if (this.radioType == 0) {
+          this.searchInfo.reserveTimeStart = ''
+          this.searchInfo.reserveTimeEnd = ''
+        }
         this.$api.poem.reservatRecordPage({
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
           status: this.radioType,
           nickname: this.searchInfo.nickname,
           startTime: this.searchInfo.getStartTime ? new Date(this.searchInfo.getStartTime).getTime() : "",
-          endTime: this.searchInfo.getEndTime ? new Date(this.searchInfo.getEndTime).getTime() : ""
+          reserveTimeStart: this.searchInfo.reserveTimeStart ? new Date(this.searchInfo.reserveTimeStart).getTime() : "",
+          endTime: this.searchInfo.getEndTime ? new Date(this.searchInfo.getEndTime).getTime() : "",
+          reserveTimeEnd: this.searchInfo.reserveTimeEnd ? new Date(this.searchInfo.reserveTimeEnd).getTime() : ""
         })
           .then(
             response => {
