@@ -83,17 +83,7 @@
         </div>
       </Modal>
 
-      <Modal
-        class="p-channel"
-        v-model="isOpenModalCopy"
-        footer-hide
-        @on-cancel="isOpenModalCopy = false"
-        width="600"
-        title="复制链接">
-        <Table class="-c-tab" :loading="isFetching" :columns="columnsModal" :data="detailList"></Table>
-      </Modal>
-
-      <put-in-list-template v-model="isOpenDataModal" :id="putInId" :list="dataList"></put-in-list-template>
+      <put-in-list-template ref="putInList" v-model="isOpenDataModal" :id="putInId"></put-in-list-template>
     </Card>
   </div>
 </template>
@@ -120,7 +110,6 @@
           type: 'datetime'
         },
         copy_url: '',
-        detailList: [],
         dataList: [],
         adminList: [],
         deliveryModeList: [
@@ -155,7 +144,7 @@
         isSending: false,
         isOpenDataModal: false,
         addInfo: {},
-        priceInfo: '',
+        priceInfo: {},
         ruleValidate: {
           name: [
             {required: true, message: '请输入活动名称', trigger: 'blur'},
@@ -178,37 +167,119 @@
           ],
 
         },
-        columnsModal: [
+        columns: [
           {
-            title: '学科名称',
-            key: 'subjectName',
-            align: 'center'
-          },
-          {
-            title: '渠道链接',
-            key: 'channelurl',
-            align: 'center'
-          },
-          {
-            title: '渠道二维码',
-            render: (h, params) => {
-              return h('img', {
-                attrs: {
-                  src: params.row.channelqrcode
-                },
-                style: {
-                  width: '60px',
-                  height: '60px',
-                  margin: '10px'
-                }
-              })
+            title: '投放信息',
+            render: (h,params)=>{
+              return h('div',params.row.info.map((item,index)=>{
+                return h('div',`${this.infoList[index]}：${item}`)
+              }))
             },
+            width: 160
+          },
+          {
+            title: '二维码',
+            render: (h,params)=>{
+              return h('div',{
+                style: {
+                  position: 'relative',
+                }
+              },[
+                h('img', {
+                  attrs: {
+                    src: params.row.qrcode
+                  },
+                  style: {
+                    width: '60px',
+                    height: '60px',
+                    margin: '10px'
+                  }
+                }),
+                h('Icon', {
+                  props: {
+                    type: 'md-download'
+                  },
+                  style: {
+                    position: 'absolute',
+                    bottom: '17px',
+                    right: '15px',
+                    fontSize: '16px',
+                    background: 'rgba(0,0,0,0.7)',
+                    color: '#ffffff',
+                    cursor: 'pointer'
+                  },
+                  on: {
+                    click: () => {
+                      window.open(params.row.qrcode)
+                    }
+                  }
+                })
+              ])
+            },
+            align: 'center',
+            width: 120
+          },
+          {
+            title: '投放人',
+            key: 'uname',
+            align: 'center',
+            width: 120
+          },
+          {
+            title: '活动名称',
+            key: 'showname',
+            align: 'center',
+            width: 120
+          },
+          {
+            title: '累计页面访问量',
+            key: 'pv',
+            align: 'center',
+            width: 120
+          },
+          {
+            title: '累计访问用户',
+            key: 'uv',
+            align: 'center',
+            width: 120
+          },
+          {
+            title: '累计试听申请用户',
+            key: 'tryapplyuv',
+            align: 'center',
+            width: 140
+          },
+          {
+            title: '累计付试听通过用户',
+            key: 'trypasseduv',
+            align: 'center',
+            width: 160
+          },
+          {
+            title: '累计试听后付费用户',
+            key: 'payeduv',
+            align: 'center',
+            width: 160
+          },
+          {
+            title: '累计付费金额',
+            key: 'paymoney',
+            align: 'center',
+            width: 120
+          },
+          {
+            title: '创建时间',
+            render: (h, params) => {
+              return h('span', `${dayjs(+params.row.createTime).format('YYYY-MM-DD HH:mm:ss')}`)
+            },
+            width: 150,
             align: 'center'
           },
           {
             title: '操作',
-            width: 250,
+            width: 220,
             align: 'center',
+            fixed: 'right',
             render: (h, params) => {
               return h('div', [
                 h('Button', {
@@ -237,10 +308,25 @@
                   },
                   on: {
                     click: () => {
-                      this.download(params.row)
+                      this.openDataModal(params.row)
                     }
                   }
-                }, '下载二维码')
+                }, '数据详情'),
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: '#5444E4',
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.openModal(params.row)
+                    }
+                  }
+                }, '编辑'),
               ])
             }
           }
@@ -254,231 +340,8 @@
         }
       };
     },
-    computed: {
-      columns() {
-        let array = []
-
-        if (this.$route.query.type == '1') {
-          array = [
-            {
-              title: '投放信息',
-              render: (h,params)=>{
-                return h('div',params.row.info.map((item,index)=>{
-                  return h('div',`${this.infoList[index]}：${item}`)
-                }))
-              },
-              width: 120
-            },
-            {
-              title: '投放人',
-              key: 'uname',
-              align: 'center'
-            },
-            {
-              title: '活动名称',
-              key: 'showname',
-              align: 'center'
-            },
-            {
-              title: '累计页面访问量',
-              key: 'pv',
-              align: 'center'
-            },
-            {
-              title: '累计访问用户',
-              key: 'uv',
-              align: 'center'
-            },
-            {
-              title: '累计试听申请用户',
-              key: 'tryapplyuv',
-              align: 'center'
-            },
-            {
-              title: '累计付试听通过用户',
-              key: 'trypasseduv',
-              align: 'center'
-            },
-            {
-              title: '累计试听后付费用户',
-              key: 'payeduv',
-              align: 'center'
-            },
-            {
-              title: '累计付费金额',
-              key: 'paymoney',
-              align: 'center'
-            },
-            {
-              title: '创建时间',
-              render: (h, params) => {
-                return h('span', `${dayjs(+params.row.createTime).format('YYYY-MM-DD HH:mm:ss')}`)
-              },
-              width: 150,
-              align: 'center'
-            },
-            {
-              title: '操作',
-              width: 250,
-              align: 'center',
-              render: (h, params) => {
-                return h('div', [
-                  h('Button', {
-                    props: {
-                      type: 'text',
-                      size: 'small'
-                    },
-                    style: {
-                      color: '#5444E4',
-                      marginRight: '5px'
-                    },
-                    on: {
-                      click: () => {
-                        this.toDetail(params.row)
-                      }
-                    }
-                  }, '推广链接'),
-                  h('Button', {
-                    props: {
-                      type: 'text',
-                      size: 'small'
-                    },
-                    style: {
-                      color: '#5444E4',
-                      marginRight: '5px'
-                    },
-                    on: {
-                      click: () => {
-                        this.openDataModal(params.row)
-                      }
-                    }
-                  }, '数据详情'),
-                  h('Button', {
-                    props: {
-                      type: 'text',
-                      size: 'small'
-                    },
-                    style: {
-                      color: '#5444E4',
-                      marginRight: '5px'
-                    },
-                    on: {
-                      click: () => {
-                        this.openModal(params.row)
-                      }
-                    }
-                  }, '编辑'),
-                ])
-              }
-            }
-          ]
-        } else {
-          array = [
-            {
-              title: '投放信息',
-              key: 'name',
-              align: 'center'
-            },
-            {
-              title: '投放人',
-              key: 'name',
-              align: 'center'
-            },
-            {
-              title: '活动名称',
-              key: 'name',
-              align: 'center'
-            },
-            {
-              title: '累计页面访问量',
-              key: 'name',
-              align: 'center'
-            },
-            {
-              title: '累计访问用户',
-              key: 'name',
-              align: 'center'
-            },
-            {
-              title: '累计付费用户',
-              key: 'name',
-              align: 'center'
-            },
-            {
-              title: '累计付费金额',
-              key: 'name',
-              align: 'center'
-            },
-            {
-              title: '创建时间',
-              render: (h, params) => {
-                return h('span', `${params.row.gmtCreate}`)
-              },
-              width: 120,
-              align: 'center'
-            },
-            {
-              title: '操作',
-              width: 250,
-              align: 'center',
-              render: (h, params) => {
-                return h('div', [
-                  h('Button', {
-                    props: {
-                      type: 'text',
-                      size: 'small'
-                    },
-                    style: {
-                      color: '#5444E4',
-                      marginRight: '5px'
-                    },
-                    on: {
-                      click: () => {
-                        this.toDetail(params.row)
-                      }
-                    }
-                  }, '推广链接'),
-                  h('Button', {
-                    props: {
-                      type: 'text',
-                      size: 'small'
-                    },
-                    style: {
-                      color: '#5444E4',
-                      marginRight: '5px'
-                    },
-                    on: {
-                      click: () => {
-                        this.openDataModal(params.row)
-                      }
-                    }
-                  }, '数据详情'),
-                  h('Button', {
-                    props: {
-                      type: 'text',
-                      size: 'small'
-                    },
-                    style: {
-                      color: '#5444E4',
-                      marginRight: '5px'
-                    },
-                    on: {
-                      click: () => {
-                        this.openModal(params.row)
-                      }
-                    }
-                  }, '编辑'),
-                ])
-              }
-            }
-          ]
-        }
-        return array
-      }
-    },
     mounted() {
       this.getList()
-
     },
     methods: {
       initData() {
@@ -522,7 +385,7 @@
         }
       },
       copyUrlFn(row) {
-        this.copy_url = row.channelurl;
+        this.copy_url = row.href;
         setTimeout(() => {
           this.$refs.copyInput.select();
           document.execCommand("copy");
@@ -537,20 +400,17 @@
         this.searchInfo.toDate = data.endTime
         this.getList(1)
       },
-      toDetail(data) {
-        this.isOpenModalCopy = true
-      },
-      openDataModal() {
-        console.log(1111)
+      openDataModal(data) {
+        this.putInId = data.id
         this.isOpenDataModal = true
       },
       openModal(data) {
-        this.priceInfo = ''
+        this.priceInfo = {}
         this.initData()
         this.gswChannelUser()
         this.isOpenModal = true
         if (data) {
-          this.addInfo = JSON.parse(JSON.stringify(data))
+          this.channerAdGet(data)
         } else {
           this.addInfo = {
             name: ''
@@ -575,6 +435,21 @@
         }).then(
           response => {
             this.priceInfo = response.data.resultData;
+          }
+        )
+      },
+      channerAdGet(data) {
+        this.$api.gswChannel.channerAdGet({
+          id : data.id
+        }).then(
+          response => {
+            this.addInfo = response.data.resultData;
+            this.addInfo.showType = this.addInfo.showType.toString()
+            this.addInfo.place = this.addInfo.place.toString()
+            this.addInfo.startDate = new Date(+this.addInfo.startDate)
+            this.addInfo.page = this.$route.query.type
+            this.priceInfo.shownum = this.addInfo.shownum
+            this.priceInfo.price = this.addInfo.price
           }
         )
       },
@@ -621,6 +496,7 @@
             this.isSending = true
             let promiseDate = this.addInfo.id ? this.$api.gswChannel.channerAdUpdate : this.$api.gswChannel.channerAdAdd
             promiseDate({
+              id: this.addInfo.id,
               chid: this.$route.query.id,
               productId: this.$route.query.type,
               place: this.addInfo.place,

@@ -50,6 +50,12 @@ const gswChannel = {
   channerAdDayList(params) {
     return axios.post("/poem/channel/adDay/list", qs.stringify(params));
   },
+  channerAdInfo(params) {
+    return axios.post("/poem/channel/ad/info", qs.stringify(params));
+  },
+  channerAdGet(params) {
+    return axios.post("/poem/channel/ad/get", qs.stringify(params));
+  },
 };
 
 export default gswChannel;

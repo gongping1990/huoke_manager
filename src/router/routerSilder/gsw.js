@@ -163,6 +163,19 @@ export const gswRouter =[
           }
         ],
         component: () => import('@/view/gsw/marketingWindow/marketingWindow')
+      },
+      {
+        path: '/gsw_customer',
+        name: 'gsw_customer',
+        meta: [
+          {
+            name: '运营管理'
+          },
+          {
+            name: 'banner管理'
+          }
+        ],
+        component: () => import('@/view/gsw/marketingWindow/marketingWindow')
       }
     ]
   },

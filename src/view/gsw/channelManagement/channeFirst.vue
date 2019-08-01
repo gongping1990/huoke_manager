@@ -125,130 +125,69 @@
               ])
             }
           }
+        ],
+        columns:[
+          {
+            title: '名称',
+            key: 'name',
+            align: 'center'
+          },
+          {
+            title: '累计页面访问量',
+            key: 'pv',
+            align: 'center'
+          },
+          {
+            title: '累计访问用户',
+            key: 'uv',
+            align: 'center'
+          },
+          {
+            title: '累计试听申请用户',
+            key: 'tryapplyuv',
+            align: 'center'
+          },
+          {
+            title: '累计付试听通过用户',
+            key: 'trypasseduv',
+            align: 'center'
+          },
+          {
+            title: '累计试听后付费用户',
+            key: 'payeduv',
+            align: 'center'
+          },
+          {
+            title: '累计付费金额',
+            key: 'payedmoney',
+            align: 'center'
+          },
+          {
+            title: '操作',
+            width: 100,
+            align: 'center',
+            render: (h, params) => {
+              return h('div', [
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: '#5444E4',
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.toSecondJump(params.row)
+                    }
+                  }
+                }, '二级渠道'),
+              ])
+            }
+          }
         ]
       };
-    },
-    computed: {
-      columns () {
-        let array= []
-
-        if (this.radioType === '1') {
-          array = [
-            {
-              title: '名称',
-              key: 'name',
-              align: 'center'
-            },
-            {
-              title: '累计页面访问量',
-              key: 'pv',
-              align: 'center'
-            },
-            {
-              title: '累计访问用户',
-              key: 'uv',
-              align: 'center'
-            },
-            {
-              title: '累计试听申请用户',
-              key: 'tryapplyuv',
-              align: 'center'
-            },
-            {
-              title: '累计付试听通过用户',
-              key: 'trypasseduv',
-              align: 'center'
-            },
-            {
-              title: '累计试听后付费用户',
-              key: 'payeduv',
-              align: 'center'
-            },
-            {
-              title: '累计付费金额',
-              key: 'payedmoney',
-              align: 'center'
-            },
-            {
-              title: '操作',
-              width: 100,
-              align: 'center',
-              render: (h, params) => {
-                return h('div', [
-                  h('Button', {
-                    props: {
-                      type: 'text',
-                      size: 'small'
-                    },
-                    style: {
-                      color: '#5444E4',
-                      marginRight: '5px'
-                    },
-                    on: {
-                      click: () => {
-                        this.toSecondJump(params.row)
-                      }
-                    }
-                  }, '二级渠道'),
-                ])
-              }
-            }
-          ]
-        } else {
-          array = [
-            {
-              title: '名称',
-              key: 'name',
-              align: 'center'
-            },
-            {
-              title: '累计页面访问量',
-              key: 'pv',
-              align: 'center'
-            },
-            {
-              title: '累计访问用户',
-              key: 'uv',
-              align: 'center'
-            },
-            {
-              title: '累计付费用户',
-              key: 'payeduv',
-              align: 'center'
-            },
-            {
-              title: '累计付费金额',
-              key: 'payedmoney',
-              align: 'center'
-            },
-            {
-              title: '操作',
-              width: 100,
-              align: 'center',
-              render: (h, params) => {
-                return h('div', [
-                  h('Button', {
-                    props: {
-                      type: 'text',
-                      size: 'small'
-                    },
-                    style: {
-                      color: '#5444E4',
-                      marginRight: '5px'
-                    },
-                    on: {
-                      click: () => {
-                        this.toSecondJump(params.row)
-                      }
-                    }
-                  }, '二级渠道'),
-                ])
-              }
-            }
-          ]
-        }
-        return array
-      }
     },
     mounted() {
       this.getList()
