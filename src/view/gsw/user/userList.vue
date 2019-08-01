@@ -182,7 +182,7 @@
           },
           {
             title: '新课程进度',
-            key: 'creatTime'
+            key: 'studynum'
           },
           {
             title: '创建时间',
