@@ -21,9 +21,13 @@
                      @on-click="getList(1)"></Input>
             </div>
           </Col>
-          <Col :span="24" class="-p-b-flex">
+          <Col :span="19" v-if="radioType==0" class="-p-b-flex">
             <date-picker-template :dataInfo="dateOption" @changeDate="changeDate"></date-picker-template>
-            <date-picker-template :dataInfo="dateOptionTwo" v-if="radioType!=0"
+            <Button @click="openModal()" ghost type="primary" style="width: 100px;">通过</Button>
+          </Col>
+          <Col :span="24" class="-p-b-flex" v-if="radioType!=0">
+            <date-picker-template :dataInfo="dateOption" @changeDate="changeDate"></date-picker-template>
+            <date-picker-template :dataInfo="dateOptionTwo"
                                   @changeDate="changeDateTwo"></date-picker-template>
             <Button @click="openModal()" ghost type="primary" style="width: 100px;" v-if="radioType!=1">通过</Button>
             <Poptip
