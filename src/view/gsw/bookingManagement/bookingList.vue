@@ -161,7 +161,9 @@
           },
           {
             title: '开课时间',
-            key: 'reserveTime'
+            render: (h, params) => {
+              return h('div', params.row.reserveTime || '无')
+            }
           },
           {
             title: '最新审核时间',
