@@ -474,6 +474,9 @@
         this.$api.gswChannel.channerAdList({
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
+          name: this.searchInfo.nickname,
+          startTime: this.searchInfo.fromDate ? new Date(this.searchInfo.fromDate).getTime() : "",
+          endTime: this.searchInfo.toDate ? new Date(this.searchInfo.toDate).getTime() : "",
           chid: this.$route.query.id,
           productId: this.$route.query.type
         })

@@ -238,7 +238,7 @@
         baseUrl: `${getBaseUrl()}/sch/common/uploadPublicFile`, // 公有 （图片）
         baseUrlVa: `http://hkupload.prod.k12.vip/common/uploadPrivateFile`, //私有地址 （音视频）
         uploadOption: {
-          tipText: '只能上传jpg/png文件，且不超过500kb',
+          tipText: '图片尺寸不低于1029*438，大小不超过500kb',
           size: 500
         },
         playUrl: '',
