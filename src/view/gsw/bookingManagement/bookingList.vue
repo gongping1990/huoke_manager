@@ -207,12 +207,7 @@
         }).then(
           response => {
             if (response.data.code == "200") {
-
-              if (!num) {
-                this.$Message.success(`审核成功，其中有${response.data.resultData}个用户已购买课程，自动跳过审核`);
-              } else {
-                this.$Message.success("操作成功");
-              }
+              this.$Message.success(response.data.msg);
               this.getList();
               this.isOpenModal = false
               this.auditType = 1
