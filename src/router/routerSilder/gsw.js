@@ -368,5 +368,22 @@ export const gswRouter =[
         component: () => import('@/view/gsw/przie/deliverGoods')
       }
     ]
+  },
+  {
+    path: '/content',
+    name: 'content',
+    title: '内容管理',
+    component: Main,
+    children: [
+      {
+        path: '/gsw_contentList',
+        name: 'gsw_contentList',
+        meta: [
+          {name: '内容管理'},
+          {name: '内容列表'}
+        ],
+        component: () => import('@/view/gsw/contentManagement/contentList')
+      }
+    ]
   }
 ]
