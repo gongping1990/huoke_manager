@@ -172,10 +172,10 @@ export const gswRouter =[
             name: '运营管理'
           },
           {
-            name: 'banner管理'
+            name: '客服管理'
           }
         ],
-        component: () => import('@/view/gsw/marketingWindow/marketingWindow')
+        component: () => import('@/view/gsw/customer/customer')
       }
     ]
   },

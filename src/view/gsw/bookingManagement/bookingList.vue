@@ -127,7 +127,7 @@
           {
             title: '预约时间',
             render: (h, params) => {
-              return h('div', dayjs(+params.row.gmtModified).format('YYYY-MM-DD HH:mm:ss'))
+              return h('div', dayjs(+params.row.gmtCreate).format('YYYY-MM-DD HH:mm:ss'))
             }
           },
           {
@@ -156,7 +156,7 @@
           {
             title: '预约时间',
             render: (h, params) => {
-              return h('div', dayjs(+params.row.gmtModified).format('YYYY-MM-DD HH:mm:ss'))
+              return h('div', dayjs(+params.row.gmtCreate).format('YYYY-MM-DD HH:mm:ss'))
             }
           },
           {
@@ -196,8 +196,6 @@
       changeAudit(num) {
         if (!num && !this.addInfo.activeTime && this.auditType === 1) {
           return this.$Message.error('请选择开课日期')
-        } else if (!this.checkAll.length) {
-          return this.$Message.error('请选择需要操作的用户')
         }
 
         this.$api.gswReservat.auditBatch({
@@ -221,6 +219,9 @@
           })
       },
       openModal(data) {
+        if (!this.checkAll.length) {
+          return this.$Message.error('请选择需要操作的用户')
+        }
         this.addInfo.activeTime = ''
         this.dataItem = data
         this.isOpenModal = !this.isOpenModal

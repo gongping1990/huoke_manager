@@ -5,7 +5,7 @@
         <Form ref="addInfo" :model="addInfo" :rules="ruleValidateOne" :label-width="90">
           <FormItem label="选择体验课" prop="courseList">
             <Select v-model="addInfo.courseList" multiple :disabled="!isEdit">
-              <Option v-for="(item,index) of courseExperienceList" :value="item.id" :label="item.name"></Option>
+              <Option v-for="(item,index) of courseExperienceList" :value="item.id" :label="item.name" :key="index"></Option>
             </Select>
           </FormItem>
         </Form>
