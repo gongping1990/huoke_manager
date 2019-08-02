@@ -210,7 +210,7 @@
           response => {
             if (response.data.code == "200") {
               this.$Message.success({
-                content: response.data.msg,
+                content: response.data.resultData,
                 duration: 15
               });
               this.getList();
