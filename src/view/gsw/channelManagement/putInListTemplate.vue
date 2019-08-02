@@ -61,7 +61,7 @@
           },
           {
             title: '试听申请用户',
-            key: 'tryapplyuv',
+            key: 'tryapply',
             width: 150,
             align: 'center'
           },
@@ -73,7 +73,7 @@
           },
           {
             title: '付试听通过用户',
-            key: 'trypasseduv',
+            key: 'trypassed',
             width: 150,
             align: 'center'
           },
@@ -86,7 +86,7 @@
           {
             title: '试听后付费用户',
             width: 150,
-            key: 'payeduv',
+            key: 'payed',
             align: 'center'
           },
           {

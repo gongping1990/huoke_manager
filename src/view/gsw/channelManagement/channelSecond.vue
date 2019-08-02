@@ -283,17 +283,17 @@
           },
           {
             title: '累计试听申请用户',
-            key: 'tryapplyuv',
+            key: 'tryapply',
             align: 'center'
           },
           {
             title: '累计付试听通过用户',
-            key: 'trypasseduv',
+            key: 'trypassed',
             align: 'center'
           },
           {
             title: '累计试听后付费用户',
-            key: 'payeduv',
+            key: 'payed',
             align: 'center'
           },
           {
