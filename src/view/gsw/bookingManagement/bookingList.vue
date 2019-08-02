@@ -209,7 +209,10 @@
         }).then(
           response => {
             if (response.data.code == "200") {
-              this.$Message.success(response.data.msg);
+              this.$Message.success({
+                content: response.data.msg,
+                duration: 15
+              });
               this.getList();
               this.isOpenModal = false
               this.auditType = 1
