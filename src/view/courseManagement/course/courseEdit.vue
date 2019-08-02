@@ -195,7 +195,7 @@
             <Button ghost type="primary">上传图片</Button>
           </Upload>
 
-          <span class="-c-tips">图片尺寸不低于640x1008px 图片大小：1M以内</span>
+          <span class="-c-tips">图片尺寸不低于1125x633 图片大小：1M以内</span>
           <div class="-c-course-wrap" v-if="addInfo.previewImgurl">
             <div class="-c-course-item -code">
               <img :src="addInfo.previewImgurl">
