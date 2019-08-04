@@ -231,6 +231,11 @@
             align: 'center'
           },
           {
+            title: '课程名称',
+            key: 'courseName',
+            align: 'center'
+          },
+          {
             title: '提交时间',
             render: (h, params) => {
               return h('div', dayjs(+params.row.workTime).format('YYYY-MM-DD HH:mm:ss'))
