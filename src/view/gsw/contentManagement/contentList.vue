@@ -32,7 +32,7 @@
       @on-cancel="isOpenModalPlay = false"
       width="350"
       title="播放">
-      <audio ref="playAudio" :src="addInfo.resUrl" autoplay controls></audio>
+      <audio ref="playAudio" :src="addInfo.content" autoplay controls></audio>
       <div slot="footer" class="g-flex-j-sa">
         <div @click="closeModalPlay" class="g-primary-btn ">确认</div>
       </div>
@@ -68,11 +68,12 @@
         columns: [
           {
             title: '发布内容',
-           render: (h, params) => {
-              return h('div',[
-                h('div', `小林哥 回复 王佳欣：`),
+            render: (h, params) => {
+              return h('div', [
+                h('div', params.row.textTip),
                 h('div', {
-                  style : {
+                  style: {
+                    display: params.row.format == 2 ? 'inline-block' : 'none',
                     color: '#5444E4',
                     'margin-left': '10px',
                     cursor: 'pointer'
@@ -82,23 +83,75 @@
                       this.openModal(params.row)
                     }
                   }
-                }, `点击播放`)
+                }, `点击播放`),
+                h('img', {
+                  attrs: {
+                    src: params.row.content
+                  },
+                  style: {
+                    display: params.row.format == 1 ? 'inline-block' : 'none',
+                    color: '#5444E4',
+                    'margin-left': '10px',
+                    cursor: 'pointer'
+                  },
+                }),
+                h('span', {
+                  style: {
+                    display: params.row.format == 0 ? 'inline-block' : 'none',
+                    color: '#5444E4'
+                  }
+                }, params.row.content)
               ])
-           }
+            }
           },
           {
             title: '回复（点评、评论、回复）',
-            key: 'sortnum',
-            align: 'center'
+            render: (h, params)=> {
+              return h('div',[
+                h('div', params.row.replyText),
+                h('div', {
+                  style: {
+                    display: params.row.format == 2 ? 'inline-block' : 'none',
+                    color: '#5444E4',
+                    'margin-left': '10px',
+                    cursor: 'pointer'
+                  },
+                  on: {
+                    click: () => {
+                      this.openModal(params.row)
+                    }
+                  }
+                }, `点击播放`),
+                h('img', {
+                  attrs: {
+                    src: params.row.content
+                  },
+                  style: {
+                    display: params.row.format == 1 ? 'inline-block' : 'none',
+                    color: '#5444E4',
+                    'margin-left': '10px',
+                    cursor: 'pointer'
+                  },
+                }),
+                h('span', {
+                  style: {
+                    display: params.row.format == 0 ? 'inline-block' : 'none',
+                    color: '#5444E4'
+                  }
+                }, params.row.content)
+              ])
+            }
           },
           {
             title: '创建时间',
-            key: 'sortnum',
+            render: (h, params) => {
+              return h('div', dayjs(+params.row.timestamp).format('YYYY-MM-DD HH:mm:ss'))
+            },
             align: 'center'
           },
           {
             title: '用户',
-            key: 'sortnum',
+            key: 'uname',
             align: 'center'
           },
           {
@@ -113,15 +166,15 @@
                     size: 'small'
                   },
                   style: {
-                    color: '#5444E4',
+                    color: !params.row.showed ? '#5444E4' : 'rgba(218, 55, 75)',
                     marginRight: '5px'
                   },
                   on: {
                     click: () => {
-                      this.openModal(params.row)
+                      this.delItem(params.row)
                     }
                   }
-                }, '启用')
+                }, !params.row.showed ? '启用' : '禁用')
               ])
             }
           }
@@ -132,7 +185,8 @@
       this.getList()
     },
     methods: {
-      openModal (data) {
+      openModal(data) {
+        this.addInfo = data
         this.isOpenModalPlay = true
       },
       closeModalPlay() {
@@ -150,25 +204,43 @@
       },
       //分页查询
       getList(num) {
+
         this.isFetching = true
         if (num) {
           this.tab.currentPage = 1
         }
 
         if (this.selectInfo == '1' && this.searchInfo.antistop) {
-          params.orderId = this.searchInfo.antistop
-        } else if (this.selectInfo == '2' && this.searchInfo.antistop) {
           params.nickname = this.searchInfo.antistop
+        } else if (this.selectInfo == '2' && this.searchInfo.antistop) {
+          params.keyword = this.searchInfo.antistop
         }
 
-        this.$api.poem.getBroadcastList({
+        this.$api.gswStudy.workComment({
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
+          start: this.searchInfo.getStartTime ? new Date(this.searchInfo.getStartTime) : '',
+          end: this.searchInfo.getEndTime ? new Date(this.searchInfo.getEndTime) : ''
         })
           .then(
             response => {
-              this.dataList = response.data.resultData.records;
+              let dataArray = ''
+              dataArray = response.data.resultData.records;
               this.total = response.data.resultData.total;
+              this.dataList =[]
+              for (let item of dataArray) {
+                this.dataList.push({
+                  timestamp: item.timestamp,
+                  uname: item.uname,
+                  target: item.target,
+                  format: item.format,
+                  workStuName: item.workStuName,
+                  content: item.content,
+                  showed: item.showed,
+                  replyText: item.source ? `${item.source.uname}${item.source.target != 0 ? (item.source.target == 1 ? '点评' : '回复') : ' 评论'}${item.source.source ? item.source.source.uname : `${item.source.workStuName}的作业`}` : item.workStuName,
+                  textTip: `${item.uname}${item.target != 0 ? '评论':'回复'}${item.target != 0 ? (item.target == 1 ? `${item.workTeacher}老师` : item.source.uname) : `${item.workStuName}的作业`}：`
+                })
+              }
             })
           .finally(() => {
             this.isFetching = false
@@ -177,9 +249,9 @@
       delItem(param) {
         this.$Modal.confirm({
           title: '提示',
-          content: '确认要启用吗？',
+          content: `确认要进行此操作吗？`,
           onOk: () => {
-            this.$api.poem.removeBroadcast({
+            this.$api.gswStudy.workCommentShow({
               id: param.id
             }).then(
               response => {
