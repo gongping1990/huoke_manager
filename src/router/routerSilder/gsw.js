@@ -402,5 +402,22 @@ export const gswRouter =[
         component: () => import('@/view/gsw/teacherManagement/counselor')
       }
     ]
+  },
+  {
+    path: '/messageCenter',
+    name: 'messageCenter',
+    title: '消息中心',
+    component: Main,
+    children: [
+      {
+        path: '/gsw_communication',
+        name: 'gsw_communication',
+        meta: [
+          {name: '消息中心'},
+          {name: '师生通讯'}
+        ],
+        component: () => import('@/view/gsw/messageCenter/communication')
+      }
+    ]
   }
 ]
