@@ -16,6 +16,9 @@ const gswProduct = {
   },
   listReleaseByProduct(params) {
     return axios.get("/poem/product/listReleaseByProduct", {params: params});
+  },
+  uploadPackage(params) {
+    return axios.get("/poem/product/uploadPackage", {params: params});
   }
 };
 

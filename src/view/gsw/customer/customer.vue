@@ -3,11 +3,11 @@
     <Card>
       <Form class="-c-form g-t-left ivu-form-item-required" ref="addInfo" :model="addInfo" :rules="ruleValidate"
             :label-width="100">
-        <FormItem label="老师名称" prop="couponMoney">
-          <Input type="text" v-model="addInfo.couponMoney" placeholder="请输入老师名称" :disabled="!isShowEdit"></Input>
+        <FormItem label="老师名称" prop="name">
+          <Input type="text" v-model="addInfo.name" placeholder="请输入老师名称" :disabled="!isShowEdit"></Input>
         </FormItem>
-        <FormItem label="微信号" prop="keepTime">
-          <Input type="text" v-model="addInfo.keepTime" placeholder="请输入微信号" :disabled="!isShowEdit"></Input>
+        <FormItem label="微信号" prop="wechat">
+          <Input type="text" v-model="addInfo.wechat" placeholder="请输入微信号" :disabled="!isShowEdit"></Input>
         </FormItem>
 
         <Form-item label="头像" class="-c-form-item ivu-form-item-required">
@@ -17,16 +17,16 @@
             :action="baseUrl"
             :show-upload-list="false"
             :max-size="500"
-            :on-success="handleSuccess"
+            :on-success="handleSuccessHeadImg"
             :on-exceeded-size="handleSize"
             :on-error="handleErr">
             <Button ghost type="primary">上传图片</Button>
           </Upload>
           <div v-if="isShowEdit" class="-c-tips">图片尺寸不低于960px*360px 图片大小：500K以内</div>
-          <div class="-c-course-wrap" v-if="addInfo.coverphoto">
+          <div class="-c-course-wrap" v-if="addInfo.headimg">
             <div class="-c-course-item">
-              <img :src="addInfo.coverphoto">
-              <div v-if="isShowEdit" class="-i-del" @click="addInfo.coverphoto= ''">删除</div>
+              <img :src="addInfo.headimg">
+              <div v-if="isShowEdit" class="-i-del" @click="addInfo.headimg= ''">删除</div>
             </div>
           </div>
         </Form-item>
@@ -37,16 +37,16 @@
             :action="baseUrl"
             :show-upload-list="false"
             :max-size="500"
-            :on-success="handleSuccess"
+            :on-success="handleSuccessQrCode"
             :on-exceeded-size="handleSize"
             :on-error="handleErr">
             <Button ghost type="primary">上传图片</Button>
           </Upload>
           <div v-if="isShowEdit" class="-c-tips">图片尺寸不低于960px*360px 图片大小：500K以内</div>
-          <div class="-c-course-wrap" v-if="addInfo.coverphoto">
+          <div class="-c-course-wrap" v-if="addInfo.qrCode">
             <div class="-c-course-item">
-              <img :src="addInfo.coverphoto">
-              <div v-if="isShowEdit" class="-i-del" @click="addInfo.coverphoto= ''">删除</div>
+              <img :src="addInfo.qrCode">
+              <div v-if="isShowEdit" class="-i-del" @click="addInfo.qrCode= ''">删除</div>
             </div>
           </div>
         </Form-item>
@@ -81,18 +81,15 @@
         isFetching: false,
         baseUrl: `${getBaseUrl()}/sch/common/uploadPublicFile`, // 公有 （图片）
         addInfo: {
-          courseGoodsIdList: [],
-          coverphoto: '',
-          useCondition: 0,
-          useScope: 0,
-          type: 0
+          headimg: '',
+          qrCode: ''
         },
         ruleValidate: {
-          couponMoney: [
-            {required: true, message: '请输入优惠金额', trigger: 'blur'},
+          name: [
+            {required: true, message: '请输入教师名称', trigger: 'blur'},
           ],
-          keepTime: [
-            {required: true, message: '请输入有效期', trigger: 'blur'},
+          wechat: [
+            {required: true, message: '请输入微信号', trigger: 'blur'},
           ]
         },
       }
@@ -107,16 +104,10 @@
       },
       getList() {
         this.isFetching = true
-        this.courseList = []
-        this.courseListOne = []
-        this.$api.giftpack.giftPackInfo()
+        this.$api.gswCustomer.getDefaultCustomer()
           .then(
             response => {
-              if (response.data.resultData) {
-                this.addInfo = response.data.resultData;
-                this.addInfo.couponMoney = this.addInfo.couponMoney.toString()
-                this.addInfo.keepTime = this.addInfo.keepTime.toString()
-              }
+              this.addInfo = response.data.resultData;
             })
           .finally(() => {
             this.isFetching = false
@@ -124,16 +115,14 @@
       },
       submitInfo(name) {
         let param = {}
-        if (!pattern.positive.exec(this.addInfo.couponMoney)) {
-          return this.$Message.error('金额保留两位小数')
-        } else if (!this.courseList.length) {
-          return this.$Message.error('请选择体验课')
-        } else if (!this.addInfo.coverphoto) {
-          return this.$Message.error('请上传封面图')
+        if (!this.addInfo.headimg) {
+          return this.$Message.error('请上传教师头像')
+        } else if (!this.addInfo.qrCode) {
+          return this.$Message.error('请上传二维码')
         }
 
         param = {
-          couponMoney: this.addInfo.couponMoney,
+          headimg: this.addInfo.headimg,
           enable: this.addInfo.enable != '0',
           keepTime: this.addInfo.keepTime,
           coverphoto: this.addInfo.coverphoto,
@@ -145,11 +134,13 @@
         this.$refs[name].validate((valid) => {
           if (valid) {
             this.isSending = true
-            let promiseDate = this.addInfo.id ? this.$api.giftpack.updateGiftPackInfo({
-              ...param,
-              id: this.addInfo.id
-            }) : this.$api.giftpack.addGiftPackInfo(param)
-            promiseDate
+            this.$api.gswCustomer.editCustomer({
+              id: this.addInfo.id,
+              name: this.addInfo.name,
+              wechat: this.addInfo.wechat,
+              headimg: this.addInfo.headimg,
+              qrCode: this.addInfo.qrCode
+            })
               .then(
                 response => {
                   if (response.data.code == '200') {
@@ -164,10 +155,16 @@
           }
         })
       },
-      handleSuccess(res) {
+      handleSuccessHeadImg(res) {
         if (res.code === 200) {
           this.$Message.success('上传成功')
-          this.addInfo.coverphoto = res.resultData.url
+          this.addInfo.headimg = res.resultData.url
+        }
+      },
+      handleSuccessQrCode(res) {
+        if (res.code === 200) {
+          this.$Message.success('上传成功')
+          this.addInfo.qrCode = res.resultData.url
         }
       },
       handleSize() {

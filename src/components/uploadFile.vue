@@ -4,7 +4,7 @@
       style="display: inline-block"
       :action="baseUrlVa"
       :show-upload-list="false"
-      :max-size="option.size || 500"
+      :max-size="option.size || 50000"
       :before-upload="beforeUpload"
       :on-success="handleSuccessPlay"
       :on-exceeded-size="handleSize"
@@ -20,16 +20,20 @@
 
   export default {
     name: 'uploadFile',
-    props: ['option', 'childData'],
+    props: ['option', 'childData', 'action'],
     data() {
       return {
-        baseUrlVa: `${getBaseUrl()}/poem/goods/uploadGoodsExcel?userId=${localStorage.userId}`,
+        defaultUrl: `${getBaseUrl()}/poem/goods/uploadGoodsExcel?userId=${localStorage.userId}`,
+        baseUrlVa: '',
         audioPlayAddress: '',
         fileDown: '',
         fileType: this.option.format,
         fileName: '',
         isFetching: false
       }
+    },
+    mounted () {
+     this.baseUrlVa = this.action || this.defaultUrl
     },
     model: {
       prop: 'childData',
@@ -41,7 +45,7 @@
       },
 
       fileDown(_n, _o) {
-        let objs = _n
+        let objs = _n || {}
         objs.isSucess = true
         this.$emit('changeUrl', objs)
       }

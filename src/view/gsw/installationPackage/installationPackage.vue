@@ -1,7 +1,7 @@
 <template>
   <div class="p-installationPackage">
     <Card>
-      <div class="g-add-btn" @click="openModal()">
+      <div class="g-add-btn" @click="openModal('', 0)">
         <Icon class="-btn-icon" color="#fff" type="ios-add" size="24"/>
       </div>
 
@@ -16,10 +16,14 @@
         v-model="isOpenModal"
         @on-cancel="closeModal('addInfo')"
         width="500"
-        title="添加版本">
+        :title="isUpload ? '上传安装包' : '添加版本'">
         <Form ref="addInfo" :model="addInfo" :rules="ruleValidate" :label-width="90">
-          <FormItem label="版本号" prop="version">
+          <FormItem label="版本号" prop="version" v-if="!isUpload">
             <Input type="text" v-model="addInfo.version" placeholder="请输入版本号"></Input>
+          </FormItem>
+          <FormItem label="安装包" prop="version" v-if="isUpload">
+           <upload-file v-model="uploadInfo" :option="uploadOption" :action="baseUrl"></upload-file>
+            <div class="-c-tips">* 仅支持安卓apk文件上传</div>
           </FormItem>
         </Form>
         <div slot="footer" class="-p-b-flex">
@@ -33,23 +37,22 @@
 
 <script>
   import {getBaseUrl} from '@/libs/index'
-  import UploadImg from "../../../components/uploadImg";
   import dayjs from 'dayjs'
+  import UploadFile from "../../../components/uploadFile";
 
   export default {
-    name: 'qrcodeList',
-    components: {UploadImg},
+    name: 'installationPackage',
+    components: {UploadFile},
     data() {
       return {
-        baseUrl: `${getBaseUrl()}/sch/common/uploadPublicFile`,
+        baseUrl: '',
         tab: {
           page: 1,
           currentPage: 1,
           pageSize: 10
         },
         uploadOption: {
-          tipText: '只能上传jpg/png文件，且不超过500kb',
-          size: 500
+          format: ['apk']
         },
         dataList: [],
         total: 0,
@@ -57,6 +60,8 @@
         isFetching: false,
         isOpenModal: false,
         isSending: false,
+        isUpload: false,
+        uploadInfo: {},
         addInfo: {},
         ruleValidate: {
           version: [
@@ -98,7 +103,7 @@
                   },
                   on: {
                     click: () => {
-                      window.open(params.androidPackage)
+                      window.open(params.row.androidPackage)
                     }
                   }
                 }, '下载'),
@@ -113,6 +118,7 @@
                   },
                   on: {
                     click: () => {
+                      this.openModal(params.row, 1)
                     }
                   }
                 }, '上传')
@@ -122,11 +128,25 @@
         ],
       };
     },
+    watch: {
+      'uploadInfo' (_n,_o) {
+        if(_n.isSucess) {
+          this.isOpenModal = false
+          this.$Message.success('上传成功')
+        }
+      }
+    },
     mounted() {
       this.getList()
     },
     methods: {
-      openModal(data) {
+      openModal(data, num) {
+        if (num === 1) {
+          this.isUpload = true
+          this.baseUrl = `${getBaseUrl()}/poem/product/uploadPackage?id=${data.id}`
+        } else {
+          this.isUpload = false
+        }
         this.isOpenModal = true
       },
       closeModal(name) {

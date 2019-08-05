@@ -25,6 +25,18 @@
             @on-change="currentChange"></Page>
 
     </Card>
+
+    <Modal
+      class="p-course-list"
+      v-model="isOpenModalPlay"
+      @on-cancel="isOpenModalPlay = false"
+      width="350"
+      title="播放">
+      <audio ref="playAudio" :src="addInfo.resUrl" autoplay controls></audio>
+      <div slot="footer" class="g-flex-j-sa">
+        <div @click="closeModalPlay" class="g-primary-btn ">确认</div>
+      </div>
+    </Modal>
   </div>
 </template>
 
@@ -51,11 +63,28 @@
         searchInfo: {},
         total: 0,
         isFetching: false,
+        isOpenModalPlay: false,
         addInfo: {},
         columns: [
           {
             title: '发布内容',
-            key: 'content'
+           render: (h, params) => {
+              return h('div',[
+                h('div', `小林哥 回复 王佳欣：`),
+                h('div', {
+                  style : {
+                    color: '#5444E4',
+                    'margin-left': '10px',
+                    cursor: 'pointer'
+                  },
+                  on: {
+                    click: () => {
+                      this.openModal(params.row)
+                    }
+                  }
+                }, `点击播放`)
+              ])
+           }
           },
           {
             title: '回复（点评、评论、回复）',
@@ -103,6 +132,13 @@
       this.getList()
     },
     methods: {
+      openModal (data) {
+        this.isOpenModalPlay = true
+      },
+      closeModalPlay() {
+        this.$refs.playAudio.pause()
+        this.isOpenModalPlay = false
+      },
       changeDate(data) {
         this.searchInfo.getStartTime = data.startTime
         this.searchInfo.getEndTime = data.endTime
