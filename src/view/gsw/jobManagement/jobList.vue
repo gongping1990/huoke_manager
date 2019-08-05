@@ -11,6 +11,14 @@
           </Radio-group>
         </Row>
         <Row class="g-t-left g-tab">
+          <Col :span="3" class="g-t-left" >
+            <div class="g-flex-a-j-center">
+              <div class="-search-select-text">是否付费：</div>
+              <Select v-model="searchInfo.pay" @on-change="getList(1)" class="-search-selectOne">
+                <Option v-for="(item,index) in buyStatusList" :label="item.name" :value="item.id" :key="index"></Option>
+              </Select>
+            </div>
+          </Col>
           <Col :span="3" class="g-t-left" v-if="radioType===3">
             <div class="g-flex-a-j-center">
               <div class="-search-select-text">用户评价：</div>
@@ -30,7 +38,7 @@
                      @on-click="getList(1)"></Input>
             </div>
           </Col>
-          <Col :span="16" class="g-flex-a-j-center">
+          <Col :span="13" class="g-flex-a-j-center">
             <date-picker-template :dataInfo="dateOption" @changeDate="changeDate"></date-picker-template>
           </Col>
         </Row>
@@ -139,6 +147,20 @@
             id: '0'
           }
         ],
+        buyStatusList: [
+          {
+            name: '全部',
+            id: '-1'
+          },
+          {
+            name: '是',
+            id: '1'
+          },
+          {
+            name: '否',
+            id: '0'
+          }
+        ],
         evaluateColumn: {
           '0': '不满意',
           '1': '一般',
@@ -151,7 +173,8 @@
         getStartTime: '',
         getEndTime: '',
         searchInfo: {
-          evaluate: '-1'
+          evaluate: '-1',
+          pay: '-1'
         },
         isFetching: false,
         isOpenModal: false,
@@ -746,6 +769,7 @@
           size: this.tab.pageSize,
           grade: 3,
           evaluation: this.searchInfo.evaluate == '-1' ? '' : this.searchInfo.evaluate,
+          pay: this.searchInfo.pay == '-1' ? '' : this.searchInfo.pay,
           starttime: this.getStartTime ? new Date(this.getStartTime).getTime() : "",
           endtime: this.getEndTime ? new Date(this.getEndTime).getTime() : "",
           status: this.radioType == 4 ? '' :  this.radioType,
