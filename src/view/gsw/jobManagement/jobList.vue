@@ -7,6 +7,7 @@
             <Radio :label=0>待批改</Radio>
             <Radio :label=1>不合格</Radio>
             <Radio :label=3>已批改</Radio>
+            <Radio :label=4>表扬</Radio>
           </Radio-group>
         </Row>
         <Row class="g-t-left g-tab">
@@ -465,6 +466,7 @@
                     size: 'small'
                   },
                   style: {
+                    display: this.radioType == 4 ? 'none' : 'inline-block',
                     color: 'rgba(218, 55, 75)',
                     marginRight: '5px'
                   },
@@ -473,7 +475,22 @@
                       this.delItem(params.row)
                     }
                   }
-                }, '删除')
+                }, '删除'),
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: '#5444E4',
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.jobPrise(params.row)
+                    }
+                  }
+                }, this.radioType == '4' ? '移除表扬' : '加入表扬')
               ])
             }
           }
@@ -612,6 +629,7 @@
           '0': this.columns,
           '3': this.columnsTwo,
           '1': this.columnsThree,
+          '4': this.columnsTwo,
         }
       }
     },
@@ -619,6 +637,24 @@
       this.getList()
     },
     methods: {
+      jobPrise (data) {
+        this.$Modal.confirm({
+          title: '提示',
+          content: `确认要进行此操作吗？`,
+          onOk: () => {
+            this.$api.gswStudy.jobPraise({
+              id: data.id,
+              praise: !data.praise
+            }).then(
+              response => {
+                if (response.data.code == "200") {
+                  this.$Message.success("操作成功");
+                  this.getList();
+                }
+              })
+          }
+        })
+      },
       changePassed () {
         this.$forceUpdate()
       },
@@ -681,7 +717,8 @@
           evaluation: this.searchInfo.evaluate == '-1' ? '' : this.searchInfo.evaluate,
           starttime: this.getStartTime ? new Date(this.getStartTime).getTime() : "",
           endtime: this.getEndTime ? new Date(this.getEndTime).getTime() : "",
-          status: this.radioType
+          status: this.radioType == 4 ? '' :  this.radioType,
+          praise: this.radioType == 4
         }
 
         if (this.selectInfo == '1' && this.searchInfo) {
@@ -703,7 +740,6 @@
                 item.workImgSrc = item.workImgSrc ? item.workImgSrc.split(',') : []
                 item.replyImg = item.replyImg ? item.replyImg.split(',') : []
               }
-              console.log(this.dataList,1)
             })
           .finally(() => {
             this.isFetching = false
