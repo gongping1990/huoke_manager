@@ -111,7 +111,7 @@
                 h('div', params.row.replyText),
                 h('div', {
                   style: {
-                    display: params.row.format == 2 ? 'inline-block' : 'none',
+                    display: params.row.formatTwo == 2 ? 'inline-block' : 'none',
                     color: '#5444E4',
                     'margin-left': '10px',
                     cursor: 'pointer'
@@ -127,7 +127,7 @@
                     src: params.row.content
                   },
                   style: {
-                    display: params.row.format == 1 ? 'inline-block' : 'none',
+                    display: params.row.formatTwo == 1 ? 'inline-block' : 'none',
                     color: '#5444E4',
                     'margin-left': '10px',
                     cursor: 'pointer'
@@ -135,7 +135,7 @@
                 }),
                 h('span', {
                   style: {
-                    display: params.row.format == 0 ? 'inline-block' : 'none',
+                    display: params.row.formatTwo == 0 ? 'inline-block' : 'none',
                     color: '#5444E4'
                   }
                 }, params.row.content)
@@ -237,6 +237,7 @@
                   workStuName: item.workStuName,
                   content: item.content,
                   showed: item.showed,
+                  formatTwo: item.source.source ? item.source.source.format : '',
                   replyText: item.source ? `${item.source.uname}${item.source.target != 0 ? (item.source.target == 1 ? '点评' : '回复') : ' 评论'}${item.source.source ? item.source.source.uname : `${item.source.workStuName}的作业`}` : item.workStuName,
                   textTip: `${item.uname}${item.target != 0 ? '评论':'回复'}${item.target != 0 ? (item.target == 1 ? `${item.workTeacher}老师` : item.source.uname) : `${item.workStuName}的作业`}：`
                 })
