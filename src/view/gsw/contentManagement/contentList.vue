@@ -80,7 +80,7 @@
                   },
                   on: {
                     click: () => {
-                      this.openModal(params.row)
+                      this.openModal(params.row.content)
                     }
                   }
                 }, `点击播放`),
@@ -118,13 +118,13 @@
                   },
                   on: {
                     click: () => {
-                      this.openModal(params.row)
+                      this.openModal(params.row.contentTwo)
                     }
                   }
                 }, `点击播放`),
                 h('img', {
                   attrs: {
-                    src: params.row.content
+                    src: params.row.contentTwo
                   },
                   style: {
                     display: params.row.formatTwo == 1 ? 'inline-block' : 'none',
@@ -138,7 +138,7 @@
                     display: params.row.formatTwo == 0 ? 'inline-block' : 'none',
                     color: '#5444E4'
                   }
-                }, params.row.content)
+                }, params.row.contentTwo)
               ])
             }
           },
@@ -185,8 +185,8 @@
       this.getList()
     },
     methods: {
-      openModal(data) {
-        this.addInfo = data
+      openModal(url) {
+        this.addInfo.content = url
         this.isOpenModalPlay = true
       },
       closeModalPlay() {
@@ -237,7 +237,8 @@
                   workStuName: item.workStuName,
                   content: item.content,
                   showed: item.showed,
-                  formatTwo: item.source.source ? item.source.source.format : '',
+                  formatTwo: item.source ? item.source.format : '',
+                  contentTwo: item.source ? item.source.content : '',
                   replyText: item.source ? `${item.source.uname}${item.source.target != 0 ? (item.source.target == 1 ? '点评' : '回复') : ' 评论'}${item.source.source ? item.source.source.uname : `${item.source.workStuName}的作业`}` : item.workStuName,
                   textTip: `${item.uname}${item.target != 0 ? '评论':'回复'}${item.target != 0 ? (item.target == 1 ? `${item.workTeacher}老师` : item.source.uname) : `${item.workStuName}的作业`}：`
                 })

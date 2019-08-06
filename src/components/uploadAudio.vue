@@ -22,6 +22,7 @@
                ref="media"
                :src="audioPlayAddress"
                controls="controls" preload="auto"></audio>
+        <div class="-i-del" @click="audioStorageAddress= ''">删除</div>
       </div>
     </div>
 
@@ -153,6 +154,18 @@
           color: #ffffff;
           background: rgba(255, 237, 116, 1);
         }
+      }
+
+      .-i-del {
+        position: absolute;
+        top: 0;
+        right: 0;
+        color: #ffff;
+        background-color: rgba(0, 0, 0, 0.4);
+        line-height: normal;
+        cursor: pointer;
+        padding: 4px;
+        border-radius: 4px;
       }
 
       .-item-video {
