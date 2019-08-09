@@ -47,6 +47,12 @@
           <choice-question ref="childOne" :type="2" @submitChoice="submitChoice"
                            :childList="choiceList"></choice-question>
         </FormItem>
+        <FormItem label="作业类型" v-if="modalType===5">
+          <Radio-group v-model="detailInfo.homeWorkType">
+            <Radio :label=1>朗读</Radio>
+            <Radio :label=2>书写</Radio>
+          </Radio-group>
+        </FormItem>
         <FormItem label="作业名称" v-if="modalType===5">
           <Input type="text" v-model="detailInfo.homework" placeholder="请输入作业名称（字数不超过20字）" :maxlength="20"></Input>
         </FormItem>
@@ -671,7 +677,9 @@
           })
       },
       saveHomeWork() {
-        if (!this.detailInfo.homework) {
+        if (!this.detailInfo.homeWorkType) {
+          return this.$Message.error('请选择作业类型')
+        } else if (!this.detailInfo.homework) {
           return this.$Message.error('请输入作业名称')
         } else if (!this.detailInfo.homeworkClaim) {
           return this.$Message.error('请输入作业要求')
@@ -680,7 +688,8 @@
         this.$api.composition.saveHomeWork({
           lessonId: this.dataItem.id,
           homework: this.detailInfo.homework,
-          homeworkClaim: this.detailInfo.homeworkClaim
+          homeworkClaim: this.detailInfo.homeworkClaim,
+          homeWorkType: this.detailInfo.homeWorkType
         })
           .then(response => {
             if (response.data.code == '200') {

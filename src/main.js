@@ -7,7 +7,10 @@ import api from "@/request/api";
 import iView from 'iview'
 import './assets/styles/iview.css'
 import './assets/style/globalStyle.css'
+import preview from 'vue-photo-preview'
+import 'vue-photo-preview/dist/skin.css'
 
+Vue.use(preview)
 Vue.use(iView)
 Vue.config.productionTip = false
 Vue.prototype.$api = api;
