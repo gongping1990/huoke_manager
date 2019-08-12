@@ -40,6 +40,11 @@
       prop: 'childData',
       event: 'changeUrl'
     },
+    mounted () {
+      if(this.childData){
+        this.imgArray = this.childData
+      }
+    },
     watch: {
       childData(_n, _o) {
         this.imgArray = _n || []

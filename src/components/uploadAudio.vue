@@ -48,9 +48,15 @@
       prop: 'childData',
       event: 'changeUrl'
     },
+    mounted () {
+      if(this.childData){
+        this.audioStorageAddress = this.childData
+        this.getAvUrl(this.childData)
+      }
+    },
     watch: {
       childData(_n, _o) {
-        console.log(_n,_o,111)
+        console.log(_n,_o,333)
         this.audioStorageAddress = _n
         this.getAvUrl(_n)
       },

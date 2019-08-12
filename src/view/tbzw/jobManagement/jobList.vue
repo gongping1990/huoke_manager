@@ -456,7 +456,7 @@
                       this.openModal(params.row)
                     }
                   }
-                }, '修改'),
+                }, '修改1'),
                 h('Button', {
                   props: {
                     type: 'text',
@@ -699,9 +699,9 @@
       openModal(data) {
         this.isOpenModal = true
         this.addInfo = {
-          replyImg: ['1'],
+          replyImg: ['111111'],
           replyText: '',
-          replyAudio: '1'
+          replyAudio: '1111111111'
         }
         if (data) {
           this.addInfo = JSON.parse(JSON.stringify(data))
