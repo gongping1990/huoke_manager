@@ -61,7 +61,7 @@
                  :maxlength='80'></Input>
         </FormItem>
         <FormItem label="朗读内容" v-if="modalType===5">
-          <editor ref="editor" v-model="addInfo.readContent"></editor>
+          <editor ref="editor" v-model="detailInfo.readContent"></editor>
         </FormItem>
       </Form>
 
@@ -436,7 +436,6 @@
         this.isOpenModalContent = false
       },
       openModalContent(data, type) {
-        console.log(data,'测试')
         this.isOpenModalContent = true
         this.detailInfo = JSON.parse(JSON.stringify(data))
         this.$refs.editor && this.$refs.editor.setHtml(this.detailInfo.readContent)
