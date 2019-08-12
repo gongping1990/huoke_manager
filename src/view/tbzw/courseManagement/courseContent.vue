@@ -60,6 +60,9 @@
           <Input type="textarea" :rows="4" v-model="detailInfo.homeworkClaim" placeholder="请输入作业要求（字数不超过80字）"
                  :maxlength='80'></Input>
         </FormItem>
+        <FormItem label="朗读内容" v-if="modalType===5">
+          <editor ref="editor" v-model="addInfo.readContent"></editor>
+        </FormItem>
       </Form>
 
       <div v-else>
@@ -435,6 +438,7 @@
       openModalContent(data, type) {
         this.isOpenModalContent = true
         this.detailInfo = JSON.parse(JSON.stringify(data))
+        this.$refs.editor && this.$refs.editor.setHtml(data.readContent)
         this.dataItem = data
         this.modalType = type
         this.detailInfo.teacher = this.dataItem.teacherId

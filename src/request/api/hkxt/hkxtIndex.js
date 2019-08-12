@@ -20,6 +20,7 @@ import dataCenter from "./dataCenter";
 import packages from "./package";
 import graduategiftpack from "./graduategiftpack";
 import statistics from "./statistics";
+import wxSubscribeKfMsg from "./wxSubscribeKfMsg";
 
 export const hkxtIndex = {
   banner,
@@ -43,5 +44,6 @@ export const hkxtIndex = {
   capsule,
   packages,
   graduategiftpack,
-  statistics
+  statistics,
+  wxSubscribeKfMsg
 }

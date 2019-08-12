@@ -50,6 +50,7 @@
     },
     watch: {
       childData(_n, _o) {
+        console.log(_n,_o,111)
         this.audioStorageAddress = _n
         this.getAvUrl(_n)
       },

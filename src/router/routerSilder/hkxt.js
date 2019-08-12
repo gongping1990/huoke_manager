@@ -340,6 +340,15 @@ export const hkxtRouter =[
           {name: '自定义短信消息'}
         ],
         component: () => import('@/view/messageManagement/custom_sms_news/custom_sms_news')
+      },
+      {
+        path: '/hkxt_wxSubscribe',
+        name: 'hkxt_wxSubscribe',
+        meta: [
+          {name: '消息管理'},
+          {name: '关注用户操作'}
+        ],
+        component: () => import('@/view/messageManagement/wxSubscribe/wxSubscribe')
       }
     ]
   },

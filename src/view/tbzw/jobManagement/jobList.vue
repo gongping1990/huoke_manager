@@ -215,7 +215,7 @@
                   display: 'flex',
                   justifyContent: 'space-around'
                 }
-              }, params.row.workImgSrc.length ? params.row.workImgSrc.map((item, index) => {
+              }, params.row.homeworkType == '2' ? params.row.workImgSrc.map((item, index) => {
                 return h('div', {
                   style: {
                     position: 'relative',
@@ -259,7 +259,7 @@
                   },
                   on: {
                     click: () => {
-                      this.openModalPlay(params.row.workAudio)
+                      this.openModalPlay(params.row.workImgSrc[0])
                     }
                   }
                 }, '播放音频')
@@ -340,7 +340,7 @@
                   display: 'flex',
                   justifyContent: 'space-around'
                 }
-              }, params.row.workImgSrc.length ? params.row.workImgSrc.map((item, index) => {
+              }, params.row.homeworkType == '2' ? params.row.workImgSrc.map((item, index) => {
                 return h('div', {
                   style: {
                     position: 'relative',
@@ -384,7 +384,7 @@
                   },
                   on: {
                     click: () => {
-                      this.openModalPlay(params.row.workAudio)
+                      this.openModalPlay(params.row.workImgSrc[0])
                     }
                   }
                 }, '播放音频')
@@ -519,7 +519,7 @@
                   display: 'flex',
                   justifyContent: 'space-around'
                 }
-              }, params.row.workImgSrc.length ? params.row.workImgSrc.map((item, index) => {
+              }, params.row.homeworkType == '2' ? params.row.workImgSrc.map((item, index) => {
                 return h('div', {
                   style: {
                     position: 'relative',
@@ -563,7 +563,7 @@
                   },
                   on: {
                     click: () => {
-                      this.openModalPlay(params.row.workAudio)
+                      this.openModalPlay(params.row.workImgSrc[0])
                     }
                   }
                 }, '播放音频')
@@ -698,15 +698,16 @@
       },
       openModal(data) {
         this.isOpenModal = true
+        this.addInfo = {
+          replyImg: ['1'],
+          replyText: '',
+          replyAudio: '1'
+        }
         if (data) {
           this.addInfo = JSON.parse(JSON.stringify(data))
           this.addInfo.isPassed = this.radioType != 1 ? 1 : 0
-        } else {
-          this.addInfo = {
-            replyImg: [],
-            replyText: ''
-          }
         }
+        console.log(this.addInfo)
       },
       closeModal(name) {
         this.isOpenModal = false
