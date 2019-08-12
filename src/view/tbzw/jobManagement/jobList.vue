@@ -195,11 +195,6 @@
             align: 'center'
           },
           {
-            title: '课程名称',
-            key: 'courseName',
-            align: 'center'
-          },
-          {
             title: '是否付费',
             render: (h, params)=> {
               return h('div', params.row.buyStatus ? '是' : '否')
@@ -208,7 +203,7 @@
           },
           {
             title: '作业要求',
-            key: 'homeworkRequire',
+            key: 'homeworkTitle',
             align: 'center'
           },
           {
@@ -325,15 +320,15 @@
             align: 'center'
           },
           {
-            title: '课程名称',
-            key: 'courseName',
-            align: 'center'
-          },
-          {
             title: '是否付费',
             render: (h, params)=> {
               return h('div', params.row.buyStatus ? '是' : '否')
             },
+            align: 'center'
+          },
+          {
+            title: '作业要求',
+            key: 'homeworkTitle',
             align: 'center'
           },
           {
@@ -504,11 +499,6 @@
             align: 'center'
           },
           {
-            title: '课程名称',
-            key: 'courseName',
-            align: 'center'
-          },
-          {
             title: '是否付费',
             render: (h, params)=> {
               return h('div', params.row.buyStatus ? '是' : '否')
@@ -517,7 +507,7 @@
           },
           {
             title: '作业要求',
-            key: 'homeworkRequire',
+            key: 'homeworkTitle',
             align: 'center'
           },
           {
@@ -656,7 +646,7 @@
           title: '提示',
           content: `确认要进行此操作吗？`,
           onOk: () => {
-            this.$api.gswStudy.jobPraise({
+            this.$api.composition.praiseHomework({
               id: data.id,
               praise: !data.praise
             }).then(

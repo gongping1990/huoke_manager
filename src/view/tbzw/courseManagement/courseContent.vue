@@ -48,7 +48,7 @@
                            :childList="choiceList"></choice-question>
         </FormItem>
         <FormItem label="作业类型" v-if="modalType===5">
-          <Radio-group v-model="detailInfo.homeWorkType">
+          <Radio-group v-model="detailInfo.homeworkType">
             <Radio :label=1>朗读</Radio>
             <Radio :label=2>书写</Radio>
           </Radio-group>
@@ -677,7 +677,7 @@
           })
       },
       saveHomeWork() {
-        if (!this.detailInfo.homeWorkType) {
+        if (!this.detailInfo.homeworkType) {
           return this.$Message.error('请选择作业类型')
         } else if (!this.detailInfo.homework) {
           return this.$Message.error('请输入作业名称')
@@ -689,7 +689,7 @@
           lessonId: this.dataItem.id,
           homework: this.detailInfo.homework,
           homeworkClaim: this.detailInfo.homeworkClaim,
-          homeWorkType: this.detailInfo.homeWorkType
+          homeWorkType: this.detailInfo.homeworkType
         })
           .then(response => {
             if (response.data.code == '200') {
