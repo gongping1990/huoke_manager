@@ -56,7 +56,6 @@
     },
     watch: {
       childData(_n, _o) {
-        console.log(_n,_o,333)
         this.audioStorageAddress = _n
         this.getAvUrl(_n)
       },
@@ -87,6 +86,7 @@
           this.isFetching = false
           this.audioStorageAddress = res.resultData.url
           this.getAvUrl(res.resultData.url)
+          this.$emit('otherAudioInfo', res.resultData.duration)
         }
       },
       getAvUrl(data) {

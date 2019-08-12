@@ -70,7 +70,7 @@
             <upload-img-multiple v-model="addInfo.replyImg" :option="uploadOption"></upload-img-multiple>
           </FormItem>
           <FormItem label="批改音频" v-if="addInfo.isPassed === 1">
-            <upload-audio ref="childAudio" v-model="addInfo.replyAudio" :option="uploadAudioOption"></upload-audio>
+            <upload-audio ref="childAudio" v-model="addInfo.replyAudio" :option="uploadAudioOption" @otherAudioInfo="getAudioInfo"></upload-audio>
           </FormItem>
           <FormItem label="批改文案" v-if="addInfo.isPassed === 1">
             <Input type="textarea" :rows="5" v-model="addInfo.replyText" placeholder="请输入批改文案"></Input>
@@ -641,6 +641,9 @@
       this.getList()
     },
     methods: {
+      getAudioInfo (data) {
+        this.addInfo.replyDuration = (data/1000).toFixed()
+      },
       jobPrise (data) {
         this.$Modal.confirm({
           title: '提示',
@@ -699,9 +702,9 @@
       openModal(data) {
         this.isOpenModal = true
         this.addInfo = {
-          replyImg: ['111111'],
+          replyImg: [],
           replyText: '',
-          replyAudio: '1111111111'
+          replyAudio: ''
         }
         if (data) {
           this.addInfo = JSON.parse(JSON.stringify(data))
@@ -769,6 +772,7 @@
           replyTeacher: this.addInfo.replyTeacher,
           replyText: this.addInfo.replyText,
           replyAudio: this.addInfo.replyAudio,
+          replyDuration: this.addInfo.replyDuration,
           isPassed: this.addInfo.isPassed == 1
         })
           .then(
