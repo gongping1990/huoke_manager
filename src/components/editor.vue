@@ -133,6 +133,7 @@ export default {
     },
     // 设置富文本内容
     setHtml(str) {
+      console.log('调用')
       this.editor.txt.html(str);
     },
     // 获取富文本中的内容

@@ -44,7 +44,7 @@
             </Radio-group>
           </FormItem>
           <FormItem label="文字内容" prop="content" v-if="addInfo.contentType==0 || addInfo.contentType==2">
-            <Input type="text" v-model="addInfo.content" placeholder="请输入文字内容"></Input>
+            <Input type="textarea" :rows="5" v-model="addInfo.content" placeholder="请输入文字内容"></Input>
           </FormItem>
           <FormItem label="上传图片" prop="img" v-if="addInfo.contentType == 1 || addInfo.contentType==2">
             <upload-img v-model="addInfo.img" :option="uploadOption"></upload-img>

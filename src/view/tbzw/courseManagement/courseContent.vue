@@ -27,7 +27,7 @@
       class="p-gsw-course-list"
       v-model="isOpenModalContent"
       @on-cancel="closeModalContent()"
-      width="600"
+      width="700"
       :title="modalTitleName[modalType]">
       <Form :model="detailInfo" :label-width="70" class="ivu-form-item-required" v-if="modalType!=6">
         <FormItem label="选择教师" v-if="modalType===1">
@@ -436,9 +436,10 @@
         this.isOpenModalContent = false
       },
       openModalContent(data, type) {
+        console.log(data,'测试')
         this.isOpenModalContent = true
         this.detailInfo = JSON.parse(JSON.stringify(data))
-        this.$refs.editor && this.$refs.editor.setHtml(data.readContent)
+        this.$refs.editor && this.$refs.editor.setHtml(this.detailInfo.readContent)
         this.dataItem = data
         this.modalType = type
         this.detailInfo.teacher = this.dataItem.teacherId
@@ -687,13 +688,16 @@
           return this.$Message.error('请输入作业名称')
         } else if (!this.detailInfo.homeworkClaim) {
           return this.$Message.error('请输入作业要求')
+        } else if (!this.detailInfo.readContent) {
+          return this.$Message.error('请输入朗读内容')
         }
 
         this.$api.composition.saveHomeWork({
           lessonId: this.dataItem.id,
           homework: this.detailInfo.homework,
           homeworkClaim: this.detailInfo.homeworkClaim,
-          homeWorkType: this.detailInfo.homeworkType
+          homeWorkType: this.detailInfo.homeworkType,
+          readContent: this.detailInfo.readContent
         })
           .then(response => {
             if (response.data.code == '200') {
