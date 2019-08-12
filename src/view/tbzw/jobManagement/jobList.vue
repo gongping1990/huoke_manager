@@ -456,7 +456,7 @@
                       this.openModal(params.row)
                     }
                   }
-                }, '修改1'),
+                }, '修改'),
                 h('Button', {
                   props: {
                     type: 'text',
