@@ -156,6 +156,7 @@
           },
           {
             title: '文字内容',
+            width: 400,
             key: 'content',
             align: 'center'
           },
