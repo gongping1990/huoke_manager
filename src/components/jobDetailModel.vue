@@ -6,28 +6,28 @@
     footer-hide
     width="750"
     title="批改详情">
-    <Form ref="dataInfo" :model="dataInfo" :label-width="70">
-      <FormItem label="教师名称">{{dataInfo.replyTeacher}}</FormItem>
+    <Form ref="jobDetail" :model="jobDetail" :label-width="70">
+      <FormItem label="教师名称">{{jobDetail.replyTeacher}}</FormItem>
       <FormItem label="批改图片">
-        <div v-if="dataInfo.replyImg.length">
-          <img  class="-img" preview="0" v-for="(item,index) of dataInfo.replyImg" :key="index" :src="item">
+        <div v-if="jobDetail.replyImg.length">
+          <img  class="-img" preview="0" v-for="(item,index) of jobDetail.replyImg" :key="index" :src="item">
         </div>
 
         <div v-else>暂无图片~</div>
       </FormItem>
       <FormItem label="批改音频">
-        <div class="-c-course-wrap" v-if="dataInfo.replyAudioAuthorUrl">
+        <div class="-c-course-wrap" v-if="jobDetail.replyAudioAuthorUrl">
           <div class="-c-course-item -item-audio">
             <Icon class="-item-icon" type="md-volume-up" size="30"/>
             <audio style="margin-left: 20px;display: flex"
                    ref="media"
-                   :src="dataInfo.replyAudioAuthorUrl"
+                   :src="jobDetail.replyAudioAuthorUrl"
                    controls="controls" preload="auto"></audio>
           </div>
         </div>
         <span v-else>暂无音频~</span>
       </FormItem>
-      <FormItem label="批改文案">{{dataInfo.replyText || '暂无文案~'}}</FormItem>
+      <FormItem label="批改文案">{{jobDetail.replyText || '暂无文案~'}}</FormItem>
     </Form>
   </Modal>
 </template>
@@ -38,21 +38,26 @@ export default {
   props: ['value', 'dataInfo'],
   data () {
     return {
-      isOpenDetail: false
+      isOpenDetail: false,
+      jobDetail: {
+        replyImg: []
+      }
     }
   },
   mounted() {
-    console.log(this.dataInfo,11111)
   },
   watch: {
     value (_n) {
       this.isOpenDetail = _n
       this.$previewRefresh()
+    },
+    dataInfo (_n) {
+      this.jobDetail = _n
     }
   },
   methods: {
     closeModal () {
-      this.dataInfo.replyAudioAuthorUrl && this.$refs.media.load()
+      this.jobDetail.replyAudioAuthorUrl && this.$refs.media.load()
       this.isOpenDetail = false
       this.$emit('input', false)
     }
