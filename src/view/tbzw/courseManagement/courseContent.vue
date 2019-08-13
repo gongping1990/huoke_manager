@@ -29,25 +29,25 @@
       @on-cancel="closeModalContent()"
       width="700"
       :title="modalTitleName[modalType]">
-      <Form :model="detailInfo" :label-width="70" class="ivu-form-item-required" v-if="modalType!=6">
-        <FormItem label="选择教师" v-if="modalType===1">
+      <Form :model="detailInfo" :label-width="70"  v-if="modalType!=6">
+        <FormItem label="选择教师" v-if="modalType===1" class="ivu-form-item-required">
           <Select v-model="detailInfo.teacher">
             <Option v-for="(item,index) in teacherList" :label="item.teacherName" :value="item.id"
                     :key="index"></Option>
           </Select>
         </FormItem>
-        <FormItem label="引导音频" v-show="modalType===2">
+        <FormItem label="引导音频" v-show="modalType===2" class="ivu-form-item-required">
           <upload-audio ref="childAudio" v-model="detailInfo.guideAudio" :option="uploadAudioOption"></upload-audio>
         </FormItem>
-        <FormItem label="问答题目" v-if="modalType===3">
+        <FormItem label="问答题目" v-if="modalType===3" class="ivu-form-item-required">
           <choice-question ref="childOne" :type="1" @submitChoice="submitChoice"
                            :childList="choiceList"></choice-question>
         </FormItem>
-        <FormItem label="检测题目" v-if="modalType===4">
+        <FormItem label="检测题目" v-if="modalType===4" class="ivu-form-item-required">
           <choice-question ref="childOne" :type="2" @submitChoice="submitChoice"
                            :childList="choiceList"></choice-question>
         </FormItem>
-        <FormItem label="作业类型" v-if="modalType===5">
+        <FormItem label="作业类型" v-if="modalType===5" class="ivu-form-item-required">
           <Radio-group v-model="detailInfo.homeworkType">
             <Radio :label=1>朗读</Radio>
             <Radio :label=2>书写</Radio>
@@ -683,12 +683,6 @@
       saveHomeWork() {
         if (!this.detailInfo.homeworkType) {
           return this.$Message.error('请选择作业类型')
-        } else if (!this.detailInfo.homework) {
-          return this.$Message.error('请输入作业名称')
-        } else if (!this.detailInfo.homeworkClaim) {
-          return this.$Message.error('请输入作业要求')
-        } else if (!this.detailInfo.readContent) {
-          return this.$Message.error('请输入朗读内容')
         }
 
         this.$api.composition.saveHomeWork({
