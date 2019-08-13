@@ -53,14 +53,14 @@
             <Radio :label=2>书写</Radio>
           </Radio-group>
         </FormItem>
-        <FormItem label="作业名称" v-if="modalType===5">
-          <Input type="text" v-model="detailInfo.homework" placeholder="请输入作业名称（字数不超过20字）" :maxlength="20"></Input>
-        </FormItem>
+        <!--<FormItem label="作业名称" v-if="modalType===5">-->
+          <!--<Input type="text" v-model="detailInfo.homework" placeholder="请输入作业名称（字数不超过20字）" :maxlength="20"></Input>-->
+        <!--</FormItem>-->
         <FormItem label="作业要求" v-if="modalType===5">
           <Input type="textarea" :rows="4" v-model="detailInfo.homeworkClaim" placeholder="请输入作业要求（字数不超过80字）"
                  :maxlength='80'></Input>
         </FormItem>
-        <FormItem label="朗读内容" v-if="modalType===5">
+        <FormItem label="朗读内容" v-if="modalType===5 && detailInfo.homeworkType===1">
           <editor ref="editor" v-model="detailInfo.readContent"></editor>
         </FormItem>
       </Form>
