@@ -1,0 +1,504 @@
+<template>
+  <div class="p-job">
+    <Card>
+      <search-template :option="searchOption" @changeSearch="getSearchInfo"></search-template>
+
+      <Table :loading="isFetching" :columns="columns" :data="dataList"></Table>
+
+      <Page class="-p-text-right" :total="total" size="small" show-elevator :page-size="tab.pageSize"
+            :current.sync="tab.currentPage"
+            @on-change="currentChange"></Page>
+
+      <Modal
+        class="p-job"
+        v-model="isOpenModal"
+        @on-cancel="closeModal('addInfo')"
+        width="750"
+        title="批改作业">
+        <Form ref="addInfo" :model="addInfo" :label-width="70">
+          <FormItem label="是否合格">
+            <Radio-group v-model="addInfo.isPassed" @on-change="changePassed" >
+              <Radio :label=1 disabled>合格</Radio>
+              <Radio :label=0 disabled>不合格</Radio>
+            </Radio-group>
+          </FormItem>
+          <FormItem label="教师名称" prop="replyTeacher" class="ivu-form-item-required">
+            <Input type="text" v-model="addInfo.replyTeacher" placeholder="请输入教师名称"></Input>
+          </FormItem>
+          <FormItem label="批改图片" v-if="addInfo.isPassed === 1">
+            <upload-img-multiple v-model="addInfo.replyImg" :option="uploadOption"></upload-img-multiple>
+          </FormItem>
+          <FormItem label="批改音频" v-if="addInfo.isPassed === 1">
+            <upload-audio ref="childAudio" v-model="addInfo.replyAudio" :option="uploadAudioOption" @otherAudioInfo="getAudioInfo"></upload-audio>
+          </FormItem>
+          <FormItem label="批改文案" v-if="addInfo.isPassed === 1">
+            <Input type="textarea" :rows="5" v-model="addInfo.replyText" placeholder="请输入批改文案"></Input>
+          </FormItem>
+        </Form>
+        <div slot="footer" class="-p-b-flex">
+          <Button @click="closeModal('addInfo')" ghost type="primary" style="width: 100px;">取消</Button>
+          <div @click="submitInfo('addInfo')" class="g-primary-btn ">确认</div>
+        </div>
+      </Modal>
+
+      <Modal
+        class="p-job"
+        v-model="isOpenModalPlay"
+        @on-cancel="closeModalPlay"
+        footer-hide
+        width="350"
+        title="播放">
+        <audio ref="playAudio" :src="playAudioUrl" controls></audio>
+      </Modal>
+
+      <job-record-template v-model="isOpenDetail" :dataInfo="1"></job-record-template>
+
+    </Card>
+  </div>
+</template>
+
+<script>
+  import {getBaseUrl} from '@/libs/index'
+  import UploadAudio from "../../../components/uploadAudio";
+  import DatePickerTemplate from "../../../components/datePickerTemplate";
+  import dayjs from 'dayjs'
+  import UploadImgMultiple from "../../../components/uploadImgMultiple";
+  import JobDetailModel from "../../../components/jobDetailModel";
+  import SearchTemplate from "../../../components/searchTemplate";
+  import JobRecordTemplate from "../../../components/jobRecordTemplate";
+
+  export default {
+    name: 'jsd_historicalRecords',
+    components: {JobRecordTemplate, SearchTemplate, UploadImgMultiple, DatePickerTemplate, UploadAudio},
+    data() {
+      return {
+        tab: {
+          page: 1,
+          currentPage: 1,
+          pageSize: 10
+        },
+        uploadOption: {
+          tipText: '只能上传jpg/png文件，且不超过500kb',
+          size: 500
+        },
+        uploadAudioOption: {
+          tipText: '音频格式：mp3、wma、arm 音频大小：150M以内',
+          size: 153600,
+          format: ['mp3', 'wma', 'arm']
+        },
+        evaluateColumn: {
+          '0': '不满意',
+          '1': '一般',
+          '2': '满意',
+        },
+        searchOption: {
+          isAppId: true,
+          isWorkType: true,
+          isPay: true,
+          isUserType: true,
+          isComment: true,
+          isSituation: true,
+          isFeedback: true
+        },
+        dataList: [],
+        total: 0,
+        radioType: 0,
+        getStartTime: '',
+        getEndTime: '',
+        searchInfo: {},
+        isFetching: false,
+        isOpenModal: false,
+        isOpenModalPlay: false,
+        isOpenDetail: false,
+        isEdit: false,
+        addInfo: {},
+        detailInfo: {},
+        playAudioUrl: '',
+        columns: [
+          {
+            title: '用户昵称',
+            key: 'nickname',
+            align: 'center'
+          },
+          {
+            title: '课时名称',
+            key: 'nickname',
+            align: 'center'
+          },
+          {
+            title: '是否付费',
+            render: (h, params)=> {
+              return h('div', params.row.buyStatus ? '是' : '否')
+            },
+            align: 'center'
+          },
+          {
+            title: '作业要求',
+            key: 'homeworkClaim',
+            align: 'center'
+          },
+          {
+            title: '作业内容',
+            width: 300,
+            render: (h, params) => {
+              return h('div', {
+                style: {
+                  display: 'flex',
+                  justifyContent: 'space-around'
+                }
+              }, params.row.homeworkType == '2' ? params.row.workImgSrc.map((item, index) => {
+                return h('div', {
+                  style: {
+                    position: 'relative',
+                  }
+                }, [
+                  h('img', {
+                    attrs: {
+                      src: item
+                    },
+                    style: {
+                      width: '50px',
+                      height: '50px',
+                      margin: '10px'
+                    }
+                  }), h('Icon', {
+                    props: {
+                      type: 'md-download'
+                    },
+                    style: {
+                      position: 'absolute',
+                      bottom: '15px',
+                      right: '10px',
+                      fontSize: '16px',
+                      background: 'rgba(0,0,0,0.7)',
+                      color: '#ffffff',
+                      cursor: 'pointer'
+                    },
+                    on: {
+                      click: () => {
+                        window.open(item.split('?')[0])
+                      }
+                    }
+                  })
+                ])
+              }) : [
+                h('div', {
+                  style: {
+                    textAlign: 'center',
+                    color: '#5444E4',
+                    cursor: 'pointer'
+                  },
+                  on: {
+                    click: () => {
+                      this.openModalPlay(params.row.workImgSrc[0])
+                    }
+                  }
+                }, '播放音频')
+              ])
+            },
+            align: 'center'
+          },
+          {
+            title: '提交时间',
+            render: (h, params) => {
+              return h('div', dayjs(+params.row.workTime).format('YYYY-MM-DD HH:mm'))
+            },
+            align: 'center'
+          },
+          {
+            title: '批改时间',
+            render: (h, params) => {
+              return h('div', dayjs(+params.row.replyTime).format('YYYY-MM-DD HH:mm'))
+            },
+            align: 'center'
+          },
+          {
+            title: '评价',
+            render: (h, params) => {
+              return h('div', [
+                h('div', this.evaluateColumn[params.row.evaluation]),
+                h('div', params.row.stumsg === null ? '' : `(${params.row.stumsg})`)
+              ])
+            },
+            align: 'center'
+          },
+          {
+            title: '操作',
+            width: 220,
+            align: 'left',
+            render: (h, params) => {
+              return h('div', [
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: '#5444E4',
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.openModal(params.row)
+                    }
+                  }
+                }, '修改评价'),
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: '#5444E4',
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.openDetail(params.row)
+                    }
+                  }
+                }, '作业记录'),
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    display: this.radioType == 4 ? 'none' : 'inline-block',
+                    color: 'rgba(218, 55, 75)',
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.delItem(params.row)
+                    }
+                  }
+                }, '删除')
+              ])
+            }
+          }
+        ],
+      };
+    },
+    mounted() {
+      this.getList()
+    },
+    methods: {
+      getSearchInfo (data) {
+        this.searchInfo = data
+        this.getList(1)
+      },
+      getAudioInfo (data) {
+        this.addInfo.replyDuration = (data/1000).toFixed()
+      },
+      jobPrise (data) {
+        this.$Modal.confirm({
+          title: '提示',
+          content: `确认要进行此操作吗？`,
+          onOk: () => {
+            this.$api.composition.praiseHomework({
+              id: data.id,
+              praise: !data.praise
+            }).then(
+              response => {
+                if (response.data.code == "200") {
+                  this.$Message.success("操作成功");
+                  this.getList();
+                }
+              })
+          }
+        })
+      },
+      changePassed () {
+        this.$forceUpdate()
+      },
+      openModalPlay(data) {
+        this.playAudioUrl = data
+        this.isOpenModalPlay = true
+      },
+      openDetail(data) {
+        this.isOpenDetail = true
+        this.detailInfo = JSON.parse(JSON.stringify(data))
+      },
+      closeModalPlay() {
+        this.$refs.playAudio.load()
+        this.isOpenModalPlay = false
+      },
+      delItem(param) {
+        this.$Modal.confirm({
+          title: '提示',
+          content: '确认要删除吗？',
+          onOk: () => {
+            this.$api.composition.removeHomework({
+              id: param.id
+            }).then(
+              response => {
+                if (response.data.code == "200") {
+                  this.$Message.success("操作成功");
+                  this.getList();
+                }
+              })
+          }
+        })
+      },
+      openModal(data) {
+        this.isOpenModal = true
+        if (data) {
+          this.addInfo = JSON.parse(JSON.stringify(data))
+          this.addInfo.isPassed = 1
+        }
+      },
+      closeModal(name) {
+        this.isOpenModal = false
+        this.$refs[name].resetFields()
+      },
+      currentChange(val) {
+        this.tab.page = val;
+        this.getList();
+      },
+      //分页查询
+      getList(num) {
+        this.isFetching = true
+        let params = {
+          current: num ? num : this.tab.page,
+          size: this.tab.pageSize,
+          grade: 3,
+          evaluation: this.searchInfo.evaluate == '-1' ? '' : this.searchInfo.evaluate,
+          pay: this.searchInfo.pay == '-1' ? '' : this.searchInfo.pay,
+          starttime: this.getStartTime ? new Date(this.getStartTime).getTime() : "",
+          endtime: this.getEndTime ? new Date(this.getEndTime).getTime() : "",
+          status: 3,
+        }
+
+        if (num) {
+          this.tab.currentPage = 1
+        }
+
+        this.$api.composition.listHomeworkByPage(params)
+          .then(
+            response => {
+              this.dataList = response.data.resultData.records;
+              this.total = response.data.resultData.total;
+              for (let item of this.dataList) {
+                item.workImgSrc = item.workImgSrc ? item.workImgSrc.split(',') : []
+                item.replyImg = item.replyImg ? item.replyImg.split(',') : []
+              }
+            })
+          .finally(() => {
+            this.isFetching = false
+          })
+      },
+      submitInfo(name) {
+        if (!this.addInfo.replyTeacher) {
+          return this.$Message.error('请输入教师名称')
+        } else if (this.addInfo.replyImg.length > 3) {
+          return this.$Message.error('最多上传三张图片')
+        }
+
+        this.$api.composition.replyHomework({
+          id: this.addInfo.id,
+          replyImg: `${this.addInfo.replyImg}`,
+          replyTeacher: this.addInfo.replyTeacher,
+          replyText: this.addInfo.replyText,
+          replyAudio: this.addInfo.replyAudio,
+          replyDuration: this.addInfo.replyDuration,
+          isPassed: this.addInfo.isPassed == 1
+        })
+          .then(
+            response => {
+              if (response.data.code == '200') {
+                this.$Message.success('提交成功');
+                this.getList()
+                this.closeModal(name)
+              }
+            })
+      }
+    }
+  };
+</script>
+
+
+<style lang="less" scoped>
+  .p-job {
+    .-search-select-text {
+      min-width: 70px;
+    }
+    .-search-selectOne {
+      width: 100px;
+      border: 1px solid #dcdee2;
+      border-radius: 4px;
+      margin-right: 20px;
+    }
+
+    .-c-tips {
+      color: #39f
+    }
+
+    .-p-job-top {
+      margin-top: 108px;
+    }
+
+    .-c-course-wrap {
+      display: inline-block;
+      .-c-course-item {
+        position: relative;
+        display: inline-block;
+        /*height: 70px;*/
+        overflow: hidden;
+
+        img {
+          width: 140px;
+          height: 70px;
+        }
+
+        .-i-text {
+          display: -webkit-box;
+          -webkit-box-orient: vertical;
+          /*-webkit-line-clamp: 1;*/
+          line-height: normal;
+        }
+
+        .-i-del {
+          position: absolute;
+          top: 0;
+          right: 0;
+          color: #ffff;
+          background-color: rgba(0, 0, 0, 0.4);
+          line-height: normal;
+          cursor: pointer;
+          padding: 4px;
+          border-radius: 4px;
+        }
+      }
+    }
+
+    .-p-b-flex {
+      display: flex;
+      padding: 0 20px;
+      justify-content: space-between;
+    }
+
+    .-p-text-right {
+      margin-top: 20px;
+      text-align: right;
+    }
+
+    .-p-modal-btn {
+      vertical-align: bottom;
+    }
+
+    .-c-tab {
+      margin: 20px 0;
+    }
+
+    .date-time {
+      width: 100%;
+      border: 1px solid #dcdee2;
+      border-radius: 4px;
+      min-width: 155px;
+    }
+    .-date-search {
+      margin-left: 20px;
+    }
+  }
+</style>

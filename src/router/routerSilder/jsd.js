@@ -23,7 +23,7 @@ export const jsdRouter =[
           {name: '教师批改'},
           {name: '历史记录'}
         ],
-        component: () => import('@/view/dataStatistics2/productData/productData')
+        component: () => import('@/view/jsd/historicalRecords/historicalRecords')
       },
       {
         path: '/jsd_historicalData',
@@ -32,7 +32,7 @@ export const jsdRouter =[
           {name: '教师批改'},
           {name: '历史数据'}
         ],
-        component: () => import('@/view/dataStatistics2/productData/productData')
+        component: () => import('@/view/jsd/historicalData/historicalData')
       }
     ]
   },

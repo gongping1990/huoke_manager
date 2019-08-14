@@ -33,6 +33,15 @@ export const tbzwRouter =[
           {name: '交易数据'}
         ],
         component: () => import('@/view/tbzw/userData/userData')
+      },
+      {
+        path: '/tbzw_landingPage',
+        name: 'tbzw_landingPage',
+        meta: [
+          {name: '数据统计'},
+          {name: '落地页数据'}
+        ],
+        component: () => import('@/view/tbzw/landingPage/landingPage')
       }
     ]
   },
