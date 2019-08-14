@@ -203,7 +203,7 @@
           },
           {
             title: '作业要求',
-            key: 'homeworkTitle',
+            key: 'homeworkClaim',
             align: 'center'
           },
           {
@@ -328,7 +328,7 @@
           },
           {
             title: '作业要求',
-            key: 'homeworkTitle',
+            key: 'homeworkClaim',
             align: 'center'
           },
           {
@@ -507,7 +507,7 @@
           },
           {
             title: '作业要求',
-            key: 'homeworkTitle',
+            key: 'homeworkClaim',
             align: 'center'
           },
           {
