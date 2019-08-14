@@ -240,7 +240,7 @@
                   formatTwo: item.source ? item.source.format : '',
                   contentTwo: item.source ? item.source.content : '',
                   replyText: item.source ? `${item.source.uname}${item.source.target != 0 ? (item.source.target == 1 ? '点评' : '回复') : ' 评论'}${item.source.source ? item.source.source.uname : `${item.source.workStuName}的作业`}` : item.workStuName,
-                  textTip: `${item.uname}${item.target != 0 ? '评论':'回复'}${item.target != 0 ? (item.target == 1 ? `${item.workTeacher}老师` : item.source.uname) : `${item.workStuName}的作业`}：`
+                  textTip: `${item.uname}${item.target != 0 ? '评论':'回复'}${item.target != 0 ? (item.target == 1 ? `${item.workTeacher}` : item.source.uname) : `${item.workStuName}的作业`}：`
                 })
               }
             })
