@@ -11,6 +11,7 @@ import gswExperience from "./experience";
 import gswReservat from "./reservat";
 import gswCustomer from "./customer";
 import gswStudy from "./study";
+import gswStatistics from "./statistics";
 
 export const gswIndex = {
   poem,
@@ -25,5 +26,6 @@ export const gswIndex = {
   gswExperience,
   gswReservat,
   gswCustomer,
-  gswStudy
+  gswStudy,
+  gswStatistics
 }

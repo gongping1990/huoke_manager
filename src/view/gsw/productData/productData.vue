@@ -3,7 +3,7 @@
     <Card>
       <Row class="g-search">
         <Col :span="3" class="g-t-left">
-          总装机量<span>{{0}}</span>
+          总装机量 <span class="-num">{{countAllInstall}}</span> 台
         </Col>
       </Row>
 
@@ -50,6 +50,8 @@
         },
         dataList: [],
         detailList: [],
+        version: '',
+        countAllInstall: '',
         total: 0,
         totalDetail: 0,
         isFetching: false,
@@ -57,13 +59,13 @@
         columns: [
           {
             title: '版本号',
-            key: 'courseName',
+            key: 'version',
             width: 200,
             align: 'center'
           },
           {
             title: '装机数量',
-            key: 'pvCount',
+            key: 'num',
             align: 'center'
           },
           {
@@ -93,12 +95,12 @@
         columnsModal: [
           {
             title: '机型',
-            key: 'inTime',
+            key: 'phoneModel',
             align: 'center'
           },
           {
             title: '装机量',
-            key: 'pv',
+            key: 'num',
             align: 'center'
           }
         ],
@@ -106,6 +108,7 @@
     },
     mounted() {
       this.getList()
+      this.getCountAllInstall()
     },
     methods: {
       closeModal() {
@@ -117,10 +120,25 @@
       },
       detailCurrentChange(val) {
         this.tabDetail.page = val;
-        // this.getDetailList();
+        this.getDetailList();
       },
       openModal(data) {
+        this.version = data.version
         this.isOpenModal = true
+        this.getDetailList();
+      },
+      getDetailList() {
+        this.isFetching = true
+        this.$api.gswStatistics.listInstallStatistics({
+          version: this.version,
+          current: this.tabDetail.page,
+          size: this.tabDetail.pageSize
+        }).then(response => {
+          this.detailList = response.data.resultData.records;
+          this.totalDetail = response.data.resultData.total;
+        }).finally(()=>{
+          this.isFetching = false
+        })
       },
       //分页查询
       getList() {
@@ -130,7 +148,7 @@
           size: this.tab.pageSize
         }
 
-        this.$api.dataCenter.getGoodsList(params)
+        this.$api.gswStatistics.listVersionStatistics(params)
           .then(
             response => {
               this.dataList = response.data.resultData.records;
@@ -139,6 +157,13 @@
           .finally(() => {
             this.isFetching = false
           })
+      },
+      getCountAllInstall() {
+        this.$api.gswStatistics.countAllInstall()
+          .then(
+            response => {
+              this.countAllInstall = response.data.resultData
+            })
       }
     }
   };
@@ -147,6 +172,12 @@
 
 <style lang="less" scoped>
   .p-productData {
+
+    .-num {
+      font-size: 20px;
+      font-weight: bold;
+    }
+
     &-btn {
       display: flex;
       justify-content: flex-end;
