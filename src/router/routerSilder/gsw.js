@@ -385,39 +385,5 @@ export const gswRouter =[
         component: () => import('@/view/gsw/contentManagement/contentList')
       }
     ]
-  },
-  {
-    path: '/teacherMan',
-    name: 'teacherMan',
-    title: '教师管理',
-    component: Main,
-    children: [
-      {
-        path: '/gsw_counselor',
-        name: 'gsw_counselor',
-        meta: [
-          {name: '教师管理'},
-          {name: '辅导教师'}
-        ],
-        component: () => import('@/view/gsw/teacherManagement/counselor')
-      }
-    ]
-  },
-  {
-    path: '/messageCenter',
-    name: 'messageCenter',
-    title: '消息中心',
-    component: Main,
-    children: [
-      {
-        path: '/gsw_communication',
-        name: 'gsw_communication',
-        meta: [
-          {name: '消息中心'},
-          {name: '师生通讯'}
-        ],
-        component: () => import('@/view/gsw/messageCenter/communication')
-      }
-    ]
   }
 ]
