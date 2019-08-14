@@ -1,17 +1,14 @@
 <template>
   <div class="p-landingPage">
     <Card>
-
       <Table class="-c-tab" :loading="isFetching" :columns="columns" :data="dataList"></Table>
-
-      <Page class="-p-text-right" :total="total" size="small" show-elevator :page-size="tab.pageSize"
-            @on-change="currentChange"></Page>
     </Card>
 
     <Modal
-      class="p-banner"
+      class="p-landingPage"
       v-model="isOpenModal"
       @on-cancel="isOpenModal = false"
+      footer-hide
       width="500"
       title="数据详情">
       <Table class="-c-tab" :loading="isFetching" :columns="columnsModal" :data="detailList"></Table>
@@ -19,9 +16,6 @@
       <Page class="g-text-right" :total="totalDetail" size="small" show-elevator :page-size="tabDetail.pageSize"
             :current.sync="tabDetail.currentPage"
             @on-change="detailCurrentChange"></Page>
-      <div slot="footer" class="p-banner-btn">
-        <div @click="isOpenModal = false" class="g-primary-btn"> 确 认</div>
-      </div>
     </Modal>
   </div>
 </template>
@@ -33,84 +27,44 @@
     name: 'tbzw_landingPage',
     data() {
       return {
-        tab: {
-          page: 1,
-          pageSize: 10
-        },
         tabDetail: {
           page: 1,
           pageSize: 10
         },
         dataList: [],
         detailList: [],
-        total: 0,
+        pageId: '',
         totalDetail: 0,
         isFetching: false,
         isOpenModal: false,
         columns: [
           {
             title: '名称',
-            key: 'courseName',
-            width: 200,
+            key: 'pageName',
             align: 'center'
           },
           {
-            title: '地址',
-            key: 'courseName',
-            width: 200,
-            align: 'center'
-          },
-          {
-            title: '二维码',
-            render: (h, params) => {
-              return h('div', {
-                style: {
-                  'display': 'flex',
-                  'align-items': 'center',
-                }
-              }, [
-                h('img', {
-                  attrs: {
-                    src: params.row.courseCover
-                  },
-                  style: {
-                    width: '100px',
-                    margin: '10px'
-                  }
-                })
-              ])
-            },
-            width: 200,
-            align: 'center'
-          },
-          {
-            title: '别名',
-            key: 'payAmount',
-            render: (h, params) => {
-              return h('div', params.row.payAmount / 100)
-            },
+            title: '订单数',
+            key: 'orderCount',
             align: 'center'
           },
           {
             title: '访问量',
-            key: 'pvCount',
-            align: 'center',
-            sortable: 'custom'
+            key: 'pv',
+            align: 'center'
           },
           {
             title: '下单量',
-            key: 'uvCount',
-            align: 'center',
-            sortable: 'custom'
+            key: 'uv',
+            align: 'center'
           },
           {
             title: '转化率',
             key: 'percentConversion',
             render: (h, params) => {
-              return h('span', `${params.row.percentConversion / 10}%`)
+              return h('span', `${params.row.conversionPercent}%`)
             },
-            align: 'center',
-            sortable: 'custom'
+            align: 'center'
           },
           {
             title: '操作',
@@ -154,12 +108,12 @@
           },
           {
             title: '下单数',
-            key: 'uv',
+            key: 'orderCount',
             align: 'center'
           },
           {
             title: '转化率',
-            key: 'uv',
+            key: 'conversionPercent',
             align: 'center'
           }
         ]
@@ -172,22 +126,21 @@
       closeModal() {
         this.isOpenModal = false
       },
-      currentChange(val) {
-        this.tab.page = val;
-        this.getList();
-      },
       detailCurrentChange(val) {
         this.tabDetail.page = val;
         this.getDetailList();
       },
       openModal(data) {
-        this.goodsId = data.goodsId
+        this.pageId = data.page
+        this.getDetailList()
         this.isOpenModal = true
       },
-      getDetailList(data) {
+      getDetailList() {
         this.isFetching = true
         this.$api.gswOperational.getOperationalStatistics({
-          operationalId: data.id
+          page: this.pageId,
+          current: this.tabDetail.page,
+          size: this.tabDetail.pageSize
         }).then(response => {
           this.detailList = response.data.resultData.records;
           this.totalDetail = response.data.resultData.total;
@@ -198,16 +151,11 @@
       //分页查询
       getList() {
         this.isFetching = true
-        let params = {
-          current: this.tab.page,
-          size: this.tab.pageSize
-        }
 
-        this.$api.dataCenter.getGoodsList(params)
+        this.$api.tbzwOrder.getTotalData()
           .then(
             response => {
-              this.dataList = response.data.resultData.records;
-              this.total = response.data.resultData.total;
+              this.dataList = response.data.resultData;
             })
           .finally(() => {
             this.isFetching = false
