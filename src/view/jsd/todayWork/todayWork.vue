@@ -1,57 +1,80 @@
 <template>
-  <div class="p-job">
+  <div class="p-todayWork">
     <Card>
       <Row class="g-search">
-        <Row class="g-t-left ">
-          <Radio-group v-model="radioType" type="button" @on-change="getList(1)">
+        <Row class="g-t-left">
+          <Radio-group v-model="radioType" type="button" @on-change="changeJobType">
             <Radio :label=0>待批改</Radio>
             <Radio :label=1>不合格</Radio>
             <Radio :label=3>已批改</Radio>
-            <Radio :label=4>表扬</Radio>
+            <!--<Radio :label=4>表扬</Radio>-->
           </Radio-group>
         </Row>
-        <Row class="g-t-left g-tab">
-          <Col :span="3" class="g-t-left" >
-            <div class="g-flex-a-j-center">
-              <div class="-search-select-text">是否付费：</div>
-              <Select v-model="searchInfo.pay" @on-change="getList(1)" class="-search-selectOne">
-                <Option v-for="(item,index) in buyStatusList" :label="item.name" :value="item.id" :key="index"></Option>
-              </Select>
-            </div>
+        <Row class="p-todayWork-flex" v-if="radioType === 0">
+          <Col :span="4">
+            <Card class="-item-wrap">
+              <div class="-item-wrap-top">
+                <div class="-name-left">作业总量</div>
+                <Poptip placement="bottom" :transfer="true" popper-class="p-todayWork-flex">
+                  <div class="-name-right">明细</div>
+                  <Row class="-mask-wrap" slot="content">
+                    <Col class="-mask-wrap-item" :span="7" v-for="item of 3">
+                      <Card>
+                        <div class="-mask-wrap-top">
+                          <div class="-name-left">自动分配</div>
+                        </div>
+                        <div class="-mask-wrap-center">28/23</div>
+                        <div class="-mask-wrap-down">25%</div>
+                      </Card>
+                    </Col>
+                  </Row>
+                </Poptip>
+              </div>
+              <div class="-item-wrap-center">28/23</div>
+              <div class="-item-wrap-down">25%</div>
+            </Card>
           </Col>
-          <Col :span="3" class="g-t-left" v-if="radioType===3">
-            <div class="g-flex-a-j-center">
-              <div class="-search-select-text">用户评价：</div>
-              <Select v-model="searchInfo.evaluate" @on-change="getList(1)" class="-search-selectOne">
-                <Option v-for="(item,index) in evaluateList" :label="item.name" :value="item.id" :key="index"></Option>
-              </Select>
-            </div>
+
+          <Col :span="4">
+            <Card class="-item-wrap">
+              <div class="-item-wrap-top">
+                <div class="-name-left">重交</div>
+              </div>
+              <div class="-item-wrap-center">28/23</div>
+              <div class="-item-wrap-down">25%</div>
+            </Card>
           </Col>
-          <Col :span="5">
-            <div class="-search">
-              <Select v-model="selectInfo" class="-search-select">
-                <Option value="1">用户昵称</Option>
-                <Option value="2">老师名称</Option>
-              </Select>
-              <span class="-search-center">|</span>
-              <Input v-model="searchInfo.manner" class="-search-input" placeholder="请输入关键字" icon="ios-search"
-                     @on-click="getList(1)"></Input>
-            </div>
-          </Col>
-          <Col :span="13" class="g-flex-a-j-center">
-            <date-picker-template :dataInfo="dateOption" @changeDate="changeDate"></date-picker-template>
-          </Col>
+
+        </Row>
+
+        <Row v-if="radioType === 1" class="-p-margin-top g-t-left">
+          <Radio-group v-model="unqualifiedType" type="button" @on-change="changeUnqualified">
+            <Radio :label=0>未重做</Radio>
+            <Radio :label=1>已重交</Radio>
+          </Radio-group>
+        </Row>
+
+        <search-template :option="searchOption" @changeSearch="getSearchInfo"></search-template>
+
+        <Row v-if="radioType === 1" class="p-todayWork-tip">
+          <div class="-tip-div g-t-left">
+            <Checkbox v-model="selectAllData" @on-change="">所有数据</Checkbox>
+          </div>
+          <div class="-tip-div g-text-right">
+            <Button @click="sendMessage()" ghost type="primary" style="width: 100px;">提醒</Button>
+          </div>
         </Row>
       </Row>
 
-      <Table :loading="isFetching" :columns="columsType[radioType]" :data="dataList"></Table>
+      <Table :loading="isFetching" :columns="columsType[radioType]" :data="dataList"
+             @on-selection-change="changeSelectData"></Table>
 
       <Page class="-p-text-right" :total="total" size="small" show-elevator :page-size="tab.pageSize"
             :current.sync="tab.currentPage"
             @on-change="currentChange"></Page>
 
       <Modal
-        class="p-job"
+        class="p-todayWork"
         v-model="isOpenModal"
         @on-cancel="closeModal('addInfo')"
         width="750"
@@ -70,7 +93,8 @@
             <upload-img-multiple v-model="addInfo.replyImg" :option="uploadOption"></upload-img-multiple>
           </FormItem>
           <FormItem label="批改音频" v-if="addInfo.isPassed === 1">
-            <upload-audio ref="childAudio" v-model="addInfo.replyAudio" :option="uploadAudioOption" @otherAudioInfo="getAudioInfo"></upload-audio>
+            <upload-audio ref="childAudio" v-model="addInfo.replyAudio" :option="uploadAudioOption"
+                          @otherAudioInfo="getAudioInfo"></upload-audio>
           </FormItem>
           <FormItem label="批改文案" v-if="addInfo.isPassed === 1">
             <Input type="textarea" :rows="5" v-model="addInfo.replyText" placeholder="请输入批改文案"></Input>
@@ -83,7 +107,7 @@
       </Modal>
 
       <Modal
-        class="p-job"
+        class="p-todayWork"
         v-model="isOpenModalPlay"
         @on-cancel="closeModalPlay"
         footer-hide
@@ -93,6 +117,8 @@
       </Modal>
 
       <job-detail-model v-model="isOpenDetail" :dataInfo="detailInfo"></job-detail-model>
+
+      <job-record-template v-model="isOpenJobRecord" :dataInfo="1"></job-record-template>
 
     </Card>
   </div>
@@ -105,10 +131,12 @@
   import dayjs from 'dayjs'
   import UploadImgMultiple from "../../../components/uploadImgMultiple";
   import JobDetailModel from "../../../components/jobDetailModel";
+  import SearchTemplate from "../../../components/searchTemplate";
+  import JobRecordTemplate from "../../../components/jobRecordTemplate";
 
   export default {
     name: 'jobList',
-    components: {JobDetailModel, UploadImgMultiple, DatePickerTemplate, UploadAudio},
+    components: {JobRecordTemplate, SearchTemplate, JobDetailModel, UploadImgMultiple, DatePickerTemplate, UploadAudio},
     data() {
       return {
         tab: {
@@ -129,42 +157,12 @@
           name: '创建时间',
           type: 'datetime'
         },
-        evaluateList: [
-          {
-            name: '全部',
-            id: '-1'
-          },
-          {
-            name: '满意',
-            id: '1'
-          },
-          {
-            name: '一般',
-            id: '2'
-          },
-          {
-            name: '不满意',
-            id: '3'
-          },
-          {
-            name: '无',
-            id: '0'
-          }
-        ],
-        buyStatusList: [
-          {
-            name: '全部',
-            id: '-1'
-          },
-          {
-            name: '是',
-            id: '1'
-          },
-          {
-            name: '否',
-            id: '0'
-          }
-        ],
+        searchOption: {
+          isAppId: true,
+          isWorkType: true,
+          isPay: true,
+          isUserType: true
+        },
         evaluateColumn: {
           '0': '不满意',
           '1': '一般',
@@ -172,18 +170,18 @@
         },
         dataList: [],
         total: 0,
-        radioType: 0,
+        radioType: 1,
+        unqualifiedType: 0,
         selectInfo: '1',
         getStartTime: '',
         getEndTime: '',
-        searchInfo: {
-          evaluate: '-1',
-          pay: '-1'
-        },
+        selectAllData: '',
+        searchInfo: {},
         isFetching: false,
         isOpenModal: false,
         isOpenModalPlay: false,
         isOpenDetail: false,
+        isOpenJobRecord: false,
         isEdit: false,
         addInfo: {},
         detailInfo: {},
@@ -195,8 +193,13 @@
             align: 'center'
           },
           {
+            title: '课程名称',
+            key: 'nickname',
+            align: 'center'
+          },
+          {
             title: '是否付费',
-            render: (h, params)=> {
+            render: (h, params) => {
               return h('div', params.row.buyStatus ? '是' : '否')
             },
             align: 'center'
@@ -321,7 +324,7 @@
           },
           {
             title: '是否付费',
-            render: (h, params)=> {
+            render: (h, params) => {
               return h('div', params.row.buyStatus ? '是' : '否')
             },
             align: 'center'
@@ -494,13 +497,18 @@
         ],
         columnsThree: [
           {
+            type: 'selection',
+            width: 60,
+            align: 'center'
+          },
+          {
             title: '用户昵称',
             key: 'nickname',
             align: 'center'
           },
           {
             title: '是否付费',
-            render: (h, params)=> {
+            render: (h, params) => {
               return h('div', params.row.buyStatus ? '是' : '否')
             },
             align: 'center'
@@ -579,15 +587,8 @@
             align: 'center'
           },
           {
-            title: '状态',
-            render: (h, params) => {
-              return h('div', params.row.status==1 ? '待重做' : '已重做')
-            },
-            align: 'center'
-          },
-          {
             title: '操作',
-            width: 200,
+            width: 260,
             align: 'left',
             render: (h, params) => {
               return h('div', [
@@ -605,7 +606,22 @@
                       this.openModal(params.row)
                     }
                   }
-                }, '批改'),
+                }, '修改评价'),
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: '#5444E4',
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.openJobRecord(params.row)
+                    }
+                  }
+                }, '作业记录'),
                 h('Button', {
                   props: {
                     type: 'text',
@@ -641,10 +657,45 @@
       this.getList()
     },
     methods: {
-      getAudioInfo (data) {
-        this.addInfo.replyDuration = (data/1000).toFixed()
+      changeSelectData(data) {
+        console.log(data)
       },
-      jobPrise (data) {
+      sendMessage() {
+        this.$Modal.confirm({
+          title: '提示',
+          content: `确认向已选中的10位用户发送微信消息和短信？`,
+          onOk: () => {
+            this.$api.composition.praiseHomework({
+              id: data.id
+            }).then(
+              response => {
+                if (response.data.code == "200") {
+                  this.$Message.success("操作成功");
+                  this.getList();
+                }
+              })
+          }
+        })
+      },
+      changeJobType() {
+        this.radioType === 1 && this.changeUnqualified()
+        this.getList(1)
+      },
+      changeUnqualified() {
+        this.$Notice.warning({
+          desc: this.unqualifiedType ? '最近7天不合作业还剩28，已重交23' : '不合作业累计还剩28，已重交23',
+          duration: 5
+        });
+        this.getList(1)
+      },
+      getSearchInfo(data) {
+        this.searchInfo = data
+        this.getList(1)
+      },
+      getAudioInfo(data) {
+        this.addInfo.replyDuration = (data / 1000).toFixed()
+      },
+      jobPrise(data) {
         this.$Modal.confirm({
           title: '提示',
           content: `确认要进行此操作吗？`,
@@ -662,7 +713,7 @@
           }
         })
       },
-      changePassed () {
+      changePassed() {
         this.$forceUpdate()
       },
       openModalPlay(data) {
@@ -671,6 +722,10 @@
       },
       openDetail(data) {
         this.isOpenDetail = true
+        this.detailInfo = JSON.parse(JSON.stringify(data))
+      },
+      openJobRecord(data) {
+        this.isOpenJobRecord = true
         this.detailInfo = JSON.parse(JSON.stringify(data))
       },
       closeModalPlay() {
@@ -731,7 +786,7 @@
           pay: this.searchInfo.pay == '-1' ? '' : this.searchInfo.pay,
           starttime: this.getStartTime ? new Date(this.getStartTime).getTime() : "",
           endtime: this.getEndTime ? new Date(this.getEndTime).getTime() : "",
-          status: this.radioType == 4 ? '' :  this.radioType,
+          status: this.radioType == 4 ? '' : this.radioType,
           praise: this.radioType == 4
         }
 
@@ -790,23 +845,80 @@
 
 
 <style lang="less" scoped>
-  .p-job {
-    .-search-select-text {
-      min-width: 70px;
+  .p-todayWork {
+
+    &-flex {
+      display: flex;
+      margin-top: 20px;
+
+      .-item-wrap {
+        margin-right: 10px;
+        font-size: 14px;
+        font-weight: bold;
+
+        &-top {
+          display: flex;
+          justify-content: space-between;
+
+          .-name-left {
+            font-size: 16px;
+          }
+
+          .-name-right {
+            cursor: pointer;
+            font-weight: normal;
+            color: #5444e4;
+          }
+        }
+
+        &-center {
+          margin: 2px 0;
+          font-size: 18px;
+          display: flex;
+          justify-content: center;
+        }
+      }
+
+      .-mask-wrap {
+        display: flex;
+        justify-content: space-between;
+        width: 580px;
+        margin: 20px 0;
+        font-size: 14px;
+        font-weight: bold;
+
+        &-top {
+          .-name-left {
+            font-size: 16px;
+          }
+        }
+
+        &-center {
+          margin: 2px 0;
+          font-size: 18px;
+          display: flex;
+          justify-content: center;
+        }
+
+        &-down {
+          text-align: center;
+        }
+      }
     }
-    .-search-selectOne {
-      width: 100px;
-      border: 1px solid #dcdee2;
-      border-radius: 4px;
-      margin-right: 20px;
+
+    &-tip {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      margin-bottom: 20px;
+
+      .-tip-div {
+        width: 50%;
+      }
     }
 
     .-c-tips {
       color: #39f
-    }
-
-    .-p-job-top {
-      margin-top: 108px;
     }
 
     .-c-course-wrap {
@@ -862,14 +974,8 @@
       margin: 20px 0;
     }
 
-    .date-time {
-      width: 100%;
-      border: 1px solid #dcdee2;
-      border-radius: 4px;
-      min-width: 155px;
-    }
-    .-date-search {
-      margin-left: 20px;
+    .-p-margin-top {
+      margin-top: 20px;
     }
   }
 </style>

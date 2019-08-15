@@ -14,7 +14,7 @@ export const jsdRouter =[
           {name: '教师批改'},
           {name: '今日工作'}
         ],
-        component: () => import('@/view/dataStatistics2/userData2/userData2')
+        component: () => import('@/view/jsd/todayWork/todayWork')
       },
       {
         path: '/jsd_historicalRecords',
