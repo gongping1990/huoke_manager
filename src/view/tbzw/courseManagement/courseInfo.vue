@@ -15,6 +15,9 @@
           <FormItem label="课时节数" prop="lessonDescribe">
             <Input type="text" :disabled="!isEdit" v-model="addInfo.lessonDescribe" placeholder="请输入课时节数"></Input>
           </FormItem>
+          <FormItem label="预约节数">
+            <Input type="text" :disabled="!isEdit" v-model="addInfo.reserves" placeholder="请输入预约节数"></Input>
+          </FormItem>
           <FormItem label="单独购价格" prop="alonePrice">
             <InputNumber  style="width: 100%;" type="text" :disabled="!isEdit" v-model="addInfo.alonePrice" :min="0"
                          placeholder="请输入单独购价格（元）"></InputNumber>

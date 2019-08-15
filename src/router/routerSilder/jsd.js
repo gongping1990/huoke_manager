@@ -37,23 +37,23 @@ export const jsdRouter =[
     ]
   },
   {
-    path: '/orderManager',
-    name: 'orderManager',
-    title: '订单管理',
+    path: '/adminUser',
+    name: 'adminUser',
+    title: '管理人员',
     component: Main,
     children: [
       {
-        path: '/hkyw_orderList',
-        name: 'hkyw_orderList',
+        path: '/jsd_adminTeacher',
+        name: 'jsd_adminTeacher',
         meta: [
           {
-            name: '订单管理'
+            name: '管理人员'
           },
           {
-            name: '订单列表'
+            name: '教师管理'
           }
         ],
-        component: () => import('@/view/hkyw/orderManagement/orderList')
+        component: () => import('@/view/jsd/teacherAdmin/teacherAdmin')
       },
 
     ]

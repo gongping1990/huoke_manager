@@ -56,9 +56,9 @@
 
         <search-template :option="searchOption" @changeSearch="getSearchInfo"></search-template>
 
-        <Row v-if="radioType === 1" class="p-todayWork-tip">
+        <Row v-if="radioType === 1 && !unqualifiedType" class="p-todayWork-tip">
           <div class="-tip-div g-t-left">
-            <Checkbox v-model="selectAllData" @on-change="">所有数据</Checkbox>
+            <Checkbox v-model="selectAllData" @on-change="changeAloneSelect">所有数据</Checkbox>
           </div>
           <div class="-tip-div g-text-right">
             <Button @click="sendMessage()" ghost type="primary" style="width: 100px;">提醒</Button>
@@ -66,7 +66,7 @@
         </Row>
       </Row>
 
-      <Table :loading="isFetching" :columns="columsType[radioType]" :data="dataList"
+      <Table :loading="isFetching" :columns="columsType[radioType]" :data="dataList" ref="selection"
              @on-selection-change="changeSelectData"></Table>
 
       <Page class="-p-text-right" :total="total" size="small" show-elevator :page-size="tab.pageSize"
@@ -116,8 +116,6 @@
         <audio ref="playAudio" :src="playAudioUrl" controls></audio>
       </Modal>
 
-      <job-detail-model v-model="isOpenDetail" :dataInfo="detailInfo"></job-detail-model>
-
       <job-record-template v-model="isOpenJobRecord" :dataInfo="1"></job-record-template>
 
     </Card>
@@ -130,13 +128,12 @@
   import DatePickerTemplate from "../../../components/datePickerTemplate";
   import dayjs from 'dayjs'
   import UploadImgMultiple from "../../../components/uploadImgMultiple";
-  import JobDetailModel from "../../../components/jobDetailModel";
   import SearchTemplate from "../../../components/searchTemplate";
   import JobRecordTemplate from "../../../components/jobRecordTemplate";
 
   export default {
     name: 'jobList',
-    components: {JobRecordTemplate, SearchTemplate, JobDetailModel, UploadImgMultiple, DatePickerTemplate, UploadAudio},
+    components: {JobRecordTemplate, SearchTemplate, UploadImgMultiple, DatePickerTemplate, UploadAudio},
     data() {
       return {
         tab: {
@@ -175,12 +172,11 @@
         selectInfo: '1',
         getStartTime: '',
         getEndTime: '',
-        selectAllData: '',
+        selectAllData: false,
         searchInfo: {},
         isFetching: false,
         isOpenModal: false,
         isOpenModalPlay: false,
-        isOpenDetail: false,
         isOpenJobRecord: false,
         isEdit: false,
         addInfo: {},
@@ -403,19 +399,14 @@
             align: 'center'
           },
           {
-            title: '老师名称',
-            key: 'replyTeacher',
-            align: 'center'
-          },
-          {
-            title: '最后批改时间',
+            title: '批改时间',
             render: (h, params) => {
               return h('div', dayjs(+params.row.replyTime).format('YYYY-MM-DD HH:mm'))
             },
             align: 'center'
           },
           {
-            title: '评价',
+            title: '评价内容',
             render: (h, params) => {
               return h('div', [
                 h('div', this.evaluateColumn[params.row.evaluation]),
@@ -426,7 +417,7 @@
           },
           {
             title: '操作',
-            width: 280,
+            width: 300,
             align: 'left',
             render: (h, params) => {
               return h('div', [
@@ -441,10 +432,10 @@
                   },
                   on: {
                     click: () => {
-                      this.openDetail(params.row)
+                      this.openModal(params.row)
                     }
                   }
-                }, '批改详情'),
+                }, '修改评价'),
                 h('Button', {
                   props: {
                     type: 'text',
@@ -456,10 +447,10 @@
                   },
                   on: {
                     click: () => {
-                      this.openModal(params.row)
+                      this.openJobRecord(params.row)
                     }
                   }
-                }, '修改'),
+                }, '作业记录'),
                 h('Button', {
                   props: {
                     type: 'text',
@@ -587,6 +578,13 @@
             align: 'center'
           },
           {
+            title: '批改时间',
+            render: (h, params) => {
+              return h('div', dayjs(+params.row.replyTime).format('YYYY-MM-DD HH:mm'))
+            },
+            align: 'center'
+          },
+          {
             title: '操作',
             width: 260,
             align: 'left',
@@ -657,6 +655,9 @@
       this.getList()
     },
     methods: {
+      changeAloneSelect () {
+        this.$refs.selection.selectAll(this.selectAllData);
+      },
       changeSelectData(data) {
         console.log(data)
       },
@@ -719,10 +720,6 @@
       openModalPlay(data) {
         this.playAudioUrl = data
         this.isOpenModalPlay = true
-      },
-      openDetail(data) {
-        this.isOpenDetail = true
-        this.detailInfo = JSON.parse(JSON.stringify(data))
       },
       openJobRecord(data) {
         this.isOpenJobRecord = true
