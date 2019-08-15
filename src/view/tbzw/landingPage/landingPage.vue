@@ -44,7 +44,7 @@
             align: 'center'
           },
           {
-            title: '订单数',
+            title: '下单数',
             key: 'orderCount',
             align: 'center'
           },
@@ -54,7 +54,7 @@
             align: 'center'
           },
           {
-            title: '下单量',
+            title: '独立访客',
             key: 'uv',
             align: 'center'
           },
@@ -62,7 +62,7 @@
             title: '转化率',
             key: 'percentConversion',
             render: (h, params) => {
-              return h('span', `${params.row.conversionPercent}%`)
+              return h('span', `${params.row.conversionPercent*100}%`)
             },
             align: 'center'
           },
