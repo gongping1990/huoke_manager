@@ -24,7 +24,7 @@
   import dayjs from 'dayjs'
 
   export default {
-    name: 'tbzw_landingPage',
+    name: 'gsw_landingPage',
     data() {
       return {
         tabDetail: {
@@ -137,7 +137,7 @@
       },
       getDetailList() {
         this.isFetching = true
-        this.$api.tbzwOrder.getDataDetails({
+        this.$api.gswOrder.getDataDetails({
           page: this.pageId,
           current: this.tabDetail.page,
           size: this.tabDetail.pageSize
@@ -152,7 +152,7 @@
       getList() {
         this.isFetching = true
 
-        this.$api.tbzwOrder.getTotalData()
+        this.$api.gswOrder.getTotalData()
           .then(
             response => {
               this.dataList = response.data.resultData;

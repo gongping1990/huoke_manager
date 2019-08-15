@@ -51,6 +51,15 @@ export const gswRouter =[
           {name: '产品数据'}
         ],
         component: () => import('@/view/gsw/productData/productData')
+      },
+      {
+        path: '/gsw_landingPage',
+        name: 'gsw_landingPage',
+        meta: [
+          {name: '数据统计'},
+          {name: '落地页数据'}
+        ],
+        component: () => import('@/view/gsw/landingPage/landingPage')
       }
     ]
   },
