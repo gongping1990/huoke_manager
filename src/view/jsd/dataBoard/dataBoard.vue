@@ -25,7 +25,7 @@
       </Row>
 
       <Row class="p-dataBoard-flex">
-        <Col :span="4" v-for="(item,index) of cardList">
+        <Col :span="4" v-for="(item,index) of cardList" :key="index">
           <Card class="-item-wrap">
             <div class="-item-wrap-top">
               <div class="-name-left">{{item.name}}</div>
@@ -225,7 +225,11 @@
         },
         dataItemFour: {
           num: 1
-        }
+        },
+        myChartOne: '',
+        myChartTwo: '',
+        myChartThree: '',
+        myChartFour: ''
       }
     },
     computed: {
@@ -256,17 +260,17 @@
         let optionSeriesLine = [
           {
             name: this.radioType === '1' ? '累计用户' : '累计付费用户',
-            type: 'line',
+            type: 'bar',
             data: dataList.one
           },
           {
             name: this.radioType === '1' ? '新增用户' : '付费用户',
-            type: 'line',
+            type: 'bar',
             data: dataList.two
           },
           {
             name: this.radioType === '1' ? '活跃用户' : '活跃付费用户',
-            type: 'line',
+            type: 'bar',
             data: dataList.three
           }
         ]
@@ -368,7 +372,12 @@
       }
     },
     mounted() {
+      this.myChartOne = echarts.init(this.$refs.echartOne)
+      this.myChartTwo = echarts.init(this.$refs.echartTwo)
+      this.myChartThree = echarts.init(this.$refs.echartThree)
+      this.myChartFour = echarts.init(this.$refs.echartFour)
       this.getList()
+
     },
     methods: {
       changeDate(type, num) {
@@ -423,13 +432,12 @@
         // this.initData()
       },
 
-      drawLine() {
+      drawLineOne() {
         let self = this;
-        let myChart = echarts.init(this.$refs.echart);
-        myChart.clear();
-        myChart.resize();
+        this.myChartOne.clear();
+        this.myChartOne.resize();
         // 绘制图表
-        myChart.setOption({
+        this.myChartOne.setOption({
           tooltip: {
             trigger: 'axis',
             axisPointer: {
@@ -439,29 +447,12 @@
               align: 'left'
             }
           },
-          legend: {
-            data: [
-              {
-                name: this.radioType === '1' ? '累计用户' : '累计付费用户',
-                icon: 'circle'
-              },
-              {
-                name: this.radioType === '1' ? '新增用户' : '付费用户',
-                icon: 'circle'
-              },
-              {
-                name: this.radioType === '1' ? '活跃用户' : '活跃付费用户',
-                icon: 'circle'
-              }
-            ],
-            right: '5%'
-          },
           xAxis: {
             boundaryGap: false,
             axisTick: {
               alignWithLabel: true
             },
-            data: this.dateTypesLine
+            data: ["衬衫","羊毛衫","雪纺衫","裤子","高跟鞋","袜子"]
           },
           grid: {
             left: '6%',
@@ -471,8 +462,7 @@
           yAxis: {
             name: '单位（人）'
           },
-          series: this.optionSeriesLine,
-          color: ['#49a9ee', '#98d87d', '#ffd86e'],
+          series: [5, 20, 36, 10, 10, 20],
           dataZoom: [
             {
               type: "slider"
@@ -481,14 +471,159 @@
         })
 
         window.addEventListener("resize", () => {
-          myChart.resize();
+          this.myChartOne.resize();
         });
-        myChart.hideLoading()
+        this.myChartOne.hideLoading()
+      },
+      drawLineTwo() {
+        let self = this;
+        this.myChartTwo.clear();
+        this.myChartTwo.resize();
+        // 绘制图表
+        this.myChartTwo.setOption({
+          tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+              type: 'line'
+            },
+            textStyle: {
+              align: 'left'
+            }
+          },
+          xAxis: {
+            boundaryGap: false,
+            axisTick: {
+              alignWithLabel: true
+            },
+            data: ["衬衫","羊毛衫","雪纺衫","裤子","高跟鞋","袜子"]
+          },
+          grid: {
+            left: '6%',
+            top: '13%',
+            right: '5%'
+          },
+          yAxis: {
+            name: '单位（人）'
+          },
+          series: [5, 20, 36, 10, 10, 20],
+          dataZoom: [
+            {
+              type: "slider"
+            }
+          ],
+        })
+        window.addEventListener("resize", () => {
+          this.myChartTwo.resize();
+        });
+        this.myChartTwo.hideLoading()
+      },
+      drawLineThree() {
+        let self = this;
+        this.myChartThree.clear();
+        this.myChartThree.resize();
+        // 绘制图表
+        this.myChartThree.setOption({
+          tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+              type: 'line'
+            },
+            textStyle: {
+              align: 'left'
+            }
+          },
+          xAxis: {
+            boundaryGap: false,
+            axisTick: {
+              alignWithLabel: true
+            },
+            data: ["衬衫","羊毛衫","雪纺衫","裤子","高跟鞋","袜子"]
+          },
+          grid: {
+            left: '6%',
+            top: '13%',
+            right: '5%'
+          },
+          yAxis: {
+            name: '单位（人）'
+          },
+          series: [5, 20, 36, 10, 10, 20],
+          dataZoom: [
+            {
+              type: "slider"
+            }
+          ],
+        })
+
+        window.addEventListener("resize", () => {
+          this.myChartThree.resize();
+        });
+        this.myChartThree.hideLoading()
+      },
+      drawLineFour() {
+        let self = this;
+        this.myChartFour.clear();
+        this.myChartFour.resize();
+        // 绘制图表
+        this.myChartFour.setOption({
+          tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+              type: 'line'
+            },
+            textStyle: {
+              align: 'left'
+            }
+          },
+          xAxis: {
+            boundaryGap: false,
+            axisTick: {
+              alignWithLabel: true
+            },
+            data: ["衬衫","羊毛衫","雪纺衫","裤子","高跟鞋","袜子"]
+          },
+          grid: {
+            left: '6%',
+            top: '13%',
+            right: '5%'
+          },
+          yAxis: {
+            name: '单位（人）'
+          },
+          series: [5, 20, 36, 10, 10, 20],
+          dataZoom: [
+            {
+              type: "slider"
+            }
+          ],
+        })
+
+        window.addEventListener("resize", () => {
+          this.myChartFour.resize();
+        });
+        this.myChartFour.hideLoading()
       },
 
       getList() {
-        let myChart = echarts.init(this.$refs.echart);
-        myChart.showLoading({
+        this.myChartOne.showLoading({
+          text: '图表加载中...',
+          color: '#20a0ff',
+          textColor: '#000',
+          zlevel: 0
+        })
+        this.myChartTwo.showLoading({
+          text: '图表加载中...',
+          color: '#20a0ff',
+          textColor: '#000',
+          zlevel: 0
+        })
+        this.myChartThree.showLoading({
+          text: '图表加载中...',
+          color: '#20a0ff',
+          textColor: '#000',
+          zlevel: 0
+        })
+        this.myChartFour.showLoading({
           text: '图表加载中...',
           color: '#20a0ff',
           textColor: '#000',
@@ -496,7 +631,9 @@
         })
 
         this.isFetching = true
-        this.$api.dataCenter.getData()
+        this.$api.wzjh.getUserAccessStat({
+          chancelId: this.radioType
+        })
           .then(
             response => {
               this.dataInfo = response.data.resultData;
@@ -506,52 +643,12 @@
             this.isFetching = false
           })
       },
-      initData() {
-        if (this.radioType == '1') {
-          this.titleList = [
-            {
-              name: '累计用户',
-              num: this.dataInfo.allUser,
-              dayRatio: this.dataInfo.allUserChainDay,
-              weekRatio: this.dataInfo.allUserBasisWeek
-            },
-            {
-              name: '新增用户',
-              num: this.dataInfo.newUser,
-              dayRatio: this.dataInfo.newUserChainDay,
-              weekRatio: this.dataInfo.newUserBasisWeek
-            },
-            {
-              name: '活跃用户',
-              num: this.dataInfo.activeUser,
-              dayRatio: this.dataInfo.activeUserChainDay,
-              weekRatio: this.dataInfo.activeUserBasisWeek
-            }
-          ]
 
-        } else {
-          this.titleList = [
-            {
-              name: '累计付费用户',
-              num: this.dataInfo.allPayUser,
-              dayRatio: this.dataInfo.allPayUserChainDay,
-              weekRatio: this.dataInfo.allPayUserBasisWeek
-            },
-            {
-              name: '付费用户',
-              num: this.dataInfo.payUser,
-              dayRatio: this.dataInfo.payUserChainDay,
-              weekRatio: this.dataInfo.payUserBasisWeek
-            },
-            {
-              name: '活跃付费用户',
-              num: this.dataInfo.activePayUser,
-              dayRatio: this.dataInfo.activePayUserChainDay,
-              weekRatio: this.dataInfo.activePayUserBasisWeek
-            }
-          ]
-        }
-        this.drawLine()
+      initData() {
+        this.drawLineOne()
+        this.drawLineTwo()
+        this.drawLineThree()
+        this.drawLineFour()
       }
     }
   }

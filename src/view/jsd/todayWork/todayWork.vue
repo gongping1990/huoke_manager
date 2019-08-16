@@ -18,7 +18,7 @@
                 <Poptip placement="bottom" :transfer="true" popper-class="p-todayWork-flex">
                   <div class="-name-right">明细</div>
                   <Row class="-mask-wrap" slot="content">
-                    <Col class="-mask-wrap-item" :span="7" v-for="item of 3">
+                    <Col class="-mask-wrap-item" :span="7" v-for="(item, index) of 3" :key="index">
                       <Card>
                         <div class="-mask-wrap-top">
                           <div class="-name-left">自动分配</div>
