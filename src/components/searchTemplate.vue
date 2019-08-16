@@ -75,6 +75,14 @@
             </Select>
           </div>
         </Col>
+        <Col :span="4" class="g-t-left" v-if="option.isTeacher">
+          <div class="g-flex-a-j-center">
+            <div class="-search-select-text">点评老师：</div>
+            <Select v-model="searchInfo.teacherId" @on-change="changeEmit()" class="-search-selectOne">
+              <Option class="-search-option" v-for="(item,index) in teacherList" :label="item.name" :value="item.id" :key="index"></Option>
+            </Select>
+          </div>
+        </Col>
       </Row>
     </Row>
   </div>
@@ -106,7 +114,8 @@
           pay: '-1',
           comment: '-1',
           situation: '-1',
-          feedback: '-1'
+          feedback: '-1',
+          teacherId: '-1'
         },
         appList: [
           {
@@ -162,6 +171,12 @@
           {
             id: '0',
             name: '不满意'
+          }
+        ],
+        teacherList:[
+          {
+            id: '-1',
+            name: '全部'
           }
         ]
       }

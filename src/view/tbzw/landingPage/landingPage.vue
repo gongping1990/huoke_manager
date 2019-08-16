@@ -113,7 +113,9 @@
           },
           {
             title: '转化率',
-            key: 'conversionPercent',
+            render: (h, params) => {
+              return h('span', `${(params.row.conversionPercent*100).toFixed()}%`)
+            },
             align: 'center'
           }
         ]

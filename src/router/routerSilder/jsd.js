@@ -1,6 +1,6 @@
 import Main from '@/view/main'
 
-export const jsdRouter =[
+export const jsdRouter = [
   {
     path: '/teacherCorrection',
     name: 'teacherCorrection',
@@ -54,6 +54,32 @@ export const jsdRouter =[
           }
         ],
         component: () => import('@/view/jsd/teacherAdmin/teacherAdmin')
+      },
+      {
+        path: '/jsd_assignmentJobs',
+        name: 'jsd_assignmentJobs',
+        meta: [
+          {
+            name: '管理人员'
+          },
+          {
+            name: '分配作业'
+          }
+        ],
+        component: () => import('@/view/jsd/assignmentJobs/assignmentJobs')
+      },
+      {
+        path: '/jsd_jobAdmin',
+        name: 'jsd_jobAdmin',
+        meta: [
+          {
+            name: '管理人员'
+          },
+          {
+            name: '作业记录'
+          }
+        ],
+        component: () => import('@/view/jsd/jobAdmin/jobAdmin')
       },
 
     ]
