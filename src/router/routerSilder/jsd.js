@@ -81,6 +81,19 @@ export const jsdRouter = [
         ],
         component: () => import('@/view/jsd/jobAdmin/jobAdmin')
       },
+      {
+        path: '/jsd_dataBoard',
+        name: 'jsd_dataBoard',
+        meta: [
+          {
+            name: '管理人员'
+          },
+          {
+            name: '数据统计'
+          }
+        ],
+        component: () => import('@/view/jsd/dataBoard/dataBoard')
+      },
 
     ]
   }

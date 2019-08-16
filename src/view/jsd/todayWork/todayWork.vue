@@ -915,7 +915,7 @@
     }
 
     .-c-tips {
-      color: #39f
+      color: #3399FF
     }
 
     .-c-course-wrap {

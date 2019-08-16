@@ -49,6 +49,11 @@
             align: 'center'
           },
           {
+            title: '成功订单数',
+            key: 'successOrderCount',
+            align: 'center'
+          },
+          {
             title: '访问量',
             key: 'pv',
             align: 'center'
@@ -97,6 +102,16 @@
             align: 'center'
           },
           {
+            title: '下单数',
+            key: 'orderCount',
+            align: 'center'
+          },
+          {
+            title: '成功订单数',
+            key: 'successOrderCount',
+            align: 'center'
+          },
+          {
             title: '访问量',
             key: 'pv',
             align: 'center'
@@ -104,11 +119,6 @@
           {
             title: '访问用户',
             key: 'uv',
-            align: 'center'
-          },
-          {
-            title: '下单数',
-            key: 'orderCount',
             align: 'center'
           },
           {
