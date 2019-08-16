@@ -9,7 +9,7 @@
       v-model="isOpenModal"
       @on-cancel="isOpenModal = false"
       footer-hide
-      width="600"
+      width="650"
       title="数据详情">
       <Table class="-c-tab" :loading="isFetching" :columns="columnsModal" :data="detailList"></Table>
 
