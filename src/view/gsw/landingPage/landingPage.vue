@@ -1,5 +1,7 @@
 <template>
   <div class="p-landingPage">
+    <input type="text" v-model="copy_url" class="copy-input" ref="copyInput">
+
     <Card>
       <Table class="-c-tab" :loading="isFetching" :columns="columns" :data="dataList"></Table>
     </Card>
@@ -34,6 +36,7 @@
         dataList: [],
         detailList: [],
         pageId: '',
+        copy_url: '',
         totalDetail: 0,
         isFetching: false,
         isOpenModal: false,
@@ -73,6 +76,7 @@
           },
           {
             title: '操作',
+            width: 200,
             align: 'center',
             render: (h, params) => {
               return h('div', [
@@ -90,7 +94,22 @@
                       this.openModal(params.row)
                     }
                   }
-                }, '查看详情')
+                }, '查看详情'),
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: '#5444E4',
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.copyUrl(params.row)
+                    }
+                  }
+                }, '复制链接')
               ])
             }
           }
@@ -135,6 +154,21 @@
       this.getList()
     },
     methods: {
+      copyUrl(param) {
+        if (param.page === 1) {
+          this.copy_url = 'http://poem.k12.vip/newDetail'
+        } else if (param.page === 2) {
+          this.copy_url = 'http://poem.k12.vip/newDetailOne'
+        } else if (param.page === 3) {
+          this.copy_url = 'http://poem.k12.vip/newDetailTwo'
+        }
+
+        setTimeout(() => {
+          this.$refs.copyInput.select();
+          document.execCommand("copy");
+          this.$Message.success('复制成功');
+        }, 500);
+      },
       closeModal() {
         this.isOpenModal = false
       },
@@ -180,6 +214,11 @@
 
 <style lang="less" scoped>
   .p-landingPage {
+
+    .copy-input {
+      position: absolute;
+      opacity: 0;
+    }
 
     .-p-b-flex {
       display: flex;
