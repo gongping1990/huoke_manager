@@ -109,6 +109,7 @@
           }
         ],
         orderType: ['单独购买', '开团购买', '跟团购买'],
+        orderPageType: ['玖桔成都', '社群', '公众号投放'],
         dataList: [],
         dateOption: {
           name: '创建时间',
@@ -158,6 +159,13 @@
             title: '订单状态',
             render: (h, params) => {
               return h('div', this.orderStatus[params.row.payStatus])
+            },
+            align: 'center'
+          },
+          {
+            title: '落地页面',
+            render: (h, params) => {
+              return h('div', this.orderPageType[params.row.orderPageSource-1])
             },
             align: 'center'
           },
