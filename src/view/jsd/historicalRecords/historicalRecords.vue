@@ -1,6 +1,13 @@
 <template>
   <div class="p-job">
     <Card>
+      <Row class="g-t-left">
+        <Radio-group v-model="radioType" type="button" @on-change="getList(1)">
+          <Radio :label=3>已批改</Radio>
+          <Radio :label=4>表扬</Radio>
+        </Radio-group>
+      </Row>
+
       <search-template :option="searchOption" @changeSearch="getSearchInfo"></search-template>
 
       <Table :loading="isFetching" :columns="columns" :data="dataList"></Table>
@@ -17,7 +24,7 @@
         title="批改作业">
         <Form ref="addInfo" :model="addInfo" :label-width="70">
           <FormItem label="是否合格">
-            <Radio-group v-model="addInfo.isPassed" @on-change="changePassed" >
+            <Radio-group v-model="addInfo.isPassed" @on-change="changePassed">
               <Radio :label=1 disabled>合格</Radio>
               <Radio :label=0 disabled>不合格</Radio>
             </Radio-group>
@@ -29,7 +36,8 @@
             <upload-img-multiple v-model="addInfo.replyImg" :option="uploadOption"></upload-img-multiple>
           </FormItem>
           <FormItem label="批改音频" v-if="addInfo.isPassed === 1">
-            <upload-audio ref="childAudio" v-model="addInfo.replyAudio" :option="uploadAudioOption" @otherAudioInfo="getAudioInfo"></upload-audio>
+            <upload-audio ref="childAudio" v-model="addInfo.replyAudio" :option="uploadAudioOption"
+                          @otherAudioInfo="getAudioInfo"></upload-audio>
           </FormItem>
           <FormItem label="批改文案" v-if="addInfo.isPassed === 1">
             <Input type="textarea" :rows="5" v-model="addInfo.replyText" placeholder="请输入批改文案"></Input>
@@ -102,7 +110,7 @@
         },
         dataList: [],
         total: 0,
-        radioType: 0,
+        radioType: 3,
         getStartTime: '',
         getEndTime: '',
         searchInfo: {},
@@ -127,7 +135,7 @@
           },
           {
             title: '是否付费',
-            render: (h, params)=> {
+            render: (h, params) => {
               return h('div', params.row.buyStatus ? '是' : '否')
             },
             align: 'center'
@@ -135,11 +143,12 @@
           {
             title: '作业要求',
             key: 'homeworkClaim',
+            tooltip: true,
             align: 'center'
           },
           {
             title: '作业内容',
-            width: 300,
+            width: 200,
             render: (h, params) => {
               return h('div', {
                 style: {
@@ -154,12 +163,14 @@
                 }, [
                   h('img', {
                     attrs: {
-                      src: item
+                      src: item,
+                      preview: '0'
                     },
                     style: {
                       width: '50px',
                       height: '50px',
-                      margin: '10px'
+                      margin: '10px',
+                      cursor: 'zoom-in'
                     }
                   }), h('Icon', {
                     props: {
@@ -224,10 +235,25 @@
           },
           {
             title: '操作',
-            width: 220,
+            width: 300,
             align: 'left',
             render: (h, params) => {
               return h('div', [
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: '#5444E4',
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.changePraise(params.row)
+                    }
+                  }
+                }, this.radioType == 4 ? '移出表扬' : '加入表扬'),
                 h('Button', {
                   props: {
                     type: 'text',
@@ -264,7 +290,6 @@
                     size: 'small'
                   },
                   style: {
-                    display: this.radioType == 4 ? 'none' : 'inline-block',
                     color: 'rgba(218, 55, 75)',
                     marginRight: '5px'
                   },
@@ -284,14 +309,14 @@
       this.getList()
     },
     methods: {
-      getSearchInfo (data) {
+      getSearchInfo(data) {
         this.searchInfo = data
         this.getList(1)
       },
-      getAudioInfo (data) {
-        this.addInfo.replyDuration = (data/1000).toFixed()
+      getAudioInfo(data) {
+        this.addInfo.replyDuration = (data / 1000).toFixed()
       },
-      jobPrise (data) {
+      jobPrise(data) {
         this.$Modal.confirm({
           title: '提示',
           content: `确认要进行此操作吗？`,
@@ -309,7 +334,7 @@
           }
         })
       },
-      changePassed () {
+      changePassed() {
         this.$forceUpdate()
       },
       openModalPlay(data) {
@@ -328,6 +353,23 @@
         this.$Modal.confirm({
           title: '提示',
           content: '确认要删除吗？',
+          onOk: () => {
+            this.$api.composition.removeHomework({
+              id: param.id
+            }).then(
+              response => {
+                if (response.data.code == "200") {
+                  this.$Message.success("操作成功");
+                  this.getList();
+                }
+              })
+          }
+        })
+      },
+      changePraise(param) {
+        this.$Modal.confirm({
+          title: '提示',
+          content: `确认要${this.radioType==4 ? '移出表扬' : '加入表扬'}？`,
           onOk: () => {
             this.$api.composition.removeHomework({
               id: param.id

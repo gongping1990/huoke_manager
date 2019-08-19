@@ -349,6 +349,23 @@
             this.isFetching = false
           })
       },
+      toChangeStatus(param) {
+        this.$Modal.confirm({
+          title: '提示',
+          content: '禁用该老师后，其“待批改”和“不合格”作业将平均分配给其他启用的老师',
+          onOk: () => {
+            this.$api.gswOperational.removeOperational({
+              operationalId: param.id
+            }).then(
+              response => {
+                if (response.data.code == "200") {
+                  this.$Message.success("操作成功");
+                  this.getList();
+                }
+              })
+          }
+        })
+      },
       delItem(param) {
         this.$Modal.confirm({
           title: '提示',

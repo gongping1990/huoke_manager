@@ -115,11 +115,12 @@
           {
             title: '作业要求',
             key: 'homeworkClaim',
+            tooltip: true,
             align: 'center'
           },
           {
             title: '作业内容',
-            width: 300,
+            width: 200,
             render: (h, params) => {
               return h('div', {
                 style: {
@@ -134,12 +135,14 @@
                 }, [
                   h('img', {
                     attrs: {
-                      src: item
+                      src: item,
+                      preview: '0'
                     },
                     style: {
                       width: '50px',
                       height: '50px',
-                      margin: '10px'
+                      margin: '10px',
+                      cursor: 'zoom-in'
                     }
                   }), h('Icon', {
                     props: {

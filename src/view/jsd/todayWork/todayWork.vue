@@ -7,7 +7,7 @@
             <Radio :label=0>待批改</Radio>
             <Radio :label=1>不合格</Radio>
             <Radio :label=3>已批改</Radio>
-            <!--<Radio :label=4>表扬</Radio>-->
+            <Radio :label=4>表扬</Radio>
           </Radio-group>
         </Row>
         <Row class="p-todayWork-flex" v-if="radioType === 0">
@@ -203,11 +203,12 @@
           {
             title: '作业要求',
             key: 'homeworkClaim',
+            tooltip: true,
             align: 'center'
           },
           {
             title: '作业内容',
-            width: 300,
+            width: 200,
             render: (h, params) => {
               return h('div', {
                 style: {
@@ -222,12 +223,14 @@
                 }, [
                   h('img', {
                     attrs: {
-                      src: item
+                      src: item,
+                      preview: '0'
                     },
                     style: {
                       width: '50px',
                       height: '50px',
-                      margin: '10px'
+                      margin: '10px',
+                      cursor: 'zoom-in'
                     }
                   }), h('Icon', {
                     props: {
@@ -328,11 +331,12 @@
           {
             title: '作业要求',
             key: 'homeworkClaim',
+            tooltip: true,
             align: 'center'
           },
           {
             title: '作业内容',
-            width: 300,
+            width: 200,
             render: (h, params) => {
               return h('div', {
                 style: {
@@ -347,12 +351,14 @@
                 }, [
                   h('img', {
                     attrs: {
-                      src: item
+                      src: item,
+                      preview: '0'
                     },
                     style: {
                       width: '50px',
                       height: '50px',
-                      margin: '10px'
+                      margin: '10px',
+                      cursor: 'zoom-in'
                     }
                   }), h('Icon', {
                     props: {
@@ -481,7 +487,7 @@
                       this.jobPrise(params.row)
                     }
                   }
-                }, this.radioType == '4' ? '移除表扬' : '加入表扬')
+                }, this.radioType == '4' ? '移出表扬' : '加入表扬')
               ])
             }
           }
@@ -507,11 +513,12 @@
           {
             title: '作业要求',
             key: 'homeworkClaim',
+            tooltip: true,
             align: 'center'
           },
           {
             title: '作业内容',
-            width: 300,
+            width: 200,
             render: (h, params) => {
               return h('div', {
                 style: {
@@ -526,12 +533,14 @@
                 }, [
                   h('img', {
                     attrs: {
-                      src: item
+                      src: item,
+                      preview: '0'
                     },
                     style: {
                       width: '50px',
                       height: '50px',
-                      margin: '10px'
+                      margin: '10px',
+                      cursor: 'zoom-in'
                     }
                   }), h('Icon', {
                     props: {
@@ -655,7 +664,7 @@
       this.getList()
     },
     methods: {
-      changeAloneSelect () {
+      changeAloneSelect() {
         this.$refs.selection.selectAll(this.selectAllData);
       },
       changeSelectData(data) {
@@ -668,6 +677,23 @@
           onOk: () => {
             this.$api.composition.praiseHomework({
               id: data.id
+            }).then(
+              response => {
+                if (response.data.code == "200") {
+                  this.$Message.success("操作成功");
+                  this.getList();
+                }
+              })
+          }
+        })
+      },
+      jobPrise(param) {
+        this.$Modal.confirm({
+          title: '提示',
+          content: `确认要${this.radioType==4 ? '移出表扬' : '加入表扬'}？`,
+          onOk: () => {
+            this.$api.composition.praiseHomework({
+              id: param.id
             }).then(
               response => {
                 if (response.data.code == "200") {
@@ -695,24 +721,6 @@
       },
       getAudioInfo(data) {
         this.addInfo.replyDuration = (data / 1000).toFixed()
-      },
-      jobPrise(data) {
-        this.$Modal.confirm({
-          title: '提示',
-          content: `确认要进行此操作吗？`,
-          onOk: () => {
-            this.$api.composition.praiseHomework({
-              id: data.id,
-              praise: !data.praise
-            }).then(
-              response => {
-                if (response.data.code == "200") {
-                  this.$Message.success("操作成功");
-                  this.getList();
-                }
-              })
-          }
-        })
       },
       changePassed() {
         this.$forceUpdate()
