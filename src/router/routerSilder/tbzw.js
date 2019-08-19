@@ -76,6 +76,32 @@ export const tbzwRouter =[
           }
         ],
         component: () => import('@/view/tbzw/qrcode/qrcodeList')
+      },
+      {
+        path: '/tbzw_patchRecord',
+        name: 'tbzw_patchRecord',
+        meta: [
+          {
+            name: '运营管理'
+          },
+          {
+            name: '补卡记录'
+          }
+        ],
+        component: () => import('@/view/tbzw/patchRecord/patchRecord')
+      },
+      {
+        path: '/tbzw_classProgress',
+        name: 'tbzw_classProgress',
+        meta: [
+          {
+            name: '运营管理'
+          },
+          {
+            name: '上课进度'
+          }
+        ],
+        component: () => import('@/view/tbzw/classProgress/classProgress')
       }
     ]
   },
@@ -144,6 +170,23 @@ export const tbzwRouter =[
           {name: '作业列表'}
         ],
         component: () => import('@/view/tbzw/bookingManagement/bookingList')
+      }
+    ]
+  },
+  {
+    path: 'market',
+    name: 'market',
+    title: '营销管理',
+    component: Main,
+    children: [
+      {
+        path: '/tbzw_couponList',
+        name: 'tbzw_couponList',
+        meta: [
+          {name: '营销管理'},
+          {name: '优惠券列表'}
+        ],
+        component: () => import('@/view/tbzw/couponManagement/couponList')
       }
     ]
   },

@@ -52,7 +52,7 @@
                     @click="changeDate(1,3)">本月</span>
             </div>
           </div>
-          <div ref="echartOne"></div>
+          <div ref="echartOne" class="-item-echart-down"></div>
         </div>
 
         <div class="-item-echart">
@@ -70,7 +70,7 @@
                     @click="changeDate(2,3)">本月</span>
             </div>
           </div>
-          <div ref="echartTwo"></div>
+          <div ref="echartTwo" class="-item-echart-down"></div>
         </div>
 
         <div class="-item-echart">
@@ -88,7 +88,7 @@
                     @click="changeDate(3,3)">本月</span>
             </div>
           </div>
-          <div ref="echartThree"></div>
+          <div ref="echartThree" class="-item-echart-down"></div>
         </div>
 
         <div class="-item-echart">
@@ -106,7 +106,7 @@
                     @click="changeDate(4,3)">本月</span>
             </div>
           </div>
-          <div ref="echartFour"></div>
+          <div ref="echartFour" class="-item-echart-down"></div>
         </div>
       </div>
     </Card>
@@ -377,7 +377,6 @@
       this.myChartThree = echarts.init(this.$refs.echartThree)
       this.myChartFour = echarts.init(this.$refs.echartFour)
       this.getList()
-
     },
     methods: {
       changeDate(type, num) {
@@ -434,40 +433,22 @@
 
       drawLineOne() {
         let self = this;
+        console.log(this.myChartOne,1111)
         this.myChartOne.clear();
         this.myChartOne.resize();
         // 绘制图表
         this.myChartOne.setOption({
-          tooltip: {
-            trigger: 'axis',
-            axisPointer: {
-              type: 'line'
-            },
-            textStyle: {
-              align: 'left'
-            }
-          },
+          tooltip: {},
           xAxis: {
-            boundaryGap: false,
-            axisTick: {
-              alignWithLabel: true
-            },
             data: ["衬衫","羊毛衫","雪纺衫","裤子","高跟鞋","袜子"]
-          },
-          grid: {
-            left: '6%',
-            top: '13%',
-            right: '5%'
           },
           yAxis: {
             name: '单位（人）'
           },
-          series: [5, 20, 36, 10, 10, 20],
-          dataZoom: [
-            {
-              type: "slider"
-            }
-          ],
+          series: {
+            type: 'bar',
+            data: [5, 20, 36, 10, 10, 20]
+          }
         })
 
         window.addEventListener("resize", () => {
@@ -481,36 +462,17 @@
         this.myChartTwo.resize();
         // 绘制图表
         this.myChartTwo.setOption({
-          tooltip: {
-            trigger: 'axis',
-            axisPointer: {
-              type: 'line'
-            },
-            textStyle: {
-              align: 'left'
-            }
-          },
+          tooltip: {},
           xAxis: {
-            boundaryGap: false,
-            axisTick: {
-              alignWithLabel: true
-            },
             data: ["衬衫","羊毛衫","雪纺衫","裤子","高跟鞋","袜子"]
-          },
-          grid: {
-            left: '6%',
-            top: '13%',
-            right: '5%'
           },
           yAxis: {
             name: '单位（人）'
           },
-          series: [5, 20, 36, 10, 10, 20],
-          dataZoom: [
-            {
-              type: "slider"
-            }
-          ],
+          series: {
+            type: 'bar',
+            data: [5, 20, 36, 10, 10, 20]
+          }
         })
         window.addEventListener("resize", () => {
           this.myChartTwo.resize();
@@ -523,36 +485,17 @@
         this.myChartThree.resize();
         // 绘制图表
         this.myChartThree.setOption({
-          tooltip: {
-            trigger: 'axis',
-            axisPointer: {
-              type: 'line'
-            },
-            textStyle: {
-              align: 'left'
-            }
-          },
+          tooltip: {},
           xAxis: {
-            boundaryGap: false,
-            axisTick: {
-              alignWithLabel: true
-            },
             data: ["衬衫","羊毛衫","雪纺衫","裤子","高跟鞋","袜子"]
-          },
-          grid: {
-            left: '6%',
-            top: '13%',
-            right: '5%'
           },
           yAxis: {
             name: '单位（人）'
           },
-          series: [5, 20, 36, 10, 10, 20],
-          dataZoom: [
-            {
-              type: "slider"
-            }
-          ],
+          series: {
+            type: 'bar',
+            data: [5, 20, 36, 10, 10, 20]
+          }
         })
 
         window.addEventListener("resize", () => {
@@ -566,36 +509,17 @@
         this.myChartFour.resize();
         // 绘制图表
         this.myChartFour.setOption({
-          tooltip: {
-            trigger: 'axis',
-            axisPointer: {
-              type: 'line'
-            },
-            textStyle: {
-              align: 'left'
-            }
-          },
+          tooltip: {},
           xAxis: {
-            boundaryGap: false,
-            axisTick: {
-              alignWithLabel: true
-            },
             data: ["衬衫","羊毛衫","雪纺衫","裤子","高跟鞋","袜子"]
-          },
-          grid: {
-            left: '6%',
-            top: '13%',
-            right: '5%'
           },
           yAxis: {
             name: '单位（人）'
           },
-          series: [5, 20, 36, 10, 10, 20],
-          dataZoom: [
-            {
-              type: "slider"
-            }
-          ],
+          series: {
+            type: 'bar',
+            data: [5, 20, 36, 10, 10, 20]
+          }
         })
 
         window.addEventListener("resize", () => {
@@ -629,7 +553,7 @@
           textColor: '#000',
           zlevel: 0
         })
-
+        this.initData()
         this.isFetching = true
         this.$api.wzjh.getUserAccessStat({
           chancelId: this.radioType
@@ -637,7 +561,7 @@
           .then(
             response => {
               this.dataInfo = response.data.resultData;
-              this.initData()
+
             })
           .finally(() => {
             this.isFetching = false
@@ -807,6 +731,11 @@
         &-text {
           cursor: pointer;
           color: #b3b5b8;
+        }
+
+        &-down {
+          width: 80%;
+          height: 240px;
         }
       }
     }

@@ -163,6 +163,13 @@
             align: 'center'
           },
           {
+            title: '订单类型',
+            render: (h, params) => {
+              return h('div', this.orderType[params.row.payStatus])
+            },
+            align: 'center'
+          },
+          {
             title: '落地页面',
             render: (h, params) => {
               return h('div', this.orderPageType[params.row.orderPageSource-1])
