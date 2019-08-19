@@ -734,7 +734,7 @@
         }
 
         &-down {
-          width: 80%;
+          width: 90%;
           height: 240px;
         }
       }
