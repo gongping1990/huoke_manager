@@ -445,6 +445,7 @@
           yAxis: {
             name: '单位（人）'
           },
+          color: ['#49a9ee'],
           series: {
             type: 'bar',
             data: [5, 20, 36, 10, 10, 20]
@@ -469,6 +470,7 @@
           yAxis: {
             name: '单位（人）'
           },
+          color: ['#98d87d'],
           series: {
             type: 'bar',
             data: [5, 20, 36, 10, 10, 20]
@@ -492,6 +494,7 @@
           yAxis: {
             name: '单位（人）'
           },
+          color: ['#ffd86e'],
           series: {
             type: 'bar',
             data: [5, 20, 36, 10, 10, 20]
