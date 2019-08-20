@@ -18,22 +18,22 @@
         width="500"
         :title="addInfo.id ? '编辑教师' : '创建教师'">
         <Form ref="addInfo" :model="addInfo" :rules="ruleValidate" :label-width="90">
-          <FormItem label="教师名称" prop="name">
-            <Input type="text" v-model="addInfo.name" placeholder="请输入活动名称"></Input>
+          <FormItem label="教师名称" prop="nickname">
+            <Input type="text" v-model="addInfo.nickname" placeholder="请输入教师名称"></Input>
           </FormItem>
-          <Form-item label="教师头像" prop="img" class="ivu-form-item-required">
-            <upload-img  v-model="addInfo.img" :option="uploadOption"></upload-img>
+          <Form-item label="教师头像" class="ivu-form-item-required">
+            <upload-img  v-model="addInfo.headimgurl" :option="uploadOption"></upload-img>
           </Form-item>
-          <FormItem label="教师账号" prop="account">
-            <Input type="text" v-model="addInfo.account" :disabled="addInfo.id!=''" placeholder="请输入账号"></Input>
+          <FormItem label="教师账号" prop="username">
+            <Input type="text" v-model="addInfo.username" :disabled="addInfo.id!=''" placeholder="请输入账号"></Input>
             <span class="-c-tips">* 添加后，账号不可修改</span>
           </FormItem>
           <FormItem label="初始密码" prop="password">
             <Input type="text" v-model="addInfo.password" placeholder="请输入初始密码"></Input>
             <span class="-c-tips">* 添加后，密码可重置为初始密码ju123456</span>
           </FormItem>
-          <FormItem label="预估工作量" prop="workload">
-            <InputNumber type="text" v-model="addInfo.workload" :min="0"
+          <FormItem label="预估工作量" prop="amount">
+            <InputNumber type="text" v-model="addInfo.amount" :min="0"
                          placeholder="请输入预估工作量"></InputNumber>
           </FormItem>
         </Form>
@@ -101,24 +101,28 @@
         isSending: false,
         addInfo: {},
         ruleValidate: {
-          name: [
-            {required: true, message: '请输入活动名称', trigger: 'blur'},
-            {type: 'string', max: 20, message: '活动名称长度为20字', trigger: 'blur'}
+          nickname: [
+            {required: true, message: '请输入教师名称', trigger: 'blur'},
+            {type: 'string', max: 20, message: '教师名称长度为20字', trigger: 'blur'}
           ],
-          workload: [
+          amount: [
             {required: true, type:'number', message: '请输入预估工作量', trigger: 'blur'}
           ],
           password: [
             {required: true, message: '请输入初始密码', trigger: 'blur'}
           ],
-          account: [
-            {required: true, message: '请输入账号', trigger: 'blur'}
+          username: [
+            {required: true, message: '请输入教师账号', trigger: 'blur'}
           ]
         },
         columns: [
           {
             title: '教师名称',
-            key: 'name'
+            key: 'nickname'
+          },
+          {
+            title: '教师账号',
+            key: 'username'
           },
           {
             title: '教师头像',
@@ -132,7 +136,7 @@
               }, [
                 h('img', {
                   attrs: {
-                    src: params.row.url
+                    src: params.row.headimgurl
                   },
                   style: {
                     width: '36px',
@@ -296,7 +300,7 @@
         } else {
           this.addInfo = {
             id: '',
-            workload: null,
+            amount: null,
             img: ''
           }
         }
@@ -335,7 +339,7 @@
         if (num) {
           this.tab.currentPage = 1
         }
-        this.$api.gswOperational.listOperational({
+        this.$api.jsdTeacher.listTeachByPage({
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
           type: 0
@@ -354,8 +358,8 @@
           title: '提示',
           content: '禁用该老师后，其“待批改”和“不合格”作业将平均分配给其他启用的老师',
           onOk: () => {
-            this.$api.gswOperational.removeOperational({
-              operationalId: param.id
+            this.$api.jsdTeacher.changeStatusTeacher({
+              userId: param.id
             }).then(
               response => {
                 if (response.data.code == "200") {
@@ -371,8 +375,8 @@
           title: '提示',
           content: '确认要删除吗？',
           onOk: () => {
-            this.$api.gswOperational.removeOperational({
-              operationalId: param.id
+            this.$api.jsdTeacher.removeTeacher({
+              userId: param.id
             }).then(
               response => {
                 if (response.data.code == "200") {
@@ -388,29 +392,12 @@
           title: '提示',
           content: '确认要重置密码吗？',
           onOk: () => {
-            this.$api.gswOperational.removeOperational({
-              operationalId: param.id
+            this.$api.jsdTeacher.updatePasswordTeacher({
+              userId: param.id
             }).then(
               response => {
                 if (response.data.code == "200") {
-                  this.$Message.success("操作成功");
-                  this.getList();
-                }
-              })
-          }
-        })
-      },
-      endItem(param) {
-        this.$Modal.confirm({
-          title: '提示',
-          content: '确认要结束吗？',
-          onOk: () => {
-            this.$api.gswOperational.finishOperational({
-              operationalId: param.id
-            }).then(
-              response => {
-                if (response.data.code == "200") {
-                  this.$Message.success("操作成功");
+                  this.$Message.success("操作成功，请重新登录");
                   this.getList();
                 }
               })
@@ -421,18 +408,19 @@
         if (this.isSending) return
         this.$refs[name].validate((valid) => {
           if (valid) {
-            if (!this.addInfo.img) {
-              return this.$Message.error('请上传闪屏图片')
+            if (!this.addInfo.headimgurl) {
+              return this.$Message.error('请上传老师头像')
             }
             this.isSending = true
-            this.$api.gswOperational.saveOperational({
+            let param = ''
+            param = this.addInfo.id ? this.$api.jsdTeacher.updateTeacher : this.$api.jsdTeacher.addTeacher
+            param({
               id: this.addInfo.id,
-              hideTime: dayjs(this.addInfo.hideTime).format("YYYY/MM/DD HH:mm:ss"),
-              showTime: dayjs(this.addInfo.showTime).format("YYYY/MM/DD HH:mm:ss"),
-              name : this.addInfo.name,
-              href : this.addInfo.href,
-              url : this.addInfo.url,
-              type: 0
+              nickname : this.addInfo.nickname,
+              username : this.addInfo.username,
+              password : this.addInfo.password,
+              headimgurl : this.addInfo.headimgurl,
+              amount : this.addInfo.amount
             })
               .then(
                 response => {

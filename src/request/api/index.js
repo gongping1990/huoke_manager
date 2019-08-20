@@ -6,6 +6,7 @@ import {wzjhIndex} from './wzjh/wzjhIndex'
 import {tbzwIndex} from './tbzw/tbzwIndex'
 import {ylxcxIndex} from './ylxcx/ylxcxIndex'
 import {hkywIndex} from './hkyw/hkywIndex'
+import {jsdIndex} from './jsd/jsdIndex'
 
 export default {
   ...hkxtIndex,
@@ -15,5 +16,6 @@ export default {
   ...wzjhIndex,
   ...tbzwIndex,
   ...ylxcxIndex,
-  ...hkywIndex
+  ...hkywIndex,
+  ...jsdIndex
 }
