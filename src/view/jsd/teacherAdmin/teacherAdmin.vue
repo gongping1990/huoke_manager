@@ -28,7 +28,7 @@
             <Input type="text" v-model="addInfo.username" :disabled="addInfo.id!=''" placeholder="请输入账号"></Input>
             <span class="-c-tips">* 添加后，账号不可修改</span>
           </FormItem>
-          <FormItem label="初始密码" prop="password">
+          <FormItem label="初始密码" prop="password" v-if="!addInfo.id">
             <Input type="text" v-model="addInfo.password" placeholder="请输入初始密码"></Input>
             <span class="-c-tips">* 添加后，密码可重置为初始密码ju123456</span>
           </FormItem>
@@ -390,7 +390,7 @@
       resultItem(param) {
         this.$Modal.confirm({
           title: '提示',
-          content: '确认要重置密码吗？',
+          content: '确认要重置密码吗？(重置后密码为初始密码：ju123456)',
           onOk: () => {
             this.$api.jsdTeacher.updatePasswordTeacher({
               userId: param.id
