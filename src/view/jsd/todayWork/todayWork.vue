@@ -47,16 +47,16 @@
 
         </Row>
 
-        <Row v-if="radioType === 1" class="-p-margin-top g-t-left">
+        <Row v-if="radioType === 1 || radioType === 2" class="-p-margin-top g-t-left">
           <Radio-group v-model="unqualifiedType" type="button" @on-change="changeUnqualified">
-            <Radio :label=0>未重做</Radio>
-            <Radio :label=1>已重交</Radio>
+            <Radio :label=1>未重做</Radio>
+            <Radio :label=2>已重交</Radio>
           </Radio-group>
         </Row>
 
         <search-template :option="searchOption" @changeSearch="getSearchInfo"></search-template>
 
-        <Row v-if="radioType === 1 && !unqualifiedType" class="p-todayWork-tip">
+        <Row v-if="radioType === 1 && unqualifiedType === 1" class="p-todayWork-tip">
           <div class="-tip-div g-t-left">
             <Checkbox v-model="selectAllData" @on-change="changeAloneSelect">所有数据</Checkbox>
           </div>
@@ -167,9 +167,8 @@
         },
         dataList: [],
         total: 0,
-        radioType: 1,
-        unqualifiedType: 0,
-        selectInfo: '1',
+        radioType: 0,
+        unqualifiedType: 1,
         getStartTime: '',
         getEndTime: '',
         selectAllData: false,
@@ -709,11 +708,11 @@
         this.getList(1)
       },
       changeUnqualified() {
+        this.radioType = this.unqualifiedType
         this.$Notice.warning({
-          desc: this.unqualifiedType ? '最近7天不合作业还剩28，已重交23' : '不合作业累计还剩28，已重交23',
+          desc: this.unqualifiedType === 2 ? '最近7天不合作业还剩28，已重交23' : '不合作业累计还剩28，已重交23',
           duration: 5
         });
-        this.getList(1)
       },
       getSearchInfo(data) {
         this.searchInfo = data
@@ -786,26 +785,32 @@
         let params = {
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
-          grade: 3,
-          evaluation: this.searchInfo.evaluate == '-1' ? '' : this.searchInfo.evaluate,
+          system: this.searchInfo.appId || '7',
+          evaluation: this.searchInfo.evaluation == '-1' ? '' : this.searchInfo.evaluation,
           pay: this.searchInfo.pay == '-1' ? '' : this.searchInfo.pay,
-          starttime: this.getStartTime ? new Date(this.getStartTime).getTime() : "",
-          endtime: this.getEndTime ? new Date(this.getEndTime).getTime() : "",
+          evaluationed: this.searchInfo.evaluationed == '-1' ? '' : this.searchInfo.evaluationed,
+          hasComment: this.searchInfo.hasComment == '-1' ? '' : this.searchInfo.hasComment,
+          hmBegin: this.searchInfo.getStartTime ? new Date(this.searchInfo.getStartTime).getTime() : "",
+          hmEnd: this.searchInfo.getEndTime ? new Date(this.searchInfo.getEndTime).getTime() : "",
           status: this.radioType == 4 ? '' : this.radioType,
           praise: this.radioType == 4
         }
 
-        if (this.selectInfo == '1' && this.searchInfo) {
-          params.nickname = this.searchInfo.manner
-        } else if (this.selectInfo == '2' && this.searchInfo) {
-          params.teachername = this.searchInfo.manner
+        if (this.searchInfo.workType == '1' && this.searchInfo) {
+          params.lname = this.searchInfo.manner
+        } else if (this.searchInfo.workType == '2' && this.searchInfo) {
+          params.hmkeyword = this.searchInfo.manner
+        }
+
+        if (this.searchInfo.userType == '1' && this.searchInfo) {
+          params.nickname = this.searchInfo.mannerTwo
         }
 
         if (num) {
           this.tab.currentPage = 1
         }
 
-        this.$api.composition.listHomeworkByPage(params)
+        this.$api.jsdJob.listTeacherWorkByPage(params)
           .then(
             response => {
               this.dataList = response.data.resultData.records;

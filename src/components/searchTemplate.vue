@@ -62,7 +62,7 @@
         <Col :span="4" class="g-t-left" v-if="option.isSituation">
           <div class="g-flex-a-j-center">
             <div class="-search-select-text" >点评情况：</div>
-            <Select v-model="searchInfo.situation" @on-change="changeEmit()" class="-search-selectOne">
+            <Select v-model="searchInfo.evaluation" @on-change="changeEmit()" class="-search-selectOne">
               <Option class="-search-option" v-for="(item,index) in situationList" :label="item.name" :value="item.id" :key="index"></Option>
             </Select>
           </div>
@@ -70,7 +70,7 @@
         <Col :span="4" class="g-t-left" v-if="option.isFeedback">
           <div class="g-flex-a-j-center">
             <div class="-search-select-text">是否留言：</div>
-            <Select v-model="searchInfo.feedback" @on-change="changeEmit()" class="-search-selectOne">
+            <Select v-model="searchInfo.hasComment" @on-change="changeEmit()" class="-search-selectOne">
               <Option class="-search-option" v-for="(item,index) in payList" :label="item.name" :value="item.id" :key="index"></Option>
             </Select>
           </div>
@@ -103,7 +103,7 @@
           type: 'date'
         },
         searchInfo: {
-          appId: '1',
+          appId: '7',
           workType: '1',
           userType: '1',
           getStartTime: '',
@@ -113,17 +113,17 @@
           workRequirements: '',
           pay: '-1',
           comment: '-1',
-          situation: '-1',
-          feedback: '-1',
+          evaluation: '-1',
+          hasComment: '-1',
           teacherId: '-1'
         },
         appList: [
           {
-            id: '1',
+            id: '7',
             name: '每日一首古诗词'
           },
           {
-            id: '2',
+            id: '8',
             name: '小语轻作文'
           }
         ],
@@ -188,6 +188,7 @@
       changeDateTime(data) {
         this.searchInfo.getStartTime = data.startTime
         this.searchInfo.getEndTime = data.endTime
+        console.log('触发')
         this.changeEmit()
       },
       changeInput() {
