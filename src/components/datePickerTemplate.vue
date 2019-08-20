@@ -17,7 +17,7 @@
                      :type="dataInfo.type"
                      v-model="dateTime.endTime"
                      :options="dateOption"
-                     @on-open-change="changeDate"
+                     @on-open-change="changeDateFn"
                      @on-change="changeEndClick">
 
         </Date-picker>
@@ -68,7 +68,7 @@
           this.dateTime.endTime = ''
         }
         if (this.dateTime.endTime) {
-          this.changeDate(false)
+          this.changeDateFn(false)
         }
       },
       changeEndClick(date) {
@@ -78,7 +78,7 @@
           this.dateTime.endTime = new Date(changeDate + (24 * 60 * 60 * 1000 - 1))
         }
       },
-      changeDate(bool) {
+      changeDateFn(bool) {
         if (!bool && this.dateTime.endTime && this.dateTime.startTime) {
           this.$emit('changeDate', this.dateTime)
         }

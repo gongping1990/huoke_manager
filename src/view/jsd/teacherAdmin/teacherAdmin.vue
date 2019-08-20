@@ -151,7 +151,7 @@
           },
           {
             title: '预计工作量',
-            key: 'href'
+            key: 'amount'
           },
           {
             title: '启用/禁用',
