@@ -691,7 +691,8 @@
           title: '提示',
           content: `确认要${this.radioType == 4 ? '移出表扬' : '加入表扬'}？`,
           onOk: () => {
-            this.$api.composition.praiseHomework({
+            this.$api.jsdJob.praise({
+              system: this.searchInfo.appId || '7',
               id: param.id
             }).then(
               response => {
@@ -764,7 +765,8 @@
           title: '提示',
           content: '确认要删除吗？',
           onOk: () => {
-            this.$api.composition.removeHomework({
+            this.$api.jsdJob.removeHomework({
+              system: this.searchInfo.appId || '7',
               id: param.id
             }).then(
               response => {
@@ -854,8 +856,9 @@
           return this.$Message.error('最多上传三张图片')
         }
 
-        this.$api.composition.replyHomework({
+        this.$api.jsdJob.replyHomework({
           id: this.addInfo.id,
+          system: this.searchInfo.appId || '7',
           replyImg: `${this.addInfo.replyImg}`,
           replyTeacher: this.addInfo.replyTeacher,
           replyText: this.addInfo.replyText,
