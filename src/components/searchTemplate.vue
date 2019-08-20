@@ -53,7 +53,7 @@
         <Col :span="4" class="g-t-left" v-if="option.isComment">
           <div class="g-flex-a-j-center">
             <div class="-search-select-text" >是否点评：</div>
-            <Select v-model="searchInfo.comment" @on-change="changeEmit()" class="-search-selectOne">
+            <Select v-model="searchInfo.evaluationed" @on-change="changeEmit()" class="-search-selectOne">
               <Option class="-search-option" v-for="(item,index) in commentList" :label="item.name" :value="item.id" :key="index"></Option>
             </Select>
           </div>
@@ -102,21 +102,7 @@
           name: '提交时间',
           type: 'date'
         },
-        searchInfo: {
-          appId: '7',
-          workType: '1',
-          userType: '1',
-          getStartTime: '',
-          getEndTime: '',
-          nickname: '',
-          lessonName: '',
-          workRequirements: '',
-          pay: '-1',
-          comment: '-1',
-          evaluation: '-1',
-          hasComment: '-1',
-          teacherId: '-1'
-        },
+        searchInfo: {},
         appList: [
           {
             id: '7',
@@ -181,7 +167,27 @@
         ]
       }
     },
+    mounted () {
+      this.initSearch()
+    },
     methods: {
+      initSearch () {
+        this.searchInfo = {
+          appId: '7',
+          workType: '1',
+          userType: '1',
+          getStartTime: '',
+          getEndTime: '',
+          nickname: '',
+          lessonName: '',
+          workRequirements: '',
+          pay: '-1',
+          evaluationed: '-1',
+          evaluation: '-1',
+          hasComment: '-1',
+          teacherId: '-1'
+        }
+      },
       changeMore() {
         this.isShowMore = !this.isShowMore
       },

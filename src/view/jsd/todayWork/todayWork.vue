@@ -54,7 +54,7 @@
           </Radio-group>
         </Row>
 
-        <search-template :option="searchOption" @changeSearch="getSearchInfo"></search-template>
+        <search-template ref="searchChild" :option="searchOption" @changeSearch="getSearchInfo"></search-template>
 
         <Row v-if="radioType === 1 && unqualifiedType === 1" class="p-todayWork-tip">
           <div class="-tip-div g-t-left">
@@ -689,7 +689,7 @@
       jobPrise(param) {
         this.$Modal.confirm({
           title: '提示',
-          content: `确认要${this.radioType==4 ? '移出表扬' : '加入表扬'}？`,
+          content: `确认要${this.radioType == 4 ? '移出表扬' : '加入表扬'}？`,
           onOk: () => {
             this.$api.composition.praiseHomework({
               id: param.id
@@ -705,6 +705,29 @@
       },
       changeJobType() {
         this.radioType === 1 && this.changeUnqualified()
+        this.searchInfo = {}
+        setTimeout(() => {
+          this.$refs.searchChild.initSearch()
+        }, 100);
+
+        if (this.radioType === 3 || this.radioType === 4) {
+          this.searchOption = {
+            isAppId: true,
+            isWorkType: true,
+            isPay: true,
+            isUserType: true,
+            isComment: true,
+            isSituation: true,
+            isFeedback: true
+          }
+        } else  {
+          this.searchOption = {
+            isAppId: true,
+            isWorkType: true,
+            isPay: true,
+            isUserType: true
+          }
+        }
         this.getList(1)
       },
       changeUnqualified() {
