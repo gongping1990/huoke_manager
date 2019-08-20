@@ -100,7 +100,7 @@
         isShowMore: false,
         dateOption: {
           name: '提交时间',
-          type: 'date'
+          type: 'datetime'
         },
         searchInfo: {},
         appList: [
