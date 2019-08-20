@@ -48,8 +48,9 @@
     computed: {},
     watch: {
       '$store.state.nowAdminType'(_n, _d) {
+        this.getRoleList()
         this.systemName = this.systemList[_n].name
-        this.getList()
+        // this.getList()
         this.$router.push('/')
         this.$forceUpdate()
       }
