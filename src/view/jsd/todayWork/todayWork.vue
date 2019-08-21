@@ -15,7 +15,7 @@
             <Card class="-item-wrap">
               <div class="-item-wrap-top">
                 <div class="-name-left">作业总量</div>
-                <Poptip placement="bottom" :transfer="true" popper-class="p-todayWork-flex">
+                <Poptip placement="bottom" :transfer="true" trigger="hover" popper-class="p-todayWork-flex">
                   <div class="-name-right">明细</div>
                   <Row class="-mask-wrap" slot="content">
                     <Col class="-mask-wrap-item" :span="7" v-for="(item, index) of 3" :key="index">
