@@ -868,7 +868,7 @@
         }
 
         this.$api.jsdJob.replyHomework({
-          id: this.addInfo.id,
+          id: this.addInfo.workId,
           system: this.searchInfo.appId || '7',
           replyImg: `${this.addInfo.replyImg}`,
           replyTeacher: this.addInfo.replyTeacher,
