@@ -28,11 +28,11 @@
         @on-cancel="closeModal('addInfo')"
         width="500"
         title="分配作业">
-        <div class="p-assignmentJobs-text">确认将选中的4578份作业，分配给</div>
+        <div class="p-assignmentJobs-text">确认将选中的{{selectUserList.length}}份作业，分配给</div>
         <Form ref="addInfo" :model="addInfo" :label-width="70">
           <FormItem label="教师名称" class="ivu-form-item-required">
             <Select v-model="addInfo.teacherId" @on-change="selectChange" class="-search-selectOne">
-              <Option v-for="(item,index) in orderStatusList" :label="item.name" :value="item.id" :key="index"></Option>
+              <Option v-for="(item,index) in teacherList" :label="item.nickname" :value="item.id" :key="index"></Option>
             </Select>
           </FormItem>
         </Form>
@@ -76,7 +76,7 @@
           isUserType: true
         },
         dataList: [],
-        orderStatusList: [],
+        teacherList: [],
         selectUserList: [],
         total: 0,
         selectInfo: '1',
@@ -97,12 +97,12 @@
           },
           {
             title: '用户昵称',
-            key: 'nickname',
+            key: 'nickName',
             align: 'center'
           },
           {
             title: '课程名称',
-            key: 'nickname',
+            key: 'lessonName',
             align: 'center'
           },
           {
@@ -114,7 +114,7 @@
           },
           {
             title: '作业要求',
-            key: 'homeworkClaim',
+            key: 'homeworkRequire',
             tooltip: true,
             align: 'center'
           },
@@ -184,7 +184,7 @@
           {
             title: '提交时间',
             render: (h, params) => {
-              return h('div', dayjs(+params.row.workTime).format('YYYY-MM-DD HH:mm'))
+              return h('div', dayjs(+params.row.submitTime).format('YYYY-MM-DD HH:mm'))
             },
             align: 'center'
           },
@@ -215,6 +215,7 @@
     },
     mounted() {
       this.getList()
+      this.getTeacherList()
     },
     methods: {
       changeAloneSelect () {
@@ -249,8 +250,9 @@
           title: '提示',
           content: '确认要删除吗？',
           onOk: () => {
-            this.$api.composition.removeHomework({
-              id: param.id
+            this.$api.jsdJob.removeHomework({
+              id: param.workId,
+              system: this.searchInfo.appId || '7'
             }).then(
               response => {
                 if (response.data.code == "200") {
@@ -276,19 +278,48 @@
         this.tab.page = val;
         this.getList();
       },
+      getTeacherList() {
+        this.$api.jsdTeacher.listTeachByPage({
+          current: 1,
+          size: 10000,
+          type: 0
+        }).then(response => {
+          let arrayT = response.data.resultData.records
+          arrayT.forEach(item=> {
+            if (!item.desabled) {
+              this.teacherList.push(item)
+            }
+          })
+        })
+      },
       //分页查询
       getList(num) {
         this.isFetching = true
+
         let params = {
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
+          system: this.searchInfo.appId || '7',
+          hmBegin: this.searchInfo.getStartTime ? new Date(this.searchInfo.getStartTime).getTime() : "",
+          hmEnd: this.searchInfo.getEndTime ? new Date(this.searchInfo.getEndTime).getTime() : "",
+          alloted: false
+        }
+
+        if (this.searchInfo.workType == '1' && this.searchInfo) {
+          params.lname = this.searchInfo.manner
+        } else if (this.searchInfo.workType == '2' && this.searchInfo) {
+          params.hmkeyword = this.searchInfo.manner
+        }
+
+        if (this.searchInfo.userType == '1' && this.searchInfo) {
+          params.nickname = this.searchInfo.mannerTwo
         }
 
         if (num) {
           this.tab.currentPage = 1
         }
 
-        this.$api.composition.listHomeworkByPage(params)
+        this.$api.jsdJob.listManagerWorkByPage(params)
           .then(
             response => {
               this.dataList = response.data.resultData.records;
@@ -307,9 +338,11 @@
           return this.$Message.error('请选择需要分配的教师')
         }
 
-        this.$api.composition.replyHomework({
+        this.$api.jsdJob.reAllotJob({
           id: this.addInfo.id,
-          teacherId: this.addInfo.teacherId
+          system: this.addInfo.appId || '7',
+          teacherId: this.addInfo.teacherId,
+          workIds: this.selectUserList
         })
           .then(
             response => {
