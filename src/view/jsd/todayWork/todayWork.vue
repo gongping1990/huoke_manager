@@ -48,7 +48,7 @@
         </Row>
 
         <Row v-if="radioType === 1 || radioType === 2" class="-p-margin-top g-t-left">
-          <Radio-group v-model="unqualifiedType" type="button" @on-change="changeUnqualified">
+          <Radio-group v-model="unqualifiedType" type="button" @on-change="changeUnqualified()">
             <Radio :label=1>未重做</Radio>
             <Radio :label=2>已重交</Radio>
           </Radio-group>
@@ -706,7 +706,12 @@
         })
       },
       changeJobType() {
-        // this.radioType === 1 && this.changeUnqualified()
+        if (this.radioType === 1) {
+          this.$Notice.warning({
+            desc: this.unqualifiedType === 2 ? '最近7天不合作业还剩28，已重交23' : '不合作业累计还剩28，已重交23',
+            duration: 5
+          });
+        }
         this.searchInfo = {}
         setTimeout(() => {
           this.$refs.searchChild.initSearch()
@@ -733,15 +738,15 @@
         this.getList(1)
       },
       changeUnqualified() {
+        this.$Notice.warning({
+          desc: this.unqualifiedType === 2 ? '最近7天不合作业还剩28，已重交23' : '不合作业累计还剩28，已重交23',
+          duration: 5
+        });
         this.searchInfo = {}
         setTimeout(() => {
           this.$refs.searchChild.initSearch()
         }, 100);
         this.radioType = this.unqualifiedType
-        this.$Notice.warning({
-          desc: this.unqualifiedType === 2 ? '最近7天不合作业还剩28，已重交23' : '不合作业累计还剩28，已重交23',
-          duration: 5
-        });
         this.getList(1)
       },
       getSearchInfo(data) {
