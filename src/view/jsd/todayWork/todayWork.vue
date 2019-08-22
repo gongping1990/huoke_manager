@@ -707,10 +707,7 @@
       },
       changeJobType() {
         if (this.radioType === 1) {
-          this.$Notice.warning({
-            desc: this.unqualifiedType === 2 ? '最近7天不合作业还剩28，已重交23' : '不合作业累计还剩28，已重交23',
-            duration: 5
-          });
+          this.noticeText()
         }
         this.searchInfo = {}
         setTimeout(() => {
@@ -738,16 +735,19 @@
         this.getList(1)
       },
       changeUnqualified() {
-        this.$Notice.warning({
-          desc: this.unqualifiedType === 2 ? '最近7天不合作业还剩28，已重交23' : '不合作业累计还剩28，已重交23',
-          duration: 5
-        });
+        this.noticeText()
         this.searchInfo = {}
         setTimeout(() => {
           this.$refs.searchChild.initSearch()
         }, 100);
         this.radioType = this.unqualifiedType
         this.getList(1)
+      },
+      noticeText () {
+        this.$Notice.warning({
+          desc: this.unqualifiedType === 2 ? '最近7天不合作业还剩28，已重交23' : '不合作业累计还剩28，已重交23',
+          duration: 5
+        });
       },
       getSearchInfo(data) {
         this.searchInfo = data
