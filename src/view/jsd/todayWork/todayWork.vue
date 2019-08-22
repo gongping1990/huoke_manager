@@ -823,7 +823,7 @@
           size: this.tab.pageSize,
           system: this.searchInfo.appId || '7',
           evaluation: this.searchInfo.evaluation == '-1' ? '' : this.searchInfo.evaluation,
-          pay: this.searchInfo.pay == '-1' ? '' : this.searchInfo.pay,
+          payed: this.searchInfo.pay == '-1' ? '' : this.searchInfo.pay,
           evaluationed: this.searchInfo.evaluationed == '-1' ? '' : this.searchInfo.evaluationed,
           hasComment: this.searchInfo.hasComment == '-1' ? '' : this.searchInfo.hasComment,
           hmBegin: this.searchInfo.getStartTime ? new Date(this.searchInfo.getStartTime).getTime() : "",
