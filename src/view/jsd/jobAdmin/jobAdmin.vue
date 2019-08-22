@@ -658,8 +658,7 @@
           size: this.tab.pageSize,
           system: this.searchInfo.appId || '7',
           hmBegin: this.searchInfo.getStartTime ? new Date(this.searchInfo.getStartTime).getTime() : "",
-          hmEnd: this.searchInfo.getEndTime ? new Date(this.searchInfo.getEndTime).getTime() : "",
-          alloted: true
+          hmEnd: this.searchInfo.getEndTime ? new Date(this.searchInfo.getEndTime).getTime() : ""
         }
 
         if (this.searchInfo.workType == '1' && this.searchInfo) {
