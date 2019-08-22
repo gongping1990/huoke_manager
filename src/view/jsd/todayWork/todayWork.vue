@@ -184,12 +184,12 @@
         columns: [
           {
             title: '用户昵称',
-            key: 'nickname',
+            key: 'nickName',
             align: 'center'
           },
           {
             title: '课程名称',
-            key: 'nickname',
+            key: 'lessonName',
             align: 'center'
           },
           {
@@ -201,7 +201,7 @@
           },
           {
             title: '作业要求',
-            key: 'homeworkClaim',
+            key: 'homeworkRequire',
             tooltip: true,
             align: 'center'
           },
@@ -271,7 +271,7 @@
           {
             title: '提交时间',
             render: (h, params) => {
-              return h('div', dayjs(+params.row.workTime).format('YYYY-MM-DD HH:mm'))
+              return h('div', dayjs(+params.row.submitTime).format('YYYY-MM-DD HH:mm'))
             },
             align: 'center'
           },
@@ -317,7 +317,7 @@
         columnsTwo: [
           {
             title: '用户昵称',
-            key: 'nickname',
+            key: 'nickName',
             align: 'center'
           },
           {
@@ -329,7 +329,7 @@
           },
           {
             title: '作业要求',
-            key: 'homeworkClaim',
+            key: 'homeworkRequire',
             tooltip: true,
             align: 'center'
           },
@@ -399,7 +399,7 @@
           {
             title: '提交时间',
             render: (h, params) => {
-              return h('div', dayjs(+params.row.workTime).format('YYYY-MM-DD HH:mm'))
+              return h('div', dayjs(+params.row.submitTime).format('YYYY-MM-DD HH:mm'))
             },
             align: 'center'
           },
@@ -499,7 +499,7 @@
           },
           {
             title: '用户昵称',
-            key: 'nickname',
+            key: 'nickName',
             align: 'center'
           },
           {
@@ -511,7 +511,7 @@
           },
           {
             title: '作业要求',
-            key: 'homeworkClaim',
+            key: 'homeworkRequire',
             tooltip: true,
             align: 'center'
           },
@@ -581,7 +581,7 @@
           {
             title: '提交时间',
             render: (h, params) => {
-              return h('div', dayjs(+params.row.workTime).format('YYYY-MM-DD HH:mm'))
+              return h('div', dayjs(+params.row.submitTime).format('YYYY-MM-DD HH:mm'))
             },
             align: 'center'
           },

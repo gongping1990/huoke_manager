@@ -31,7 +31,7 @@
         <div class="p-assignmentJobs-text">确认将选中的{{selectUserList.length}}份作业，分配给</div>
         <Form ref="addInfo" :model="addInfo" :label-width="70">
           <FormItem label="教师名称" class="ivu-form-item-required">
-            <Select v-model="addInfo.teacherId" @on-change="selectChange" class="-search-selectOne">
+            <Select v-model="addInfo.teacherId" class="-search-selectOne">
               <Option v-for="(item,index) in teacherList" :label="item.nickname" :value="item.id" :key="index"></Option>
             </Select>
           </FormItem>
@@ -224,11 +224,8 @@
       changeSelectData(data) {
         this.selectUserList = []
         for (let item of data) {
-          this.selectUserList.push(item.id)
+          this.selectUserList.push(item.workId)
         }
-      },
-      selectChange() {
-        this.getList(1)
       },
       getSearchInfo(data) {
         this.searchInfo = data
