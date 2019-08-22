@@ -79,7 +79,7 @@
           <div class="g-flex-a-j-center">
             <div class="-search-select-text">点评老师：</div>
             <Select v-model="searchInfo.teacherId" @on-change="changeEmit()" class="-search-selectOne">
-              <Option class="-search-option" v-for="(item,index) in teacherList" :label="item.name" :value="item.id" :key="index"></Option>
+              <Option class="-search-option" v-for="(item,index) in teacherList" :label="item.nickname" :value="item.id" :key="index"></Option>
             </Select>
           </div>
         </Col>
@@ -159,18 +159,28 @@
             name: '不满意'
           }
         ],
-        teacherList:[
-          {
-            id: '-1',
-            name: '全部'
-          }
-        ]
+        teacherList:[]
       }
     },
     mounted () {
       this.initSearch()
+      this.getTeacherList()
     },
     methods: {
+      getTeacherList() {
+        this.teacherList = []
+        this.$api.jsdTeacher.listTeachByPage({
+          current: 1,
+          size: 10000,
+          type: 0
+        }).then(response => {
+          this.teacherList = response.data.resultData.records
+          this.teacherList.unshift({
+            id: '-1',
+            nickname: '全部'
+          })
+        })
+      },
       initSearch () {
         this.searchInfo = {
           appId: '7',

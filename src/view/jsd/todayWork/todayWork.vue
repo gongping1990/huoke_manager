@@ -655,6 +655,7 @@
           '0': this.columns,
           '3': this.columnsTwo,
           '1': this.columnsThree,
+          '2': this.columnsThree,
           '4': this.columnsTwo,
         }
       }
@@ -705,7 +706,7 @@
         })
       },
       changeJobType() {
-        this.radioType === 1 && this.changeUnqualified()
+        // this.radioType === 1 && this.changeUnqualified()
         this.searchInfo = {}
         setTimeout(() => {
           this.$refs.searchChild.initSearch()
@@ -732,11 +733,16 @@
         this.getList(1)
       },
       changeUnqualified() {
+        this.searchInfo = {}
+        setTimeout(() => {
+          this.$refs.searchChild.initSearch()
+        }, 100);
         this.radioType = this.unqualifiedType
         this.$Notice.warning({
           desc: this.unqualifiedType === 2 ? '最近7天不合作业还剩28，已重交23' : '不合作业累计还剩28，已重交23',
           duration: 5
         });
+        this.getList(1)
       },
       getSearchInfo(data) {
         this.searchInfo = data

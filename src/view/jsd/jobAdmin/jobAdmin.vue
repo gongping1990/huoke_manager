@@ -11,14 +11,14 @@
           </Radio-group>
         </Row>
 
-        <Row v-if="radioType === 1" class="-p-margin-top g-t-left">
+        <Row v-if="radioType === 1 || radioType === 2" class="-p-margin-top g-t-left">
           <Radio-group v-model="unqualifiedType" type="button" @on-change="changeUnqualified">
-            <Radio :label=0>未重做</Radio>
-            <Radio :label=1>已重交</Radio>
+            <Radio :label=1>未重做</Radio>
+            <Radio :label=2>已重交</Radio>
           </Radio-group>
         </Row>
 
-        <search-template :option="searchOption" @changeSearch="getSearchInfo"></search-template>
+        <search-template ref="searchChild" :option="searchOption" @changeSearch="getSearchInfo"></search-template>
 
         <Row v-if="radioType === 0" class="p-jobAdmin-tip">
           <div class="-tip-div g-t-left">
@@ -121,7 +121,7 @@
         teacherList: [],
         total: 0,
         radioType: 0,
-        unqualifiedType: 0,
+        unqualifiedType: 1,
         selectInfo: '1',
         getStartTime: '',
         getEndTime: '',
@@ -508,6 +508,7 @@
           '0': this.columns,
           '3': this.columnsTwo,
           '1': this.columnsThree,
+          '2': this.columnsThree,
           '4': this.columnsTwo,
         }
       }
@@ -543,7 +544,13 @@
         })
       },
       changeJobType() {
-        if (this.radioType === 0 || this.radioType === 1) {
+        // this.radioType === 1 && this.changeUnqualified()
+        this.searchInfo = {}
+        setTimeout(() => {
+          this.$refs.searchChild.initSearch()
+        }, 100);
+
+        if (this.radioType === 0 || this.radioType === 1 || this.radioType === 2) {
           this.searchOption = {
             isAppId: true,
             isWorkType: true,
@@ -565,6 +572,11 @@
         this.getList(1)
       },
       changeUnqualified() {
+        this.searchInfo = {}
+        setTimeout(() => {
+          this.$refs.searchChild.initSearch()
+        }, 100);
+        this.radioType = this.unqualifiedType
         this.getList(1)
       },
       getSearchInfo(data) {
@@ -657,8 +669,15 @@
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
           system: this.searchInfo.appId || '7',
+          evaluation: this.searchInfo.evaluation == '-1' ? '' : this.searchInfo.evaluation,
+          payed: this.searchInfo.pay == '-1' ? '' : this.searchInfo.pay,
+          evaluationed: this.searchInfo.evaluationed == '-1' ? '' : this.searchInfo.evaluationed,
+          hasComment: this.searchInfo.hasComment == '-1' ? '' : this.searchInfo.hasComment,
           hmBegin: this.searchInfo.getStartTime ? new Date(this.searchInfo.getStartTime).getTime() : "",
-          hmEnd: this.searchInfo.getEndTime ? new Date(this.searchInfo.getEndTime).getTime() : ""
+          hmEnd: this.searchInfo.getEndTime ? new Date(this.searchInfo.getEndTime).getTime() : "",
+          teacherId: this.searchInfo.teacherId == '-1' ? '' : this.searchInfo.teacherId,
+          status: this.radioType == 4 ? '' : this.radioType,
+          praise: this.radioType == 4
         }
 
         if (this.searchInfo.workType == '1' && this.searchInfo) {
