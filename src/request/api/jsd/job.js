@@ -21,6 +21,9 @@ const jsdJob = {
   },
   replyHomework(params) {
     return axios.post(`/homework/job/replyHomework`, qs.stringify(params))
+  },
+  listHomeWorkLog(params) {
+    return axios.get(`/homework/job/listHomeWorkLog`, {params})
   }
 }
 

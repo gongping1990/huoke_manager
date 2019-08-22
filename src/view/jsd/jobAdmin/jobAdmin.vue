@@ -67,7 +67,7 @@
         <audio ref="playAudio" :src="playAudioUrl" controls></audio>
       </Modal>
 
-      <job-record-template v-model="isOpenJobRecord" :dataInfo="1"></job-record-template>
+      <job-record-template v-model="isOpenJobRecord" :dataInfo="detailInfo"></job-record-template>
 
     </Card>
   </div>
@@ -611,6 +611,7 @@
       openJobRecord(data) {
         this.isOpenJobRecord = true
         this.detailInfo = JSON.parse(JSON.stringify(data))
+        this.detailInfo.appId = this.searchInfo.appId || '7'
       },
       closeModalPlay() {
         this.$refs.playAudio.load()
