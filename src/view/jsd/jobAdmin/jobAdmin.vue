@@ -43,11 +43,11 @@
         @on-cancel="closeModal('addInfo')"
         width="500"
         title="分配作业">
-        <div class="p-jobAdmin-text">确认将选中的4578份作业，分配给</div>
+        <div class="p-jobAdmin-text">确认将{{selectAllData ? '所有' : `选中的${selectUserList.length}份`}}作业，分配给</div>
         <Form ref="addInfo" :model="addInfo" :label-width="70">
           <FormItem label="教师名称" class="ivu-form-item-required">
-            <Select v-model="addInfo.teacherId" @on-change="selectChange" class="-search-selectOne">
-              <Option v-for="(item,index) in teacherList" :label="item.name" :value="item.id" :key="index"></Option>
+            <Select v-model="addInfo.teacherId" class="-search-selectOne">
+              <Option v-for="(item,index) in teacherList" :label="item.nickname" :value="item.id" :key="index"></Option>
             </Select>
           </FormItem>
         </Form>
@@ -119,6 +119,7 @@
         },
         dataList: [],
         teacherList: [],
+        selectUserList: [],
         total: 0,
         radioType: 0,
         unqualifiedType: 1,
@@ -515,16 +516,17 @@
     },
     mounted() {
       this.getList()
+      this.getTeacherList()
     },
     methods: {
-      selectChange() {
-        this.getList(1)
-      },
       changeAloneSelect() {
         this.$refs.selection.selectAll(this.selectAllData);
       },
       changeSelectData(data) {
-        console.log(data)
+        this.selectUserList = []
+        for (let item of data) {
+          this.selectUserList.push(item.workId)
+        }
       },
       sendMessage() {
         this.$Modal.confirm({
@@ -662,6 +664,20 @@
         this.tab.page = val;
         this.getList();
       },
+      getTeacherList() {
+        this.$api.jsdTeacher.listTeachByPage({
+          current: 1,
+          size: 10000,
+          type: 0
+        }).then(response => {
+          let arrayT = response.data.resultData.records
+          arrayT.forEach(item=> {
+            if (!item.desabled) {
+              this.teacherList.push(item)
+            }
+          })
+        })
+      },
       //分页查询
       getList(num) {
         this.isFetching = true
@@ -709,20 +725,15 @@
           })
       },
       submitInfo(name) {
-        if (!this.addInfo.replyTeacher) {
-          return this.$Message.error('请输入教师名称')
-        } else if (this.addInfo.replyImg.length > 3) {
-          return this.$Message.error('最多上传三张图片')
+        if (!this.addInfo.teacherId) {
+          return this.$Message.error('请选择需要分配的教师')
         }
 
-        this.$api.jsdJob.replyHomework({
-          id: this.addInfo.id,
-          replyImg: `${this.addInfo.replyImg}`,
-          replyTeacher: this.addInfo.replyTeacher,
-          replyText: this.addInfo.replyText,
-          replyAudio: this.addInfo.replyAudio,
-          replyDuration: this.addInfo.replyDuration,
-          isPassed: this.addInfo.isPassed == 1
+        this.$api.jsdJob.reAllotJob({
+          range: this.selectAllData ? 1 : 0,
+          system: this.addInfo.appId || '7',
+          teacherId: this.addInfo.teacherId,
+          workIds: this.selectAllData ? '' : this.selectUserList
         })
           .then(
             response => {
