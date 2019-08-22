@@ -160,7 +160,7 @@
           },
           {
             title: '作业要求',
-            key: 'homeworkClaim',
+            key: 'homeworkRequire',
             tooltip: true,
             align: 'center'
           },
@@ -230,7 +230,7 @@
           {
             title: '提交时间',
             render: (h, params) => {
-              return h('div', dayjs(+params.row.workTime).format('YYYY-MM-DD HH:mm'))
+              return h('div', dayjs(+params.row.submitTime).format('YYYY-MM-DD HH:mm'))
             },
             align: 'center'
           },
@@ -255,7 +255,7 @@
           },
           {
             title: '作业要求',
-            key: 'homeworkClaim',
+            key: 'homeworkRequire',
             tooltip: true,
             align: 'center'
           },
@@ -325,7 +325,7 @@
           {
             title: '提交时间',
             render: (h, params) => {
-              return h('div', dayjs(+params.row.workTime).format('YYYY-MM-DD HH:mm'))
+              return h('div', dayjs(+params.row.submitTime).format('YYYY-MM-DD HH:mm'))
             },
             align: 'center'
           },
@@ -390,7 +390,7 @@
           },
           {
             title: '作业要求',
-            key: 'homeworkClaim',
+            key: 'homeworkRequire',
             tooltip: true,
             align: 'center'
           },
@@ -460,7 +460,7 @@
           {
             title: '提交时间',
             render: (h, params) => {
-              return h('div', dayjs(+params.row.workTime).format('YYYY-MM-DD HH:mm'))
+              return h('div', dayjs(+params.row.submitTime).format('YYYY-MM-DD HH:mm'))
             },
             align: 'center'
           },
@@ -659,7 +659,7 @@
           system: this.searchInfo.appId || '7',
           hmBegin: this.searchInfo.getStartTime ? new Date(this.searchInfo.getStartTime).getTime() : "",
           hmEnd: this.searchInfo.getEndTime ? new Date(this.searchInfo.getEndTime).getTime() : "",
-          alloted: false
+          alloted: true
         }
 
         if (this.searchInfo.workType == '1' && this.searchInfo) {
