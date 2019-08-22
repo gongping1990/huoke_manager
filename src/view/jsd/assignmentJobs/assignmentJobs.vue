@@ -336,7 +336,7 @@
         }
 
         this.$api.jsdJob.reAllotJob({
-          id: this.addInfo.id,
+          range: this.selectAllData ? 1 : 0,
           system: this.addInfo.appId || '7',
           teacherId: this.addInfo.teacherId,
           workIds: this.selectUserList

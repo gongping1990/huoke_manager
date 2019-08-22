@@ -143,12 +143,12 @@
           },
           {
             title: '用户昵称',
-            key: 'nickname',
+            key: 'nickName',
             align: 'center'
           },
           {
             title: '课程名称',
-            key: 'nickname',
+            key: 'lessonName',
             align: 'center'
           },
           {
@@ -243,7 +243,7 @@
         columnsTwo: [
           {
             title: '用户昵称',
-            key: 'nickname',
+            key: 'nickName',
             align: 'center'
           },
           {
@@ -378,7 +378,7 @@
         columnsThree: [
           {
             title: '用户昵称',
-            key: 'nickname',
+            key: 'nickName',
             align: 'center'
           },
           {
@@ -530,7 +530,7 @@
           title: '提示',
           content: `确认向已选中的10位用户发送微信消息和短信？`,
           onOk: () => {
-            this.$api.composition.praiseHomework({
+            this.$api.jsdJob.praiseHomework({
               id: data.id
             }).then(
               response => {
@@ -579,7 +579,7 @@
           title: '提示',
           content: `确认要进行此操作吗？`,
           onOk: () => {
-            this.$api.composition.praiseHomework({
+            this.$api.jsdJob.praiseHomework({
               id: data.id,
               praise: !data.praise
             }).then(
@@ -612,7 +612,7 @@
           title: '提示',
           content: '确认要删除吗？',
           onOk: () => {
-            this.$api.composition.removeHomework({
+            this.$api.jsdJob.removeHomework({
               id: param.id
             }).then(
               response => {
@@ -656,26 +656,27 @@
         let params = {
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
-          grade: 3,
-          evaluation: this.searchInfo.evaluate == '-1' ? '' : this.searchInfo.evaluate,
-          pay: this.searchInfo.pay == '-1' ? '' : this.searchInfo.pay,
-          starttime: this.getStartTime ? new Date(this.getStartTime).getTime() : "",
-          endtime: this.getEndTime ? new Date(this.getEndTime).getTime() : "",
-          status: this.radioType == 4 ? '' : this.radioType,
-          praise: this.radioType == 4
+          system: this.searchInfo.appId || '7',
+          hmBegin: this.searchInfo.getStartTime ? new Date(this.searchInfo.getStartTime).getTime() : "",
+          hmEnd: this.searchInfo.getEndTime ? new Date(this.searchInfo.getEndTime).getTime() : "",
+          alloted: false
         }
 
-        if (this.selectInfo == '1' && this.searchInfo) {
-          params.nickname = this.searchInfo.manner
-        } else if (this.selectInfo == '2' && this.searchInfo) {
-          params.teachername = this.searchInfo.manner
+        if (this.searchInfo.workType == '1' && this.searchInfo) {
+          params.lname = this.searchInfo.manner
+        } else if (this.searchInfo.workType == '2' && this.searchInfo) {
+          params.hmkeyword = this.searchInfo.manner
+        }
+
+        if (this.searchInfo.userType == '1' && this.searchInfo) {
+          params.nickname = this.searchInfo.mannerTwo
         }
 
         if (num) {
           this.tab.currentPage = 1
         }
 
-        this.$api.composition.listHomeworkByPage(params)
+        this.$api.jsdJob.listManagerWorkByPage(params)
           .then(
             response => {
               this.dataList = response.data.resultData.records;
@@ -696,7 +697,7 @@
           return this.$Message.error('最多上传三张图片')
         }
 
-        this.$api.composition.replyHomework({
+        this.$api.jsdJob.replyHomework({
           id: this.addInfo.id,
           replyImg: `${this.addInfo.replyImg}`,
           replyTeacher: this.addInfo.replyTeacher,
