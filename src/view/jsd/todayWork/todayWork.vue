@@ -676,7 +676,7 @@
           content: `确认向已选中的10位用户发送微信消息和短信？`,
           onOk: () => {
             this.$api.composition.praiseHomework({
-              id: data.id
+              id: data.workId
             }).then(
               response => {
                 if (response.data.code == "200") {
@@ -694,7 +694,7 @@
           onOk: () => {
             this.$api.jsdJob.praise({
               system: this.searchInfo.appId || '7',
-              id: param.id
+              id: param.workId
             }).then(
               response => {
                 if (response.data.code == "200") {
@@ -778,7 +778,7 @@
           onOk: () => {
             this.$api.jsdJob.removeHomework({
               system: this.searchInfo.appId || '7',
-              id: param.id
+              id: param.workId
             }).then(
               response => {
                 if (response.data.code == "200") {
