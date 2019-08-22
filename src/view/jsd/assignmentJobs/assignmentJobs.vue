@@ -28,7 +28,7 @@
         @on-cancel="closeModal('addInfo')"
         width="500"
         title="分配作业">
-        <div class="p-assignmentJobs-text">确认将选中的{{selectUserList.length}}份作业，分配给</div>
+        <div class="p-assignmentJobs-text">确认将{{selectAllData ? '所有' : `选中的${selectUserList.length}份`}}作业，分配给</div>
         <Form ref="addInfo" :model="addInfo" :label-width="70">
           <FormItem label="教师名称" class="ivu-form-item-required">
             <Select v-model="addInfo.teacherId" class="-search-selectOne">
