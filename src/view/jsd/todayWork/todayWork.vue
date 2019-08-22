@@ -412,12 +412,7 @@
           },
           {
             title: '评价内容',
-            render: (h, params) => {
-              return h('div', [
-                h('div', this.evaluateColumn[params.row.evaluation]),
-                h('div', params.row.stumsg === null ? '' : `(${params.row.stumsg})`)
-              ])
-            },
+            key: 'evaluationText',
             align: 'center'
           },
           {
