@@ -285,7 +285,7 @@
             list = [
               {
                 title: '时间',
-                render: (h, params)=> {
+                render: (h, params) => {
                   return h('div', dayjs(+params.row.gmtCreate).format('YYYY-DD-MM'))
                 },
                 align: 'center'
@@ -299,7 +299,7 @@
                 title: '接收电话',
                 tooltip: true,
                 render: (h, params) => {
-                  return h('div', params.row.phones.map((item)=> {
+                  return h('div', params.row.phones.map((item) => {
                     return h('div', item)
                   }))
                 },
@@ -432,15 +432,15 @@
 
         let phoneArray = []
 
-        this.phoneList.forEach(item=>{
+        this.phoneList.forEach(item => {
           phoneArray.push(item.phone)
         })
 
-        this.$api.jsdJob.updatePhones({
-          phones: phoneArray
-        }).then(res=>{
-          this.$Message.success('发送成功')
-        })
+        this.$api.jsdJob.updatePhones(phoneArray)
+          .then(res => {
+            this.isOpenModal = false
+            this.$Message.success('发送成功')
+          })
       },
       detailCurrentChange(val) {
         this.tabDetail.page = val;
@@ -453,14 +453,14 @@
 
       drawLineOne() {
         let self = this;
-        console.log(this.myChartOne,1111)
+        console.log(this.myChartOne, 1111)
         this.myChartOne.clear();
         this.myChartOne.resize();
         // 绘制图表
         this.myChartOne.setOption({
           tooltip: {},
           xAxis: {
-            data: ["衬衫","羊毛衫","雪纺衫","裤子","高跟鞋","袜子"]
+            data: ["衬衫", "羊毛衫", "雪纺衫", "裤子", "高跟鞋", "袜子"]
           },
           yAxis: {
             name: '单位（人）'
@@ -485,7 +485,7 @@
         this.myChartTwo.setOption({
           tooltip: {},
           xAxis: {
-            data: ["衬衫","羊毛衫","雪纺衫","裤子","高跟鞋","袜子"]
+            data: ["衬衫", "羊毛衫", "雪纺衫", "裤子", "高跟鞋", "袜子"]
           },
           yAxis: {
             name: '单位（人）'
@@ -509,7 +509,7 @@
         this.myChartThree.setOption({
           tooltip: {},
           xAxis: {
-            data: ["衬衫","羊毛衫","雪纺衫","裤子","高跟鞋","袜子"]
+            data: ["衬衫", "羊毛衫", "雪纺衫", "裤子", "高跟鞋", "袜子"]
           },
           yAxis: {
             name: '单位（人）'
@@ -534,7 +534,7 @@
         this.myChartFour.setOption({
           tooltip: {},
           xAxis: {
-            data: ["衬衫","羊毛衫","雪纺衫","裤子","高跟鞋","袜子"]
+            data: ["衬衫", "羊毛衫", "雪纺衫", "裤子", "高跟鞋", "袜子"]
           },
           yAxis: {
             name: '单位（人）'
