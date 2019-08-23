@@ -432,6 +432,10 @@
           setTimeout(() => {
             this.$refs.childAudio.load()
           }, 0)
+        } else if (this.modalType === 4) {
+          setTimeout(() => {
+            this.$refs.childChoiceAudio && this.$refs.childChoiceAudio.load()
+          }, 0)
         }
         this.isOpenModalContent = false
       },
@@ -606,6 +610,8 @@
         let checkOptionStatus = []
         let checkOptionBoolStatus = []
         let choiceDataList = []
+        let isCheckRightAudio = true
+        let isCheckErrorAudio = true
 
         this.choiceList.forEach(item => {
           if ( item.answerMinute === '' || item.answerSecond === '' || !item.answerTime || item.publishMinute === '' || item.publishSecond === '' ) {
@@ -640,6 +646,15 @@
           isCheckOptionOK = checkOptionStatus.every(list => {
             return list
           })
+
+          if (!item.rightAudio) {
+            isCheckRightAudio = false
+          }
+
+          if (!item.errorAudio) {
+            isCheckErrorAudio = false
+          }
+
         })
 
         if (!isCheckName) {
@@ -654,6 +669,10 @@
           return this.$Message.error('请选择一个正确的答案')
         } else if (!isCheckOptionOK) {
           return this.$Message.error('选择题不能有空选项')
+        } else if (!isCheckRightAudio && this.modalType == '4') {
+          return this.$Message.error('请上传正确回答音频')
+        } else if (!isCheckErrorAudio && this.modalType == '4') {
+          return this.$Message.error('请上传错误回答音频')
         }
 
         choiceDataList = JSON.parse(JSON.stringify(this.choiceList))

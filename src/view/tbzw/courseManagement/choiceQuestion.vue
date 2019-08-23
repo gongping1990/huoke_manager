@@ -2,8 +2,9 @@
   <div class="p-choice">
     <div v-for="(list,listIndex) of choiceList" :key="listIndex" class="p-choice-wrap">
       <div class="-name">
-        <span  class="-span">题目{{listIndex+1}}：</span>
-        <Input class="-input-name -s-width" v-model="list.name" type="text" :maxlength="40" placeholder="请输入题目（最多四十个字）"/>
+        <span class="-span">题目{{listIndex+1}}：</span>
+        <Input class="-input-name -s-width" v-model="list.name" type="text" :maxlength="40"
+               placeholder="请输入题目（最多四十个字）"/>
         <span class="-s-color g-cursor" @click="delChoice(list,listIndex)">删除</span>
       </div>
       <div class="-name" v-if="type === 1">
@@ -29,6 +30,14 @@
         <Checkbox v-model="item.isChecked" @on-change="changeCheck(list,index)">设为答案</Checkbox>
         <span class="-s-width -s-color g-cursor" @click="delOption(list,index)">删除</span>
       </div>
+      <div class="-audio" v-if="type !== 1">
+        <span class="-span">正确音频：</span>
+        <upload-audio ref="childChoiceAudio" v-model="list.rightAudio" :option="uploadAudioOption"></upload-audio>
+      </div>
+      <div class="-audio" v-if="type !== 1">
+        <span class="-span">错误音频：</span>
+        <upload-audio ref="childChoiceAudio" v-model="list.errorAudio" :option="uploadAudioOption"></upload-audio>
+      </div>
       <div class="-form-btn g-cursor" v-if="list.optionJson.length < 4" @click="addOption(list)">+ 新增选项</div>
     </div>
     <div class="-form-btn g-cursor" v-if="isShowAddChoice" @click="addChoice">+ 新增题目</div>
@@ -37,13 +46,20 @@
 
 <script>
   import admin from "../../../request/api/hkxt/admin";
+  import UploadAudio from "../../../components/uploadAudio";
 
   export default {
     name: "choiceQuestion",
+    components: {UploadAudio},
     props: ['type', 'childList', 'adminType'],
     data() {
       return {
         choiceList: [],
+        uploadAudioOption: {
+          tipText: '音频格式：mp3、wma、arm 音频大小：150M以内',
+          size: 153600,
+          format: ['mp3', 'wma', 'arm']
+        },
         optionLetter: ['A', 'B', 'C', 'D'],
         isShowAddChoice: true
       }
@@ -60,7 +76,9 @@
         this.choiceList.push({
           name: '',
           optionJson: [],
-          sortnum: this.choiceList.length + 1
+          sortnum: this.choiceList.length + 1,
+          rightAudio: '',
+          errorAudio: '',
         })
         if (this.choiceList.length > 2) {
           this.isShowAddChoice = false
@@ -85,7 +103,7 @@
         list.optionJson.splice(index, 1)
       },
       delChoice(list, listIndex) {
-        if(list.id) {
+        if (list.id) {
           this.$Modal.confirm({
             title: '提示',
             content: '确认要删除吗？',
@@ -143,6 +161,11 @@
     .-input-name {
       padding: 10px 0;
       width: 60%;
+    }
+
+    .-audio {
+      display: flex;
+      margin-top: 10px;
     }
 
     .-p-item-select-wrap {
