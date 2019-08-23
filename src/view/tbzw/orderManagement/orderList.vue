@@ -183,6 +183,11 @@
             align: 'center'
           },
           {
+            title: '手机号码',
+            key: 'phone',
+            align: 'center'
+          },
+          {
             title: '订单状态',
             render: (h, params) => {
               return h('div', this.orderStatus[params.row.payStatus])
