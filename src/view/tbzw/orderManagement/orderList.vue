@@ -10,7 +10,15 @@
             </Select>
           </div>
         </Col>
-        <Col :span="6">
+        <Col :span="3" class="g-t-left">
+          <div class="g-flex-a-j-center">
+            <div class="-search-select-text">订单类型：</div>
+            <Select v-model="searchInfo.orderMode" @on-change="selectChange" class="-search-selectOne">
+              <Option v-for="(item,index) in orderModeList" :label="item.name" :value="item.id" :key="index"></Option>
+            </Select>
+          </div>
+        </Col>
+        <Col :span="5">
           <div class="-search">
             <Select v-model="selectInfo" class="-search-select">
               <Option value="0">订单号</Option>
@@ -21,7 +29,7 @@
                    @on-click="selectChange"></Input>
           </div>
         </Col>
-        <Col :span="10" style="margin-left: 10px" class="g-flex-a-j-center">
+        <Col :span="8" style="margin-left: 10px" class="g-flex-a-j-center">
           <date-picker-template :dataInfo="dateOption" @changeDate="changeDate"></date-picker-template>
         </Col>
         <div class="g-text-right">
@@ -83,6 +91,7 @@
         searchInfo: {
           status: '-1',
           type: '-1',
+          orderMode: '0',
           antistop: ''
         },
         selectInfo: '0',
@@ -106,6 +115,24 @@
           {
             name: '已取消',
             id: '20'
+          }
+        ],
+        orderModeList: [
+          {
+            name: '全部',
+            id: '0'
+          },
+          {
+            name: '单独购买',
+            id: '1'
+          },
+          {
+            name: '开团购买',
+            id: '2'
+          },
+          {
+            name: '跟团购买',
+            id: '3'
           }
         ],
         orderType: ['单独购买', '开团购买', '跟团购买'],
@@ -165,7 +192,7 @@
           {
             title: '订单类型',
             render: (h, params) => {
-              return h('div', this.orderType[params.row.payStatus])
+              return h('div', this.orderType[params.row.orderMode-1])
             },
             align: 'center'
           },
@@ -255,6 +282,7 @@
           current: this.tab.page,
           size: this.tab.pageSize,
           payStatus: this.searchInfo.status,
+          orderMode: this.searchInfo.orderMode,
           startTime: this.getStartTime ? new Date(this.getStartTime).getTime() : "",
           endTime: this.getEndTime ? new Date(this.getEndTime).getTime() : ""
         }
