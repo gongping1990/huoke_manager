@@ -116,7 +116,7 @@
         <audio ref="playAudio" :src="playAudioUrl" controls></audio>
       </Modal>
 
-      <job-record-template v-model="isOpenJobRecord" :dataInfo="1"></job-record-template>
+      <job-record-template v-model="isOpenJobRecord" :dataInfo="detailInfo"></job-record-template>
 
     </Card>
   </div>
@@ -166,6 +166,7 @@
           '2': '满意',
         },
         dataList: [],
+        selectUserList: [],
         total: 0,
         radioType: 0,
         unqualifiedType: 1,
@@ -663,12 +664,18 @@
         this.$refs.selection.selectAll(this.selectAllData);
       },
       changeSelectData(data) {
-        console.log(data)
+        this.selectUserList = []
+        for (let item of data) {
+          this.selectUserList.push(item.workId)
+        }
       },
       sendMessage() {
+        if(!this.selectUserList.length) {
+          return this.$Message.error('请选择需要提醒用户')
+        }
         this.$Modal.confirm({
           title: '提示',
-          content: `确认向已选中的10位用户发送微信消息和短信？`,
+          content: `确认向${this.selectAllData ? '所有' : `选中的${this.selectUserList.length}位`}用户发送微信消息和短信？`,
           onOk: () => {
             this.$api.composition.praiseHomework({
               id: data.workId
@@ -689,6 +696,7 @@
           onOk: () => {
             this.$api.jsdJob.praise({
               system: this.searchInfo.appId || '7',
+              praise: this.radioType === 3,
               id: param.workId
             }).then(
               response => {
@@ -761,6 +769,7 @@
       openJobRecord(data) {
         this.isOpenJobRecord = true
         this.detailInfo = JSON.parse(JSON.stringify(data))
+        this.detailInfo.appId = this.searchInfo.appId || '7'
       },
       closeModalPlay() {
         this.$refs.playAudio.load()
