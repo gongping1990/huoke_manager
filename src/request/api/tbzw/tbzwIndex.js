@@ -6,5 +6,6 @@ import tbzwCoupon from "./coupon";
 export const tbzwIndex = {
   composition,
   tbzwUser,
+  tbzwOrder,
   tbzwCoupon
 }

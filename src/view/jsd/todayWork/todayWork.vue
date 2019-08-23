@@ -723,6 +723,11 @@
       changeJobType() {
         if (this.radioType === 1) {
           this.noticeText()
+        } else if (this.radioType === 3) {
+          this.$Notice.warning({
+            desc: '今日已批该作业28，用户已点评23',
+            duration: 5
+          });
         }
         this.searchInfo = {}
         setTimeout(() => {
