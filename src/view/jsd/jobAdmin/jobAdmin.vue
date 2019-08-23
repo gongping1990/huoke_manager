@@ -523,23 +523,6 @@
           this.selectUserList.push(item.workId)
         }
       },
-      sendMessage() {
-        this.$Modal.confirm({
-          title: '提示',
-          content: `确认向已选中的10位用户发送微信消息和短信？`,
-          onOk: () => {
-            this.$api.jsdJob.praiseHomework({
-              id: data.id
-            }).then(
-              response => {
-                if (response.data.code == "200") {
-                  this.$Message.success("操作成功");
-                  this.getList();
-                }
-              })
-          }
-        })
-      },
       changeJobType() {
         // this.radioType === 1 && this.changeUnqualified()
         this.searchInfo = {}
