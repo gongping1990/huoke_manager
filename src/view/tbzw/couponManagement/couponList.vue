@@ -40,35 +40,35 @@
         width="600"
         :title="addInfo.id ? '编辑优惠券' : '创建优惠券'">
         <Form ref="addInfo" :model="addInfo" :rules="ruleValidate" :label-width="90">
-          <FormItem label="注意" prop="name" class="-c-tips">
+          <FormItem label="注意" class="-c-tips">
             添加优惠券后，只能修改发行量，且发行量只能增加，不能减少
           </FormItem>
-          <FormItem label="优惠券名称" prop="name">
-            <Input type="text" v-model="addInfo.name" placeholder="请输入优惠券名称"></Input>
+          <FormItem label="优惠券名称" prop="couponName">
+            <Input type="text" v-model="addInfo.couponName" :disabled="addInfo.id!=''" placeholder="请输入优惠券名称"></Input>
           </FormItem>
-          <FormItem label="优惠券面额" prop="name">
-            <Input-number class="g-width" :min="0" :step="1" v-model="addInfo.denomination"
+          <FormItem label="优惠券面额" prop="couponAmount">
+            <Input-number class="g-width" :min="0" :step="1" v-model="addInfo.couponAmount" :disabled="addInfo.id!=''"
                           placeholder="请输入优惠券面额（元）"></Input-number>
             <span class="-c-tips">* 精确到小数点后2位，如99.99</span>
           </FormItem>
-          <FormItem label="发行量" prop="name">
-            <Input-number class="g-width" :max="1000000" :min="0" :step="1" v-model="addInfo.denomination"
+          <FormItem label="发行量" prop="couponNum">
+            <Input-number class="g-width" :max="1000000" :min="0" :step="1" v-model="addInfo.couponNum"
                           placeholder="请输入发行量"></Input-number>
             <span class="-c-tips">* 添加优惠券后，发行量只能增加，不能减少，总共不超过1,000,000张</span>
           </FormItem>
           <FormItem label="有效期" class="ivu-form-item-required">
             <Row>
               <Col span="11">
-                <Form-item prop="getStartTime">
-                  <Date-picker style="width: 100%" type="datetime" placeholder="选择开始日期" :disabled="addInfo.id!=''"
-                               v-model="addInfo.showTime" :options="dateStartOption"></Date-picker>
+                <Form-item prop="expiryStartDate">
+                  <Date-picker style="width: 100%" type="date" placeholder="选择开始日期" :disabled="addInfo.id!=''"
+                               v-model="addInfo.expiryStartDate" :options="dateStartOption"></Date-picker>
                 </Form-item>
               </Col>
               <Col span="2" style="text-align: center">-</Col>
               <Col span="11">
-                <Form-item prop="getEndTime">
-                  <Date-picker style="width: 100%" type="datetime" placeholder="选择结束日期"
-                               v-model="addInfo.hideTime" :options="dateEndOption"></Date-picker>
+                <Form-item prop="expiryEndDate">
+                  <Date-picker style="width: 100%" type="date" placeholder="选择结束日期" :disabled="addInfo.id!=''"
+                               v-model="addInfo.expiryEndDate" :options="dateEndOption"></Date-picker>
                 </Form-item>
               </Col>
             </Row>
@@ -76,28 +76,28 @@
           <FormItem label="领取时间" class="ivu-form-item-required">
             <Row>
               <Col span="11">
-                <Form-item prop="getStartTime">
-                  <Date-picker style="width: 100%" type="datetime" placeholder="选择开始日期" :disabled="addInfo.id!=''"
-                               v-model="addInfo.showTime" :options="dateStartOption"></Date-picker>
+                <Form-item prop="receiveStartDate">
+                  <Date-picker style="width: 100%" type="date" placeholder="选择开始日期" :disabled="addInfo.id!=''"
+                               v-model="addInfo.receiveStartDate" :options="dateStartOption"></Date-picker>
                 </Form-item>
               </Col>
               <Col span="2" style="text-align: center">-</Col>
               <Col span="11">
-                <Form-item prop="getEndTime">
-                  <Date-picker style="width: 100%" type="datetime" placeholder="选择结束日期"
-                               v-model="addInfo.hideTime" :options="dateEndOption"></Date-picker>
+                <Form-item prop="receiveEndDate">
+                  <Date-picker style="width: 100%" type="date" placeholder="选择结束日期" :disabled="addInfo.id!=''"
+                               v-model="addInfo.receiveEndDate" :options="dateEndOption"></Date-picker>
                 </Form-item>
               </Col>
             </Row>
           </FormItem>
-          <FormItem label="分享大标题" prop="href">
-            <Input type="text" v-model="addInfo.href" placeholder="请输入链接地址"></Input>
+          <FormItem label="分享大标题" >
+            <Input type="text" v-model="addInfo.bigTitle" placeholder="请输入分享大标题"></Input>
           </FormItem>
-          <FormItem label="分享小标题" prop="href">
-            <Input type="text" v-model="addInfo.href" placeholder="请输入链接地址"></Input>
+          <FormItem label="分享小标题">
+            <Input type="text" v-model="addInfo.title" placeholder="请输入分享小标题"></Input>
           </FormItem>
-          <Form-item label="领取海报" prop="url">
-            <upload-img :isDisabled="addInfo.id!=''" v-model="addInfo.url" :option="uploadOption"></upload-img>
+          <Form-item label="领取海报">
+            <upload-img :isDisabled="addInfo.id!=''" v-model="addInfo.playbill" :option="uploadOption"></upload-img>
           </Form-item>
         </Form>
         <div slot="footer" class="-p-b-flex">
@@ -126,11 +126,6 @@
           currentPage: 1,
           pageSize: 10
         },
-        tabDetail: {
-          page: 1,
-          currentPage: 1,
-          pageSize: 10
-        },
         uploadOption: {
           tipText: '只能上传jpg/png文件，且不超过500kb',
           size: 500
@@ -139,6 +134,10 @@
           {
             id: '-1',
             name: '全部'
+          },
+          {
+            id: '0',
+            name: '未开始'
           },
           {
             id: '1',
@@ -150,18 +149,14 @@
           },
           {
             id: '3',
-            name: '未开始'
-          },
-          {
-            id: '4',
             name: '已过期'
           }
         ],
         dataList: [],
-        detailList: [],
-        operationalId: '',
         selectInfo: '1',
-        searchInfo: {},
+        searchInfo: {
+          payed: '-1'
+        },
         total: 0,
         totalDetail: 0,
         isFetching: false,
@@ -169,14 +164,12 @@
         isOpenModalData: false,
         isSending: false,
         addInfo: {},
-        getStartTime: '',
-        getEndTime: '',
         copy_url: '',
         statusList: {
           '0': '未开始',
           '1': '领取中',
-          '2': '已过期',
-          '3': '已结束'
+          '2': '已结束',
+          '3': '已过期'
         },
         dateStartOption: {
           disabledDate(date) {
@@ -189,52 +182,73 @@
           }
         },
         ruleValidate: {
-          name: [
-            {required: true, message: '请输入活动名称', trigger: 'blur'},
-            {type: 'string', max: 20, message: '活动名称长度为20字', trigger: 'blur'}
+          couponName: [
+            {required: true, message: '请输入优惠券名称', trigger: 'blur'},
+            {type: 'string', max: 20, message: '优惠券名称长度为20字', trigger: 'blur'}
+          ],
+          couponAmount: [
+            {required: true, type: 'number', message: '请输入优惠券金额', trigger: 'blur'},
+          ],
+          couponNum: [
+            {required: true, type: 'number', message: '请输入优惠券发行量', trigger: 'blur'},
+          ],
+          expiryStartDate: [
+            {required: true, type: 'date', message: '请输入有效期开始时间', trigger: 'blur'},
+          ],
+          expiryEndDate: [
+            {required: true, type: 'date', message: '请输入有效期结束时间', trigger: 'blur'},
+          ],
+          receiveStartDate: [
+            {required: true, type: 'date', message: '请输入领取开始时间', trigger: 'blur'},
+          ],
+          receiveEndDate: [
+            {required: true, type: 'date', message: '请输入领取结束时间', trigger: 'blur'},
           ]
         },
         columns: [
           {
             title: '优惠券名称',
-            key: 'name'
+            key: 'couponName'
           },
           {
-            title: '面额',
-            key: 'href'
+            title: '优惠券金额',
+            render: (h, params)=> {
+              return h('span', (params.row.couponAmount/100).toFixed())
+            },
+            key: 'couponAmount'
           },
           {
             title: '领取时间',
             render: (h, params) => {
-              return h('span', `${params.row.showTime} - ${params.row.hideTime}`)
+              return h('span', `${params.row.receiveStartDate} - ${params.row.receiveEndDate}`)
             },
-            width: 300,
+            width: 200,
             align: 'center'
           },
           {
             title: '有效期时间',
             render: (h, params) => {
-              return h('span', `${params.row.showTime} - ${params.row.hideTime}`)
+              return h('span', `${params.row.expiryStartDate} - ${params.row.expiryEndDate}`)
             },
-            width: 300,
+            width: 200,
             align: 'center'
           },
           {
             title: '发行量',
-            key: 'pv'
+            key: 'couponNum'
           },
           {
             title: '已领取',
-            key: 'uv'
+            key: 'receives'
           },
           {
             title: '已使用',
-            key: 'uv'
+            key: 'uses'
           },
           {
             title: '领取状态',
             render: (h, params) => {
-              return h('div', this.statusList[params.row.status])
+              return h('div', this.statusList[params.row.type])
             }
           },
           {
@@ -248,7 +262,7 @@
                     size: 'small'
                   },
                   style: {
-                    display: params.row.status < 2 ? 'inline-block' : 'none',
+                    display: params.row.type < 2 ? 'inline-block' : 'none',
                     color: '#5444E4',
                     marginRight: '5px'
                   },
@@ -264,7 +278,7 @@
                     size: 'small'
                   },
                   style: {
-                    display: params.row.status > 2 ? 'none' : 'inline-block',
+                    display: params.row.type > 1 ? 'none' : 'inline-block',
                     color: 'rgba(218, 55, 75)',
                     marginRight: '5px'
                   },
@@ -280,7 +294,7 @@
                     size: 'small'
                   },
                   style: {
-                    color: 'rgba(218, 55, 75)',
+                    color: '#5444E4',
                     marginRight: '5px'
                   },
                   on: {
@@ -295,22 +309,13 @@
         ]
       };
     },
-    watch: {
-      'getStartTime'(_new, _old) {
-        this.dateEndOption = {
-          disabledDate(date) {
-            return date && date.valueOf() < new Date(_new).getTime();
-          }
-        }
-      }
-    },
     mounted() {
       this.getList()
     },
     methods: {
       copyUrl(param) {
         if (param.page === 1) {
-          this.copy_url = 'http://composition.k12.vip/'
+          this.copy_url = param.couponUrl
         }
 
         setTimeout(() => {
@@ -319,49 +324,28 @@
           this.$Message.success('复制成功');
         }, 500);
       },
-      changeDate(data) {
-        this.getStartTime = data.startTime
-        this.getEndTime = data.endTime
-        this.getList(1)
-      },
       openModal(data) {
         this.isOpenModal = true
         if (data) {
           this.addInfo = JSON.parse(JSON.stringify(data))
+          this.addInfo.couponAmount = +this.addInfo.couponAmount
+          this.addInfo.couponNum = +this.addInfo.couponNum
         } else {
           this.addInfo = {
             id: '',
-            url: ''
+            couponAmount: null,
+            couponNum: null,
+            playbill: ''
           }
         }
-      },
-      openModalData(data) {
-        this.isOpenModalData = true
-        this.operationalId = data.id
-        this.getDetailList(data)
       },
       closeModal(name) {
         this.isOpenModal = false
         this.$refs[name].resetFields()
       },
-      detailCurrentChange(val) {
-        this.tabDetail.page = val;
-        this.getDetailList();
-      },
       currentChange(val) {
         this.tab.page = val;
         this.getList();
-      },
-      getDetailList(data) {
-        this.isFetching = true
-        this.$api.gswOperational.getOperationalStatistics({
-          operationalId: data.id
-        }).then(response => {
-          this.detailList = response.data.resultData.records;
-          this.totalDetail = response.data.resultData.total;
-        }).finally(() => {
-          this.isFetching = false
-        })
       },
       //分页查询
       getList(num) {
@@ -369,11 +353,11 @@
         if (num) {
           this.tab.currentPage = 1
         }
-        this.$api.gswOperational.listOperational({
+        this.$api.tbzwCoupon.pageCouponConfig({
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
-          name: this.searchInfo.nickname,
-          type: 0
+          couponName: this.searchInfo.nickname,
+          type: this.searchInfo.payed
         })
           .then(
             response => {
@@ -389,8 +373,8 @@
           title: '提示',
           content: '确认要结束吗？',
           onOk: () => {
-            this.$api.gswOperational.finishOperational({
-              operationalId: param.id
+            this.$api.tbzwCoupon.finishCoupon({
+              couponId: param.id
             }).then(
               response => {
                 if (response.data.code == "200") {
@@ -405,18 +389,21 @@
 
         if (this.isSending) return
 
-        this.addInfo.type = 0
         this.$refs[name].validate((valid) => {
           if (valid) {
             this.isSending = true
-            this.$api.gswOperational.saveOperational({
+            this.$api.tbzwCoupon.editCouponConfig({
               id: this.addInfo.id,
-              hideTime: dayjs(this.addInfo.hideTime).format("YYYY/MM/DD HH:mm:ss"),
-              showTime: dayjs(this.addInfo.showTime).format("YYYY/MM/DD HH:mm:ss"),
-              name: this.addInfo.name,
-              href: this.addInfo.href,
-              url: this.addInfo.url,
-              type: 0
+              expiryStartDate: dayjs(this.addInfo.expiryStartDate).format("YYYY-MM-DD"),
+              expiryEndDate: dayjs(this.addInfo.expiryEndDate).format("YYYY-MM-DD"),
+              receiveStartDate: dayjs(this.addInfo.receiveStartDate).format("YYYY-MM-DD"),
+              receiveEndDate: dayjs(this.addInfo.receiveEndDate).format("YYYY-MM-DD"),
+              couponName: this.addInfo.couponName,
+              couponNum: this.addInfo.couponNum,
+              couponAmount: this.addInfo.couponAmount*100,
+              bigTitle: this.addInfo.bigTitle,
+              playbill: this.addInfo.playbill,
+              title: this.addInfo.title
             })
               .then(
                 response => {
