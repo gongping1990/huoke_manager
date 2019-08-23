@@ -322,6 +322,11 @@
             align: 'center'
           },
           {
+            title: '课程名称',
+            key: 'lessonName',
+            align: 'center'
+          },
+          {
             title: '是否付费',
             render: (h, params) => {
               return h('div', params.row.buyStatus ? '是' : '否')
@@ -496,6 +501,11 @@
           {
             title: '用户昵称',
             key: 'nickName',
+            align: 'center'
+          },
+          {
+            title: '课程名称',
+            key: 'lessonName',
             align: 'center'
           },
           {
