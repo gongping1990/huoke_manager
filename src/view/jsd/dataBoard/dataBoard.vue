@@ -155,6 +155,7 @@
 <script>
   import {thousandFormatter} from '@/libs/index'
   import echarts from "echarts/lib/echarts";
+  import dayjs from 'dayjs'
   // 引入柱状图
   import "echarts/lib/chart/bar";
   import "echarts/lib/chart/line";
@@ -284,17 +285,24 @@
             list = [
               {
                 title: '时间',
-                key: 'date',
+                render: (h, params)=> {
+                  return h('div', dayjs(+params.row.gmtCreate).format('YYYY-DD-MM'))
+                },
                 align: 'center'
               },
               {
                 title: '消息内容',
-                key: 'pv',
+                key: 'message',
                 align: 'center'
               },
               {
                 title: '接收电话',
-                key: 'uv',
+                tooltip: true,
+                render: (h, params) => {
+                  return h('div', params.row.phones.map((item)=> {
+                    return h('div', item)
+                  }))
+                },
                 align: 'center'
               }
             ]
@@ -405,6 +413,7 @@
         }]
         this.modelType = +num
         this.isOpenModal = true
+        this.modelType === 1 && this.getHistoryList()
       },
       addPhone() {
         this.phoneList.push({
@@ -420,7 +429,18 @@
             return this.$Message.error('手机号码不能为空')
           }
         }
-        console.log(this.phoneList)
+
+        let phoneArray = []
+
+        this.phoneList.forEach(item=>{
+          phoneArray.push(item.phone)
+        })
+
+        this.$api.jsdJob.updatePhones({
+          phones: phoneArray
+        }).then(res=>{
+          this.$Message.success('发送成功')
+        })
       },
       detailCurrentChange(val) {
         this.tabDetail.page = val;
@@ -530,7 +550,24 @@
         });
         this.myChartFour.hideLoading()
       },
-
+      getHistoryList(num) {
+        this.isFetching = true
+        if (num) {
+          this.tabDetail.currentPage = 1
+        }
+        this.$api.jsdJob.listWarnMessagePage({
+          current: num ? num : this.tabDetail.page,
+          size: this.tabDetail.pageSize
+        })
+          .then(
+            response => {
+              this.detailList = response.data.resultData.records;
+              this.totalDetail = response.data.resultData.total;
+            })
+          .finally(() => {
+            this.isFetching = false
+          })
+      },
       getList() {
         this.myChartOne.showLoading({
           text: '图表加载中...',

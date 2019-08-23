@@ -24,6 +24,12 @@ const jsdJob = {
   },
   listHomeWorkLog(params) {
     return axios.get(`/homework/job/listHomeWorkLog`, {params})
+  },
+  updatePhones(params) {
+    return axios.post(`/homework/job/updatePhones`, params)
+  },
+  listWarnMessagePage(params) {
+    return axios.get(`/homework/job/listWarnMessagePage`, {params})
   }
 }
 
