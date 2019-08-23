@@ -172,7 +172,8 @@
         this.$api.jsdTeacher.listTeachByPage({
           current: 1,
           size: 10000,
-          type: 0
+          type: 0,
+          disabled: false
         }).then(response => {
           this.teacherList = response.data.resultData.records
           this.teacherList.unshift({
