@@ -687,8 +687,10 @@
           title: '提示',
           content: `确认向${this.selectAllData ? '所有' : `选中的${this.selectUserList.length}位`}用户发送微信消息和短信？`,
           onOk: () => {
-            this.$api.composition.praiseHomework({
-              id: data.workId
+            this.$api.jsdJob.remindReSubmit({
+              range: this.selectAllData ? 1 : 0,
+              system: this.searchInfo.appId || '7',
+              workIds: this.selectAllData ? '' : this.selectUserList
             }).then(
               response => {
                 if (response.data.code == "200") {

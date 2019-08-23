@@ -30,6 +30,9 @@ const jsdJob = {
   },
   listWarnMessagePage(params) {
     return axios.get(`/homework/job/listWarnMessagePage`, {params})
+  },
+  remindReSubmit(params) {
+    return axios.post(`/homework/job/remindReSubmit`, params)
   }
 }
 
