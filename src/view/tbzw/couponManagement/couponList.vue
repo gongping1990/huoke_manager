@@ -314,10 +314,7 @@
     },
     methods: {
       copyUrl(param) {
-        if (param.page === 1) {
-          this.copy_url = param.couponUrl
-        }
-
+        this.copy_url = param.couponUrl
         setTimeout(() => {
           this.$refs.copyInput.select();
           document.execCommand("copy");
