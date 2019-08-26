@@ -213,7 +213,7 @@
           {
             title: '优惠券金额',
             render: (h, params)=> {
-              return h('span', (params.row.couponAmount/100).toFixed())
+              return h('span', (+params.row.couponAmount/100).toFixed(2))
             },
             key: 'couponAmount'
           },
@@ -325,7 +325,7 @@
         this.isOpenModal = true
         if (data) {
           this.addInfo = JSON.parse(JSON.stringify(data))
-          this.addInfo.couponAmount = +this.addInfo.couponAmount
+          this.addInfo.couponAmount = +this.addInfo.couponAmount/100
           this.addInfo.couponNum = +this.addInfo.couponNum
         } else {
           this.addInfo = {
