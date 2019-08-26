@@ -5,10 +5,11 @@
         <Col :span="5">
           <div class="-search">
             <Select v-model="selectInfo" class="-search-select">
-              <Option value="1">电话号码</Option>
+              <Option value="1">用户昵称</Option>
+              <Option value="2">电话号码</Option>
             </Select>
             <span class="-search-center">|</span>
-            <Input v-model="searchInfo.phone" class="-search-input" placeholder="请输入电话号码" icon="ios-search"
+            <Input v-model="searchInfo.manner" class="-search-input" placeholder="请输入关键词" icon="ios-search"
                    @on-click="getList(1)"></Input>
           </div>
         </Col>
@@ -40,12 +41,6 @@
           <FormItem label="补卡日期" prop="recordTime">
             <Date-picker class="date-time" placeholder="选择开始日期" v-model="addInfo.date"></Date-picker>
           </FormItem>
-          <FormItem label="强制补卡" prop="force">
-            <Radio-group v-model="addInfo.force">
-              <Radio label='1'>是</Radio>
-              <Radio label='0'>否</Radio>
-            </Radio-group>
-          </FormItem>
         </Form>
         <div slot="footer" class="-p-b-flex">
           <Button @click="closeModal('addInfo')" ghost type="primary" style="width: 100px;">取消</Button>
@@ -72,7 +67,6 @@
           pageSize: 10
         },
         dataList: [],
-        radioType: '1116634427162689538',
         selectInfo: '1',
         searchInfo: {},
         userInfo: '',
@@ -143,7 +137,7 @@
         if (!this.addInfo.phone) {
           return this.$Message.error('请输入手机号码')
         }
-        this.$api.poem.getUserByPhone({
+        this.$api.tbzwStudy.getUserByPhone({
           phone: this.addInfo.phone
         })
           .then(
@@ -176,12 +170,18 @@
         if (num) {
           this.tab.currentPage = 1
         }
-        this.$api.poem.listRepairCard({
+        let params = {
           current: num ? num : this.tab.page,
-          size: this.tab.pageSize,
-          phone: this.searchInfo.phone,
-          courseId: this.radioType
-        })
+          size: this.tab.pageSize
+        }
+
+        if (this.selectInfo == '1' && this.searchInfo) {
+          params.nickName = this.searchInfo.manner
+        } else if (this.selectInfo == '2' && this.searchInfo) {
+          params.phone = this.searchInfo.manner
+        }
+
+        this.$api.tbzwStudy.listRepairCard(params)
           .then(
             response => {
               this.dataList = response.data.resultData.records || [];
@@ -195,11 +195,9 @@
         if (this.isSending) return
         this.$refs[name].validate((valid) => {
           if (valid) {
-            this.$api.poem.repairCard({
+            this.$api.tbzwStudy.repairCard({
               date: dayjs(this.addInfo.date).format('YYYY-MM-DD'),
-              phone: this.addInfo.phone,
-              courseId: this.radioType,
-              force: this.addInfo.force === '1',
+              phone: this.addInfo.phone
             })
               .then(
                 response => {

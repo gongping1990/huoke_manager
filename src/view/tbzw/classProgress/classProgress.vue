@@ -18,10 +18,6 @@
         </Col>
       </Row>
 
-      <div class="g-add-btn g-add-top" @click="openModal()">
-        <Icon class="-btn-icon" color="#fff" type="ios-add" size="24"/>
-      </div>
-
       <Table class="-c-tab" :loading="isFetching" :columns="columns" :data="dataList"></Table>
 
       <Page class="-p-text-right" :total="total" size="small" show-elevator :page-size="tab.pageSize"
@@ -58,31 +54,32 @@
         columns: [
           {
             title: '用户昵称',
-            key: 'content'
+            key: 'nickName',
+            align: 'center'
           },
           {
             title: '电话号码',
-            key: 'sortnum',
+            key: 'phone',
             align: 'center'
           },
           {
             title: '课程进度',
-            key: 'sortnum',
+            key: 'courseProgress',
             align: 'center'
           },
           {
             title: '累计打卡',
-            key: 'sortnum',
+            key: 'totalCard',
             align: 'center'
           },
           {
             title: '最近连续打卡',
-            key: 'sortnum',
+            key: 'continueCard',
             align: 'center'
           },
           {
             title: '最长连续打卡',
-            key: 'sortnum',
+            key: 'longerContinueCard',
             align: 'center'
           },
           {
@@ -102,7 +99,7 @@
                     this.openModal(params.row)
                   }
                 }
-              }, params.row.sortnum)
+              }, params.row.works)
             },
             align: 'center'
           }
@@ -113,7 +110,7 @@
       this.getList()
     },
     methods: {
-      openModal (data) {
+      openModal(data) {
         this.isOpenModal = true
       },
       currentChange(val) {
@@ -126,31 +123,29 @@
         if (num) {
           this.tab.currentPage = 1
         }
-
         let params = {
           current: num ? num : this.tab.page,
           size: this.tab.pageSize
         }
-
         switch (+this.selectInfo) {
           case 1:
-            params.nickname = this.searchInfo.public
+            params.nickName = this.searchInfo.public
             break
           case 2:
-            params.nickname = this.searchInfo.public
+            params.courseProgress = this.searchInfo.public
             break
           case 3:
-            params.nickname = this.searchInfo.public
+            params.totalCard = this.searchInfo.public
             break
           case 4:
-            params.nickname = this.searchInfo.public
+            params.continueCard = this.searchInfo.public
             break
           case 5:
-            params.nickname = this.searchInfo.public
+            params.longerContinueCard = this.searchInfo.public
             break
         }
 
-        this.$api.composition.getBroadcastList(params)
+        this.$api.tbzwClockin.pageClassProgressByList(params)
           .then(
             response => {
               this.dataList = response.data.resultData.records;
