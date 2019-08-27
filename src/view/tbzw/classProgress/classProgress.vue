@@ -25,7 +25,19 @@
             @on-change="currentChange"></Page>
     </Card>
 
-    <job-record-template v-model="isOpenModal" :dataInfo="1"></job-record-template>
+    <Modal
+      class="p-classProgress"
+      v-model="isOpenModal"
+      footer-hide
+      width="500"
+      title="作业记录">
+      <Timeline>
+        <TimelineItem v-for="(item,index) of recordList" :key="index">
+          <div>{{item.takeTime}}</div>
+          <div class="-text">{{item.lessonName}}</div>
+        </TimelineItem>
+      </Timeline>
+    </Modal>
   </div>
 </template>
 
@@ -45,6 +57,7 @@
           pageSize: 10
         },
         dataList: [],
+        recordList: [],
         total: 0,
         isFetching: false,
         isOpenModal: false,
@@ -112,6 +125,7 @@
     methods: {
       openModal(data) {
         this.isOpenModal = true
+        this.recordList = data.workList
       },
       currentChange(val) {
         this.tab.page = val;
@@ -166,38 +180,9 @@
       color: #39f
     }
 
-    .-c-course-wrap {
-      display: inline-block;
-      .-c-course-item {
-        position: relative;
-        display: inline-block;
-        /*height: 70px;*/
-        overflow: hidden;
-
-        img {
-          width: 140px;
-          height: 70px;
-        }
-
-        .-i-text {
-          display: -webkit-box;
-          -webkit-box-orient: vertical;
-          /*-webkit-line-clamp: 1;*/
-          line-height: normal;
-        }
-
-        .-i-del {
-          position: absolute;
-          top: 0;
-          right: 0;
-          color: #ffff;
-          background-color: rgba(0, 0, 0, 0.4);
-          line-height: normal;
-          cursor: pointer;
-          padding: 4px;
-          border-radius: 4px;
-        }
-      }
+    .-text {
+      margin: 10px 0;
+      font-size: 16px;
     }
 
     .-p-b-flex {
@@ -210,22 +195,8 @@
       text-align: right;
     }
 
-    .-p-modal-btn {
-      vertical-align: bottom;
-    }
-
     .-c-tab {
       margin: 20px 0;
-    }
-
-    .date-time {
-      width: 100%;
-      border: 1px solid #dcdee2;
-      border-radius: 4px;
-      min-width: 155px;
-    }
-    .-date-search {
-      margin-left: 20px;
     }
   }
 </style>
