@@ -756,7 +756,7 @@
       },
       changeUnqualified() {
         this.noticeText()
-        this.searchInfo = {}
+        // this.searchInfo = {}
         setTimeout(() => {
           this.$refs.searchChild.initSearch()
         }, 100);
