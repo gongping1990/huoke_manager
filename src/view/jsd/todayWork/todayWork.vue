@@ -849,8 +849,7 @@
           hasComment: this.searchInfo.hasComment == '-1' ? '' : this.searchInfo.hasComment,
           hmBegin: this.searchInfo.getStartTime ? new Date(this.searchInfo.getStartTime).getTime() : "",
           hmEnd: this.searchInfo.getEndTime ? new Date(this.searchInfo.getEndTime).getTime() : "",
-          status: this.radioType == 4 ? '' : this.radioType,
-          praise: this.radioType == 4
+          status: this.radioType == 4 ? '' : this.radioType
         }
 
         if (this.searchInfo.workType == '1' && this.searchInfo) {
@@ -861,6 +860,10 @@
 
         if (this.searchInfo.userType == '1' && this.searchInfo) {
           params.nickname = this.searchInfo.mannerTwo
+        }
+
+        if (this.radioType == 4) {
+          params.praise = true
         }
 
         if (num) {
