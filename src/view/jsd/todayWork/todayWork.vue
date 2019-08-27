@@ -690,7 +690,7 @@
             this.$api.jsdJob.remindReSubmit({
               range: this.selectAllData ? 1 : 0,
               system: this.searchInfo.appId || '7',
-              workIds: this.selectAllData ? '' : this.selectUserList
+              workIds: this.selectAllData ? [] : this.selectUserList
             }).then(
               response => {
                 if (response.data.code == "200") {
