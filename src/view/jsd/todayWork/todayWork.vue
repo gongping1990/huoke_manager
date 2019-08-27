@@ -724,10 +724,10 @@
         if (this.radioType === 1) {
           this.noticeText()
         } else if (this.radioType === 3) {
-          this.$Notice.warning({
-            desc: '今日已批该作业28，用户已点评23',
-            duration: 5
-          });
+          // this.$Notice.warning({
+          //   desc: '今日已批该作业28，用户已点评23',
+          //   duration: 5
+          // });
         }
         // this.searchInfo = {}
         setTimeout(() => {
@@ -764,10 +764,10 @@
         this.getList(1)
       },
       noticeText () {
-        this.$Notice.warning({
-          desc: this.unqualifiedType === 2 ? '最近7天不合作业还剩28，已重交23' : '不合作业累计还剩28，已重交23',
-          duration: 5
-        });
+        // this.$Notice.warning({
+        //   desc: this.unqualifiedType === 2 ? '最近7天不合作业还剩28，已重交23' : '不合作业累计还剩28，已重交23',
+        //   duration: 5
+        // });
       },
       getSearchInfo(data) {
         this.searchInfo = data
