@@ -6,7 +6,7 @@ const tbzwStudy = {
     return axios.get('/composition/user/getUserByPhone', {params: params})
   },
   repairCard(params) {
-    return axios.get("/composition/study/repairCard", {params: params});
+    return axios.post("/composition/study/repairCard", qs.stringify(params));
   },
   listRepairCard(params) {
     return axios.post("/composition/study/listRepairCard", qs.stringify(params));
