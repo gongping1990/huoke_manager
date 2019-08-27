@@ -158,6 +158,7 @@
       openModal() {
         this.isOpenModal = true
         this.addInfo.date = ''
+        this.userInfo = ''
       },
       closeModal(name) {
         this.isOpenModal = false
