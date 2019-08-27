@@ -184,7 +184,7 @@
       },
       initSearch () {
         this.searchInfo = {
-          appId: '7',
+          appId: this.searchInfo.appId || '7',
           workType: '1',
           userType: '1',
           getStartTime: '',

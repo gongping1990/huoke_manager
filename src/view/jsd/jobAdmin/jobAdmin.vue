@@ -525,7 +525,7 @@
       },
       changeJobType() {
         // this.radioType === 1 && this.changeUnqualified()
-        this.searchInfo = {}
+        // this.searchInfo = {}
         setTimeout(() => {
           this.$refs.searchChild.initSearch()
         }, 100);
@@ -552,7 +552,7 @@
         this.getList(1)
       },
       changeUnqualified() {
-        this.searchInfo = {}
+        // this.searchInfo = {}
         setTimeout(() => {
           this.$refs.searchChild.initSearch()
         }, 100);
