@@ -560,6 +560,7 @@
         this.getList(1)
       },
       getSearchInfo(data) {
+        this.selectUserList = []
         this.searchInfo = data
         this.getList(1)
       },
@@ -648,17 +649,10 @@
       },
       getTeacherList() {
         this.teacherList = []
-        this.$api.jsdTeacher.listTeachByPage({
-          current: 1,
-          size: 10000,
+        this.$api.jsdTeacher.selectTeacher({
           system: this.searchInfo.appId || '7',
         }).then(response => {
-          let arrayT = response.data.resultData.records
-          arrayT.forEach(item=> {
-            if (!item.desabled) {
-              this.teacherList.push(item)
-            }
-          })
+          this.teacherList = response.data.resultData
         })
       },
       //分页查询

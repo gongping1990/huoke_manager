@@ -22,6 +22,9 @@ const jsdTeacher = {
   updatePasswordTeacher(params) {
     return axios.post(`/homework/teacher/updatePassword`, qs.stringify(params))
   },
+  selectTeacher(params) {
+    return axios.post(`/homework/teacher/selectTeacher`, qs.stringify(params))
+  }
 }
 
 export default jsdTeacher
