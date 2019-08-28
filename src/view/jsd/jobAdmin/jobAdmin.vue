@@ -672,7 +672,8 @@
           hmEnd: this.searchInfo.getEndTime ? new Date(this.searchInfo.getEndTime).getTime() : "",
           teacherId: this.searchInfo.teacherId == '-1' ? '' : this.searchInfo.teacherId,
           status: this.radioType == 4 ? '' : this.radioType,
-          praise: this.radioType == 4
+          praise: this.radioType == 4,
+          alloted: true
         }
 
         if (this.searchInfo.workType == '1' && this.searchInfo) {
