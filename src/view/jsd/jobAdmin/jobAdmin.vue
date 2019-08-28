@@ -623,6 +623,9 @@
         this.getList(1)
       },
       openModal(data) {
+        if (!this.selectUserList.length) {
+          return this.$Message.error('请选择需要分配的作业')
+        }
         this.isOpenModal = true
         this.addInfo = {
           replyImg: [],
@@ -633,7 +636,7 @@
           this.addInfo = JSON.parse(JSON.stringify(data))
           this.addInfo.isPassed = this.radioType != 1 ? 1 : 0
         }
-        console.log(this.addInfo)
+        this.getTeacherList()
       },
       closeModal(name) {
         this.isOpenModal = false
@@ -644,10 +647,11 @@
         this.getList();
       },
       getTeacherList() {
+        this.teacherList = []
         this.$api.jsdTeacher.listTeachByPage({
           current: 1,
           size: 10000,
-          type: 0
+          system: this.searchInfo.appId || '7',
         }).then(response => {
           let arrayT = response.data.resultData.records
           arrayT.forEach(item=> {

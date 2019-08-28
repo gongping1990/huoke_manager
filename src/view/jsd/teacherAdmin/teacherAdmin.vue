@@ -36,6 +36,18 @@
             <InputNumber type="text" v-model="addInfo.amount" :min="0"
                          placeholder="请输入预估工作量"></InputNumber>
           </FormItem>
+          <!--<FormItem label="角色权限" prop="roleId">-->
+            <!--<Radio-group v-model="addInfo.roleId">-->
+              <!--<Radio label='3'>作业批改老师</Radio>-->
+              <!--<Radio label='4'>作业管理员</Radio>-->
+            <!--</Radio-group>-->
+          <!--</FormItem>-->
+          <FormItem label="所属课程" prop="systems">
+            <CheckboxGroup v-model="addInfo.systems">
+              <Checkbox label="7">每日一首古诗词</Checkbox>
+              <Checkbox label="8">小语轻作文</Checkbox>
+            </CheckboxGroup>
+          </FormItem>
         </Form>
         <div slot="footer" class="-p-b-flex">
           <Button @click="closeModal('addInfo')" ghost type="primary" style="width: 100px;">取消</Button>
@@ -92,6 +104,7 @@
         detailList: [],
         operationalId: '',
         selectInfo: '1',
+        oldSystemsLength: [],
         searchInfo: {},
         total: 0,
         totalDetail: 0,
@@ -113,6 +126,9 @@
           ],
           username: [
             {required: true, message: '请输入教师账号', trigger: 'blur'}
+          ],
+          systems: [
+            {required: true, type: 'array', min: 1, message: '请选择所属课程', trigger: 'change'}
           ]
         },
         columns: [
@@ -124,6 +140,15 @@
             title: '教师账号',
             key: 'username'
           },
+          {
+            title: '所属课程',
+            key: 'systemTexts',
+            width: 200
+          },
+          // {
+          //   title: '角色权限',
+          //   key: 'roleName'
+          // },
           {
             title: '教师头像',
             render: (h, params) => {
@@ -297,10 +322,12 @@
         this.isOpenModal = true
         if (data) {
           this.addInfo = JSON.parse(JSON.stringify(data))
+          this.oldSystemsLength = JSON.parse(JSON.stringify(data)).systems
         } else {
           this.addInfo = {
             id: '',
             amount: null,
+            systems: [],
             img: ''
           }
         }
@@ -405,6 +432,19 @@
         })
       },
       submitInfo(name) {
+        if (this.addInfo.id && this.addInfo.systems.length < this.oldSystemsLength.length) {
+          this.$Modal.confirm({
+            title: '提示',
+            content: '取消课程权限后，其“待批改”和“不合格”作业，将平均分配给其他有权限的老师',
+            onOk: () => {
+              this.teacherEdit(name)
+            }
+          })
+        } else {
+          this.teacherEdit(name)
+        }
+      },
+      teacherEdit (name) {
         if (this.isSending) return
         this.$refs[name].validate((valid) => {
           if (valid) {
@@ -420,7 +460,8 @@
               username : this.addInfo.username,
               password : this.addInfo.password,
               headimgurl : this.addInfo.headimgurl,
-              amount : this.addInfo.amount
+              amount : this.addInfo.amount,
+              systems : `${this.addInfo.systems}`
             })
               .then(
                 response => {
