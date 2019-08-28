@@ -213,7 +213,7 @@ const composition = {
 
   // 表扬
   praiseHomework(params) {
-    return axios.get('/composition/study/praise', {params: params})
+    return axios.post('/composition/study/praise', qs.stringify(params))
   },
 
   // 表扬
