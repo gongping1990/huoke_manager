@@ -274,44 +274,44 @@
             },
             align: 'center'
           },
-          {
-            title: '操作',
-            width: 190,
-            render: (h, params) => {
-              return h('div', [
-                h('Button', {
-                  props: {
-                    type: 'text',
-                    size: 'small'
-                  },
-                  style: {
-                    color: '#5444E4',
-                    marginRight: '5px'
-                  },
-                  on: {
-                    click: () => {
-                      this.openModal(params.row)
-                    }
-                  }
-                }, '批改'),
-                h('Button', {
-                  props: {
-                    type: 'text',
-                    size: 'small'
-                  },
-                  style: {
-                    color: 'rgba(218, 55, 75)',
-                    marginRight: '5px'
-                  },
-                  on: {
-                    click: () => {
-                      this.delItem(params.row)
-                    }
-                  }
-                }, '删除')
-              ])
-            }
-          }
+          // {
+          //   title: '操作',
+          //   width: 190,
+          //   render: (h, params) => {
+          //     return h('div', [
+          //       h('Button', {
+          //         props: {
+          //           type: 'text',
+          //           size: 'small'
+          //         },
+          //         style: {
+          //           color: '#5444E4',
+          //           marginRight: '5px'
+          //         },
+          //         on: {
+          //           click: () => {
+          //             this.openModal(params.row)
+          //           }
+          //         }
+          //       }, '批改'),
+          //       h('Button', {
+          //         props: {
+          //           type: 'text',
+          //           size: 'small'
+          //         },
+          //         style: {
+          //           color: 'rgba(218, 55, 75)',
+          //           marginRight: '5px'
+          //         },
+          //         on: {
+          //           click: () => {
+          //             this.delItem(params.row)
+          //           }
+          //         }
+          //       }, '删除')
+          //     ])
+          //   }
+          // }
         ],
         columnsTwo: [
           {
@@ -421,76 +421,76 @@
             },
             align: 'center'
           },
-          {
-            title: '操作',
-            width: 280,
-            align: 'left',
-            render: (h, params) => {
-              return h('div', [
-                h('Button', {
-                  props: {
-                    type: 'text',
-                    size: 'small'
-                  },
-                  style: {
-                    color: '#5444E4',
-                    marginRight: '5px'
-                  },
-                  on: {
-                    click: () => {
-                      this.openDetail(params.row)
-                    }
-                  }
-                }, '批改详情'),
-                h('Button', {
-                  props: {
-                    type: 'text',
-                    size: 'small'
-                  },
-                  style: {
-                    color: '#5444E4',
-                    marginRight: '5px'
-                  },
-                  on: {
-                    click: () => {
-                      this.openModal(params.row)
-                    }
-                  }
-                }, '修改'),
-                h('Button', {
-                  props: {
-                    type: 'text',
-                    size: 'small'
-                  },
-                  style: {
-                    display: this.radioType == 4 ? 'none' : 'inline-block',
-                    color: 'rgba(218, 55, 75)',
-                    marginRight: '5px'
-                  },
-                  on: {
-                    click: () => {
-                      this.delItem(params.row)
-                    }
-                  }
-                }, '删除'),
-                h('Button', {
-                  props: {
-                    type: 'text',
-                    size: 'small'
-                  },
-                  style: {
-                    color: '#5444E4',
-                    marginRight: '5px'
-                  },
-                  on: {
-                    click: () => {
-                      this.jobPrise(params.row)
-                    }
-                  }
-                }, this.radioType == '4' ? '移除表扬' : '加入表扬')
-              ])
-            }
-          }
+          // {
+          //   title: '操作',
+          //   width: 280,
+          //   align: 'left',
+          //   render: (h, params) => {
+          //     return h('div', [
+          //       h('Button', {
+          //         props: {
+          //           type: 'text',
+          //           size: 'small'
+          //         },
+          //         style: {
+          //           color: '#5444E4',
+          //           marginRight: '5px'
+          //         },
+          //         on: {
+          //           click: () => {
+          //             this.openDetail(params.row)
+          //           }
+          //         }
+          //       }, '批改详情'),
+          //       h('Button', {
+          //         props: {
+          //           type: 'text',
+          //           size: 'small'
+          //         },
+          //         style: {
+          //           color: '#5444E4',
+          //           marginRight: '5px'
+          //         },
+          //         on: {
+          //           click: () => {
+          //             this.openModal(params.row)
+          //           }
+          //         }
+          //       }, '修改'),
+          //       h('Button', {
+          //         props: {
+          //           type: 'text',
+          //           size: 'small'
+          //         },
+          //         style: {
+          //           display: this.radioType == 4 ? 'none' : 'inline-block',
+          //           color: 'rgba(218, 55, 75)',
+          //           marginRight: '5px'
+          //         },
+          //         on: {
+          //           click: () => {
+          //             this.delItem(params.row)
+          //           }
+          //         }
+          //       }, '删除'),
+          //       h('Button', {
+          //         props: {
+          //           type: 'text',
+          //           size: 'small'
+          //         },
+          //         style: {
+          //           color: '#5444E4',
+          //           marginRight: '5px'
+          //         },
+          //         on: {
+          //           click: () => {
+          //             this.jobPrise(params.row)
+          //           }
+          //         }
+          //       }, this.radioType == '4' ? '移除表扬' : '加入表扬')
+          //     ])
+          //   }
+          // }
         ],
         columnsThree: [
           {
@@ -585,45 +585,45 @@
             },
             align: 'center'
           },
-          {
-            title: '操作',
-            width: 200,
-            align: 'left',
-            render: (h, params) => {
-              return h('div', [
-                h('Button', {
-                  props: {
-                    type: 'text',
-                    size: 'small'
-                  },
-                  style: {
-                    color: '#5444E4',
-                    marginRight: '5px'
-                  },
-                  on: {
-                    click: () => {
-                      this.openModal(params.row)
-                    }
-                  }
-                }, '批改'),
-                h('Button', {
-                  props: {
-                    type: 'text',
-                    size: 'small'
-                  },
-                  style: {
-                    color: 'rgba(218, 55, 75)',
-                    marginRight: '5px'
-                  },
-                  on: {
-                    click: () => {
-                      this.delItem(params.row)
-                    }
-                  }
-                }, '删除')
-              ])
-            }
-          }
+          // {
+          //   title: '操作',
+          //   width: 200,
+          //   align: 'left',
+          //   render: (h, params) => {
+          //     return h('div', [
+          //       h('Button', {
+          //         props: {
+          //           type: 'text',
+          //           size: 'small'
+          //         },
+          //         style: {
+          //           color: '#5444E4',
+          //           marginRight: '5px'
+          //         },
+          //         on: {
+          //           click: () => {
+          //             this.openModal(params.row)
+          //           }
+          //         }
+          //       }, '批改'),
+          //       h('Button', {
+          //         props: {
+          //           type: 'text',
+          //           size: 'small'
+          //         },
+          //         style: {
+          //           color: 'rgba(218, 55, 75)',
+          //           marginRight: '5px'
+          //         },
+          //         on: {
+          //           click: () => {
+          //             this.delItem(params.row)
+          //           }
+          //         }
+          //       }, '删除')
+          //     ])
+          //   }
+          // }
         ],
       };
     },
