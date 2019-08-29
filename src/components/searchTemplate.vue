@@ -5,7 +5,7 @@
         <Col :span="4" class="g-t-left" v-if="option.isAppId">
           <div class="g-flex-a-j-center">
             <div class="-search-select-text">产品名称：</div>
-            <Select v-model="searchInfo.appId" @on-change="changeEmit()" class="-search-selectOne">
+            <Select v-model="searchInfo.appId" @on-change="changeEmit(true)" class="-search-selectOne">
               <Option v-for="(item,index) in appList" :label="item.name" :value="item.id" :key="index"></Option>
             </Select>
           </div>
@@ -169,13 +169,10 @@
     methods: {
       getTeacherList() {
         this.teacherList = []
-        this.$api.jsdTeacher.listTeachByPage({
-          current: 1,
-          size: 10000,
-          type: 0,
-          disabled: false
+        this.$api.jsdTeacher.selectTeacher({
+          system: this.searchInfo.appId || '7',
         }).then(response => {
-          this.teacherList = response.data.resultData.records
+          this.teacherList = response.data.resultData
           this.teacherList.unshift({
             id: '-1',
             nickname: '全部'
@@ -221,7 +218,8 @@
 
         this.changeEmit()
       },
-      changeEmit() {
+      changeEmit(bool) {
+        bool && this.getTeacherList()
         this.$emit('changeSearch', this.searchInfo)
       }
     }

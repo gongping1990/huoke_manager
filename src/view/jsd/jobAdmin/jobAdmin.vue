@@ -22,7 +22,7 @@
 
         <Row v-if="radioType === 0" class="p-jobAdmin-tip">
           <div class="-tip-div g-t-left">
-            <Checkbox v-model="selectAllData" @on-change="changeAloneSelect">所有数据</Checkbox>
+            <Checkbox v-model="selectAllData" @on-change="changeAloneSelect">全选所有作业</Checkbox>
           </div>
           <div class="-tip-div g-text-right">
             <Button @click="openModal()" ghost type="primary" style="width: 100px;">分配作业</Button>
@@ -712,7 +712,7 @@
           range: this.selectAllData ? 1 : 0,
           system: this.addInfo.appId || '7',
           teacherId: this.addInfo.teacherId,
-          workIds: this.selectAllData ? '' : this.selectUserList
+          workIds: this.selectAllData ? [] : this.selectUserList
         })
           .then(
             response => {

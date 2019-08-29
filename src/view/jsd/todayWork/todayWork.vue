@@ -58,7 +58,7 @@
 
         <Row v-if="radioType === 1 && unqualifiedType === 1" class="p-todayWork-tip">
           <div class="-tip-div g-t-left">
-            <Checkbox v-model="selectAllData" @on-change="changeAloneSelect">所有数据</Checkbox>
+            <Checkbox v-model="selectAllData" @on-change="changeAloneSelect">全选所有作业</Checkbox>
           </div>
           <div class="-tip-div g-text-right">
             <Button @click="sendMessage()" ghost type="primary" style="width: 100px;">提醒</Button>
