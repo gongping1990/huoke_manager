@@ -560,6 +560,7 @@
         this.getList(1)
       },
       getSearchInfo(data) {
+        this.selectAllData = false
         this.selectUserList = []
         this.searchInfo = data
         this.getList(1)
