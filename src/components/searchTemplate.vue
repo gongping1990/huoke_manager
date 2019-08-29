@@ -180,6 +180,7 @@
         })
       },
       initSearch () {
+        console.log('重置')
         this.searchInfo = {
           appId: this.searchInfo.appId || '7',
           workType: '1',

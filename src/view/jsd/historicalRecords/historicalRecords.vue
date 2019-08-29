@@ -2,13 +2,13 @@
   <div class="p-job">
     <Card>
       <Row class="g-t-left">
-        <Radio-group v-model="radioType" type="button" @on-change="getList(1)">
+        <Radio-group v-model="radioType" type="button" @on-change="changeJobType">
           <Radio :label=3>已批改</Radio>
           <Radio :label=4>表扬</Radio>
         </Radio-group>
       </Row>
 
-      <search-template :option="searchOption" @changeSearch="getSearchInfo"></search-template>
+      <search-template ref="searchChild" :option="searchOption" @changeSearch="getSearchInfo"></search-template>
 
       <Table :loading="isFetching" :columns="columns" :data="dataList"></Table>
 
@@ -59,7 +59,7 @@
         <audio ref="playAudio" :src="playAudioUrl" controls></audio>
       </Modal>
 
-      <job-record-template v-model="isOpenDetail" :dataInfo="1"></job-record-template>
+      <job-record-template v-model="isOpenDetail" :dataInfo="detailInfo"></job-record-template>
 
     </Card>
   </div>
@@ -125,12 +125,12 @@
         columns: [
           {
             title: '用户昵称',
-            key: 'nickname',
+            key: 'nickName',
             align: 'center'
           },
           {
             title: '课时名称',
-            key: 'nickname',
+            key: 'lessonName',
             align: 'center'
           },
           {
@@ -142,7 +142,7 @@
           },
           {
             title: '作业要求',
-            key: 'homeworkClaim',
+            key: 'homeworkRequire',
             tooltip: true,
             align: 'center'
           },
@@ -201,7 +201,7 @@
                   },
                   on: {
                     click: () => {
-                      this.openModalPlay(params.row.workImgSrc[0])
+                      this.openModalPlay(params.row.workAudio)
                     }
                   }
                 }, '播放音频')
@@ -212,7 +212,7 @@
           {
             title: '提交时间',
             render: (h, params) => {
-              return h('div', dayjs(+params.row.workTime).format('YYYY-MM-DD HH:mm'))
+              return h('div', dayjs(+params.row.submitTime).format('YYYY-MM-DD HH:mm'))
             },
             align: 'center'
           },
@@ -224,13 +224,8 @@
             align: 'center'
           },
           {
-            title: '评价',
-            render: (h, params) => {
-              return h('div', [
-                h('div', this.evaluateColumn[params.row.evaluation]),
-                h('div', params.row.stumsg === null ? '' : `(${params.row.stumsg})`)
-              ])
-            },
+            title: '评价内容',
+            key: 'evaluationText',
             align: 'center'
           },
           {
@@ -309,30 +304,18 @@
       this.getList()
     },
     methods: {
+      changeJobType() {
+        setTimeout(() => {
+          this.$refs.searchChild.initSearch()
+        }, 100);
+        this.getList(1)
+      },
       getSearchInfo(data) {
         this.searchInfo = data
         this.getList(1)
       },
       getAudioInfo(data) {
         this.addInfo.replyDuration = (data / 1000).toFixed()
-      },
-      jobPrise(data) {
-        this.$Modal.confirm({
-          title: '提示',
-          content: `确认要进行此操作吗？`,
-          onOk: () => {
-            this.$api.composition.praiseHomework({
-              id: data.id,
-              praise: !data.praise
-            }).then(
-              response => {
-                if (response.data.code == "200") {
-                  this.$Message.success("操作成功");
-                  this.getList();
-                }
-              })
-          }
-        })
       },
       changePassed() {
         this.$forceUpdate()
@@ -344,6 +327,7 @@
       openDetail(data) {
         this.isOpenDetail = true
         this.detailInfo = JSON.parse(JSON.stringify(data))
+        this.detailInfo.appId = this.searchInfo.appId || '7'
       },
       closeModalPlay() {
         this.$refs.playAudio.load()
@@ -354,8 +338,9 @@
           title: '提示',
           content: '确认要删除吗？',
           onOk: () => {
-            this.$api.composition.removeHomework({
-              id: param.id
+            this.$api.jsdJob.removeHomework({
+              system: this.searchInfo.appId || '7',
+              id: param.workId
             }).then(
               response => {
                 if (response.data.code == "200") {
@@ -369,10 +354,12 @@
       changePraise(param) {
         this.$Modal.confirm({
           title: '提示',
-          content: `确认要${this.radioType==4 ? '移出表扬' : '加入表扬'}？`,
+          content: `确认要${this.radioType == 4 ? '移出表扬' : '加入表扬'}？`,
           onOk: () => {
-            this.$api.composition.removeHomework({
-              id: param.id
+            this.$api.jsdJob.praise({
+              system: this.searchInfo.appId || '7',
+              praise: this.radioType === 3,
+              id: param.workId
             }).then(
               response => {
                 if (response.data.code == "200") {
@@ -404,19 +391,35 @@
         let params = {
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
-          grade: 3,
-          evaluation: this.searchInfo.evaluate == '-1' ? '' : this.searchInfo.evaluate,
-          pay: this.searchInfo.pay == '-1' ? '' : this.searchInfo.pay,
-          starttime: this.getStartTime ? new Date(this.getStartTime).getTime() : "",
-          endtime: this.getEndTime ? new Date(this.getEndTime).getTime() : "",
-          status: 3,
+          system: this.searchInfo.appId || '7',
+          evaluation: this.searchInfo.evaluation == '-1' ? '' : this.searchInfo.evaluation,
+          payed: this.searchInfo.pay == '-1' ? '' : this.searchInfo.pay,
+          evaluationed: this.searchInfo.evaluationed == '-1' ? '' : this.searchInfo.evaluationed,
+          hasComment: this.searchInfo.hasComment == '-1' ? '' : this.searchInfo.hasComment,
+          hmBegin: this.searchInfo.getStartTime ? new Date(this.searchInfo.getStartTime).getTime() : "",
+          hmEnd: this.searchInfo.getEndTime ? new Date(this.searchInfo.getEndTime).getTime() : "",
+          status: this.radioType == 4 ? '' : this.radioType
+        }
+
+        if (this.searchInfo.workType == '1' && this.searchInfo) {
+          params.lname = this.searchInfo.manner
+        } else if (this.searchInfo.workType == '2' && this.searchInfo) {
+          params.hmkeyword = this.searchInfo.manner
+        }
+
+        if (this.searchInfo.userType == '1' && this.searchInfo) {
+          params.nickname = this.searchInfo.mannerTwo
+        }
+
+        if (this.radioType == 4) {
+          params.praise = true
         }
 
         if (num) {
           this.tab.currentPage = 1
         }
 
-        this.$api.composition.listHomeworkByPage(params)
+        this.$api.jsdJob.listTeacherWorkByPage(params)
           .then(
             response => {
               this.dataList = response.data.resultData.records;
@@ -437,8 +440,9 @@
           return this.$Message.error('最多上传三张图片')
         }
 
-        this.$api.composition.replyHomework({
-          id: this.addInfo.id,
+        this.$api.jsdJob.replyHomework({
+          id: this.addInfo.workId,
+          system: this.searchInfo.appId || '7',
           replyImg: `${this.addInfo.replyImg}`,
           replyTeacher: this.addInfo.replyTeacher,
           replyText: this.addInfo.replyText,
