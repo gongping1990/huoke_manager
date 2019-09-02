@@ -70,6 +70,13 @@ module.exports = {
       {
         test: /\.less$/,
         loader: 'style-loader!css-loader!less-loader'
+      },
+      {
+        test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
+        loader: 'image-webpack-loader',
+        options: {
+          bypassOnDebug: true,
+        }
       }
     ]
   },
