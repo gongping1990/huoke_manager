@@ -394,5 +394,31 @@ export const gswRouter =[
         component: () => import('@/view/gsw/contentManagement/contentList')
       }
     ]
+  },
+  {
+    path: '/channelManagement',
+    name: 'channelManagement',
+    title: '渠道管理',
+    component: Main,
+    children: [
+      {
+        path: '/gsw_channelType',
+        name: 'gsw_channelType',
+        meta: [
+          {name: '渠道管理'},
+          {name: '渠道分类'}
+        ],
+        component: () => import('@/view/gsw/channelManagement/channelType/channelType')
+      },
+      {
+        path: '/gsw_channelList',
+        name: 'gsw_channelList',
+        meta: [
+          {name: '渠道管理'},
+          {name: '渠道列表'}
+        ],
+        component: () => import('@/view/gsw/channelManagement/channelList/channelList')
+      }
+    ]
   }
 ]
