@@ -33,6 +33,18 @@ const jsdJob = {
   },
   remindReSubmit(params) {
     return axios.post(`/homework/job/remindReSubmit`, params)
+  },
+  listMyWorkJobCountByPage(params) {
+    return axios.get(`/homework/job/listMyWorkJobCountByPage`, {params})
+  },
+  listWorkJobCountByPage(params) {
+    return axios.get(`/homework/job/listWorkJobCountByPage`, {params})
+  },
+  viewTeacherDateCount(params) {
+    return axios.get(`/homework/job/viewTeacherDateCount`, {params})
+  },
+  todayWorkJobCount(params) {
+    return axios.get(`/homework/job/todayWorkJobCount`, {params})
   }
 }
 

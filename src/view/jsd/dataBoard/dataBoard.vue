@@ -119,6 +119,16 @@
       width="780"
       :title="titleType[modelType]">
       <div v-if="modelType !== 2">
+        <Row class="g-search" v-if="modelType === 3">
+          <Col :span="10" class="g-flex-a-j-center">
+            <div class="-search-select-text">日期查询：</div>
+            <Date-picker class="date-time"
+                         placeholder="选择日期"
+                         @on-change="viewTeacherDateCount(1)"
+                         v-model="checkDate"></Date-picker>
+          </Col>
+        </Row>
+
         <Table class="-c-tab" :loading="isFetching" :columns="columnsModal" :data="detailList"></Table>
 
         <Page class="g-text-right" :total="totalDetail" size="small" show-elevator :page-size="tabDetail.pageSize"
@@ -230,7 +240,8 @@
         myChartOne: '',
         myChartTwo: '',
         myChartThree: '',
-        myChartFour: ''
+        myChartFour: '',
+        checkDate: new Date(),
       }
     },
     computed: {
@@ -311,33 +322,43 @@
             list = [
               {
                 title: '老师名称',
-                key: 'date',
+                key: 'teacherName',
                 align: 'center'
               },
               {
                 title: '总量/已处理',
-                key: 'pv',
-                align: 'center'
+                render: (h,p)=>{
+                  return h('div', `${p.row.total}/${p.row.totalHandled}`)
+                },
+                align: 'center',
               },
               {
                 title: '自动分配/已处理',
-                key: 'uv',
-                align: 'center'
+                render: (h,p)=>{
+                  return h('div', `${p.row.autonum}/${p.row.autoHandled}`)
+                },
+                align: 'center',
               },
               {
                 title: '补批/已处理',
-                key: 'uv',
-                align: 'center'
+                render: (h,p)=>{
+                  return h('div', `${p.row.oldnum}/${p.row.oldHandled}`)
+                },
+                align: 'center',
               },
               {
                 title: '调度/已处理',
-                key: 'uv',
-                align: 'center'
+                render: (h,p)=>{
+                  return h('div', `${p.row.allotnum}/${p.row.allotHandled}`)
+                },
+                align: 'center',
               },
               {
                 title: '重交/已处理',
-                key: 'uv',
-                align: 'center'
+                render: (h,p)=>{
+                  return h('div', `${p.row.resubmitnum}/${p.row.handleResubmit}`)
+                },
+                align: 'center',
               }
             ]
             break
@@ -414,6 +435,7 @@
         this.modelType = +num
         this.isOpenModal = true
         this.modelType === 1 && this.getHistoryList()
+        this.modelType === 3 && this.viewTeacherDateCount()
       },
       addPhone() {
         this.phoneList.push({
@@ -557,6 +579,25 @@
         }
         this.$api.jsdJob.listWarnMessagePage({
           current: num ? num : this.tabDetail.page,
+          size: this.tabDetail.pageSize
+        })
+          .then(
+            response => {
+              this.detailList = response.data.resultData.records;
+              this.totalDetail = response.data.resultData.total;
+            })
+          .finally(() => {
+            this.isFetching = false
+          })
+      },
+      viewTeacherDateCount(num) {
+        this.isFetching = true
+        if (num) {
+          this.tabDetail.currentPage = 1
+        }
+        this.$api.jsdJob.viewTeacherDateCount({
+          current: num ? num : this.tabDetail.page,
+          date: new Date(this.checkDate).getTime(),
           size: this.tabDetail.pageSize
         })
           .then(
@@ -720,6 +761,17 @@
 
       .-c-tab {
         margin: 20px 0;
+      }
+
+      .date-time {
+        width: 20%;
+        border: 1px solid #dcdee2;
+        border-radius: 4px;
+        min-width: 155px;
+      }
+
+      .-date-search {
+        margin-left: 20px;
       }
     }
 

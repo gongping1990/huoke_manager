@@ -30,45 +30,55 @@
         columns: [
           {
             title: '日期',
-            render: (h,params)=>{
-              return h('div',dayjs(params.row.date).format('YYYY-MM-DD'))
-            },
+            key: 'day',
             width: 100,
             align: 'center'
           },
           {
             title: '当日总量/已处理',
-            key: 'newuser',
+            render: (h,p)=>{
+              return h('div', `${p.row.total}/${p.row.totalHandled}`)
+            },
             align: 'center',
           },
           {
             title: '当日自动分配/已处理',
-            key: 'oneRate',
+            render: (h,p)=>{
+              return h('div', `${p.row.autonum}/${p.row.autoHandled}`)
+            },
             align: 'center',
           },
           {
             title: '补批/已处理',
-            key: 'twoRate',
+            render: (h,p)=>{
+              return h('div', `${p.row.oldnum}/${p.row.oldHandled}`)
+            },
             align: 'center',
           },
           {
             title: '调度/已处理',
-            key: 'threeRate',
+            render: (h,p)=>{
+              return h('div', `${p.row.allotnum}/${p.row.allotHandled}`)
+            },
             align: 'center',
           },
           {
             title: '重交/已处理',
-            key: 'threeRate',
+            render: (h,p)=>{
+              return h('div', `${p.row.resubmitnum}/${p.row.handleResubmit}`)
+            },
             align: 'center',
           },
           {
             title: '效率（分钟）',
-            key: 'sixRate',
+            key: 'replytime',
             align: 'center',
           },
           {
             title: '好评率/差评率',
-            key: 'threeRate',
+            render: (h,p)=>{
+              return h('div', `${p.row.good}/${p.row.bad}`)
+            },
             align: 'center',
           }
         ],
@@ -88,7 +98,7 @@
         if (num) {
           this.tab.currentPage = 1
         }
-        this.$api.wzjh.listRetentionRate({
+        this.$api.jsdJob.listMyWorkJobCountByPage({
           current: num ? num : this.tab.page,
           size: this.tab.pageSize
         })

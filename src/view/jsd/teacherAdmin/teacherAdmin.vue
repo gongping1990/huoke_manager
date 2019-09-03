@@ -273,43 +273,56 @@
         columnsModal: [
           {
             title: '日期',
-            key: 'date',
+            key: 'day',
+            width: 100,
             align: 'center'
           },
           {
             title: '总量/已处理',
-            key: 'pv',
-            align: 'center'
+            render: (h,p)=>{
+              return h('div', `${p.row.total}/${p.row.totalHandled}`)
+            },
+            align: 'center',
           },
           {
             title: '自动分配/已处理',
-            key: 'pv',
-            align: 'center'
+            render: (h,p)=>{
+              return h('div', `${p.row.autonum}/${p.row.autoHandled}`)
+            },
+            align: 'center',
           },
           {
             title: '补批/已处理',
-            key: 'uv',
-            align: 'center'
+            render: (h,p)=>{
+              return h('div', `${p.row.oldnum}/${p.row.oldHandled}`)
+            },
+            align: 'center',
           },
           {
             title: '调度/已处理',
-            key: 'uv',
-            align: 'center'
+            render: (h,p)=>{
+              return h('div', `${p.row.allotnum}/${p.row.allotHandled}`)
+            },
+            align: 'center',
           },
           {
             title: '重交/已处理',
-            key: 'uv',
-            align: 'center'
+            render: (h,p)=>{
+              return h('div', `${p.row.resubmitnum}/${p.row.handleResubmit}`)
+            },
+            align: 'center',
           },
           {
             title: '效率（分钟）',
-            key: 'uv',
-            align: 'center'
+            key: 'replytime',
+            align: 'center',
           },
           {
             title: '好评率/差评率',
-            key: 'uv',
-            align: 'center'
+            render: (h,p)=>{
+              return h('div', `${p.row.good}/${p.row.bad}`)
+            },
+            align: 'center',
           }
         ]
       };
@@ -335,7 +348,7 @@
       openModalData (data) {
         this.isOpenModalData = true
         this.operationalId = data.id
-        this.getDetailList(data)
+        this.getDetailList()
       },
       closeModal(name) {
         this.isOpenModal = false
@@ -349,10 +362,13 @@
         this.tab.page = val;
         this.getList();
       },
-      getDetailList(data) {
+      getDetailList() {
         this.isFetching = true
-        this.$api.gswOperational.getOperationalStatistics({
-          operationalId: data.id
+
+        this.$api.jsdJob.listWorkJobCountByPage({
+          current: this.tabDetail.page,
+          size: this.tabDetail.pageSize,
+          teacherId: this.operationalId
         }).then(response => {
           this.detailList = response.data.resultData.records;
           this.totalDetail = response.data.resultData.total;
