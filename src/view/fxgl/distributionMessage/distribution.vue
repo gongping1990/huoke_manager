@@ -11,20 +11,20 @@
       class="p-distribution"
       v-model="isOpenModal"
       @on-cancel="closeModal"
-      width="500"
-      :title="openType === '1' ? '变更记录' : '设置'">
+      width="600"
+      :title="openType === 1 ? '变更记录' : '设置'">
 
       <Table class="-c-tab" :loading="isFetching" :columns="columnsModal" :data="detailList"
-             v-if="openType ==='1'"></Table>
+             v-if="openType ===1"></Table>
 
       <Page class="-p-text-right" :total="totalDetail" size="small" show-elevator :page-size="tabDetail.pageSize"
-            :current.sync="tabDetail.currentPage" v-if="openType === '1'"
+            :current.sync="tabDetail.currentPage" v-if="openType === 1"
             @on-change="detailCurrentChange"></Page>
 
-      <Form ref="addInfo" :model="addInfo" :rules="ruleValidate" :label-width="90" v-if="openType === '2'">
+      <Form ref="addInfo" :model="addInfo" :rules="ruleValidate" :label-width="90" v-if="openType === 2">
 
-        <FormItem label="佣金比例" prop="name">
-          <Input type="text" v-model="addInfo.name" placeholder="请输入佣金比例"></Input>%
+        <FormItem label="佣金比例(%)" prop="name">
+          <Input type="text" v-model="addInfo.name" placeholder="请输入佣金比例(%)"></Input>
         </FormItem>
       </Form>
 
@@ -212,7 +212,7 @@
             })
       },
       submitInfo() {
-        if (this.openType === '1') {
+        if (this.openType === 1) {
           return this.closeModal()
         }
 

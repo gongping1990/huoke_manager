@@ -2,6 +2,15 @@
   <div class="p-cashWithdrawal">
     <Card>
       <Row class="g-search">
+        <Col :span="3" class="g-t-left">
+          <div class="g-flex-a-j-center">
+            <div class="-search-select-text">提现状态：</div>
+            <Select v-model="searchInfo.status" @on-change="selectChange" class="-search-selectOne">
+              <Option v-for="(item,index) in orderStatusList" :label="item.name" :value="item.id" :key="index"></Option>
+            </Select>
+          </div>
+        </Col>
+
         <Col :span="6">
           <div class="-search">
             <Select v-model="selectInfo" class="-search-select">
@@ -11,14 +20,6 @@
             <span class="-search-center">|</span>
             <Input v-model="searchInfo.antistop" class="-search-input" placeholder="请输入关键字" icon="ios-search"
                    @on-click="selectChange"></Input>
-          </div>
-        </Col>
-        <Col :span="3" class="g-t-left">
-          <div class="g-flex-a-j-center">
-            <div class="-search-select-text">提现状态：</div>
-            <Select v-model="searchInfo.status" @on-change="selectChange" class="-search-selectOne">
-              <Option v-for="(item,index) in orderStatusList" :label="item.name" :value="item.id" :key="index"></Option>
-            </Select>
           </div>
         </Col>
 
@@ -55,7 +56,7 @@
           type: '-1',
           antistop: ''
         },
-        selectInfo: '0',
+        selectInfo: '1',
         orderStatus: {
           '0': '未支付',
           '10': '已支付'
@@ -81,7 +82,7 @@
         orderType: ['提现成功', '提现失败', '处理中'],
         dataList: [],
         dateOption: {
-          name: '提现申请时间',
+          name: '申请时间',
           type: 'datetime',
           row: '2'
         },

@@ -26,6 +26,8 @@
             </Select>
           </div>
         </Col>
+      </Row>
+      <Row class="g-search -c-tab">
         <Col :span="6">
           <div class="-search">
             <Select v-model="selectInfo" class="-search-select">
@@ -41,9 +43,6 @@
         <Col :span="10" style="margin-left: 10px" class="g-flex-a-j-center">
           <date-picker-template :dataInfo="dateOption" @changeDate="changeDate"></date-picker-template>
         </Col>
-        <!--<div class="g-text-right">-->
-          <!--<Button type="primary" ghost class="-p-modal-btn -date-search" @click="toExcel">导出表格</Button>-->
-        <!--</div>-->
       </Row>
 
       <Table class="-c-tab" :loading="isFetching" :columns="columns" :data="dataList"></Table>

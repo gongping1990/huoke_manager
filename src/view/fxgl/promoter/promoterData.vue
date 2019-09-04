@@ -3,7 +3,7 @@
     <Row class="g-search">
       <Col :span="3" class="g-flex-a-j-center -s-radio">
         <div class="-search-select-text-two">课程名称：</div>
-        <Select v-model="radioType" @on-change="changeChannel" class="-search-selectOne">
+        <Select v-model="searchInfo.name" @on-change="changeChannel" class="-search-selectOne">
           <Option label="全部" value="-1"></Option>
           <Option label="小语轻作文" value="7"></Option>
           <Option label="每日一首古诗词" value="8"></Option>
@@ -11,7 +11,7 @@
       </Col>
       <Col :span="3" class="g-flex-a-j-center -s-radio">
         <div class="-search-select-text-two">推广方式：</div>
-        <Select v-model="radioType" @on-change="changeChannel" class="-search-selectOne">
+        <Select v-model="searchInfo.mode" @on-change="changeChannel" class="-search-selectOne">
           <Option label="全部" value="-1"></Option>
           <Option label="直接邀请" value="1"></Option>
           <Option label="开团邀请" value="2"></Option>
@@ -38,7 +38,7 @@
       </Col>
     </Row>
 
-    <Row class="g-flex-a-j-center" :gutter="10" style="margin-top: 20px">
+    <Row class="p-promoterData-flex" :gutter="10" style="margin-top: 20px">
       <Col v-for="(item,index) of titleList" :key="index" class="-p-d-col">
         <Card class="g-t-left">
           <div class="-col-name">{{item.name}}</div>
@@ -49,7 +49,7 @@
 
     <div class="p-promoterData-title">实时数据</div>
 
-    <Row class="g-flex-a-j-center" :gutter="10" style="margin-top: 20px">
+    <Row class="p-promoterData-flex" :gutter="10" style="margin-top: 20px">
       <Col v-for="(item,index) of titleListTwo" :key="index" class="-p-d-col">
         <Card class="g-t-left">
           <div class="-col-name">{{item.name}}</div>
@@ -60,7 +60,7 @@
 
     <div class="p-promoterData-title">今日数据</div>
 
-    <Row class="g-flex-a-j-center" :gutter="10" style="margin-top: 20px">
+    <Row class="p-promoterData-flex" :gutter="10" style="margin-top: 20px">
       <Col v-for="(item,index) of titleListTwo" :key="index" class="-p-d-col">
         <Card class="g-t-left">
           <div class="-col-name">{{item.name}}</div>
@@ -87,7 +87,7 @@
       </Col>
     </Row>
 
-    <Card class="-p-d-col -c-tab">
+    <Card class="-c-tab">
       <div class="-c-tab -p-d-echart">
         <div ref="echart" class="-p-c-content"></div>
       </div>
@@ -115,6 +115,10 @@
     components: {DatePickerTemplate},
     data() {
       return {
+        searchInfo: {
+          name: '-1',
+          mode: '-1'
+        },
         radioType: '0',
         selectTypeTwo: 1,
         selectTypeThree: 1,
@@ -466,6 +470,11 @@
 <style scoped lang="less">
   .p-promoterData {
 
+    &-flex {
+      display: flex;
+      flex-flow: wrap;
+    }
+
     &-title {
       font-size: 20px;
       font-weight: bold;
@@ -502,8 +511,8 @@
     }
 
     .-p-d-col {
-      width: 100%;
-
+      width: 20%;
+      margin-bottom: 20px;
       .-col-name {
         min-width: 100px;
         height: 42px;
@@ -523,17 +532,19 @@
         font-size: 13px;
       }
 
-      .-p-d-echart {
-        width: 100%;
-      }
-
-      .-p-c-content {
-        width: 100%;
-        height: 450px;
-        /*background-color: red;*/
-        /*overflow: hidden;*/
-      }
     }
+
+    .-p-d-echart {
+      width: 100%;
+    }
+
+    .-p-c-content {
+      width: 100%;
+      height: 450px;
+      /*background-color: red;*/
+      /*overflow: hidden;*/
+    }
+
     .-p-d-red {
       color: #fe4758
     }

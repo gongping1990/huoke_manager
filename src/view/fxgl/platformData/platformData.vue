@@ -104,7 +104,7 @@
     components: {DatePickerTemplate},
     data() {
       return {
-        radioType: '0',
+        radioType: 0,
         selectTypeTwo: 1,
         selectTypeThree: 1,
         dateOptionOne: {

@@ -3,7 +3,7 @@
     <Row class="g-search">
       <Col :span="3" class="g-flex-a-j-center -s-radio">
         <div class="-search-select-text-two">课程名称：</div>
-        <Select v-model="radioType" @on-change="changeChannel" class="-search-selectOne">
+        <Select v-model="searchInfo.name" @on-change="changeChannel" class="-search-selectOne">
           <Option label="全部" value="-1"></Option>
           <Option label="小语轻作文" value="7"></Option>
           <Option label="每日一首古诗词" value="8"></Option>
@@ -11,7 +11,7 @@
       </Col>
       <Col :span="3" class="g-flex-a-j-center -s-radio">
         <div class="-search-select-text-two">推广方式：</div>
-        <Select v-model="radioType" @on-change="changeChannel" class="-search-selectOne">
+        <Select v-model="searchInfo.mode" @on-change="changeChannel" class="-search-selectOne">
           <Option label="全部" value="-1"></Option>
           <Option label="直接邀请" value="1"></Option>
           <Option label="开团邀请" value="2"></Option>
@@ -93,6 +93,10 @@
     components: {DatePickerTemplate},
     data() {
       return {
+        searchInfo: {
+          name: '-1',
+          mode: '-1'
+        },
         radioType: '0',
         selectTypeTwo: 1,
         selectTypeThree: 1,

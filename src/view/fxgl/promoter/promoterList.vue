@@ -37,7 +37,7 @@
       <Page class="g-text-right" :total="totalDetail" size="small" show-elevator :page-size="tabDetail.pageSize"
             :current.sync="tabDetail.currentPage"
             @on-change="detailCurrentChange"></Page>
-      <div slot="footer" class="p-banner-btn">
+      <div slot="footer" class="p-promoter-btn">
         <div @click="isOpenModalData = false" class="g-primary-btn"> 确 认</div>
       </div>
     </Modal>
@@ -67,7 +67,7 @@
           type: '-1',
           antistop: ''
         },
-        selectInfo: '0',
+        selectInfo: '1',
         dataList: [],
         detailList: [],
         dateOption: {
@@ -122,6 +122,7 @@
           {
             title: '操作',
             align: 'center',
+            width: 320,
             render: (h, params) => {
               return h('div', [
                 h('Button', {
@@ -434,6 +435,11 @@
 
     .-c-red{
       color: rgb(218, 55, 75);
+    }
+
+    &-btn {
+      display: flex;
+      justify-content: flex-end;
     }
 
   }
