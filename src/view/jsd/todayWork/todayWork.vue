@@ -21,17 +21,17 @@
                     <Col class="-mask-wrap-item" :span="7" v-for="(item, index) of 3" :key="index">
                       <Card>
                         <div class="-mask-wrap-top">
-                          <div class="-name-left">自动分配</div>
+                          <div class="-name-left">{{item.name}}</div>
                         </div>
-                        <div class="-mask-wrap-center">28/23</div>
-                        <div class="-mask-wrap-down">25%</div>
+                        <div class="-mask-wrap-center">{{item.num}}</div>
+                        <div class="-mask-wrap-down">{{item.ratio}}</div>
                       </Card>
                     </Col>
                   </Row>
                 </Poptip>
               </div>
-              <div class="-item-wrap-center">28/23</div>
-              <div class="-item-wrap-down">25%</div>
+              <div class="-item-wrap-center">{{countInfo.total}}/{{countInfo.totalHandled}}</div>
+              <div class="-item-wrap-down">{{(countInfo.totalHandled/countInfo.total)*100}}%</div>
             </Card>
           </Col>
 
@@ -40,8 +40,8 @@
               <div class="-item-wrap-top">
                 <div class="-name-left">重交</div>
               </div>
-              <div class="-item-wrap-center">28/23</div>
-              <div class="-item-wrap-down">25%</div>
+              <div class="-item-wrap-center">{{countInfo.resubmitnum}}/{{countInfo.handleResubmit}}</div>
+              <div class="-item-wrap-down">{{(countInfo.handleResubmit/countInfo.resubmitnum)*100}}%</div>
             </Card>
           </Col>
 
@@ -181,6 +181,7 @@
         isEdit: false,
         addInfo: {},
         detailInfo: {},
+        countInfo: {},
         playAudioUrl: '',
         columns: [
           {
@@ -668,6 +669,7 @@
     },
     mounted() {
       this.getList()
+      this.todayWorkJobCount()
     },
     methods: {
       changeAloneSelect() {
@@ -680,7 +682,7 @@
         }
       },
       sendMessage() {
-        if(!this.selectUserList.length) {
+        if (!this.selectUserList.length) {
           return this.$Message.error('请选择需要提醒用户')
         }
         this.$Modal.confirm({
@@ -744,7 +746,7 @@
             isSituation: true,
             isFeedback: true
           }
-        } else  {
+        } else {
           this.searchOption = {
             isAppId: true,
             isWorkType: true,
@@ -763,7 +765,7 @@
         this.radioType = this.unqualifiedType
         this.getList(1)
       },
-      noticeText () {
+      noticeText() {
         // this.$Notice.warning({
         //   desc: this.unqualifiedType === 2 ? '最近7天不合作业还剩28，已重交23' : '不合作业累计还剩28，已重交23',
         //   duration: 5
@@ -835,6 +837,29 @@
       currentChange(val) {
         this.tab.page = val;
         this.getList();
+      },
+      todayWorkJobCount() {
+        this.$api.jsdJob.todayWorkJobCount()
+          .then(response => {
+            this.countInfo = response.data.resultData;
+            this.countInfo.otherList = [
+              {
+                name: '自动分配',
+                num: `${this.countInfo.autonum}/${this.countInfo.autoHandled}`,
+                ratio: `${(this.countInfo.autoHandled / this.countInfo.autonum) * 100}%`
+              },
+              {
+                name: '补批',
+                num: `${this.countInfo.oldnum}/${this.countInfo.oldHandled}`,
+                ratio: `${(this.countInfo.oldHandled / this.countInfo.oldnum) * 100}%`
+              },
+              {
+                name: '调度',
+                num: `${this.countInfo.allotnum}/${this.countInfo.allotHandled}`,
+                ratio: `${(this.countInfo.allotHandled / this.countInfo.allotnum) * 100}%`
+              }
+            ]
+          })
       },
       //分页查询
       getList(num) {
