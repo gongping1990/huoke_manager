@@ -9,6 +9,7 @@ import {wzjhRouter} from './routerSilder/wzjh'
 import {ylxcxRouter} from './routerSilder/ylxcx'
 import {yhzxRouter} from './routerSilder/yhzx'
 import {jsdRouter} from './routerSilder/jsd'
+import {fxglRouter} from './routerSilder/fxgl'
 // import err404 from '@/pages/404'
 //otherRouter
 // import home from '@/pages/home'
@@ -200,6 +201,16 @@ export const otherRouter = {
       ],
       component: () => import('@/view/gsw/channelManagement/putInChannel')
     },
+    {
+      path: '/fxgl_promoterData',
+      name: 'fxgl_promoterData',
+      meta: [
+        {name: '分销管理'},
+        {name: '推广人列表', url: 'fxgl_promoter'},
+        {name: '数据统计'}
+      ],
+      component: () => import('@/view/fxgl/promoter/promoterData')
+    },
   ]
 };
 
@@ -219,5 +230,6 @@ export const routers = [
   ...wzjhRouter,
   ...ylxcxRouter,
   ...yhzxRouter,
-  ...jsdRouter
+  ...jsdRouter,
+  ...fxglRouter
 ]

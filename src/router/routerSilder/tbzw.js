@@ -241,5 +241,31 @@ export const tbzwRouter =[
         component: () => import('@/view/tbzw/user/userList')
       }
     ]
+  },
+  {
+    path: '/channelManagement',
+    name: 'channelManagement',
+    title: '渠道管理',
+    component: Main,
+    children: [
+      {
+        path: '/tbzw_channelType',
+        name: 'tbzw_channelType',
+        meta: [
+          {name: '渠道管理'},
+          {name: '渠道分类'}
+        ],
+        component: () => import('@/view/tbzw/channelManagement/channelType/channelType')
+      },
+      {
+        path: '/tbzw_channelList',
+        name: 'tbzw_channelList',
+        meta: [
+          {name: '渠道管理'},
+          {name: '渠道列表'}
+        ],
+        component: () => import('@/view/tbzw/channelManagement/channelList/channelList')
+      }
+    ]
   }
 ]
