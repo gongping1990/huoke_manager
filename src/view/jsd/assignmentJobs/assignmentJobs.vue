@@ -306,6 +306,8 @@
 
         if (this.searchInfo.userType == '1' && this.searchInfo) {
           params.nickname = this.searchInfo.mannerTwo
+        } else if (this.searchInfo.userType == '2' && this.searchInfo) {
+          params.phone = this.searchInfo.mannerTwo
         }
 
         if (num) {

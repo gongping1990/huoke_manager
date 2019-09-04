@@ -43,6 +43,7 @@
           <div class="-search -margin-right">
             <Select v-model="searchInfo.userType" class="-search-select">
               <Option value="1">用户昵称</Option>
+              <Option value="2">手机号码</Option>
             </Select>
             <span class="-search-center">|</span>
             <Input v-model="searchInfo.mannerTwo" class="-search-input" placeholder="请输入关键字" icon="ios-search"
@@ -215,6 +216,8 @@
 
         if (this.searchInfo.userType === '1' && this.searchInfo) {
           this.searchInfo.nickname = this.searchInfo.mannerTwo
+        } else if (this.searchInfo.userType === '2' && this.searchInfo) {
+          this.searchInfo.phone = this.searchInfo.mannerTwo
         }
 
         this.changeEmit()
