@@ -27,7 +27,7 @@
       </Col>
     </Row>
 
-    <Row class="g-flex-a-j-center" :gutter="10" style="margin-top: 20px">
+    <Row class="p-platformData-flex" :gutter="10" style="margin-top: 20px">
       <Col v-for="(item,index) of titleList" :key="index" class="-p-d-col">
         <Card class="g-t-left">
           <div class="-col-name">{{item.name}}</div>
@@ -38,7 +38,7 @@
 
     <div class="p-platformData-title" v-if="radioType === 1">实时数据</div>
 
-    <Row class="g-flex-a-j-center" :gutter="10" style="margin-top: 20px" v-if="radioType === 1">
+    <Row class="p-platformData-flex" :gutter="10" style="margin-top: 20px" v-if="radioType === 1">
       <Col v-for="(item,index) of titleListTwo" :key="index" class="-p-d-col">
         <Card class="g-t-left">
           <div class="-col-name">{{item.name}}</div>
@@ -49,7 +49,7 @@
 
     <div class="p-platformData-title">今日数据</div>
 
-    <Row class="g-flex-a-j-center" :gutter="10" style="margin-top: 20px">
+    <Row class="p-platformData-flex" :gutter="10" style="margin-top: 20px">
       <Col v-for="(item,index) of titleListTwo" :key="index" class="-p-d-col">
         <Card class="g-t-left">
           <div class="-col-name">{{item.name}}</div>
@@ -76,7 +76,7 @@
       </Col>
     </Row>
 
-    <Card class="-p-d-col -c-tab">
+    <Card class="-c-tab">
       <div class="-c-tab -p-d-echart">
         <div ref="echart" class="-p-c-content"></div>
       </div>
@@ -405,6 +405,12 @@
       text-align: left;
       margin: 10px 0;
     }
+
+    &-flex {
+      display: flex;
+      flex-flow: wrap;
+    }
+
     .-search-select-text {
       min-width: 70px;
     }
@@ -435,7 +441,8 @@
     }
 
     .-p-d-col {
-      width: 100%;
+      width: 20%;
+      margin-bottom: 20px;
 
       .-col-name {
         min-width: 100px;
@@ -456,16 +463,16 @@
         font-size: 13px;
       }
 
-      .-p-d-echart {
-        width: 100%;
-      }
+    }
+    .-p-d-echart {
+      width: 100%;
+    }
 
-      .-p-c-content {
-        width: 100%;
-        height: 450px;
-        /*background-color: red;*/
-        /*overflow: hidden;*/
-      }
+    .-p-c-content {
+      width: 100%;
+      height: 450px;
+      /*background-color: red;*/
+      /*overflow: hidden;*/
     }
     .-p-d-red {
       color: #fe4758
