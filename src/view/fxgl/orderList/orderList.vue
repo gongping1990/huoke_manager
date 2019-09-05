@@ -2,27 +2,28 @@
   <div class="p-order">
     <Card>
       <Row class="g-search">
-        <Col :span="3" class="g-t-left">
+        <Col :span="4" class="g-t-left">
           <div class="g-flex-a-j-center">
-            <div class="-search-select-text">订单状态：</div>
+            <div class="-search-select-text">订单状态</div>
             <Select v-model="searchInfo.status" @on-change="selectChange" class="-search-selectOne">
               <Option v-for="(item,index) in orderStatusList" :label="item.name" :value="item.id" :key="index"></Option>
             </Select>
           </div>
         </Col>
-        <Col :span="3" class="g-t-left">
+        <Col :span="4" class="g-t-left">
           <div class="g-flex-a-j-center">
-            <div class="-search-select-text">支付状态：</div>
+            <div class="-search-select-text">支付状态</div>
             <Select v-model="searchInfo.status" @on-change="selectChange" class="-search-selectOne">
               <Option v-for="(item,index) in payStatusList" :label="item.name" :value="item.id" :key="index"></Option>
             </Select>
           </div>
         </Col>
-        <Col :span="3" class="g-t-left">
+        <Col :span="4" class="g-t-left">
           <div class="g-flex-a-j-center">
-            <div class="-search-select-text">推广方式：</div>
+            <div class="-search-select-text">推广方式</div>
             <Select v-model="searchInfo.status" @on-change="selectChange" class="-search-selectOne">
-              <Option v-for="(item,index) in promoterStatusList" :label="item.name" :value="item.id" :key="index"></Option>
+              <Option v-for="(item,index) in promoterStatusList" :label="item.name" :value="item.id"
+                      :key="index"></Option>
             </Select>
           </div>
         </Col>
@@ -47,7 +48,7 @@
 
       <Table class="-c-tab" :loading="isFetching" :columns="columns" :data="dataList"></Table>
 
-      <Page class="g-text-right" :total="total" size="small" show-elevator :page-size="tab.pageSize"
+      <Page class="g-text-center" :total="total"  show-elevator :page-size="tab.pageSize"
             :current="tab.page" @on-change="currentChange"></Page>
     </Card>
 
@@ -76,7 +77,7 @@
         </div>
         <div class="-p-o-flex">
           <FormItem label="手机号码" class="-p-o-width">{{orderInfo.phone}}</FormItem>
-          <FormItem  class="-p-o-width"></FormItem>
+          <FormItem class="-p-o-width"></FormItem>
         </div>
       </Form>
       <div slot="footer" class="-p-o-footer">
@@ -110,6 +111,11 @@
           '0': '未支付',
           '10': '已支付',
           '20': '已退款'
+        },
+        orderColor: {
+          '0': 'g-error-bg',
+          '10': 'g-success-bg',
+          '20': 'g-gary-bg'
         },
         payStatusList: [
           {
@@ -184,31 +190,33 @@
           {
             title: '订单号',
             key: 'id',
+            tooltip: true,
             align: 'center'
           },
           {
             title: '课程名称',
             key: 'courseName',
+            tooltip: true,
             align: 'center'
           },
           {
             title: '订单金额',
             render: (h, params) => {
-              return h('div', params.row.amount / 100)
+              return h('div', `￥ ${params.row.amount / 100}`)
             },
             align: 'center'
           },
           {
             title: '优惠金额',
             render: (h, params) => {
-              return h('div', params.row.couponAmount / 100)
+              return h('div', `￥ ${params.row.couponAmount / 100}`)
             },
             align: 'center'
           },
           {
             title: '实际支付',
             render: (h, params) => {
-              return h('div', params.row.payAmount / 100)
+              return h('div', `￥ ${params.row.payAmount / 100}`)
             },
             align: 'center'
           },
@@ -220,48 +228,70 @@
           {
             title: '手机号码',
             key: 'phone',
+            tooltip: true,
             align: 'center'
           },
           {
             title: '订单状态',
             render: (h, params) => {
-              return h('div', this.orderType[params.row.orderMode-1])
+              return h('div', this.orderType[params.row.orderMode - 1])
             },
             align: 'center'
           },
           {
             title: '支付状态',
             render: (h, params) => {
-              return h('div', this.orderStatus[params.row.payStatus])
+              return h('div', {
+                style: {
+                  display: 'flex',
+                  alignItems: 'center'
+                }
+              },[
+                h('div', {
+                  class: this.orderColor[params.row.payStatus],
+                  style: {
+                    display: 'inline-block',
+                    width: '6px',
+                    height: '6px',
+                    marginRight: '8px',
+                    borderRadius: '50%',
+                  }
+                }),
+                h('span', this.orderStatus[params.row.payStatus])
+              ])
             },
             align: 'center'
           },
           {
             title: '推广方式',
             render: (h, params) => {
-              return h('div', this.promoterType[params.row.orderPageSource-1])
+              return h('div', this.promoterType[params.row.orderPageSource - 1])
             },
             align: 'center'
           },
           {
             title: '创建时间',
+            tooltip: true,
             render: (h, params) => {
-              return h('div', dayjs(+params.row.gmtCreate).format("YYYY-MM-DD HH:mm:ss"))
+              return h('div', dayjs(+params.row.gmtCreate).format("YYYY-MM-DD HH:mm"))
             },
             align: 'center'
           },
           {
             title: '操作',
-            width:200,
+            width: 200,
             render: (h, params) => {
-              return h('div', [
+              return h('div', {
+                class: 'g-flex-a-j-c-center'
+              }, [
                 h('Button', {
                   props: {
                     type: 'text',
                     size: 'small'
                   },
                   style: {
-                    color: '#5444E4'
+                    color: '#1890FF',
+                    marginRight: '15px'
                   },
                   on: {
                     click: () => {
@@ -278,7 +308,7 @@
                   },
                   style: {
                     cursor: 'pointer',
-                    color: '#5444E4',
+                    color: '#FD9B00',
                     marginRight: '5px'
                   },
                   on: {
@@ -310,7 +340,7 @@
       changeAudit() {
 
       },
-      changeDate (data) {
+      changeDate(data) {
         this.getStartTime = data.startTime
         this.getEndTime = data.endTime
         this.selectChange()
@@ -396,14 +426,14 @@
       min-width: 70px;
     }
     .-search-selectOne {
-      width: 100px;
+      width: 100%;
       border: 1px solid #dcdee2;
       border-radius: 4px;
       margin-right: 20px;
     }
 
     .-c-tab {
-      margin: 20px 0;
+      margin: 29px 0;
     }
 
     .date-time {
@@ -424,10 +454,5 @@
     .-c-tips {
       color: #39f
     }
-
-    .-c-red{
-      color: rgb(218, 55, 75);
-    }
-
   }
 </style>

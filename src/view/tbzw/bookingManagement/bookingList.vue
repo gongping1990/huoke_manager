@@ -3,7 +3,15 @@
     <Card>
       <Row class="g-search">
         <Row class="g-t-left g-tab">
-          <Col :span="5">
+          <Col :span="4" class="g-t-left">
+            <div class="g-flex-a-j-center">
+              <div class="-search-select-text">是否回访</div>
+              <Select v-model="searchInfo.visited" @on-change="getList()" class="-search-selectOne">
+                <Option v-for="(item,index) in visitedStatusList" :label="item.name" :value="item.id" :key="index"></Option>
+              </Select>
+            </div>
+          </Col>
+          <Col :span="4">
             <div class="-search">
               <Select v-model="selectInfo" class="-search-select">
                 <Option value="1">用户昵称</Option>
@@ -14,9 +22,8 @@
                      @on-click="getList(1)"></Input>
             </div>
           </Col>
-          <Col :span="16" class="g-flex-a-j-center">
+          <Col :span="10" class="g-flex-a-j-center">
             <date-picker-template :dataInfo="dateOption" @changeDate="changeDate"></date-picker-template>
-
           </Col>
         </Row>
       </Row>
@@ -50,9 +57,25 @@
           type: 'datetime'
         },
         dataList: [],
+        visitedStatusList: [
+          {
+            id: '-1',
+            name: '全部'
+          },
+          {
+            id: '1',
+            name: '是'
+          },
+          {
+            id: '0',
+            name: '否'
+          }
+        ],
         total: 0,
         selectInfo: '1',
-        searchInfo: {},
+        searchInfo: {
+          visited: '-1'
+        },
         isFetching: false,
         columns: [
           {
@@ -132,6 +155,7 @@
         let params = {
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
+          visited: this.searchInfo.visited == '-1' ? '' : this.searchInfo.visited,
           startTime: this.searchInfo.getStartTime ? new Date(this.searchInfo.getStartTime).getTime() : "",
           endTime: this.searchInfo.getEndTime ? new Date(this.searchInfo.getEndTime).getTime() : ""
         }
@@ -163,38 +187,14 @@
       color: #39f
     }
 
-    .-c-course-wrap {
-      display: inline-block;
-      .-c-course-item {
-        position: relative;
-        display: inline-block;
-        /*height: 70px;*/
-        overflow: hidden;
-
-        img {
-          width: 140px;
-          height: 70px;
-        }
-
-        .-i-text {
-          display: -webkit-box;
-          -webkit-box-orient: vertical;
-          /*-webkit-line-clamp: 1;*/
-          line-height: normal;
-        }
-
-        .-i-del {
-          position: absolute;
-          top: 0;
-          right: 0;
-          color: #ffff;
-          background-color: rgba(0, 0, 0, 0.4);
-          line-height: normal;
-          cursor: pointer;
-          padding: 4px;
-          border-radius: 4px;
-        }
-      }
+    .-search-select-text {
+      min-width: 70px;
+    }
+    .-search-selectOne {
+      width: 100%;
+      border: 1px solid #dcdee2;
+      border-radius: 4px;
+      margin-right: 20px;
     }
 
     .-p-b-flex {

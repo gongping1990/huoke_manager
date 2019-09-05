@@ -75,17 +75,23 @@
           },
           {
             title: '单独购价格',
-            key: 'num',
+            render: (h, params) => {
+              return h('div', `￥ ${params.row.payAmount / 100}`)
+            },
             align: 'center'
           },
           {
             title: '拼团价格',
-            key: 'num',
+            render: (h, params) => {
+              return h('div', `￥ ${params.row.payAmount / 100}`)
+            },
             align: 'center'
           },
           {
             title: '佣金比例',
-            key: 'num',
+            render: (h, params) => {
+              return h('div', `${params.row.payAmount}%`)
+            },
             align: 'center'
           },
           {
@@ -99,7 +105,7 @@
                     size: 'small'
                   },
                   style: {
-                    color: '#5444E4',
+                    color: '#1890FF',
                     marginRight: '5px'
                   },
                   on: {
@@ -114,7 +120,7 @@
                     size: 'small'
                   },
                   style: {
-                    color: '#5444E4',
+                    color: '#1890FF',
                     marginRight: '5px'
                   },
                   on: {

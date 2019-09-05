@@ -4,7 +4,7 @@
       <Row class="g-search">
         <Col :span="3" class="g-t-left">
           <div class="g-flex-a-j-center">
-            <div class="-search-select-text">提现状态：</div>
+            <div class="-search-select-text">提现状态</div>
             <Select v-model="searchInfo.status" @on-change="selectChange" class="-search-selectOne">
               <Option v-for="(item,index) in orderStatusList" :label="item.name" :value="item.id" :key="index"></Option>
             </Select>
@@ -31,7 +31,7 @@
 
       <Table class="-c-tab" :loading="isFetching" :columns="columns" :data="dataList"></Table>
 
-      <Page class="g-text-right" :total="total" size="small" show-elevator :page-size="tab.pageSize"
+      <Page class="g-t-center" :total="total" show-elevator :page-size="tab.pageSize"
             :current="tab.page" @on-change="currentChange"></Page>
     </Card>
 
@@ -39,14 +39,13 @@
       class="p-cashWithdrawal"
       v-model="isOpenModal"
       width="600"
-      title="确认打款">
-      <div>您确认已经将提现金额打款到加盟商账户了吗？</div>
-      <div>打款是在线下进行的，这里只对金额进行记录</div>
+      title="您确认已经将提现金额打款到加盟商账户了吗?">
       <Form ref="addInfo" :model="addInfo"  :label-width="100" class="ivu-form-item-required">
         <FormItem label="打款凭证截图">
           <upload-img v-model="addInfo.qrcode" :option="uploadOption"></upload-img>
         </FormItem>
       </Form>
+      <div class="p-cashWithdrawal-tip -c-tips">提示：打款是在线下进行的，这里只对金额进行记录</div>
       <div slot="footer" class="-p-v-flex">
         <Button @click="isOpenModal = false" ghost type="primary" style="width: 100px;">取消</Button>
         <div @click="submitInfo()" class="g-primary-btn ">确认</div>
@@ -80,10 +79,6 @@
           antistop: ''
         },
         selectInfo: '1',
-        orderStatus: {
-          '0': '未支付',
-          '10': '已支付'
-        },
         orderStatusList: [
           {
             name: '全部',
@@ -102,6 +97,11 @@
             id: '20'
           }
         ],
+        orderColor: {
+          '0': 'g-success-bg',
+          '1': 'g-error-bg',
+          '2': 'g-gary-bg'
+        },
         orderType: ['提现成功', '提现失败', '处理中'],
         dataList: [],
         dateOption: {
@@ -128,51 +128,45 @@
           },
           {
             title: '提现金额',
-            key: 'phone',
+            render: (h, params) => {
+              return h('div', `￥ ${params.row.couponAmount / 100}`)
+            },
             align: 'center'
           },
           {
             title: '提现申请时间',
             render: (h, params) => {
-              return h('div', dayjs(+params.row.gmtCreate).format("YYYY-MM-DD HH:mm:ss"))
+              return h('div', dayjs(+params.row.gmtCreate).format("YYYY-MM-DD HH:mm"))
             },
             align: 'center'
           },
           {
             title: '提现到账时间',
             render: (h, params) => {
-              return h('div', dayjs(+params.row.gmtCreate).format("YYYY-MM-DD HH:mm:ss"))
+              return h('div', dayjs(+params.row.gmtCreate).format("YYYY-MM-DD HH:mm"))
             },
             align: 'center'
           },
           {
             title: '提现状态',
             render: (h, params) => {
-              return h('div', this.orderType[params.row.orderPageSource-1])
+              return h('div', {
+                class: 'g-flex-a-j-c-center'
+              },[
+                h('div', {
+                  class: this.orderColor[params.row.orderPageSource-1],
+                  style: {
+                    display: 'inline-block',
+                    width: '6px',
+                    height: '6px',
+                    marginRight: '8px',
+                    borderRadius: '50%',
+                  }
+                }),
+                h('span', this.orderType[params.row.orderPageSource-1])
+              ])
             },
             align: 'center'
-          },
-          {
-            title: '操作',
-            align: 'center',
-            render: (h, params) => {
-              return h('div', [
-                h('Button', {
-                  props: {
-                    type: 'text',
-                    size: 'small'
-                  },
-                  style: {
-                    color: '#5444E4'
-                  },
-                  on: {
-                    click: () => {
-                      this.openModal(params.row)
-                    }
-                  }
-                }, '确认打款')
-              ])
-            }
           },
           {
             title: '打款凭证截图',
@@ -190,6 +184,28 @@
               return h('div', dayjs(+params.row.gmtCreate).format("YYYY-MM-DD HH:mm:ss"))
             },
             align: 'center'
+          },
+          {
+            title: '操作',
+            align: 'center',
+            render: (h, params) => {
+              return h('div', [
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: '#1890FF'
+                  },
+                  on: {
+                    click: () => {
+                      this.openModal(params.row)
+                    }
+                  }
+                }, '确认打款')
+              ])
+            }
           }
         ],
       };
@@ -264,6 +280,13 @@
 
 <style lang="less" scoped>
   .p-cashWithdrawal {
+
+    &-tip {
+      font-size: 16px;
+      font-weight: bold;
+      margin: 10px 0;
+    }
+
     .-title {
       color: #B3B5B8;
       font-size: 16px;
@@ -282,14 +305,14 @@
       min-width: 70px;
     }
     .-search-selectOne {
-      width: 100px;
+      width: 100%;
       border: 1px solid #dcdee2;
       border-radius: 4px;
       margin-right: 20px;
     }
 
     .-c-tab {
-      margin: 20px 0;
+      margin: 29px 0;
     }
 
     .date-time {
@@ -309,10 +332,6 @@
 
     .-c-tips {
       color: #39f
-    }
-
-    .-c-red{
-      color: rgb(218, 55, 75);
     }
 
     .-p-v-flex {

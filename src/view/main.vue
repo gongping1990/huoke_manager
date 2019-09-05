@@ -3,7 +3,7 @@
     <Sider class="left-sider" collapsible hide-trigger :width="256" :collapsed-width="64" :style="{overflow: 'auto'}">
       <side-menu class="hk_menu" :openName='openName'></side-menu>
     </Sider>
-    <Layout>
+    <Layout class="right-layout">
       <Header class="header-con">
         <header-bar></header-bar>
       </Header>
@@ -49,6 +49,12 @@
     }
   }
 </script>
+
+<style lang="less">
+  .ivu-card-body {
+    padding: 30px 20px;
+  }
+</style>
 <style scoped lang="less">
   .main {
     .logo-con {
@@ -62,8 +68,9 @@
       }
     }
     .header-con {
-      background-color: #F5F5F5;
+      background-color: #FFFFFF;
       padding: 0 20px;
+      margin-bottom: 30px;
       width: 100%;
     }
     .main-layout-con {
@@ -84,6 +91,7 @@
       padding-top: 0;
       height: ~"calc(100% - 80px)";
       overflow: auto;
+      background: #F0F2F5;
     }
     .left-sider {
       background-color: #fff;
@@ -93,6 +101,9 @@
         overflow-y: scroll;
         margin-right: -18px;
       }
+    }
+    .right-layout {
+      background: #F0F2F5;
     }
   }
 

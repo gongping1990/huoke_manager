@@ -93,6 +93,12 @@
   justify-items: center;
 }
 
+.g-flex-a-j-c-center{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .g-text-right {
   text-align: right;
 }
@@ -118,6 +124,18 @@
 }
 .g-error{
   color: rgba(218, 55, 75, 1)
+}
+.g-gary{
+  color: rgba(0,0,0,0.25)
+}
+.g-gary-bg{
+  background:rgba(0,0,0,0.25);
+}
+.g-success-bg{
+  background:rgba(82,196,26,1);
+}
+.g-error-bg{
+  background:rgba(245,34,45,1)
 }
 
 .g-width {

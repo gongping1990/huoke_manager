@@ -1,6 +1,6 @@
 <template>
   <div class="p-date g-flex-a-j-center" :class="{'p-date-left': dataInfo.row != '2'}">
-    <Col span="2" class="-search-select-text" v-if="dataInfo.name">{{dataInfo.name}}：</Col>
+    <Col span="2" class="-search-select-text" v-if="dataInfo.name">{{dataInfo.name}}</Col>
     <Col span="14" class="g-flex-a-j-center">
       <div>
         <Date-picker class="date-time"
