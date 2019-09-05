@@ -182,6 +182,11 @@ const composition = {
     return axios.post('/composition/reservat/audit',  qs.stringify(params))
   },
 
+ // 审核
+  visitReservRecord(params) {
+    return axios.post('/composition/reservat/visitReservRecord',  qs.stringify(params))
+  },
+
   // 订单
   tbzwOrderList(params) {
     return axios.get('/composition/order/orderList', {params: params})
