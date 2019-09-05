@@ -3,7 +3,7 @@
     <Card>
       <Table class="-c-tab" :loading="isFetching" :columns="columns" :data="dataList"></Table>
 
-      <Page class="-p-text-right" :total="total" size="small" show-elevator :page-size="tab.pageSize"
+      <Page class="g-t-center" :total="total" show-elevator :page-size="tab.pageSize"
             @on-change="currentChange"></Page>
     </Card>
 
@@ -17,7 +17,7 @@
       <Table class="-c-tab" :loading="isFetching" :columns="columnsModal" :data="detailList"
              v-if="openType ===1"></Table>
 
-      <Page class="-p-text-right" :total="totalDetail" size="small" show-elevator :page-size="tabDetail.pageSize"
+      <Page class="g-t-center" :total="totalDetail" show-elevator :page-size="tabDetail.pageSize"
             :current.sync="tabDetail.currentPage" v-if="openType === 1"
             @on-change="detailCurrentChange"></Page>
 

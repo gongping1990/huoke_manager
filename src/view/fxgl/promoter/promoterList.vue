@@ -22,7 +22,7 @@
 
       <Table class="-c-tab" :loading="isFetching" :columns="columns" :data="dataList"></Table>
 
-      <Page class="g-text-right" :total="total" size="small" show-elevator :page-size="tab.pageSize"
+      <Page class="g-t-center" :total="total" show-elevator :page-size="tab.pageSize"
             :current="tab.page" @on-change="currentChange"></Page>
     </Card>
 
@@ -34,7 +34,7 @@
       title="数据详情">
       <Table class="-c-tab" :loading="isFetching" :columns="columsType[openType]" :data="detailList"></Table>
 
-      <Page class="g-text-right" :total="totalDetail" size="small" show-elevator :page-size="tabDetail.pageSize"
+      <Page class="g-t-center" :total="totalDetail"  show-elevator :page-size="tabDetail.pageSize"
             :current.sync="tabDetail.currentPage"
             @on-change="detailCurrentChange"></Page>
       <div slot="footer" class="p-promoter-btn">
@@ -115,7 +115,7 @@
           {
             title: '注册时间',
             render: (h, params) => {
-              return h('div', dayjs(+params.row.gmtCreate).format("YYYY-MM-DD HH:mm:ss"))
+              return h('div', dayjs(+params.row.gmtCreate).format("YYYY-MM-DD HH:mm"))
             },
             align: 'center'
           },
@@ -131,7 +131,7 @@
                     size: 'small'
                   },
                   style: {
-                    color: '#5444E4',
+                    color: '#1890FF',
                     marginRight: '5px'
                   },
                   on: {
@@ -146,7 +146,7 @@
                     size: 'small'
                   },
                   style: {
-                    color: '#5444E4',
+                    color: '#1890FF',
                     marginRight: '5px'
                   },
                   on: {
@@ -161,7 +161,7 @@
                     size: 'small'
                   },
                   style: {
-                    color: '#5444E4',
+                    color: '#1890FF',
                     marginRight: '5px'
                   },
                   on: {
@@ -176,7 +176,7 @@
                     size: 'small'
                   },
                   style: {
-                    color: '#5444E4',
+                    color: '#1890FF',
                     marginRight: '5px'
                   },
                   on: {
