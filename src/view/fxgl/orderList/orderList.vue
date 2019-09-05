@@ -108,7 +108,8 @@
         selectInfo: '0',
         orderStatus: {
           '0': '未支付',
-          '10': '已支付'
+          '10': '已支付',
+          '20': '已退款'
         },
         payStatusList: [
           {
@@ -122,6 +123,10 @@
           {
             name: '已支付',
             id: '10'
+          },
+          {
+            name: '已退款',
+            id: '20'
           }
         ],
         orderStatusList: [
@@ -247,7 +252,7 @@
           },
           {
             title: '操作',
-            align: 'center',
+            width:200,
             render: (h, params) => {
               return h('div', [
                 h('Button', {
@@ -263,7 +268,27 @@
                       this.openModal(params.row)
                     }
                   }
-                }, '订单详情')
+                }, '订单详情'),
+                h('Poptip', {
+                  props: {
+                    confirm: true,
+                    title: '您确认要对此订单进行退款操作吗？（只能对购买后7天内的订单进行退款操作）',
+                    'ok-text': "确认退款",
+                    'cancel-text': "取消"
+                  },
+                  style: {
+                    cursor: 'pointer',
+                    color: '#5444E4',
+                    marginRight: '5px'
+                  },
+                  on: {
+                    'on-ok': () => {
+                      this.changeAudit(params.row, 1)
+                    },
+                    'on-cancel': () => {
+                    }
+                  }
+                }, '退款')
               ])
             }
           }
@@ -282,6 +307,9 @@
       this.getList()
     },
     methods: {
+      changeAudit() {
+
+      },
       changeDate (data) {
         this.getStartTime = data.startTime
         this.getEndTime = data.endTime

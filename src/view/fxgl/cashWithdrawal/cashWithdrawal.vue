@@ -34,6 +34,24 @@
       <Page class="g-text-right" :total="total" size="small" show-elevator :page-size="tab.pageSize"
             :current="tab.page" @on-change="currentChange"></Page>
     </Card>
+
+    <Modal
+      class="p-cashWithdrawal"
+      v-model="isOpenModal"
+      width="600"
+      title="确认打款">
+      <div>您确认已经将提现金额打款到加盟商账户了吗？</div>
+      <div>打款是在线下进行的，这里只对金额进行记录</div>
+      <Form ref="addInfo" :model="addInfo"  :label-width="100" class="ivu-form-item-required">
+        <FormItem label="打款凭证截图">
+          <upload-img v-model="addInfo.qrcode" :option="uploadOption"></upload-img>
+        </FormItem>
+      </Form>
+      <div slot="footer" class="-p-v-flex">
+        <Button @click="isOpenModal = false" ghost type="primary" style="width: 100px;">取消</Button>
+        <div @click="submitInfo()" class="g-primary-btn ">确认</div>
+      </div>
+    </Modal>
   </div>
 </template>
 
@@ -41,12 +59,17 @@
   import dayjs from 'dayjs'
   import {getBaseUrl} from "@/libs/index";
   import DatePickerTemplate from "@/components/datePickerTemplate";
+  import UploadImg from "../../../components/uploadImg";
 
   export default {
-    name: 'fxgl_order',
-    components: {DatePickerTemplate},
+    name: 'fxgl_CashWithdrawal',
+    components: {UploadImg, DatePickerTemplate},
     data() {
       return {
+        uploadOption: {
+          tipText: '只能上传jpg/png文件，且不超过500kb',
+          size: 500
+        },
         tab: {
           page: 1,
           pageSize: 10
@@ -88,8 +111,10 @@
         },
         total: 0,
         isFetching: false,
+        isOpenModal: false,
         getStartTime: '',
         getEndTime: '',
+        addInfo: {},
         columns: [
           {
             title: '用户昵称',
@@ -126,6 +151,45 @@
               return h('div', this.orderType[params.row.orderPageSource-1])
             },
             align: 'center'
+          },
+          {
+            title: '操作',
+            align: 'center',
+            render: (h, params) => {
+              return h('div', [
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: '#5444E4'
+                  },
+                  on: {
+                    click: () => {
+                      this.openModal(params.row)
+                    }
+                  }
+                }, '确认打款')
+              ])
+            }
+          },
+          {
+            title: '打款凭证截图',
+            key: 'phone',
+            align: 'center'
+          },
+          {
+            title: '操作人',
+            key: 'phone',
+            align: 'center'
+          },
+          {
+            title: '操作时间',
+            render: (h, params) => {
+              return h('div', dayjs(+params.row.gmtCreate).format("YYYY-MM-DD HH:mm:ss"))
+            },
+            align: 'center'
           }
         ],
       };
@@ -142,6 +206,9 @@
       this.getList()
     },
     methods: {
+      openModal () {
+        this.isOpenModal = true
+      },
       changeDate (data) {
         this.getStartTime = data.startTime
         this.getEndTime = data.endTime
@@ -187,6 +254,9 @@
           .finally(() => {
             this.isFetching = false
           })
+      },
+      submitInfo () {
+
       }
     }
   };
@@ -243,6 +313,12 @@
 
     .-c-red{
       color: rgb(218, 55, 75);
+    }
+
+    .-p-v-flex {
+      display: flex;
+      padding: 0 20px;
+      justify-content: space-between;
     }
 
   }

@@ -65,6 +65,19 @@ export const fxglRouter =[
         component: () => import('@/view/fxgl/distributionMessage/distribution')
       },
       {
+        path: '/fxgl_franchisorAudit',
+        name: 'fxgl_franchisorAudit',
+        meta: [
+          {
+            name: '分销管理'
+          },
+          {
+            name: '加盟商审核'
+          }
+        ],
+        component: () => import('@/view/fxgl/distributionMessage/distribution')
+      },
+      {
         path: '/fxgl_promoter',
         name: 'fxgl_promoter',
         meta: [
