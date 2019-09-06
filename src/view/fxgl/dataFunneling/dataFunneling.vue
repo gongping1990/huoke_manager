@@ -9,6 +9,36 @@
         </div>
         <div class="g-flex-a-j-center">
           <div class="-search-select-text">日期查询：</div>
+          <Select v-model="selectType" class="-search-selectOne" @on-change="changeTime">
+            <Option label='全部' :value="1"></Option>
+            <Option label='自定义' :value="2"></Option>
+          </Select>
+          <date-picker-template v-if="selectType===2" :dataInfo="dateOption"
+                                @changeDate="changeDate"></date-picker-template>
+        </div>
+      </div>
+
+      <div class="-p-d-echart">
+        <div class="-p-c-tip-wrap">
+          <div class="-item" :style="{'color': item.color}" v-for="(item, index) of optionSeriesLine" :key="item.value">
+            <div class="-item-div">
+              <div>{{item.name}}</div>
+              <div>{{item.text}}</div>
+            </div>
+          </div>
+        </div>
+        <div ref="echart" class="-p-c-content"></div>
+      </div>
+    </Card>
+
+    <Card class="p-dataFunneling-top">
+      <div class="p-dataFunneling-title">
+        <div class="-left">
+          <img src="../../../assets/images/icon/icon3.png"/>
+          <span>访问支付转化</span>
+        </div>
+        <div class="g-flex-a-j-center">
+          <div class="-search-select-text">日期查询：</div>
           <Select v-model="selectTypeTwo" class="-search-selectOne" @on-change="changeTimeTwo">
             <Option label='全部' :value="1"></Option>
             <Option label='自定义' :value="2"></Option>
@@ -18,13 +48,46 @@
         </div>
       </div>
 
-      <div class="-c-tab -p-d-echart">
-        <div ref="echart" class="-p-c-content"></div>
+      <div class="-p-d-echart">
         <div class="-p-c-tip-wrap">
-          <div class="-item" :style="{'color': item.color}" v-for="item of optionSeriesLine" :key="item.value">
-            {{item.name}}
+          <div class="-item -item-two" :style="{'color': item.color}" v-for="(item, index) of optionSeriesLineTwo" :key="item.value">
+            <div class="-item-div">
+              <div>{{item.name}}</div>
+              <div>{{item.text}}</div>
+            </div>
           </div>
         </div>
+        <div ref="echartTwo" class="-p-c-content"></div>
+      </div>
+    </Card>
+
+    <Card class="p-dataFunneling-top">
+      <div class="p-dataFunneling-title">
+        <div class="-left">
+          <img src="../../../assets/images/icon/icon4.png"/>
+          <span>代理人活跃度统计</span>
+        </div>
+        <div class="g-flex-a-j-center">
+          <div class="-search-select-text">日期查询：</div>
+          <Select v-model="selectTypeTwo" class="-search-selectOne" @on-change="changeTimeTwo">
+            <Option label='全部' :value="1"></Option>
+            <Option label='自定义' :value="2"></Option>
+          </Select>
+          <date-picker-template v-if="selectTypeTwo===2" :dataInfo="dateOption"
+                                @changeDate="changeDateTwo"></date-picker-template>
+        </div>
+      </div>
+
+      <div class="-p-d-echart">
+        <div class="-p-c-tip-wrap">
+          <div class="-item" :style="{'color': item.color}" v-for="(item, index) of optionSeriesLineThree" :key="item.value">
+            <div class="-item-div">
+              <div>{{item.name}}</div>
+              <div>{{item.text}}</div>
+            </div>
+          </div>
+        </div>
+        <div ref="echartThree" class="-p-c-content"></div>
       </div>
     </Card>
 
@@ -42,7 +105,6 @@
   import "echarts/lib/component/toolbox";
   import "echarts/lib/component/markPoint";
   import "echarts/lib/component/tooltip";
-  import "echarts/lib/component/dataZoom";
   import DatePickerTemplate from "../../../components/datePickerTemplate";
 
   export default {
@@ -50,6 +112,7 @@
     components: {DatePickerTemplate},
     data() {
       return {
+        selectType: 1,
         selectTypeTwo: 1,
         selectTypeThree: 1,
         dateOptionOne: {
@@ -68,8 +131,10 @@
         selectTime: new Date(new Date().getTime() - 24 * 60 * 60 * 1000),
         getStartTimeThree: '',
         getStartTimeTwo: '',
+        getStartTime: '',
         getEndTimeThree: '',
         getEndTimeTwo: '',
+        getEndTime: '',
         titleList: []
       }
     },
@@ -98,22 +163,102 @@
           {
             name: '代理人注册人数',
             value: 160,
-            color: '#FF6F43'
+            color: '#FF6F43',
+            text: ''
           },
           {
             name: '完成1阶人数',
-            value: 140,
-            color: '#FFAB40'
+            value: 110,
+            color: '#FFAB40',
+            text: `注册代理1阶任务完成率${(110 / 160).toFixed(2)*100}%`
           },
           {
             name: '完成2阶人数',
-            value: 120,
-            color: '#FFD54F'
+            value: 80,
+            color: '#FFD54F',
+            text: `注册代理2阶任务完成率${(80 / 160).toFixed(2)*100}%`
           },
           {
             name: '销售五单',
-            value: 30,
-            color: '#80CBC4'
+            value: 40,
+            color: '#80CBC4',
+            text: `代理人成单率${(40 / 160).toFixed(2)*100}%`
+          }
+        ]
+        return optionSeriesLine
+      },
+      optionSeriesLineTwo() {
+        let dataList = {
+          orderUser: [],
+          payedMoney: [],
+          payedUser: [],
+          pv: []
+        }
+        for (let item of this.dataInfo) {
+          dataList.orderUser.push(item.orderUser)
+          dataList.payedMoney.push(item.payedMoney)
+          dataList.payedUser.push(item.payedUser)
+          dataList.pv.push(item.pv)
+        }
+        let optionSeriesLine = [
+          {
+            name: '访问人数',
+            value: 160,
+            color: '#FF6F43',
+            text: ''
+          },
+          {
+            name: '下单人数',
+            value: 110,
+            color: '#FFAB40',
+            text: `访问下单转化率${(110 / 160).toFixed(2)*100}% / 下单支付转化率${(80 / 110).toFixed(2)*100}%`
+          },
+          {
+            name: '支付人数',
+            value: 80,
+            color: '#FFD54F',
+            text: `访问支付转化率${(80 / 160).toFixed(2)*100}%`
+          }
+        ]
+        return optionSeriesLine
+      },
+      optionSeriesLineThree() {
+        let dataList = {
+          orderUser: [],
+          payedMoney: [],
+          payedUser: [],
+          pv: []
+        }
+        for (let item of this.dataInfo) {
+          dataList.orderUser.push(item.orderUser)
+          dataList.payedMoney.push(item.payedMoney)
+          dataList.payedUser.push(item.payedUser)
+          dataList.pv.push(item.pv)
+        }
+        let optionSeriesLine = [
+          {
+            name: '进入系统的代理人人数',
+            value: 160,
+            color: '#FF6F43',
+            text: ''
+          },
+          {
+            name: '代理人分享1次人数',
+            value: 110,
+            color: '#FFAB40',
+            text: `代理人分享1次比例${(110 / 160).toFixed(2)*100}%`
+          },
+          {
+            name: '代理人分享2次人数',
+            value: 80,
+            color: '#FFD54F',
+            text: `代理人分享2次比例${(80 / 160).toFixed(2)*100}%`
+          },
+          {
+            name: '代理人分享3次人数',
+            value: 40,
+            color: '#80CBC4',
+            text: `代理人分享3次比例${(40 / 160).toFixed(2)*100}%`
           }
         ]
         return optionSeriesLine
@@ -123,6 +268,11 @@
       this.getChannelList()
     },
     methods: {
+      changeTime() {
+        if (this.selectType == 1) {
+          this.getTotalInfo()
+        }
+      },
       changeTimeTwo() {
         if (this.selectTypeTwo == 1) {
           this.getTotalInfo()
@@ -135,6 +285,11 @@
       },
       changeChannel() {
         this.getList()
+      },
+      changeDate(data) {
+        this.getStartTime = data.startTime
+        this.getEndTime = data.endTime
+        this.getTotalInfo()
       },
       changeDateTwo(data) {
         this.getStartTimeTwo = data.startTime
@@ -172,15 +327,10 @@
         // 绘制图表
         myChart.setOption({
           tooltip: {
-            trigger: 'item',
-            axisPointer: {
-              type: 'funnel'
-            },
-            textStyle: {
-              align: 'left'
-            }
+            trigger: 'item'
           },
           legend: {
+            selectedMode: false,
             data: [
               {
                 name: '代理人注册人数'
@@ -201,18 +351,118 @@
             minSize: '0%',
             maxSize: '100%',
             gap: 3,
-            label: {
-              show: true,
-              position: 'center'
-            },
-            labelLine: {
-              show: true,
-              length: 20,
-              lineStyle: {
-                shadowOffsetX: 10,
+            emphasis: {
+              label: {
+                fontSize: 20
               }
             },
+            label: {
+              show: true,
+              position: 'center',
+              formatter: '{c}人'
+            },
             data: this.optionSeriesLine
+          },
+          color: ['#FF6F43', '#FFAB40', '#FFD54F', '#80CBC4']
+        })
+
+        window.addEventListener("resize", () => {
+          myChart.resize();
+        });
+        myChart.hideLoading()
+      },
+      drawLineTwo() {
+        let self = this;
+        let myChart = echarts.init(this.$refs.echartTwo);
+        myChart.clear();
+        myChart.resize();
+        // 绘制图表
+        myChart.setOption({
+          tooltip: {
+            trigger: 'item'
+          },
+          legend: {
+            selectedMode: false,
+            data: [
+              {
+                name: '访问人数'
+              },
+              {
+                name: '下单人数'
+              },
+              {
+                name: '支付人数'
+              }
+            ]
+          },
+          series: {
+            type: 'funnel',
+            minSize: '0%',
+            maxSize: '100%',
+            gap: 3,
+            emphasis: {
+              label: {
+                fontSize: 20
+              }
+            },
+            label: {
+              show: true,
+              position: 'center',
+              formatter: '{c}人'
+            },
+            data: this.optionSeriesLineTwo
+          },
+          color: ['#FF6F43', '#FFAB40', '#FFD54F', '#80CBC4']
+        })
+
+        window.addEventListener("resize", () => {
+          myChart.resize();
+        });
+        myChart.hideLoading()
+      },
+      drawLineThree() {
+        let self = this;
+        let myChart = echarts.init(this.$refs.echartThree);
+        myChart.clear();
+        myChart.resize();
+        // 绘制图表
+        myChart.setOption({
+          tooltip: {
+            trigger: 'item'
+          },
+          legend: {
+            selectedMode: false,
+            data: [
+              {
+                name: '进入系统的代理人人数'
+              },
+              {
+                name: '代理人分享1次人数'
+              },
+              {
+                name: '代理人分享2次人数'
+              },
+              {
+                name: '代理人分享3次人数'
+              }
+            ]
+          },
+          series: {
+            type: 'funnel',
+            minSize: '0%',
+            maxSize: '100%',
+            gap: 3,
+            emphasis: {
+              label: {
+                fontSize: 20
+              }
+            },
+            label: {
+              show: true,
+              position: 'center',
+              formatter: '{c}人'
+            },
+            data: this.optionSeriesLineThree
           },
           color: ['#FF6F43', '#FFAB40', '#FFD54F', '#80CBC4']
         })
@@ -241,56 +491,12 @@
             response => {
               this.dataInfo = response.data.resultData;
               this.drawLine()
+              this.drawLineTwo()
+              this.drawLineThree()
             })
           .finally(() => {
             this.isFetching = false
           })
-      },
-      initData() {
-        this.titleList = [
-          {
-            name: '累计页面访问量',
-            num: this.totalInfo.pv,
-            todayName: '今日页面访问量',
-            todayNum: '100'
-          },
-          {
-            name: '累计访问用户',
-            num: this.totalInfo.uv,
-            todayName: '今日访问用户',
-            todayNum: '100'
-          },
-          {
-            name: '累计下单用户',
-            num: this.totalInfo.orderUser,
-            todayName: '今日下单用户',
-            todayNum: '100'
-          },
-          {
-            name: '累计付费用户',
-            num: this.totalInfo.orderUser,
-            todayName: '今日付费用户',
-            todayNum: '100'
-          },
-          {
-            name: '累计下单数',
-            num: this.totalInfo.orderUser,
-            todayName: '今日下单数',
-            todayNum: '100'
-          },
-          {
-            name: '累计支付成功订单数',
-            num: this.totalInfo.orderUser,
-            todayName: '今日支付成功订单数',
-            todayNum: '100'
-          },
-          {
-            name: '累计付费金额',
-            num: this.totalInfo.orderUser,
-            todayName: '今日付费金额',
-            todayNum: '100'
-          }
-        ]
       }
     }
   }
@@ -377,8 +583,9 @@
       }
     }
     .-p-d-echart {
+      position: relative;
       display: flex;
-      margin-top: 72px;
+      margin-top: 42px;
       width: 100%;
       .-p-c-content {
         margin: 0 auto;
@@ -386,19 +593,25 @@
         height: 331px;
       }
       .-p-c-tip-wrap {
-        padding-top: 50px;
-        transform: translateX(-200%);
+        position: absolute;
+        left: 70%;
+        padding-top: 60px;
         text-align: left;
 
         .-item {
-          line-height: 60px;
+          display: flex;
+          align-items: center;
+          height: 58px;
 
-          &:before{
+          &:before {
             content: '---';
-            width: 100px;
+            margin-right: 10px;
           }
         }
 
+        .-item-two {
+          height: 76px;
+        }
       }
     }
 

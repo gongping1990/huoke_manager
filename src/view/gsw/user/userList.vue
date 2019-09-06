@@ -175,7 +175,7 @@
             }
           },
           {
-            title: '是否付费',
+            title: '新课程是否付费',
             render: (h,params)=>{
               return h('div',params.row.payed ? '是' : '否')
             }
