@@ -381,7 +381,7 @@
       getList() {
         this.isFetching = true
 
-        this.$api.gswInternalChannel.listChannel({
+        this.$api.tbzwInternalChannel.listChannel({
           current: this.tab.page,
           size: this.tab.pageSize
         })
@@ -395,7 +395,7 @@
           })
       },
       getTypeList() {
-        this.$api.gswInternalChannel.categoryList({
+        this.$api.tbzwInternalChannel.categoryList({
           current: 1,
           size: 1000,
         })
@@ -423,7 +423,7 @@
           params.date = dayjs(this.selectTime).format('YYYYMMDD')
         }
 
-        let promiseDate = this.modalDetailType === '1' ? this.$api.gswInternalChannel.getInternalChannelData(params) : this.$api.gswInternalChannel.getInternalChannelDataByDate(params)
+        let promiseDate = this.modalDetailType === '1' ? this.$api.tbzwInternalChannel.getInternalChannelData(params) : this.$api.tbzwInternalChannel.getInternalChannelDataByDate(params)
 
         promiseDate.then(response => {
           this.dataDetailList = response.data.resultData.records;
@@ -436,7 +436,7 @@
       submitInfo(name) {
         this.$refs[name].validate((valid) => {
           if (valid) {
-            this.$api.gswInternalChannel.saveChannel(this.addInfo)
+            this.$api.tbzwInternalChannel.saveChannel(this.addInfo)
               .then(
                 response => {
                   if (response.data.code == '200') {

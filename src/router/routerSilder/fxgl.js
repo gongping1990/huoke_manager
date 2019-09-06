@@ -50,7 +50,7 @@ export const fxglRouter =[
           {name: '数据统计'},
           {name: '数据漏斗'}
         ],
-        component: () => import('@/view/tbzw/landingPage/landingPage')
+        component: () => import('@/view/fxgl/dataFunneling/dataFunneling')
       }
     ]
   },

@@ -129,7 +129,7 @@
       //分页查询
       getList() {
         this.isFetching = true
-        this.$api.gswInternalChannel.categoryList({
+        this.$api.tbzwInternalChannel.categoryList({
           current: this.tab.page,
           size: this.tab.pageSize,
         })
@@ -147,7 +147,7 @@
           title: '提示',
           content: '确认要删除吗？',
           onOk: () => {
-            this.$api.gswInternalChannel.deleteCategory({
+            this.$api.tbzwInternalChannel.deleteCategory({
               id: param.id
             }).then(
               response => {
@@ -166,7 +166,7 @@
         this.$refs[name].validate((valid) => {
           if (valid) {
             this.isSending = true
-          this.$api.gswInternalChannel.saveCategory(this.addInfo)
+          this.$api.tbzwInternalChannel.saveCategory(this.addInfo)
               .then(
                 response => {
                   if (response.data.code == '200') {
