@@ -2,15 +2,15 @@
   <div class="p-salesData">
     <Row class="g-search">
       <Col :span="3" class="g-flex-a-j-center -s-radio">
-        <div class="-search-select-text-two">课程名称：</div>
+        <div class="-search-select-text-two">课程名称</div>
         <Select v-model="searchInfo.name" @on-change="changeChannel" class="-search-selectOne">
           <Option label="全部" value="-1"></Option>
           <Option label="小语轻作文" value="7"></Option>
           <Option label="每日一首古诗词" value="8"></Option>
         </Select>
       </Col>
-      <Col :span="3" class="g-flex-a-j-center -s-radio">
-        <div class="-search-select-text-two">推广方式：</div>
+      <Col :span="3" class="g-flex-a-j-center -s-radio -margin-left">
+        <div class="-search-select-text-two">推广方式</div>
         <Select v-model="searchInfo.mode" @on-change="changeChannel" class="-search-selectOne">
           <Option label="全部" value="-1"></Option>
           <Option label="直接邀请" value="1"></Option>
@@ -20,52 +20,54 @@
       </Col>
     </Row>
 
-    <div class="p-salesData-title">累计数据</div>
-
-    <Row class="g-search">
-      <Col :span="4" class="g-t-left">
+    <Card class="p-salesData-top">
+      <div class="p-salesData-title">
+        <div class="-left">
+          <img src="../../../assets/images/icon/icon2.png"/>
+          <span>销售数据</span>
+        </div>
         <div class="g-flex-a-j-center">
           <div class="-search-select-text">日期查询：</div>
           <Select v-model="selectTypeTwo" class="-search-selectOne" @on-change="changeTimeTwo">
             <Option label='全部' :value="1"></Option>
             <Option label='自定义' :value="2"></Option>
           </Select>
+          <date-picker-template v-if="selectTypeTwo===2" :dataInfo="dateOption"
+                                @changeDate="changeDateTwo"></date-picker-template>
         </div>
-      </Col>
-      <Col :span="8" class="g-flex-a-j-center">
-        <date-picker-template v-if="selectTypeTwo===2" :dataInfo="dateOption"
-                              @changeDate="changeDateTwo"></date-picker-template>
-      </Col>
-    </Row>
+      </div>
+      <Row class="p-salesData-flex" :gutter="10" style="margin-top: 20px">
+        <Col v-for="(item,index) of titleList" :key="index" class="-p-d-col">
+          <div class="g-t-left -card-wrap">
+            <div class="-col-name">{{item.name}}</div>
+            <div class="-col-down">
+              {{item.num}}
+            </div>
+            <div class="-col-today">
+              <span class="-col-today-width">{{item.todayName}}</span>
+              <span class="-col-today-color">{{item.todayNum}}</span>
+            </div>
+          </div>
+        </Col>
+      </Row>
+    </Card>
 
-    <Row class="p-salesData-flex" :gutter="10" style="margin-top: 20px">
-      <Col v-for="(item,index) of titleList" :key="index" class="-p-d-col">
-        <Card class="g-t-left">
-          <div class="-col-name">{{item.name}}</div>
-          <div class="-col-num">{{item.num}}</div>
-        </Card>
-      </Col>
-    </Row>
-
-    <div class="p-salesData-title">销售趋势</div>
-
-    <Row class="g-search">
-      <Col :span="4" class="g-t-left">
+    <Card class="p-salesData-top">
+      <div class="p-salesData-title -three">
+        <div class="-left">
+          <img src="../../../assets/images/icon/icon7.png"/>
+          <span>趋势数据</span>
+        </div>
         <div class="g-flex-a-j-center">
           <div class="-search-select-text">日期查询：</div>
           <Select v-model="selectTypeThree" class="-search-selectOne" @on-change="changeTimeThree">
             <Option label='最近一月' :value="1"></Option>
             <Option label='自定义' :value="2"></Option>
           </Select>
+          <date-picker-template v-if="selectTypeThree===2" :dataInfo="dateOption"
+                                @changeDate="changeDateThree"></date-picker-template>
         </div>
-      </Col>
-      <Col :span="8" class="g-flex-a-j-center">
-        <date-picker-template v-if="selectTypeThree===2" :dataInfo="dateOption"
-                              @changeDate="changeDateThree"></date-picker-template>
-      </Col>
-    </Row>
-
-    <Card class="-c-tab">
+      </div>
       <div class="-c-tab -p-d-echart">
         <div ref="echart" class="-p-c-content"></div>
       </div>
@@ -341,23 +343,45 @@
         this.titleList = [
           {
             name: '累计页面访问量',
-            num: this.totalInfo.pv
+            num: this.totalInfo.pv,
+            todayName: '今日页面访问量',
+            todayNum: '100'
           },
           {
             name: '累计访问用户',
-            num: this.totalInfo.uv
+            num: this.totalInfo.uv,
+            todayName: '今日访问用户',
+            todayNum: '100'
           },
           {
             name: '累计下单用户',
-            num: this.totalInfo.orderUser
+            num: this.totalInfo.orderUser,
+            todayName: '今日下单用户',
+            todayNum: '100'
           },
           {
             name: '累计付费用户',
-            num: this.totalInfo.orderUser
+            num: this.totalInfo.orderUser,
+            todayName: '今日付费用户',
+            todayNum: '100'
+          },
+          {
+            name: '累计下单数',
+            num: this.totalInfo.orderUser,
+            todayName: '今日下单数',
+            todayNum: '100'
+          },
+          {
+            name: '累计支付成功订单数',
+            num: this.totalInfo.orderUser,
+            todayName: '今日支付成功订单数',
+            todayNum: '100'
           },
           {
             name: '累计付费金额',
-            num: this.totalInfo.orderUser
+            num: this.totalInfo.orderUser,
+            todayName: '今日付费金额',
+            todayNum: '100'
           }
         ]
       }
@@ -367,30 +391,112 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="less">
+
   .p-salesData {
 
+    &-top {
+      margin-top: 30px;
+
+      .-three {
+        padding-bottom: 28px;
+        border-bottom: 1px solid rgba(232,232,232,1);
+      }
+    }
+
     &-title {
-      font-size: 20px;
-      font-weight: bold;
-      text-align: left;
-      margin: 10px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .-left {
+        display: flex;
+        align-items: center;
+        font-size:18px;
+        font-weight:400;
+        color:rgba(23,34,62,1);
+        line-height:25px;
+
+        img {
+          width:28px;
+          height:28px;
+          margin-right: 10px;
+        }
+      }
     }
 
     &-flex {
       display: flex;
       flex-flow: wrap;
+
+      .-card-wrap {
+        background:rgba(255,255,255,1);
+        border-radius:4px;
+        border:1px solid rgba(232,232,232,1);
+
+        .-col-name {
+          padding: 18px 0 18px 15px ;
+          min-width: 100px;
+          border-bottom: 1px solid #E9EAEC;
+          font-size:16px;
+          font-weight:500;
+          color:rgba(23,34,62,1);
+        }
+
+        .-col-down {
+          margin: 20px 15px 0;
+          padding-bottom: 12px;
+          border-bottom: 1px solid #E9EAEC;
+          font-weight: bold;
+          color:rgba(128,134,149,1);
+          font-size:36px;
+        }
+
+        .-col-today {
+          display: flex;
+          justify-content: space-between;
+          padding: 15px;
+          font-size:15px;
+          font-weight:400;
+          color:rgba(81,89,110,1);
+          line-height:21px;
+
+          &-width {
+            max-width: 60%;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+          }
+
+          &-color {
+            font-size:18px;
+            font-weight:600;
+            color:rgba(255,156,105,1);
+            line-height:25px;
+          }
+        }
+      }
+
+      .-card-wrap-two {
+        .-col-down {
+          margin: 20px 0 0 15px;
+          padding-bottom: 20px;
+          border: none;
+        }
+      }
     }
+
     .-search-select-text {
       min-width: 70px;
     }
     .-search-selectOne {
-      width: 100px;
+      width: 150px;
       border: 1px solid #dcdee2;
       border-radius: 4px;
-      margin-right: 20px;
       text-align: left;
     }
-
+    .-margin-left {
+      margin-left: 30px;
+    }
     .date-time {
       width: 20%;
       border: 1px solid #dcdee2;
@@ -402,26 +508,20 @@
       margin: 20px 0;
     }
     .-search-select-text-two {
-      min-width: 80px;
       text-align: left;
+      margin-right: 20px;
+      font-size:16px;
+      font-weight:400;
+      color:rgba(23,34,62,1);
+      line-height:22px;
     }
     .-s-radio {
       min-width: 240px;
     }
 
     .-p-d-col {
-      width:20%;
+      width: 20%;
       margin-bottom: 20px;
-
-      .-col-name {
-        min-width: 100px;
-        height: 42px;
-      }
-
-      .-col-num {
-        font-size: 25px;
-        font-weight: bold;
-      }
 
       .-col-flex {
         display: flex;
@@ -431,8 +531,6 @@
       .-col-ratio {
         font-size: 13px;
       }
-
-
     }
     .-p-d-echart {
       width: 100%;
@@ -441,21 +539,6 @@
     .-p-c-content {
       width: 100%;
       height: 450px;
-      /*background-color: red;*/
-      /*overflow: hidden;*/
-    }
-
-
-    .-p-d-red {
-      color: #fe4758
-    }
-
-    .-p-d-green {
-      color: #21c45a;
-    }
-
-    .-p-d-gray {
-      color: #B3B5B8;
     }
   }
 </style>

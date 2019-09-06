@@ -2,7 +2,7 @@
   <div class="p-franchisorAudit">
     <Card>
       <Row class="g-search">
-        <Row class="g-t-left g-tab">
+        <Row class="g-t-left">
           <Radio-group v-model="radioType" type="button" @on-change="getList(1)">
             <Radio :label=0>待审核</Radio>
             <Radio :label=1>已通过</Radio>
@@ -10,7 +10,7 @@
           </Radio-group>
         </Row>
 
-        <Row class="g-t-left g-tab">
+        <Row class="g-t-left" style="margin-top: 30px">
           <Col :span="5">
             <div class="-search">
               <Select v-model="selectInfo" class="-search-select">
@@ -23,14 +23,13 @@
           </Col>
           <Col :span="16" class="g-flex-a-j-center">
             <date-picker-template :dataInfo="dateOption" @changeDate="changeDate"></date-picker-template>
-
           </Col>
         </Row>
       </Row>
 
-      <Table :loading="isFetching" :columns="radioType === 0 ? columns : columnsTwo" :data="dataList"></Table>
+      <Table class="-c-tab" :loading="isFetching" :columns="radioType === 0 ? columns : columnsTwo" :data="dataList"></Table>
 
-      <Page class="-p-text-right" :total="total" size="small" show-elevator :page-size="tab.pageSize"
+      <Page class="g-t-center" :total="total" show-elevator :page-size="tab.pageSize"
             :current.sync="tab.currentPage"
             @on-change="currentChange"></Page>
 
@@ -91,7 +90,7 @@
                   },
                   style: {
                     cursor: 'pointer',
-                    color: '#5444E4',
+                    color: '#1890FF',
                     marginRight: '5px'
                   },
                   on: {
@@ -141,7 +140,7 @@
                   style: {
                     display: this.radioType === 2 ? 'none' : 'inline-block',
                     cursor: 'pointer',
-                    color: '#5444E4',
+                    color: '#1890FF',
                     marginRight: '5px'
                   },
                   on: {
@@ -305,7 +304,7 @@
     }
 
     .-c-tab {
-      margin: 20px 0;
+      margin: 29px 0;
     }
 
     .date-time {

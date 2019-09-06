@@ -9,15 +9,6 @@
           <Option label="每日一首古诗词" value="8"></Option>
         </Select>
       </Col>
-      <Col :span="3" class="g-flex-a-j-center -s-radio -margin-left">
-        <div class="-search-select-text-two">推广方式</div>
-        <Select v-model="searchInfo.mode" @on-change="changeChannel" class="-search-selectOne">
-          <Option label="全部" value="-1"></Option>
-          <Option label="直接邀请" value="1"></Option>
-          <Option label="开团邀请" value="2"></Option>
-          <Option label="海报邀请" value="3"></Option>
-        </Select>
-      </Col>
     </Row>
 
 
@@ -25,7 +16,7 @@
       <div class="p-extensionData-title">
         <div class="-left">
           <img src="../../../assets/images/icon/icon1.png"/>
-          <span>推广数据</span>
+          <span>加盟商数据</span>
         </div>
         <div class="g-flex-a-j-center">
           <div class="-search-select-text">日期查询：</div>
@@ -58,7 +49,7 @@
       <div class="p-extensionData-title -three">
         <div class="-left">
           <img src="../../../assets/images/icon/icon7.png"/>
-          <span>推广趋势</span>
+          <span>趋势数据</span>
         </div>
         <div class="g-flex-a-j-center">
           <div class="-search-select-text">日期查询：</div>
@@ -94,7 +85,7 @@
   import DatePickerTemplate from "../../../components/datePickerTemplate";
 
   export default {
-    name: 'userData2',
+    name: 'fxgl_FranchiseeData',
     components: {DatePickerTemplate},
     data() {
       return {
@@ -345,51 +336,15 @@
       initData() {
         this.titleList = [
           {
-            name: '累计推广人数',
+            name: '累计邀请推广人人数',
             num: this.totalInfo.pv,
-            todayName: '今日推广人数',
+            todayName: '今日邀请推广人人数',
             todayNum: '100'
           },
           {
-            name: '累计推广获益人数',
+            name: '加盟商累计收益',
             num: this.totalInfo.pv,
-            todayName: '今日推广获益人数',
-            todayNum: '100'
-          },
-          {
-            name: '累计推广收益',
-            num: this.totalInfo.pv,
-            todayName: '今日推广收益',
-            todayNum: '100'
-          },
-          {
-            name: '直接邀请累计分享次数',
-            num: this.totalInfo.uv,
-            todayName: '直接邀请今日分享次数',
-            todayNum: '100'
-          },
-          {
-            name: '开团邀请累计分享次数',
-            num: this.totalInfo.orderUser,
-            todayName: '开团邀请今日分享次数',
-            todayNum: '100'
-          },
-          {
-            name: '海报邀请累计分享次数',
-            num: this.totalInfo.orderUser,
-            todayName: '海报邀请今日分享次数',
-            todayNum: '100'
-          },
-          {
-            name: '累计完成1阶新手任务人数',
-            num: this.totalInfo.orderUser,
-            todayName: '今日完成1阶新手任务人数',
-            todayNum: '100'
-          },
-          {
-            name: '累计完成2阶新手任务人数',
-            num: this.totalInfo.orderUser,
-            todayName: '今日完成2阶新手任务人数',
+            todayName: '加盟商今日收益',
             todayNum: '100'
           }
         ]

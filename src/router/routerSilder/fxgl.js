@@ -35,6 +35,15 @@ export const fxglRouter =[
         component: () => import('@/view/fxgl/extensionData/extensionData')
       },
       {
+        path: '/fxgl_FranchiseeData',
+        name: 'fxgl_FranchiseeData',
+        meta: [
+          {name: '数据统计'},
+          {name: '加盟商数据'}
+        ],
+        component: () => import('@/view/fxgl/franchiseeData/franchiseeData')
+      },
+      {
         path: '/fxgl_DataFunneling',
         name: 'fxgl_DataFunneling',
         meta: [
@@ -75,7 +84,7 @@ export const fxglRouter =[
             name: '加盟商审核'
           }
         ],
-        component: () => import('@/view/fxgl/distributionMessage/distribution')
+        component: () => import('@/view/fxgl/franchisorAudit/franchisorAudit')
       },
       {
         path: '/fxgl_promoter',
