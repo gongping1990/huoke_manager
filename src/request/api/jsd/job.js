@@ -45,6 +45,24 @@ const jsdJob = {
   },
   todayWorkJobCount(params) {
     return axios.get(`/homework/job/todayWorkJobCount`, {params})
+  },
+  topGood(params) {
+    return axios.get(`/homework/job/topGood`, {params})
+  },
+  topHandleRate(params) {
+    return axios.get(`/homework/job/topHandleRate`, {params})
+  },
+  topHandled(params) {
+    return axios.get(`/homework/job/topHandled`, {params})
+  },
+  topReplytime(params) {
+    return axios.get(`/homework/job/topReplytime`, {params})
+  },
+  listDaySumWorkJobCountByPage(params) {
+    return axios.get(`/homework/job/listDaySumWorkJobCountByPage`, {params})
+  },
+  sumWorkJobCount(params) {
+    return axios.get(`/homework/job/sumWorkJobCount`, {params})
   }
 }
 

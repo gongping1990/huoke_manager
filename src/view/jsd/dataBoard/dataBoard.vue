@@ -13,12 +13,12 @@
       </Row>
       <Row class="g-t-left p-dataBoard-radio">
         <Radio-group v-model="radioType" type="button" @on-change="changeRadio">
-          <Radio label="1">今日</Radio>
-          <Radio label="2">本周</Radio>
-          <Radio label="3">本月</Radio>
+          <Radio label="0">今日</Radio>
+          <Radio label="1">本周</Radio>
+          <Radio label="2">本月</Radio>
         </Radio-group>
 
-        <span class="-text-wrap" v-if="radioType === '1'">
+        <span class="-text-wrap" v-if="radioType === '0'">
           <span class="-text" @click="openModal(3)">今日老师数据</span>
           <span class="-text" @click="openModal(4)">每日数据详情</span>
         </span>
@@ -31,7 +31,7 @@
               <div class="-name-left">{{item.name}}</div>
             </div>
             <div class="-item-wrap-center">{{item.all}}/{{item.alone}}</div>
-            <div class="-item-wrap-down">{{item.parent}}%</div>
+            <div class="-item-wrap-down" v-if="item.parent">{{item.parent}}%</div>
           </Card>
         </Col>
       </Row>
@@ -42,14 +42,14 @@
             <div class="-item-echart-name">效率榜</div>
             <div>
               <span class="-item-echart-text"
-                    :class="{'-item-active' : dataItemOne.num === 1}"
-                    @click="changeDate(1,1)">今日</span>
+                    :class="{'-item-active' : dataItemOne.num === 0}"
+                    @click="changeDate(1,0)">今日</span>
               <span class="-item-echart-text -text-center"
-                    :class="{'-item-active' : dataItemOne.num === 2}"
-                    @click="changeDate(1,2)">本周</span>
+                    :class="{'-item-active' : dataItemOne.num === 1}"
+                    @click="changeDate(1,1)">本周</span>
               <span class="-item-echart-text"
-                    :class="{'-item-active' : dataItemOne.num === 3}"
-                    @click="changeDate(1,3)">本月</span>
+                    :class="{'-item-active' : dataItemOne.num === 2}"
+                    @click="changeDate(1,2)">本月</span>
             </div>
           </div>
           <div ref="echartOne" class="-item-echart-down"></div>
@@ -60,14 +60,14 @@
             <div class="-item-echart-name">完成榜</div>
             <div>
               <span class="-item-echart-text"
-                    :class="{'-item-active' : dataItemTwo.num === 1}"
-                    @click="changeDate(2,1)">今日</span>
+                    :class="{'-item-active' : dataItemTwo.num === 0}"
+                    @click="changeDate(2,0)">今日</span>
               <span class="-item-echart-text -text-center"
-                    :class="{'-item-active' : dataItemTwo.num === 2}"
-                    @click="changeDate(2,2)">本周</span>
+                    :class="{'-item-active' : dataItemTwo.num === 1}"
+                    @click="changeDate(2,1)">本周</span>
               <span class="-item-echart-text"
-                    :class="{'-item-active' : dataItemTwo.num === 3}"
-                    @click="changeDate(2,3)">本月</span>
+                    :class="{'-item-active' : dataItemTwo.num === 2}"
+                    @click="changeDate(2,2)">本月</span>
             </div>
           </div>
           <div ref="echartTwo" class="-item-echart-down"></div>
@@ -78,14 +78,14 @@
             <div class="-item-echart-name">好评榜</div>
             <div>
               <span class="-item-echart-text"
-                    :class="{'-item-active' : dataItemThree.num === 1}"
-                    @click="changeDate(3,1)">今日</span>
+                    :class="{'-item-active' : dataItemThree.num === 0}"
+                    @click="changeDate(3,0)">今日</span>
               <span class="-item-echart-text -text-center"
-                    :class="{'-item-active' : dataItemThree.num === 2}"
-                    @click="changeDate(3,2)">本周</span>
+                    :class="{'-item-active' : dataItemThree.num === 1}"
+                    @click="changeDate(3,1)">本周</span>
               <span class="-item-echart-text"
-                    :class="{'-item-active' : dataItemThree.num === 3}"
-                    @click="changeDate(3,3)">本月</span>
+                    :class="{'-item-active' : dataItemThree.num === 2}"
+                    @click="changeDate(3,2)">本月</span>
             </div>
           </div>
           <div ref="echartThree" class="-item-echart-down"></div>
@@ -96,14 +96,14 @@
             <div class="-item-echart-name">数量榜</div>
             <div>
               <span class="-item-echart-text"
-                    :class="{'-item-active' : dataItemFour.num === 1}"
-                    @click="changeDate(4,1)">今日</span>
+                    :class="{'-item-active' : dataItemFour.num === 0}"
+                    @click="changeDate(4,0)">今日</span>
               <span class="-item-echart-text -text-center"
-                    :class="{'-item-active' : dataItemFour.num === 2}"
-                    @click="changeDate(4,2)">本周</span>
+                    :class="{'-item-active' : dataItemFour.num === 1}"
+                    @click="changeDate(4,1)">本周</span>
               <span class="-item-echart-text"
-                    :class="{'-item-active' : dataItemFour.num === 3}"
-                    @click="changeDate(4,3)">本月</span>
+                    :class="{'-item-active' : dataItemFour.num === 2}"
+                    @click="changeDate(4,2)">本月</span>
             </div>
           </div>
           <div ref="echartFour" class="-item-echart-down"></div>
@@ -185,11 +185,14 @@
           pageSize: 10
         },
         totalDetail: 0,
-        radioType: '1',
+        radioType: '0',
         modelType: 2,
         isFetching: false,
         isOpenModal: false,
-        dataInfo: '',
+        dataInfoOne: '',
+        dataInfoTwo: '',
+        dataInfoThree: '',
+        dataInfoFour: '',
         titleList: [],
         titleType: {
           '1': '预警历史',
@@ -198,26 +201,7 @@
           '4': '每日数据详情'
         },
         detailList: [],
-        cardList: [
-          {
-            name: '作业总量',
-            all: '24',
-            alone: '20',
-            parent: '20'
-          },
-          {
-            name: '作业总量',
-            all: '24',
-            alone: '20',
-            parent: '20'
-          },
-          {
-            name: '作业总量',
-            all: '24',
-            alone: '20',
-            parent: '20'
-          }
-        ],
+        cardList: [],
         phoneList: [
           {
             phone: ''
@@ -226,16 +210,16 @@
         echartList: [],
         addInfo: {},
         dataItemOne: {
-          num: 1
+          num: 0
         },
         dataItemTwo: {
-          num: 1
+          num: 0
         },
         dataItemThree: {
-          num: 1
+          num: 0
         },
         dataItemFour: {
-          num: 1
+          num: 0
         },
         myChartOne: '',
         myChartTwo: '',
@@ -245,49 +229,63 @@
       }
     },
     computed: {
-      dateTypesLine() {
+      dateTypesLineOne() {
         let arrayX = []
-        for (let item of this.dataInfo.data) {
-          arrayX.push(item.date)
+        for (let item of this.dataInfoOne) {
+          arrayX.push(item.teacherName)
         }
         return arrayX
       },
-      optionSeriesLine() {
-        let dataList = {
-          one: [],
-          two: [],
-          three: []
+      dateTypesLineTwo() {
+        let arrayX = []
+        for (let item of this.dataInfoTwo) {
+          arrayX.push(item.teacherName)
         }
-        for (let item of this.dataInfo.data) {
-          if (this.radioType === '1') {
-            dataList.one.push(item.allUser)
-            dataList.two.push(item.newUser)
-            dataList.three.push(item.activeUser)
-          } else {
-            dataList.one.push(item.allPayUser)
-            dataList.two.push(item.payUser)
-            dataList.three.push(item.activePayUser)
-          }
-        }
-        let optionSeriesLine = [
-          {
-            name: this.radioType === '1' ? '累计用户' : '累计付费用户',
-            type: 'bar',
-            data: dataList.one
-          },
-          {
-            name: this.radioType === '1' ? '新增用户' : '付费用户',
-            type: 'bar',
-            data: dataList.two
-          },
-          {
-            name: this.radioType === '1' ? '活跃用户' : '活跃付费用户',
-            type: 'bar',
-            data: dataList.three
-          }
-        ]
-        return optionSeriesLine
+        return arrayX
       },
+      dateTypesLineThree() {
+        let arrayX = []
+        for (let item of this.dataInfoThree) {
+          arrayX.push(item.teacherName)
+        }
+        return arrayX
+      },
+      dateTypesLineFour() {
+        let arrayX = []
+        for (let item of this.dataInfoFour) {
+          arrayX.push(item.teacherName)
+        }
+        return arrayX
+      },
+      optionSeriesLineOne() {
+        let arrayY = []
+        for (let item of this.dataInfoOne) {
+          arrayY.push(item.replytime)
+        }
+        return arrayY
+      },
+      optionSeriesLineTwo() {
+        let arrayY = []
+        for (let item of this.dataInfoTwo) {
+          arrayY.push(`${(item.totalHandled/10)}`)
+        }
+        return arrayY
+      },
+      optionSeriesLineThree() {
+        let arrayY = []
+        for (let item of this.dataInfoThree) {
+          arrayY.push(item.good)
+        }
+        return arrayY
+      },
+      optionSeriesLineFour() {
+        let arrayY = []
+        for (let item of this.dataInfoFour) {
+          arrayY.push(item.totalHandled)
+        }
+        return arrayY
+      },
+
       columnsModal() {
         let list = []
 
@@ -327,35 +325,35 @@
               },
               {
                 title: '总量/已处理',
-                render: (h,p)=>{
+                render: (h, p) => {
                   return h('div', `${p.row.total}/${p.row.totalHandled}`)
                 },
                 align: 'center',
               },
               {
                 title: '自动分配/已处理',
-                render: (h,p)=>{
+                render: (h, p) => {
                   return h('div', `${p.row.autonum}/${p.row.autoHandled}`)
                 },
                 align: 'center',
               },
               {
                 title: '补批/已处理',
-                render: (h,p)=>{
+                render: (h, p) => {
                   return h('div', `${p.row.oldnum}/${p.row.oldHandled}`)
                 },
                 align: 'center',
               },
               {
                 title: '调度/已处理',
-                render: (h,p)=>{
+                render: (h, p) => {
                   return h('div', `${p.row.allotnum}/${p.row.allotHandled}`)
                 },
                 align: 'center',
               },
               {
                 title: '重交/已处理',
-                render: (h,p)=>{
+                render: (h, p) => {
                   return h('div', `${p.row.resubmitnum}/${p.row.handleResubmit}`)
                 },
                 align: 'center',
@@ -366,32 +364,42 @@
             list = [
               {
                 title: '时间',
-                key: 'date',
+                key: 'day',
                 align: 'center'
               },
               {
                 title: '总量/已处理',
-                key: 'pv',
+                render: (h, p) => {
+                  return h('div', `${p.row.total}/${p.row.totalHandled}`)
+                },
                 align: 'center'
               },
               {
                 title: '自动分配/已处理',
-                key: 'uv',
+                render: (h, p) => {
+                  return h('div', `${p.row.autonum}/${p.row.autoHandled}`)
+                },
                 align: 'center'
               },
               {
                 title: '补批/已处理',
-                key: 'uv',
+                render: (h, p) => {
+                  return h('div', `${p.row.oldnum}/${p.row.oldHandled}`)
+                },
                 align: 'center'
               },
               {
                 title: '调度/已处理',
-                key: 'uv',
+                render: (h, p) => {
+                  return h('div', `${p.row.allotnum}/${p.row.allotHandled}`)
+                },
                 align: 'center'
               },
               {
                 title: '重交/已处理',
-                key: 'uv',
+                render: (h, p) => {
+                  return h('div', `${p.row.resubmitnum}/${p.row.handleResubmit}`)
+                },
                 align: 'center'
               }
             ]
@@ -405,7 +413,11 @@
       this.myChartTwo = echarts.init(this.$refs.echartTwo)
       this.myChartThree = echarts.init(this.$refs.echartThree)
       this.myChartFour = echarts.init(this.$refs.echartFour)
-      this.getList()
+      this.topReplytime()
+      this.topHandleRate()
+      this.topGood()
+      this.topHandled()
+      this.sumWorkJobCount()
     },
     methods: {
       changeDate(type, num) {
@@ -413,18 +425,22 @@
           case 1:
             this.dataItemOne.type = type
             this.dataItemOne.num = num
+            this.topReplytime()
             break
           case 2:
             this.dataItemTwo.type = type
             this.dataItemTwo.num = num
+            this.topHandleRate()
             break
           case 3:
             this.dataItemThree.type = type
             this.dataItemThree.num = num
+            this.topGood()
             break
           case 4:
             this.dataItemFour.type = type
             this.dataItemFour.num = num
+            this.topHandled()
             break
         }
       },
@@ -436,6 +452,7 @@
         this.isOpenModal = true
         this.modelType === 1 && this.getHistoryList()
         this.modelType === 3 && this.viewTeacherDateCount()
+        this.modelType === 4 && this.listDaySumWorkJobCountByPage()
       },
       addPhone() {
         this.phoneList.push({
@@ -468,32 +485,28 @@
         this.tabDetail.page = val;
         this.getDetailList();
       },
-
       changeRadio() {
-        // this.initData()
+        this.sumWorkJobCount()
       },
-
       drawLineOne() {
         let self = this;
-        console.log(this.myChartOne, 1111)
         this.myChartOne.clear();
         this.myChartOne.resize();
         // 绘制图表
         this.myChartOne.setOption({
           tooltip: {},
           xAxis: {
-            data: ["衬衫", "羊毛衫", "雪纺衫", "裤子", "高跟鞋", "袜子"]
+            data: this.dateTypesLineOne
           },
           yAxis: {
-            name: '单位（人）'
+            name: '单位（分钟）'
           },
           color: ['#49a9ee'],
           series: {
             type: 'bar',
-            data: [5, 20, 36, 10, 10, 20]
+            data: this.optionSeriesLineOne
           }
         })
-
         window.addEventListener("resize", () => {
           this.myChartOne.resize();
         });
@@ -507,15 +520,15 @@
         this.myChartTwo.setOption({
           tooltip: {},
           xAxis: {
-            data: ["衬衫", "羊毛衫", "雪纺衫", "裤子", "高跟鞋", "袜子"]
+            data: this.dateTypesLineTwo
           },
           yAxis: {
-            name: '单位（人）'
+            name: '单位（%）'
           },
           color: ['#98d87d'],
           series: {
             type: 'bar',
-            data: [5, 20, 36, 10, 10, 20]
+            data: this.optionSeriesLineTwo
           }
         })
         window.addEventListener("resize", () => {
@@ -531,15 +544,15 @@
         this.myChartThree.setOption({
           tooltip: {},
           xAxis: {
-            data: ["衬衫", "羊毛衫", "雪纺衫", "裤子", "高跟鞋", "袜子"]
+            data: this.dateTypesLineThree
           },
           yAxis: {
-            name: '单位（人）'
+            name: '单位（次）'
           },
           color: ['#ffd86e'],
           series: {
             type: 'bar',
-            data: [5, 20, 36, 10, 10, 20]
+            data: this.optionSeriesLineThree
           }
         })
 
@@ -556,14 +569,14 @@
         this.myChartFour.setOption({
           tooltip: {},
           xAxis: {
-            data: ["衬衫", "羊毛衫", "雪纺衫", "裤子", "高跟鞋", "袜子"]
+            data: this.dateTypesLineFour
           },
           yAxis: {
-            name: '单位（人）'
+            name: '单位（次）'
           },
           series: {
             type: 'bar',
-            data: [5, 20, 36, 10, 10, 20]
+            data: this.optionSeriesLineFour
           }
         })
 
@@ -590,6 +603,71 @@
             this.isFetching = false
           })
       },
+      listDaySumWorkJobCountByPage(num) {
+        this.isFetching = true
+        if (num) {
+          this.tabDetail.currentPage = 1
+        }
+        this.$api.jsdJob.listDaySumWorkJobCountByPage({
+          current: num ? num : this.tabDetail.page,
+          size: this.tabDetail.pageSize
+        })
+          .then(
+            response => {
+              this.detailList = response.data.resultData.records;
+              this.totalDetail = response.data.resultData.total;
+            })
+          .finally(() => {
+            this.isFetching = false
+          })
+      },
+      sumWorkJobCount(num) {
+        this.isFetching = true
+
+        this.$api.jsdJob.sumWorkJobCount({
+          range: this.radioType
+        })
+          .then(
+            response => {
+              let countObj = response.data.resultData;
+              this.cardList = [
+                {
+                  name: '作业总量',
+                  all: countObj.total,
+                  alone: countObj.totalHandled,
+                  parent: ''
+                },
+                {
+                  name: '自动分配',
+                  all: countObj.autonum,
+                  alone: countObj.autoHandled,
+                  parent: ''
+                },
+                {
+                  name: '补批',
+                  all: countObj.oldnum,
+                  alone: countObj.oldHandled,
+                  parent: ''
+                },
+                {
+                  name: '调度',
+                  all: countObj.allotnum,
+                  alone: countObj.allotHandled,
+                  parent: ''
+                },
+                {
+                  name: '重交',
+                  all: countObj.resubmitnum,
+                  alone: countObj.handleResubmit,
+                  parent: ''
+                }
+              ]
+
+            })
+          .finally(() => {
+            this.isFetching = false
+          })
+      },
       viewTeacherDateCount(num) {
         this.isFetching = true
         if (num) {
@@ -609,51 +687,73 @@
             this.isFetching = false
           })
       },
-      getList() {
+      topReplytime() {
         this.myChartOne.showLoading({
           text: '图表加载中...',
           color: '#20a0ff',
           textColor: '#000',
           zlevel: 0
         })
+        this.$api.jsdJob.topReplytime({
+          range: this.dataItemOne.num
+        })
+          .then(
+            response => {
+              this.dataInfoOne = response.data.resultData;
+              this.drawLineOne()
+            })
+      },
+      topHandleRate() {
         this.myChartTwo.showLoading({
           text: '图表加载中...',
           color: '#20a0ff',
           textColor: '#000',
           zlevel: 0
         })
+
+        this.$api.jsdJob.topHandleRate({
+          range: this.dataItemTwo.num
+        })
+          .then(
+            response => {
+              this.dataInfoTwo = response.data.resultData;
+              this.drawLineTwo()
+            })
+
+      },
+      topGood() {
         this.myChartThree.showLoading({
           text: '图表加载中...',
           color: '#20a0ff',
           textColor: '#000',
           zlevel: 0
         })
+
+        this.$api.jsdJob.topGood({
+          range: this.dataItemThree.num
+        })
+          .then(
+            response => {
+              this.dataInfoThree = response.data.resultData;
+              this.drawLineThree()
+            })
+      },
+      topHandled() {
         this.myChartFour.showLoading({
           text: '图表加载中...',
           color: '#20a0ff',
           textColor: '#000',
           zlevel: 0
         })
-        this.initData()
-        this.isFetching = true
-        this.$api.wzjh.getUserAccessStat({
-          chancelId: this.radioType
+
+        this.$api.jsdJob.topHandled({
+          range: this.dataItemFour.num
         })
           .then(
             response => {
-              this.dataInfo = response.data.resultData;
-
+              this.dataInfoFour = response.data.resultData;
+              this.drawLineFour()
             })
-          .finally(() => {
-            this.isFetching = false
-          })
-      },
-
-      initData() {
-        this.drawLineOne()
-        this.drawLineTwo()
-        this.drawLineThree()
-        this.drawLineFour()
       }
     }
   }
