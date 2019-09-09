@@ -2,11 +2,19 @@
   <div class="p-booking">
     <Card>
       <Row class="g-search">
-        <Row class="g-t-left g-tab">
+        <Row class="g-t-left">
           <Col :span="4" class="g-t-left">
             <div class="g-flex-a-j-center">
               <div class="-search-select-text">是否回访</div>
               <Select v-model="searchInfo.visited" @on-change="getList()" class="-search-selectOne">
+                <Option v-for="(item,index) in visitedStatusList" :label="item.name" :value="item.id" :key="index"></Option>
+              </Select>
+            </div>
+          </Col>
+          <Col :span="4" class="g-t-left">
+            <div class="g-flex-a-j-center">
+              <div class="-search-select-text">是否购买</div>
+              <Select v-model="searchInfo.buyed" @on-change="getList()" class="-search-selectOne">
                 <Option v-for="(item,index) in visitedStatusList" :label="item.name" :value="item.id" :key="index"></Option>
               </Select>
             </div>
@@ -28,7 +36,7 @@
         </Row>
       </Row>
 
-      <Table :loading="isFetching" :columns="columns" :data="dataList"></Table>
+      <Table class="g-tab" :loading="isFetching" :columns="columns" :data="dataList"></Table>
 
       <Page class="-p-text-right" :total="total" size="small" show-elevator :page-size="tab.pageSize"
             :current.sync="tab.currentPage"
@@ -74,29 +82,41 @@
         total: 0,
         selectInfo: '1',
         searchInfo: {
-          visited: '-1'
+          visited: '-1',
+          buyed: '-1'
         },
         isFetching: false,
         columns: [
           {
             title: '用户昵称',
-            key: 'nickname'
+            key: 'nickname',
+            align: 'center'
           },
           {
-            title: '电话号码',
-            key: 'phone'
-          },
-          {
-            title: '领取时间',
-            render: (h, params) => {
-              return h('div', dayjs(+params.row.gmtModified).format('YYYY-MM-DD HH:mm:ss'))
-            }
+            title: '是否购买',
+            render: (h,p)=> {
+              return h('div',p.row.buyed ? '是' : '否')
+            },
+            align: 'center'
           },
           {
             title: '是否回访',
             render: (h,p)=> {
               return h('div',p.row.visited ? '是' : '否')
-            }
+            },
+            align: 'center'
+          },
+          {
+            title: '电话号码',
+            key: 'phone',
+            align: 'center'
+          },
+          {
+            title: '领取时间',
+            render: (h, params) => {
+              return h('div', dayjs(+params.row.gmtModified).format('YYYY-MM-DD HH:mm:ss'))
+            },
+            align: 'center'
           },
           {
             title: '操作',
@@ -116,7 +136,8 @@
                   }
                 }, '标记为已回访')
               ])
-            }
+            },
+            align: 'center'
           }
         ]
       };
@@ -156,6 +177,7 @@
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
           visited: this.searchInfo.visited == '-1' ? '' : this.searchInfo.visited,
+          buyed: this.searchInfo.buyed == '-1' ? '' : this.searchInfo.buyed,
           startTime: this.searchInfo.getStartTime ? new Date(this.searchInfo.getStartTime).getTime() : "",
           endTime: this.searchInfo.getEndTime ? new Date(this.searchInfo.getEndTime).getTime() : ""
         }
