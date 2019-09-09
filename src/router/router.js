@@ -206,7 +206,7 @@ export const otherRouter = {
       name: 'fxgl_promoterData',
       meta: [
         {name: '分销管理'},
-        {name: '推广人列表', url: 'fxgl_promoter'},
+        {name: '人员列表', url: 'fxgl_promoter'},
         {name: '数据统计'}
       ],
       component: () => import('@/view/fxgl/promoter/promoterData')

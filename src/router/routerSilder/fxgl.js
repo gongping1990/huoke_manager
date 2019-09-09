@@ -94,7 +94,7 @@ export const fxglRouter =[
             name: '分销管理'
           },
           {
-            name: '推广人列表'
+            name: '人员列表'
           }
         ],
         component: () => import('@/view/fxgl/promoter/promoterList')

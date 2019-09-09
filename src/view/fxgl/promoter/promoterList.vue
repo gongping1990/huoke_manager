@@ -2,6 +2,15 @@
   <div class="p-promoter">
     <Card>
       <Row class="g-search">
+        <Col :span="5" class="g-flex-a-j-center">
+          <Radio-group v-model="radioType" type="button" @on-change="getList">
+            <Radio :label=0>推广人列表</Radio>
+            <Radio :label=1>加盟商列表</Radio>
+          </Radio-group>
+        </Col>
+      </Row>
+
+      <Row class="g-search -c-tab">
         <Col :span="6">
           <div class="-search">
             <Select v-model="selectInfo" class="-search-select">
@@ -67,6 +76,7 @@
           type: '-1',
           antistop: ''
         },
+        radioType: 0,
         selectInfo: '1',
         dataList: [],
         detailList: [],
@@ -82,157 +92,6 @@
         getStartTime: '',
         getEndTime: '',
         openType: '',
-        columns: [
-          {
-            title: '用户头像/昵称',
-            render: (h, params) => {
-              return h('div', {
-                style: {
-                  'display': 'flex',
-                  'align-items': 'center',
-                }
-              }, [
-                h('img', {
-                  attrs: {
-                    src: params.row.headImgUrl
-                  },
-                  style: {
-                    width: '36px',
-                    height: '36px',
-                    margin: '10px',
-                    'border-radius': '50%'
-                  }
-                }),
-                h('span', params.row.nickname)
-              ])
-            }
-          },
-          {
-            title: '手机号码',
-            key: 'phone',
-            align: 'center'
-          },
-          {
-            title: '注册时间',
-            render: (h, params) => {
-              return h('div', dayjs(+params.row.gmtCreate).format("YYYY-MM-DD HH:mm"))
-            },
-            align: 'center'
-          },
-          {
-            title: '操作',
-            align: 'center',
-            width: 320,
-            render: (h, params) => {
-              return h('div', [
-                h('Button', {
-                  props: {
-                    type: 'text',
-                    size: 'small'
-                  },
-                  style: {
-                    color: '#1890FF',
-                    marginRight: '5px'
-                  },
-                  on: {
-                    click: () => {
-                      this.openModal(params.row,1)
-                    }
-                  }
-                }, '收益明细'),
-                h('Button', {
-                  props: {
-                    type: 'text',
-                    size: 'small'
-                  },
-                  style: {
-                    color: '#1890FF',
-                    marginRight: '5px'
-                  },
-                  on: {
-                    click: () => {
-                      this.openModal(params.row,2)
-                    }
-                  }
-                }, '提现明细'),
-                h('Button', {
-                  props: {
-                    type: 'text',
-                    size: 'small'
-                  },
-                  style: {
-                    color: '#1890FF',
-                    marginRight: '5px'
-                  },
-                  on: {
-                    click: () => {
-                      this.openModal(params.row,3)
-                    }
-                  }
-                }, '邀请明细'),
-                h('Button', {
-                  props: {
-                    type: 'text',
-                    size: 'small'
-                  },
-                  style: {
-                    color: '#1890FF',
-                    marginRight: '5px'
-                  },
-                  on: {
-                    click: () => {
-                      this.openUrl(params.row)
-                    }
-                  }
-                }, '数据统计')
-              ])
-            }
-          }
-        ],
-        columnsModalOne: [
-          {
-            title: '订单号',
-            key: 'phoneModel',
-            align: 'center'
-          },
-          {
-            title: '商品名称',
-            key: 'num',
-            align: 'center'
-          },
-          {
-            title: '买家昵称',
-            key: 'num',
-            align: 'center'
-          },
-          {
-            title: '实付金额',
-            key: 'num',
-            align: 'center'
-          },
-          {
-            title: '佣金比例',
-            key: 'num',
-            align: 'center'
-          },
-          {
-            title: '佣金金额',
-            key: 'num',
-            align: 'center'
-          },
-          {
-            title: '佣金状态',
-            key: 'num',
-            align: 'center'
-          },
-          {
-            title: '下单时间',
-            render: (h, params) => {
-              return h('div', dayjs(+params.row.gmtCreate).format("YYYY-MM-DD HH:mm:ss"))
-            },
-            align: 'center'
-          }
-        ],
         columnsModalTwo: [
           {
             title: '提现金额',
@@ -258,30 +117,6 @@
             key: 'num',
             align: 'center'
           }
-        ],
-        columnsModalThree: [
-          {
-            title: '用户昵称',
-            key: 'phoneModel',
-            align: 'center'
-          },
-          {
-            title: '手机号',
-            key: 'num',
-            align: 'center'
-          },
-          {
-            title: '类型',
-            key: 'num',
-            align: 'center'
-          },
-          {
-            title: '邀请时间',
-            render: (h, params) => {
-              return h('div', dayjs(+params.row.gmtCreate).format("YYYY-MM-DD HH:mm:ss"))
-            },
-            align: 'center'
-          }
         ]
       };
     },
@@ -292,6 +127,385 @@
           '2': this.columnsModalTwo,
           '3': this.columnsModalThree
         }
+      },
+      columns () {
+        let storage = []
+        if (this.radioType === 0) {
+          storage = [
+            {
+              title: '用户头像/昵称',
+              render: (h, params) => {
+                return h('div', {
+                  style: {
+                    'display': 'flex',
+                    'align-items': 'center',
+                  }
+                }, [
+                  h('img', {
+                    attrs: {
+                      src: params.row.headImgUrl
+                    },
+                    style: {
+                      width: '36px',
+                      height: '36px',
+                      margin: '10px',
+                      'border-radius': '50%'
+                    }
+                  }),
+                  h('span', params.row.nickname)
+                ])
+              }
+            },
+            {
+              title: '手机号码',
+              key: 'phone',
+              align: 'center'
+            },
+            {
+              title: '加盟商',
+              key: 'phone',
+              align: 'center'
+            },
+            {
+              title: '注册时间',
+              render: (h, params) => {
+                return h('div', dayjs(+params.row.gmtCreate).format("YYYY-MM-DD HH:mm"))
+              },
+              align: 'center'
+            },
+            {
+              title: '操作',
+              align: 'center',
+              width: 320,
+              render: (h, params) => {
+                return h('div', [
+                  h('Button', {
+                    props: {
+                      type: 'text',
+                      size: 'small'
+                    },
+                    style: {
+                      color: '#1890FF',
+                      marginRight: '5px'
+                    },
+                    on: {
+                      click: () => {
+                        this.openModal(params.row,1)
+                      }
+                    }
+                  }, '收益明细'),
+                  h('Button', {
+                    props: {
+                      type: 'text',
+                      size: 'small'
+                    },
+                    style: {
+                      color: '#1890FF',
+                      marginRight: '5px'
+                    },
+                    on: {
+                      click: () => {
+                        this.openModal(params.row,2)
+                      }
+                    }
+                  }, '提现明细'),
+                  h('Button', {
+                    props: {
+                      type: 'text',
+                      size: 'small'
+                    },
+                    style: {
+                      color: '#1890FF',
+                      marginRight: '5px'
+                    },
+                    on: {
+                      click: () => {
+                        this.openModal(params.row,3)
+                      }
+                    }
+                  }, '邀请明细'),
+                  h('Button', {
+                    props: {
+                      type: 'text',
+                      size: 'small'
+                    },
+                    style: {
+                      color: '#1890FF',
+                      marginRight: '5px'
+                    },
+                    on: {
+                      click: () => {
+                        this.openUrl(params.row)
+                      }
+                    }
+                  }, '数据统计')
+                ])
+              }
+            }
+          ]
+        } else {
+          storage = [
+            {
+              title: '用户头像/昵称',
+              render: (h, params) => {
+                return h('div', {
+                  style: {
+                    'display': 'flex',
+                    'align-items': 'center',
+                  }
+                }, [
+                  h('img', {
+                    attrs: {
+                      src: params.row.headImgUrl
+                    },
+                    style: {
+                      width: '36px',
+                      height: '36px',
+                      margin: '10px',
+                      'border-radius': '50%'
+                    }
+                  }),
+                  h('span', params.row.nickname)
+                ])
+              }
+            },
+            {
+              title: '手机号码',
+              key: 'phone',
+              align: 'center'
+            },
+            {
+              title: '注册时间',
+              render: (h, params) => {
+                return h('div', dayjs(+params.row.gmtCreate).format("YYYY-MM-DD HH:mm"))
+              },
+              align: 'center'
+            },
+            {
+              title: '操作',
+              align: 'center',
+              width: 320,
+              render: (h, params) => {
+                return h('div', [
+                  h('Button', {
+                    props: {
+                      type: 'text',
+                      size: 'small'
+                    },
+                    style: {
+                      color: '#1890FF',
+                      marginRight: '5px'
+                    },
+                    on: {
+                      click: () => {
+                        this.openModal(params.row,1)
+                      }
+                    }
+                  }, '收益明细'),
+                  h('Button', {
+                    props: {
+                      type: 'text',
+                      size: 'small'
+                    },
+                    style: {
+                      color: '#1890FF',
+                      marginRight: '5px'
+                    },
+                    on: {
+                      click: () => {
+                        this.openModal(params.row,2)
+                      }
+                    }
+                  }, '提现明细'),
+                  h('Button', {
+                    props: {
+                      type: 'text',
+                      size: 'small'
+                    },
+                    style: {
+                      color: '#1890FF',
+                      marginRight: '5px'
+                    },
+                    on: {
+                      click: () => {
+                        this.openModal(params.row,3)
+                      }
+                    }
+                  }, '邀请明细'),
+                  h('Button', {
+                    props: {
+                      type: 'text',
+                      size: 'small'
+                    },
+                    style: {
+                      color: '#1890FF',
+                      marginRight: '5px'
+                    },
+                    on: {
+                      click: () => {
+                        this.openUrl(params.row)
+                      }
+                    }
+                  }, '数据统计')
+                ])
+              }
+            }
+          ]
+        }
+
+        return storage
+      },
+      columnsModalOne () {
+        let storage = []
+        if (this.radioType === 0) {
+          storage = [
+            {
+              title: '订单号',
+              key: 'phoneModel',
+              align: 'center'
+            },
+            {
+              title: '商品名称',
+              key: 'num',
+              align: 'center'
+            },
+            {
+              title: '买家昵称',
+              key: 'num',
+              align: 'center'
+            },
+            {
+              title: '实付金额',
+              key: 'num',
+              align: 'center'
+            },
+            {
+              title: '佣金比例',
+              key: 'num',
+              align: 'center'
+            },
+            {
+              title: '佣金金额',
+              key: 'num',
+              align: 'center'
+            },
+            {
+              title: '佣金状态',
+              key: 'num',
+              align: 'center'
+            },
+            {
+              title: '下单时间',
+              render: (h, params) => {
+                return h('div', dayjs(+params.row.gmtCreate).format("YYYY-MM-DD HH:mm:ss"))
+              },
+              align: 'center'
+            }
+          ]
+        } else {
+          storage = [
+            {
+              title: '订单号',
+              key: 'phoneModel',
+              align: 'center'
+            },
+            {
+              title: '商品名称',
+              key: 'num',
+              align: 'center'
+            },
+            {
+              title: '买家昵称',
+              key: 'num',
+              align: 'center'
+            },
+            {
+              title: '实付金额',
+              key: 'num',
+              align: 'center'
+            },
+            {
+              title: '推广人',
+              key: 'num',
+              align: 'center'
+            },
+            {
+              title: '佣金比例',
+              key: 'num',
+              align: 'center'
+            },
+            {
+              title: '佣金金额',
+              key: 'num',
+              align: 'center'
+            },
+            {
+              title: '佣金状态',
+              key: 'num',
+              align: 'center'
+            },
+            {
+              title: '下单时间',
+              render: (h, params) => {
+                return h('div', dayjs(+params.row.gmtCreate).format("YYYY-MM-DD HH:mm:ss"))
+              },
+              align: 'center'
+            }
+          ]
+        }
+
+        return storage
+      },
+      columnsModalThree () {
+        let storage = []
+        if (this.radioType === 0) {
+          storage = [
+            {
+              title: '用户昵称',
+              key: 'phoneModel',
+              align: 'center'
+            },
+            {
+              title: '手机号',
+              key: 'num',
+              align: 'center'
+            },
+            {
+              title: '类型',
+              key: 'num',
+              align: 'center'
+            },
+            {
+              title: '邀请时间',
+              render: (h, params) => {
+                return h('div', dayjs(+params.row.gmtCreate).format("YYYY-MM-DD HH:mm:ss"))
+              },
+              align: 'center'
+            }
+          ]
+        } else {
+          storage = [
+            {
+              title: '推广人昵称',
+              key: 'phoneModel',
+              align: 'center'
+            },
+            {
+              title: '手机号',
+              key: 'num',
+              align: 'center'
+            },
+            {
+              title: '推广人注册时间',
+              render: (h, params) => {
+                return h('div', dayjs(+params.row.gmtCreate).format("YYYY-MM-DD HH:mm:ss"))
+              },
+              align: 'center'
+            }
+          ]
+        }
+
+        return storage
       }
     },
     filters: {
@@ -308,7 +522,10 @@
     methods: {
       openUrl () {
         this.$router.push({
-          name: 'fxgl_promoterData'
+          name: 'fxgl_promoterData',
+          query: {
+            type: this.radioType
+          }
         })
       },
       openModal (data, num) {
@@ -411,7 +628,7 @@
     }
 
     .-c-tab {
-      margin: 20px 0;
+      margin: 29px 0;
     }
 
     .date-time {
@@ -431,10 +648,6 @@
 
     .-c-tips {
       color: #39f
-    }
-
-    .-c-red{
-      color: rgb(218, 55, 75);
     }
 
     &-btn {
