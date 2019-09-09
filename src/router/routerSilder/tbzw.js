@@ -166,8 +166,8 @@ export const tbzwRouter =[
         path: '/tbzw_bookingList',
         name: 'tbzw_bookingList',
         meta: [
-          {name: '作业管理'},
-          {name: '作业列表'}
+          {name: '预约管理'},
+          {name: '预约列表'}
         ],
         component: () => import('@/view/tbzw/bookingManagement/bookingList')
       }
