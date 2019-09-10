@@ -63,6 +63,12 @@ const jsdJob = {
   },
   sumWorkJobCount(params) {
     return axios.get(`/homework/job/sumWorkJobCount`, {params})
+  },
+  getLastActiveMessage(params) {
+    return axios.get(`/homework/job/getLastActiveMessage`, {params})
+  },
+  getTeacherRemind(params) {
+    return axios.get(`/homework/job/getTeacherRemind`, {params})
   }
 }
 

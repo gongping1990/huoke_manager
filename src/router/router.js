@@ -211,6 +211,16 @@ export const otherRouter = {
       ],
       component: () => import('@/view/fxgl/promoter/promoterData')
     },
+    {
+      path: '/tbzw_userInfo',
+      name: 'tbzw_userInfo',
+      meta: [
+        {name: '用户管理'},
+        {name: '用户列表', url: 'tbzw_userList'},
+        {name: '用户详情'}
+      ],
+      component: () => import('@/view/tbzw/user/userInfo')
+    }
   ]
 };
 

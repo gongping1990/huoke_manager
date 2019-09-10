@@ -3,22 +3,6 @@
     <Card>
       <Row class="g-search">
         <Row class="g-t-left">
-          <Col :span="4" class="g-t-left">
-            <div class="g-flex-a-j-center">
-              <div class="-search-select-text">是否回访</div>
-              <Select v-model="searchInfo.visited" @on-change="getList()" class="-search-selectOne">
-                <Option v-for="(item,index) in visitedStatusList" :label="item.name" :value="item.id" :key="index"></Option>
-              </Select>
-            </div>
-          </Col>
-          <Col :span="4" class="g-t-left">
-            <div class="g-flex-a-j-center">
-              <div class="-search-select-text">是否购买</div>
-              <Select v-model="searchInfo.buyed" @on-change="getList()" class="-search-selectOne">
-                <Option v-for="(item,index) in visitedStatusList" :label="item.name" :value="item.id" :key="index"></Option>
-              </Select>
-            </div>
-          </Col>
           <Col :span="4">
             <div class="-search">
               <Select v-model="selectInfo" class="-search-select">
@@ -34,6 +18,40 @@
             <date-picker-template :dataInfo="dateOption" @changeDate="changeDate"></date-picker-template>
           </Col>
         </Row>
+        <Row style="margin-top: 29px">
+          <Col :span="4" class="g-t-left">
+            <div class="g-flex-a-j-center">
+              <div class="-search-select-text">是否上课</div>
+              <Select v-model="searchInfo.visited" @on-change="getList()" class="-search-selectOne">
+                <Option v-for="(item,index) in visitedStatusList" :label="item.name" :value="item.id" :key="index"></Option>
+              </Select>
+            </div>
+          </Col>
+          <Col :span="4" class="g-t-left">
+            <div class="g-flex-a-j-center">
+              <div class="-search-select-text">是否交作业</div>
+              <Select v-model="searchInfo.buyed" @on-change="getList()" class="-search-selectOne">
+                <Option v-for="(item,index) in visitedStatusList" :label="item.name" :value="item.id" :key="index"></Option>
+              </Select>
+            </div>
+          </Col>
+          <Col :span="4" class="g-t-left">
+            <div class="g-flex-a-j-center">
+              <div class="-search-select-text">是否购买</div>
+              <Select v-model="searchInfo.buyed" @on-change="getList()" class="-search-selectOne">
+                <Option v-for="(item,index) in visitedStatusList" :label="item.name" :value="item.id" :key="index"></Option>
+              </Select>
+            </div>
+          </Col>
+          <Col :span="4" class="g-t-left">
+            <div class="g-flex-a-j-center">
+              <div class="-search-select-text">是否购买</div>
+              <Select v-model="searchInfo.buyed" @on-change="getList()" class="-search-selectOne">
+                <Option v-for="(item,index) in visitedStatusList" :label="item.name" :value="item.id" :key="index"></Option>
+              </Select>
+            </div>
+          </Col>
+        </Row>
       </Row>
 
       <Table class="g-tab" :loading="isFetching" :columns="columns" :data="dataList"></Table>
@@ -43,6 +61,20 @@
             @on-change="currentChange"></Page>
 
     </Card>
+
+    <Modal
+      class="p-booking"
+      v-model="isOpenModal"
+      @on-cancel="isOpenModal = false"
+      footer-hide
+      width="800"
+      title="作业记录">
+      <Table class="-c-tab" :loading="isFetching" :columns="columnsModal" :data="dataDetailList"></Table>
+
+      <Page class="g-text-right" :total="totalDetail" size="small" show-elevator :page-size="tabDetail.pageSize"
+            :current.sync="tabDetail.currentPage"
+            @on-change="detailCurrentChange"></Page>
+    </Modal>
   </div>
 </template>
 
@@ -60,11 +92,17 @@
           currentPage: 1,
           pageSize: 10
         },
+        tabDetail: {
+          page: 1,
+          currentPage: 1,
+          pageSize: 10
+        },
         dateOption: {
           name: '领取时间',
           type: 'datetime'
         },
         dataList: [],
+        dataDetailList: [],
         visitedStatusList: [
           {
             id: '-1',
@@ -80,12 +118,14 @@
           }
         ],
         total: 0,
+        totalDetail: 0,
         selectInfo: '1',
         searchInfo: {
           visited: '-1',
           buyed: '-1'
         },
         isFetching: false,
+        isOpenModal: false,
         columns: [
           {
             title: '用户昵称',
@@ -103,6 +143,40 @@
             title: '是否回访',
             render: (h,p)=> {
               return h('div',p.row.visited ? '是' : '否')
+            },
+            align: 'center'
+          },
+          {
+            title: '是否上课（次）',
+            render: (h,p)=> {
+              return h('div',{
+                style: {
+                  cursor: 'pointer',
+                  color: '#5444E4'
+                },
+                on: {
+                  click: () => {
+                    this.openModal(p.row)
+                  }
+                }
+              },`${p.row.visited ? '是' : '否'}(${1})`)
+            },
+            align: 'center'
+          },
+          {
+            title: '是否交作业（次）',
+            render: (h,p)=> {
+              return h('div',{
+                style: {
+                  cursor: 'pointer',
+                  color: '#5444E4'
+                },
+                on: {
+                  click: () => {
+                    this.openModal(p.row)
+                  }
+                }
+              },`${p.row.visited ? '是' : '否'}(${2})`)
             },
             align: 'center'
           },
@@ -139,6 +213,27 @@
             },
             align: 'center'
           }
+        ],
+        columnsModal: [
+          {
+            title: '课时名称',
+            key: 'nickname',
+            align: 'center'
+          },
+          {
+            title: '首次完成上课时间',
+            render: (h, params) => {
+              return h('div', dayjs(+params.row.gmtModified).format('YYYY-MM-DD HH:mm:ss'))
+            },
+            align: 'center'
+          },
+          {
+            title: '最后交作业时间',
+            render: (h, params) => {
+              return h('div', dayjs(+params.row.gmtModified).format('YYYY-MM-DD HH:mm:ss'))
+            },
+            align: 'center'
+          }
         ]
       };
     },
@@ -146,6 +241,9 @@
       this.getList()
     },
     methods: {
+      openModal () {
+        this.isOpenModal = true
+      },
       changeDate(data) {
         this.searchInfo.getStartTime = data.startTime
         this.searchInfo.getEndTime = data.endTime
@@ -164,6 +262,10 @@
           })
       },
       currentChange(val) {
+        this.tab.page = val;
+        this.getList();
+      },
+      detailCurrentChange(val) {
         this.tab.page = val;
         this.getList();
       },
@@ -210,7 +312,7 @@
     }
 
     .-search-select-text {
-      min-width: 70px;
+      min-width: 80px;
     }
     .-search-selectOne {
       width: 100%;

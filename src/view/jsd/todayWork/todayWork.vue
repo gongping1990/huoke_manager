@@ -5,6 +5,7 @@
         <Row class="g-t-left">
           <Radio-group v-model="radioType" type="button" @on-change="changeJobType">
             <Radio :label=0>待批改</Radio>
+            <Radio :label=5>无需批改</Radio>
             <Radio :label=1>不合格</Radio>
             <Radio :label=3>已批改</Radio>
             <Radio :label=4>表扬</Radio>
@@ -56,12 +57,14 @@
 
         <search-template ref="searchChild" :option="searchOption" @changeSearch="getSearchInfo"></search-template>
 
-        <Row v-if="radioType === 1 && unqualifiedType === 1" class="p-todayWork-tip">
+        <Row v-if="(radioType === 1 && unqualifiedType === 1) || radioType === 5" class="p-todayWork-tip">
           <div class="-tip-div g-t-left">
             <Checkbox v-model="selectAllData" @on-change="changeAloneSelect">全选所有作业</Checkbox>
           </div>
           <div class="-tip-div g-text-right">
-            <Button @click="sendMessage()" ghost type="primary" style="width: 100px;">提醒</Button>
+            <Button @click="sendMessage()" ghost type="primary" style="width: 100px;">{{radioType === 5 ? '移入待批改' :
+              '提醒'}}
+            </Button>
           </div>
         </Row>
       </Row>
@@ -172,6 +175,7 @@
         unqualifiedType: 1,
         getStartTime: '',
         getEndTime: '',
+        noticeMessage: '',
         selectAllData: false,
         searchInfo: {},
         isFetching: false,
@@ -186,7 +190,23 @@
         columns: [
           {
             title: '用户昵称',
-            key: 'nickName',
+            render: (h, params) => {
+              return h('Button', {
+                props: {
+                  type: 'text',
+                  size: 'small'
+                },
+                style: {
+                  color: '#5444E4',
+                  marginRight: '5px'
+                },
+                on: {
+                  click: () => {
+                    this.toDetail(params.row)
+                  }
+                }
+              }, params.row.nickName)
+            },
             align: 'center'
           },
           {
@@ -279,9 +299,24 @@
           },
           {
             title: '操作',
-            width: 190,
+            width: 210,
             render: (h, params) => {
               return h('div', [
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: '#5444E4',
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.noRequired(params.row)
+                    }
+                  }
+                }, this.radioType === 5 ? '移入待批改' : '无需批改'),
                 h('Button', {
                   props: {
                     type: 'text',
@@ -661,6 +696,7 @@
         return {
           '0': this.columns,
           '3': this.columnsTwo,
+          '5': this.columns,
           '1': this.columnsThree,
           '2': this.columnsThree,
           '4': this.columnsTwo,
@@ -670,8 +706,35 @@
     mounted() {
       this.getList()
       this.todayWorkJobCount()
+      this.getTeacherRemind()
     },
     methods: {
+      noRequired() {
+        this.$Modal.confirm({
+          title: '提示',
+          content: this.radioType === 5 ? '确认将该作业移入待批改' : '确认移出到无需批改？',
+          onOk: () => {
+            this.$api.jsdJob.removeHomework({
+              system: this.searchInfo.appId || '7',
+              id: param.workId
+            }).then(
+              response => {
+                if (response.data.code == "200") {
+                  this.$Message.success("操作成功");
+                  this.getList();
+                }
+              })
+          }
+        })
+      },
+      toDetail(param) {
+        this.$router.push({
+          name: 'tbzw_userInfo',
+          query: {
+            id: param.userId
+          }
+        })
+      },
       changeAloneSelect() {
         this.$refs.selection.selectAll(this.selectAllData);
       },
@@ -683,11 +746,12 @@
       },
       sendMessage() {
         if (!this.selectUserList.length) {
-          return this.$Message.error('请选择需要提醒用户')
+          return this.$Message.error('请选择需要操作的用户')
         }
+        let tipText = this.radioType === 5 ? `确认将${this.selectAllData ? '所有' : `选中的${this.selectUserList.length}份`}作业移入待批改？` : `确认向${this.selectAllData ? '所有' : `选中的${this.selectUserList.length}位`}用户发送微信消息和短信？`
         this.$Modal.confirm({
           title: '提示',
-          content: `确认向${this.selectAllData ? '所有' : `选中的${this.selectUserList.length}位`}用户发送微信消息和短信？`,
+          content: tipText,
           onOk: () => {
             this.$api.jsdJob.remindReSubmit({
               range: this.selectAllData ? 1 : 0,
@@ -725,11 +789,6 @@
       changeJobType() {
         if (this.radioType === 1) {
           this.noticeText()
-        } else if (this.radioType === 3) {
-          // this.$Notice.warning({
-          //   desc: '今日已批该作业28，用户已点评23',
-          //   duration: 5
-          // });
         }
         // this.searchInfo = {}
         setTimeout(() => {
@@ -757,7 +816,7 @@
         this.getList(1)
       },
       changeUnqualified() {
-        this.noticeText()
+        // this.noticeText()
         // this.searchInfo = {}
         setTimeout(() => {
           this.$refs.searchChild.initSearch()
@@ -766,10 +825,19 @@
         this.getList(1)
       },
       noticeText() {
-        // this.$Notice.warning({
-        //   desc: this.unqualifiedType === 2 ? '最近7天不合作业还剩28，已重交23' : '不合作业累计还剩28，已重交23',
-        //   duration: 5
-        // });
+        if (this.noticeMessage) {
+          this.$Notice.warning({
+            desc: this.noticeMessage,
+            duration: 5
+          });
+        }
+      },
+      getTeacherRemind() {
+        this.$api.jsdJob.getTeacherRemind()
+          .then(
+            response => {
+              this.noticeMessage = response.data.resultData;
+            })
       },
       getSearchInfo(data) {
         this.searchInfo = data

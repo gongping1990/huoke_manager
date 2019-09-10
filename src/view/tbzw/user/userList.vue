@@ -185,7 +185,22 @@
                       this.toChangeStatus(params.row)
                     }
                   }
-                }, params.row.disabled ? '启用' : '禁用')
+                }, params.row.disabled ? '启用' : '禁用'),
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: '#5444E4',
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.toDetail(params.row)
+                    }
+                  }
+                }, '详情')
               ])
             }
           }
@@ -196,8 +211,15 @@
       this.getList()
     },
     methods: {
+      toDetail(param) {
+        this.$router.push({
+          name: 'tbzw_userInfo',
+          query: {
+            id: param.userId
+          }
+        })
+      },
       toChangeStatus(params) {
-
         this.$api.tbzwUser.TbzwChangeStatus({
           userId: params.userId,
           disabled: !params.disabled

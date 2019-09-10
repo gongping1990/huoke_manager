@@ -4,7 +4,7 @@
       <Row class="p-dataBoard-notice -c-tab">
         <Col :span="12" class="g-t-left">
           <img class="-img" src="../../../assets/images/index-label-icon-tips.png"/>
-          <span>截止2019-7-26  19:53:52，未分配作业累计已达50条，请及时调度分配</span>
+          <span>{{noticeMessage}}</span>
         </Col>
         <Col :span="12" class="g-text-right">
           <span class="-text" @click="openModal(1)">预警历史</span>
@@ -189,6 +189,7 @@
         modelType: 2,
         isFetching: false,
         isOpenModal: false,
+        noticeMessage: '',
         dataInfoOne: '',
         dataInfoTwo: '',
         dataInfoThree: '',
@@ -267,7 +268,7 @@
       optionSeriesLineTwo() {
         let arrayY = []
         for (let item of this.dataInfoTwo) {
-          arrayY.push(`${(item.totalHandled/10)}`)
+          arrayY.push(`${(item.totalHandled / 10)}`)
         }
         return arrayY
       },
@@ -418,6 +419,7 @@
       this.topGood()
       this.topHandled()
       this.sumWorkJobCount()
+      this.getLastActiveMessage()
     },
     methods: {
       changeDate(type, num) {
@@ -667,6 +669,13 @@
           .finally(() => {
             this.isFetching = false
           })
+      },
+      getLastActiveMessage(num) {
+        this.$api.jsdJob.getLastActiveMessage()
+          .then(
+            response => {
+              this.noticeMessage = response.data.resultData || '暂无通知消息';
+            })
       },
       viewTeacherDateCount(num) {
         this.isFetching = true
