@@ -143,7 +143,7 @@
                 }, [
                   h('img', {
                     attrs: {
-                      src: params.row.headImgUrl
+                      src: params.row.headimgurl
                     },
                     style: {
                       width: '36px',
@@ -152,7 +152,7 @@
                       'border-radius': '50%'
                     }
                   }),
-                  h('span', params.row.nickname)
+                  h('span', params.row.userName)
                 ])
               }
             },
@@ -163,14 +163,12 @@
             },
             {
               title: '加盟商',
-              key: 'phone',
+              key: 'franchisee',
               align: 'center'
             },
             {
               title: '注册时间',
-              render: (h, params) => {
-                return h('div', dayjs(+params.row.gmtCreate).format("YYYY-MM-DD HH:mm"))
-              },
+              key: 'applyTime',
               align: 'center'
             },
             {
@@ -247,27 +245,8 @@
           storage = [
             {
               title: '用户头像/昵称',
-              render: (h, params) => {
-                return h('div', {
-                  style: {
-                    'display': 'flex',
-                    'align-items': 'center',
-                  }
-                }, [
-                  h('img', {
-                    attrs: {
-                      src: params.row.headImgUrl
-                    },
-                    style: {
-                      width: '36px',
-                      height: '36px',
-                      margin: '10px',
-                      'border-radius': '50%'
-                    }
-                  }),
-                  h('span', params.row.nickname)
-                ])
-              }
+              key: 'userName',
+              align: 'center'
             },
             {
               title: '手机号码',
@@ -276,9 +255,7 @@
             },
             {
               title: '注册时间',
-              render: (h, params) => {
-                return h('div', dayjs(+params.row.gmtCreate).format("YYYY-MM-DD HH:mm"))
-              },
+              key: 'applyTime',
               align: 'center'
             },
             {
@@ -569,14 +546,11 @@
         let params = {
           current:  num ? num : this.tab.page,
           size: this.tab.pageSize,
-          payStatus: this.searchInfo.status,
-          startTime: this.getStartTime ? new Date(this.getStartTime).getTime() : "",
-          endTime: this.getEndTime ? new Date(this.getEndTime).getTime() : ""
+          applyStart: this.getStartTime ? new Date(this.getStartTime).getTime() : "",
+          applyEnd: this.getEndTime ? new Date(this.getEndTime).getTime() : ""
         }
 
-        if (this.selectInfo == '0' && this.searchInfo.antistop) {
-          params.id = this.searchInfo.antistop
-        } else if (this.selectInfo == '1' && this.searchInfo.antistop) {
+        if (this.selectInfo == '1' && this.searchInfo.antistop) {
           params.nickName = this.searchInfo.antistop
         } else if (this.selectInfo == '2' && this.searchInfo.antistop) {
           params.phone = this.searchInfo.antistop
@@ -587,7 +561,8 @@
       //分页查询
       getList(num) {
         this.isFetching = true
-        this.$api.gswOrder.gswOrderList(this.paramsInit(num))
+        let paramUrl = this.radioType === 0 ? this.$api.jsdDistributie.listByPromoter : this.$api.jsdDistributie.listByFranchisee
+        paramUrl(this.paramsInit(num))
           .then(
             response => {
               this.dataList = response.data.resultData.records;

@@ -15,9 +15,10 @@
             <div class="-search">
               <Select v-model="selectInfo" class="-search-select">
                 <Option value="1">用户昵称</Option>
+                <Option value="2">手机号码</Option>
               </Select>
               <span class="-search-center">|</span>
-              <Input v-model="searchInfo.nickname" class="-search-input" placeholder="请输入关键字" icon="ios-search"
+              <Input v-model="searchInfo.manner" class="-search-input" placeholder="请输入关键字" icon="ios-search"
                      @on-click="getList(1)"></Input>
             </div>
           </Col>
@@ -64,16 +65,16 @@
         columns: [
           {
             title: '用户昵称',
-            key: 'nickname'
+            key: 'userName'
           },
           {
             title: '手机号',
-            key: 'nickname'
+            key: 'phone'
           },
           {
             title: '申请时间',
             render: (h, params) => {
-              return h('div', dayjs(+params.row.gmtModified).format('YYYY-MM-DD HH:mm:ss'))
+              return h('div', dayjs(+params.row.applyTime).format('YYYY-MM-DD HH:mm:ss'))
             }
           },
           {
@@ -109,11 +110,11 @@
         columnsTwo: [
           {
             title: '用户昵称',
-            key: 'nickname'
+            key: 'userName'
           },
           {
             title: '手机号',
-            key: 'nickname'
+            key: 'phone'
           },
           {
             title: '预约时间',
@@ -167,10 +168,9 @@
         this.getList(1)
       },
       changeAudit(param, num) {
-        console.log(param)
-        this.$api.composition.recordAudit({
-          id: param.id,
-          status: num
+        this.$api.jsdDistributie.audit({
+          auditId: param.id,
+          auditStatus: num
         }).then(
           response => {
             if (response.data.code == "200") {
@@ -183,13 +183,9 @@
         this.isOpenModal = true
         if (data) {
           this.addInfo = JSON.parse(JSON.stringify(data))
-          this.addInfo.sortnum = this.addInfo.sortnum.toString()
         } else {
           this.addInfo = {}
         }
-        setTimeout(() => {
-          this.$refs.childImg.init()
-        }, 0)
       },
       closeModal(name) {
         this.isOpenModal = false
@@ -202,17 +198,26 @@
       //分页查询
       getList(num) {
         this.isFetching = true
-        if (num) {
-          this.tab.currentPage = 1
-        }
-        this.$api.composition.reservatRecordPage({
+
+        let params = {
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
           status: this.radioType,
-          nickname: this.searchInfo.nickname,
-          startTime: this.searchInfo.getStartTime ? new Date(this.searchInfo.getStartTime).getTime() : "",
-          endTime: this.searchInfo.getEndTime ? new Date(this.searchInfo.getEndTime).getTime() : ""
-        })
+          applyStart: this.searchInfo.getStartTime ? new Date(this.searchInfo.getStartTime).getTime() : "",
+          applyEnd: this.searchInfo.getEndTime ? new Date(this.searchInfo.getEndTime).getTime() : ""
+        }
+
+        if (this.selectInfo == '1' && this.searchInfo) {
+          params.nickName = this.searchInfo.manner
+        } else if (this.selectInfo == '2' && this.searchInfo) {
+          params.phone = this.searchInfo.manner
+        }
+
+        if (num) {
+          this.tab.currentPage = 1
+        }
+
+        this.$api.jsdDistributie.listByApplyFranchisee(params)
           .then(
             response => {
               this.dataList = response.data.resultData.records;
@@ -221,27 +226,6 @@
           .finally(() => {
             this.isFetching = false
           })
-      },
-      submitInfo(name) {
-        if (this.isSending) return
-        this.$refs[name].validate((valid) => {
-          if (valid) {
-            this.isSending = true
-            let promiseDate = this.addInfo.id ? this.$api.composition.updateBroadcast(this.addInfo) : this.$api.composition.saveBroadcast(this.addInfo)
-            promiseDate
-              .then(
-                response => {
-                  if (response.data.code == '200') {
-                    this.$Message.success('提交成功');
-                    this.getList()
-                    this.closeModal(name)
-                  }
-                })
-              .finally(() => {
-                this.isSending = false
-              })
-          }
-        })
       }
     }
   };

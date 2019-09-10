@@ -2,16 +2,13 @@
   <div class="p-distribution">
     <Card>
       <Table class="-c-tab" :loading="isFetching" :columns="columns" :data="dataList"></Table>
-
-      <Page class="g-t-center" :total="total" show-elevator :page-size="tab.pageSize"
-            @on-change="currentChange"></Page>
     </Card>
 
     <Modal
       class="p-distribution"
       v-model="isOpenModal"
       @on-cancel="closeModal"
-      width="600"
+      width="650"
       :title="openType === 1 ? '变更记录' : '设置'">
 
       <Table class="-c-tab" :loading="isFetching" :columns="columnsModal" :data="detailList"
@@ -21,10 +18,13 @@
             :current.sync="tabDetail.currentPage" v-if="openType === 1"
             @on-change="detailCurrentChange"></Page>
 
-      <Form ref="addInfo" :model="addInfo" :rules="ruleValidate" :label-width="90" v-if="openType === 2">
+      <Form ref="addInfo" :model="addInfo" :label-width="140" v-if="openType === 2">
 
-        <FormItem label="佣金比例(%)" prop="name">
-          <Input type="text" v-model="addInfo.name" placeholder="请输入佣金比例(%)"></Input>
+        <FormItem label="推广人佣金比例(%)" prop="promoterRatio">
+          <Input type="text" v-model="addInfo.promoterRatio" placeholder="请输入推广人佣金比例(%)"></Input>
+        </FormItem>
+        <FormItem label="加盟商佣金比例(%)" prop="franchiseeRatio">
+          <Input type="text" v-model="addInfo.franchiseeRatio" placeholder="请输入加盟商佣金比例(%)"></Input>
         </FormItem>
       </Form>
 
@@ -54,43 +54,44 @@
         dataList: [],
         detailList: [],
         version: '',
-        countAllInstall: '',
         total: 0,
         totalDetail: 0,
         isFetching: false,
         isOpenModal: false,
         openType: '',
         addInfo: {},
-        ruleValidate: {
-          name: [
-            {required: true, message: '请输入佣金比例', trigger: 'blur'},
-          ]
-        },
         columns: [
           {
             title: '课程名称',
-            key: 'version',
+            key: 'courseName',
             width: 200,
             align: 'center'
           },
           {
             title: '单独购价格',
             render: (h, params) => {
-              return h('div', `￥ ${params.row.payAmount / 100}`)
+              return h('div', `￥ ${params.row.ddgPrice / 100}`)
             },
             align: 'center'
           },
           {
             title: '拼团价格',
             render: (h, params) => {
-              return h('div', `￥ ${params.row.payAmount / 100}`)
+              return h('div', `￥ ${params.row.ptPrice / 100}`)
             },
             align: 'center'
           },
           {
-            title: '佣金比例',
+            title: '推广人佣金比例',
             render: (h, params) => {
-              return h('div', `${params.row.payAmount}%`)
+              return h('div', `${params.row.promoterRatio}%`)
+            },
+            align: 'center'
+          },
+          {
+            title: '加盟商佣金比例',
+            render: (h, params) => {
+              return h('div', `${params.row.franchiseeRatio}%`)
             },
             align: 'center'
           },
@@ -135,23 +136,23 @@
         ],
         columnsModal: [
           {
-            title: '更改前佣金比例',
-            key: 'phoneModel',
+            title: '推广人佣金比例（更改前->更改后）',
+            key: 'promoterRatio',
             align: 'center'
           },
           {
-            title: '更改后佣金比例',
-            key: 'num',
+            title: '加盟商佣金比例（更改前->更改后）',
+            key: 'franchiseeRatio',
             align: 'center'
           },
           {
             title: '操作人',
-            key: 'num',
+            key: 'gmtCreater',
             align: 'center'
           },
           {
             title: '操作时间',
-            key: 'num',
+            key: 'gmtCreate',
             align: 'center'
           }
         ],
@@ -159,7 +160,6 @@
     },
     mounted() {
       this.getList()
-      this.getCountAllInstall()
     },
     methods: {
       closeModal() {
@@ -175,14 +175,16 @@
       },
       openModal(data, num) {
         this.openType = num
-        this.version = data.version
+        this.version = data.courseId
+        this.addInfo = JSON.parse(JSON.stringify(data))
         this.isOpenModal = true
         this.getDetailList();
       },
       getDetailList() {
         this.isFetching = true
-        this.$api.gswStatistics.listInstallStatistics({
-          version: this.version,
+        this.$api.jsdDistributie.pageDistributieRatioLog({
+          courseId: this.version,
+          system: this.addInfo.system,
           current: this.tabDetail.page,
           size: this.tabDetail.pageSize
         }).then(response => {
@@ -195,43 +197,35 @@
       //分页查询
       getList() {
         this.isFetching = true
-        let params = {
-          current: this.tab.page,
-          size: this.tab.pageSize
-        }
 
-        this.$api.gswStatistics.listVersionStatistics(params)
+        this.$api.jsdDistributie.listDistributieRatio()
           .then(
             response => {
-              this.dataList = response.data.resultData.records;
-              this.total = response.data.resultData.total;
+              this.dataList = response.data.resultData;
             })
           .finally(() => {
             this.isFetching = false
           })
-      },
-      getCountAllInstall() {
-        this.$api.gswStatistics.countAllInstall()
-          .then(
-            response => {
-              this.countAllInstall = response.data.resultData
-            })
       },
       submitInfo() {
         if (this.openType === 1) {
           return this.closeModal()
         }
 
-        if (!this.addInfo.name) {
-          return this.$Message.error('请输入佣金比例')
+        if (!this.addInfo.promoterRatio) {
+          return this.$Message.error('请输入推广人佣金比例')
+        } else if (!this.addInfo.franchiseeRatio ) {
+          return this.$Message.error('请输入加盟商佣金比例')
         }
 
         if (this.isSending) return
 
         this.isSending = true
-        this.$api.gswOperational.saveOperational({
-          id: this.addInfo.id,
-          name: this.addInfo.name
+        this.$api.jsdDistributie.editDistributieRatio({
+          courseId: this.version,
+          system: this.addInfo.system,
+          franchiseeRatio: this.addInfo.franchiseeRatio,
+          promoterRatio: this.addInfo.promoterRatio
         }).then(
           response => {
             if (response.data.code == '200') {

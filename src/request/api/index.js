@@ -7,6 +7,7 @@ import {tbzwIndex} from './tbzw/tbzwIndex'
 import {ylxcxIndex} from './ylxcx/ylxcxIndex'
 import {hkywIndex} from './hkyw/hkywIndex'
 import {jsdIndex} from './jsd/jsdIndex'
+import {fxglIndex} from './fxgl/fxglIndex'
 
 export default {
   ...hkxtIndex,
@@ -17,5 +18,6 @@ export default {
   ...tbzwIndex,
   ...ylxcxIndex,
   ...hkywIndex,
-  ...jsdIndex
+  ...jsdIndex,
+  ...fxglIndex
 }
