@@ -1,19 +1,6 @@
 <template>
-  <div class="p-qrcode">
+  <div class="p-homePageSet">
     <Card>
-      <Row class="g-search">
-        <Row class="g-t-left">
-          <Radio-group v-model="radioType" type="button" @on-change="getList()">
-            <Radio :label=1>正常</Radio>
-            <Radio :label=2>失效</Radio>
-          </Radio-group>
-        </Row>
-      </Row>
-
-      <div class="g-add-btn g-add-top" @click="openModal()">
-        <Icon class="-btn-icon" color="#fff" type="ios-add" size="24"/>
-      </div>
-
       <Table class="-c-tab" :loading="isFetching" :columns="columns" :data="dataList"></Table>
 
       <Page class="-p-text-right" :total="total" size="small" show-elevator :page-size="tab.pageSize"
@@ -21,20 +8,22 @@
             @on-change="currentChange"></Page>
 
       <Modal
-        class="p-qrcode"
+        class="p-homePageSet"
         v-model="isOpenModal"
         @on-cancel="closeModal('addInfo')"
         width="500"
-        :title="addInfo.id ? '编辑二维码' : '创建二维码'">
+        title="编辑首页信息配置">
         <Form ref="addInfo" :model="addInfo" :rules="ruleValidate" :label-width="90">
-          <FormItem label="二维码名称" prop="name">
-            <Input type="text" v-model="addInfo.name" placeholder="请输入消息内容"></Input>
+          <FormItem label="课程名称" prop="name">
+            <Input type="text" v-model="addInfo.name" placeholder="请输入课程名称"></Input>
           </FormItem>
-          <FormItem label="有效期" prop="endTime">
-            <Date-picker style="width: 100%" type="datetime" placeholder="选择结束日期"
-                         v-model="addInfo.endTime"></Date-picker>
+          <FormItem label="课程描述" prop="name">
+            <Input type="text" v-model="addInfo.name" placeholder="请输入课程描述"></Input>
           </FormItem>
-          <FormItem label="二维码">
+          <FormItem label="竖版封面">
+            <upload-img v-model="addInfo.qrcode" :option="uploadOption"></upload-img>
+          </FormItem>
+          <FormItem label="横版封面">
             <upload-img v-model="addInfo.qrcode" :option="uploadOption"></upload-img>
           </FormItem>
         </Form>
@@ -48,16 +37,13 @@
 </template>
 
 <script>
-  import {getBaseUrl} from '@/libs/index'
-  import UploadImg from "../../../components/uploadImg";
-  import dayjs from 'dayjs'
+  import UploadImg from "@/components/uploadImg";
 
   export default {
-    name: 'qrcodeList',
+    name: 'tbzw_homePageSet',
     components: {UploadImg},
     data() {
       return {
-        baseUrl: `${getBaseUrl()}/sch/common/uploadPublicFile`,
         tab: {
           page: 1,
           currentPage: 1,
@@ -69,7 +55,6 @@
         },
         dataList: [],
         total: 0,
-        radioType:1,
         isFetching: false,
         isOpenModal: false,
         isSending: false,
@@ -84,11 +69,18 @@
         },
         columns: [
           {
-            title: '二维码名称',
-            key: 'name'
+            title: '课程名称',
+            key: 'name',
+            align: 'center'
           },
           {
-            title: '二维码',
+            title: '课程描述',
+            key: 'name',
+            align: 'center'
+          },
+          {
+            title: '竖版封面',
+            align:'center',
             render: (h, params) => {
               return h('div', [
                 h('img', {
@@ -105,20 +97,21 @@
             }
           },
           {
-            title: '扫码次数',
-            key: 'scanNum',
-            align: 'center'
-          },
-          {
-            title: '创建时间',
+            title: '横版封面',
+            align:'center',
             render: (h, params) => {
-              return h('div', dayjs(+params.row.gmtCreate).format('YYYY-MM-DD HH:mm:ss'))
-            }
-          },
-          {
-            title: '结束日期',
-            render: (h, params) => {
-              return h('div', dayjs(+params.row.endTime).format('YYYY-MM-DD HH:mm:ss'))
+              return h('div', [
+                h('img', {
+                  attrs: {
+                    src: params.row.qrcode
+                  },
+                  style: {
+                    width: '50px',
+                    height: '50px',
+                    margin: '10px auto'
+                  }
+                })
+              ])
             }
           },
           {
@@ -141,22 +134,7 @@
                       this.openModal(params.row)
                     }
                   }
-                }, '编辑'),
-                h('Button', {
-                  props: {
-                    type: 'text',
-                    size: 'small'
-                  },
-                  style: {
-                    color: 'rgba(218, 55, 75)',
-                    marginRight: '5px'
-                  },
-                  on: {
-                    click: () => {
-                      this.delItem(params.row)
-                    }
-                  }
-                }, '删除')
+                }, '编辑')
               ])
             }
           }
@@ -169,12 +147,7 @@
     methods: {
       openModal(data) {
         this.isOpenModal = true
-        if (data) {
-          this.addInfo = JSON.parse(JSON.stringify(data))
-          this.addInfo.endTime = new Date(+this.addInfo.endTime)
-        } else {
-          this.addInfo = {}
-        }
+        this.addInfo = JSON.parse(JSON.stringify(data))
       },
       closeModal(name) {
         this.isOpenModal = false
@@ -193,7 +166,6 @@
         this.$api.composition.qrcodeList({
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
-          normal: this.radioType === 1
         })
           .then(
             response => {
@@ -204,36 +176,20 @@
             this.isFetching = false
           })
       },
-      delItem(param) {
-        this.$Modal.confirm({
-          title: '提示',
-          content: '确认要删除吗？',
-          onOk: () => {
-            this.$api.composition.deleteQrcode({
-              id: param.id
-            }).then(
-              response => {
-                if (response.data.code == "200") {
-                  this.$Message.success("操作成功");
-                  this.getList();
-                }
-              })
-          }
-        })
-      },
       submitInfo(name) {
         if (this.isSending) return
         this.$refs[name].validate((valid) => {
           if (valid) {
             if (!this.addInfo.qrcode) {
-              return this.$Message.error('请上传二维码')
+              return this.$Message.error('请上传竖版图片')
+            } else if (!this.addInfo.qrcode) {
+              return this.$Message.error('请上传横版图片')
             }
             this.isSending = true
             this.$api.composition.saveQrcode({
               id: this.addInfo.id,
               name: this.addInfo.name,
               qrcode: this.addInfo.qrcode,
-              endTime: new Date(this.addInfo.endTime).getTime()
             })
               .then(
                 response => {
@@ -255,43 +211,9 @@
 
 
 <style lang="less" scoped>
-  .p-qrcode {
+  .p-homePageSet {
     .-c-tips {
       color: #39f
-    }
-
-    .-c-course-wrap {
-      display: inline-block;
-      .-c-course-item {
-        position: relative;
-        display: inline-block;
-        /*height: 70px;*/
-        overflow: hidden;
-
-        img {
-          width: 140px;
-          height: 70px;
-        }
-
-        .-i-text {
-          display: -webkit-box;
-          -webkit-box-orient: vertical;
-          /*-webkit-line-clamp: 1;*/
-          line-height: normal;
-        }
-
-        .-i-del {
-          position: absolute;
-          top: 0;
-          right: 0;
-          color: #ffff;
-          background-color: rgba(0, 0, 0, 0.4);
-          line-height: normal;
-          cursor: pointer;
-          padding: 4px;
-          border-radius: 4px;
-        }
-      }
     }
 
     .-p-b-flex {
@@ -310,16 +232,6 @@
 
     .-c-tab {
       margin: 20px 0;
-    }
-
-    .date-time {
-      width: 100%;
-      border: 1px solid #dcdee2;
-      border-radius: 4px;
-      min-width: 155px;
-    }
-    .-date-search {
-      margin-left: 20px;
     }
   }
 </style>

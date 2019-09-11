@@ -2,7 +2,7 @@
 .g-add-btn {
   position: absolute;
   display: inline-block;
-  top: 16px;
+  top: 26px;
   right: 16px;
   z-index: 999;
   width: 40px;
@@ -19,7 +19,7 @@
 }
 
 .g-add-top {
-  top: 36px;
+  top: 46px;
 }
 
 /*一般默认按钮*/

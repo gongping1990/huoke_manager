@@ -2,7 +2,15 @@
   <div class="p-order">
     <Card>
       <Row class="g-search">
-        <Col :span="3" class="g-t-left">
+        <Col :span="4" class="g-t-left">
+          <div class="g-flex-a-j-center">
+            <div class="-search-select-text">课程名称：</div>
+            <Select v-model="searchInfo.status" @on-change="selectChange" class="-search-selectOne">
+              <Option v-for="(item,index) in orderStatusList" :label="item.name" :value="item.id" :key="index"></Option>
+            </Select>
+          </div>
+        </Col>
+        <Col :span="4" class="g-t-left">
           <div class="g-flex-a-j-center">
             <div class="-search-select-text">订单状态：</div>
             <Select v-model="searchInfo.status" @on-change="selectChange" class="-search-selectOne">
@@ -10,7 +18,7 @@
             </Select>
           </div>
         </Col>
-        <Col :span="3" class="g-t-left">
+        <Col :span="4" class="g-t-left">
           <div class="g-flex-a-j-center">
             <div class="-search-select-text">订单类型：</div>
             <Select v-model="searchInfo.orderMode" @on-change="selectChange" class="-search-selectOne">
@@ -18,6 +26,12 @@
             </Select>
           </div>
         </Col>
+        <div class="g-text-right">
+          <Button type="primary" ghost class="-p-modal-btn -date-search" @click="toExcel">导出表格</Button>
+        </div>
+      </Row>
+
+      <Row class="g-search -c-tab">
         <Col :span="5">
           <div class="-search">
             <Select v-model="selectInfo" class="-search-select">
@@ -32,9 +46,6 @@
         <Col :span="8" style="margin-left: 10px" class="g-flex-a-j-center">
           <date-picker-template :dataInfo="dateOption" @changeDate="changeDate"></date-picker-template>
         </Col>
-        <div class="g-text-right">
-          <Button type="primary" ghost class="-p-modal-btn -date-search" @click="toExcel">导出表格</Button>
-        </div>
       </Row>
 
       <Table class="-c-tab" :loading="isFetching" :columns="columns" :data="dataList"></Table>
@@ -50,21 +61,35 @@
       width="600"
       title="订单详情">
       <Form ref="orderInfo" :model="orderInfo" :label-width="90">
+        <div class="-p-o-title">订单信息</div>
         <div class="-p-o-flex">
           <FormItem label="订单号" class="-p-o-width">{{orderInfo.id}}</FormItem>
+          <FormItem label="课程名称" class="-p-o-width">{{orderInfo.amount | moneyFormatter}} 元</FormItem>
+        </div>
+        <div class="-p-o-flex">
           <FormItem label="订单金额" class="-p-o-width">{{orderInfo.amount | moneyFormatter}} 元</FormItem>
+          <FormItem label="优惠金额" class="-p-o-width">{{orderInfo.amount | moneyFormatter}} 元</FormItem>
         </div>
         <div class="-p-o-flex">
-          <FormItem label="课程名称" class="-p-o-width">小学轻作文</FormItem>
-          <FormItem label="用户昵称" class="-p-o-width -c-tips g-cursor"><span>{{orderInfo.nickName}}</span></FormItem>
-        </div>
-        <div class="-p-o-flex">
-          <FormItem label="订单状态" class="-p-o-width">{{orderStatus[orderInfo.payStatus]}}</FormItem>
-          <FormItem label="三方交易号" class="-p-o-width">{{orderInfo.transactionNo}}</FormItem>
-        </div>
-        <div class="-p-o-flex">
-          <FormItem label="创建时间" class="-p-o-width">{{orderInfo.gmtCreate | timeFormatter}}</FormItem>
+          <FormItem label="实付金额" class="-p-o-width">{{orderStatus[orderInfo.payStatus]}}</FormItem>
           <FormItem label="支付时间" class="-p-o-width">{{orderInfo.timeEnd}}</FormItem>
+        </div>
+        <div class="-p-o-flex">
+          <FormItem label="三方交易号" class="-p-o-width">{{orderInfo.transactionNo}}</FormItem>
+          <FormItem label="" class="-p-o-width"></FormItem>
+        </div>
+        <div class="-p-o-title">团购信息</div>
+        <div class="-p-o-flex">
+          <FormItem label="团购人数" class="-p-o-width">{{orderInfo.id}}</FormItem>
+          <FormItem label="团购时限" class="-p-o-width">{{orderInfo.amount | moneyFormatter}} 元</FormItem>
+        </div>
+        <div class="-p-o-flex">
+          <FormItem label="成团时限" class="-p-o-width">{{orderInfo.amount | moneyFormatter}} 元</FormItem>
+          <FormItem label="成团时间" class="-p-o-width">{{orderInfo.amount | moneyFormatter}} 元</FormItem>
+        </div>
+        <div class="-p-o-flex">
+          <FormItem label="团长" class="-p-o-width">{{orderStatus[orderInfo.payStatus]}}</FormItem>
+          <FormItem label="团员" class="-p-o-width">{{orderInfo.timeEnd}}</FormItem>
         </div>
       </Form>
       <div slot="footer" class="-p-o-footer">
@@ -154,6 +179,12 @@
           {
             title: '订单号',
             key: 'id',
+            tooltip: true,
+            align: 'center'
+          },
+          {
+            title: '课程名称',
+            key: 'courseName',
             align: 'center'
           },
           {
@@ -211,7 +242,7 @@
           {
             title: '创建时间',
             render: (h, params) => {
-              return h('div', dayjs(+params.row.gmtCreate).format("YYYY-MM-DD HH:mm:ss"))
+              return h('div', dayjs(+params.row.gmtCreate).format("YYYY-MM-DD HH:mm"))
             },
             align: 'center'
           },
@@ -324,6 +355,12 @@
       font-size: 16px;
       font-weight: bold;
       margin-bottom: 10px;
+    }
+
+    .-p-o-title {
+      color: #B3B5B8 ;
+      margin: 5px 0;
+      font-size: 16px;
     }
     .-p-o-width {
       width: 50%;

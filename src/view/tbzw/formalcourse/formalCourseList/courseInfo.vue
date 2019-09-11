@@ -12,11 +12,11 @@
           <FormItem label="课程名称" prop="name">
             <Input type="text" :disabled="!isEdit" v-model="addInfo.name" placeholder="请输入课程名称"></Input>
           </FormItem>
+          <FormItem label="课程描述" prop="des">
+            <Input type="text" :disabled="!isEdit" v-model="addInfo.des" placeholder="请输入课程描述"></Input>
+          </FormItem>
           <FormItem label="课时节数" prop="lessonDescribe">
             <Input type="text" :disabled="!isEdit" v-model="addInfo.lessonDescribe" placeholder="请输入课时节数"></Input>
-          </FormItem>
-          <FormItem label="预约节数">
-            <Input type="text" :disabled="!isEdit" v-model="addInfo.reserves" placeholder="请输入预约节数"></Input>
           </FormItem>
           <FormItem label="单独购价格" prop="alonePrice">
             <InputNumber  style="width: 100%;" type="text" :disabled="!isEdit" v-model="addInfo.alonePrice" :min="0"
@@ -32,9 +32,19 @@
             <InputNumber style="width: 100%;" type="text" :disabled="!isEdit" v-model="addInfo.groupTime" :min="0"
                          placeholder="请输入拼课时限（小时）"></InputNumber>
           </FormItem>
+          <FormItem label="成团时限" prop="agglomerationTime">
+            <InputNumber style="width: 100%;" type="text" :disabled="!isEdit" v-model="addInfo.agglomerationTime" :min="0"
+                         placeholder="请输入成团时限（小时）"></InputNumber>
+          </FormItem>
           <FormItem label="咨询电话" prop="consultPhone">
             <InputNumber style="width: 100%;" type="text" :disabled="!isEdit" v-model="addInfo.consultPhone"
                          placeholder="请输入咨询电话"></InputNumber>
+          </FormItem>
+          <FormItem label="实物礼包" prop="consultPhone" class="ivu-form-item-required">
+            <RadioGroup v-model="addInfo.giftPackage">
+              <Radio label="1">是</Radio>
+              <Radio label="否"></Radio>
+            </RadioGroup>
           </FormItem>
           <Form-item label="封面图片" class="-c-form-item ivu-form-item-required">
             <Upload
@@ -51,6 +61,25 @@
             <div class="-c-course-wrap" v-if="addInfo.coverphoto">
               <div class="-c-course-item">
                 <img :src="addInfo.coverphoto">
+              </div>
+            </div>
+            <div class="-c-tips">图片尺寸不低于960px*360px 图片大小：500K以内</div>
+          </Form-item>
+          <Form-item label="竖版封面" class="-c-form-item ivu-form-item-required">
+            <Upload
+              v-if="isEdit"
+              style="display: inline-block"
+              :action="baseUrl"
+              :show-upload-list="false"
+              :max-size="500"
+              :on-success="handleSuccessVerticalPhoto"
+              :on-exceeded-size="handleSize"
+              :on-error="handleErr">
+              <Button ghost type="primary">上传图片</Button>
+            </Upload>
+            <div class="-c-course-wrap" v-if="addInfo.verticalPhoto">
+              <div class="-c-course-item">
+                <img :src="addInfo.verticalPhoto">
               </div>
             </div>
             <div class="-c-tips">图片尺寸不低于960px*360px 图片大小：500K以内</div>
@@ -107,9 +136,8 @@
           </div>
         </Form>
         <div class="-c-flex">
-          <Button v-if="isEdit" @click="closeEdit('addInfo')" ghost type="primary" class="-c-btn">取 消</Button>
+          <Button v-if="isEdit" @click="backCourse('addInfo')" ghost type="primary" class="-c-btn">返 回</Button>
           <div v-if="isEdit" @click="submitInfo('addInfo')" class="g-primary-btn -c-btn">确 认</div>
-          <div v-if="!isEdit" @click="isEdit= true" class="g-primary-btn -c-btn">编 辑</div>
         </div>
       </div>
     </Card>
@@ -118,34 +146,40 @@
 
 <script>
   import {getBaseUrl} from "@/libs/index";
-  import Loading from "../../../components/loading";
-  import Editor from "../../../components/editor";
+  import Loading from "@/components/loading";
+  import Editor from "@/components/editor";
 
   export default {
-    name: 'contentList',
+    name: 'tbzw_forma_courseInfo',
     components: {Editor, Loading},
-    props: ['open'],
     data() {
       return {
         baseUrl: `${getBaseUrl()}/sch/common/uploadPublicFile`, // 公有 （图片）
         addInfo: {
           name: '',
+          des: '',
           alonePrice: null,
           groupPrice: null,
           lessonDescribe: '',
           consultPhone: null,
+          agglomerationTime: null,
           aloneInfo: '',
           groupInfo: '',
           launchInfo: '',
           coverphoto: "",
+          verticalPhoto: "",
+          giftPackage: "1",
           qrCode: ""
         },
         radioType: '1',
-        isEdit: false,
+        isEdit: true,
         isSending: false,
         ruleValidateOne: {
           name: [
             {required: true, message: '请输入课程名称', trigger: 'blur'},
+          ],
+          des: [
+            {required: true, message: '请输入课程描述', trigger: 'blur'},
           ],
           lessonDescribe: [
             {required: true, message: '请输入课时节数', trigger: 'blur'},
@@ -158,6 +192,9 @@
           ],
           groupTime: [
             {required: true, type: 'number', message: '请输入拼课时限', trigger: 'blur'},
+          ],
+          agglomerationTime: [
+            {required: true, type: 'number', message: '请输入成团时限', trigger: 'blur'},
           ],
           consultPhone: [
             {required: true, type: 'number', message: '请输入咨询电话', trigger: 'blur'},
@@ -177,17 +214,31 @@
       };
     },
     mounted() {
-      this.getList()
+      if (this.$route.query.courseId) {
+        this.getList()
+      }
     },
     methods: {
       changeRadio() {
         this.closeEdit('addInfo')
-        this.getList()
+        if (this.$route.query.courseId) {
+          this.getList()
+        }
+      },
+      backCourse(name) {
+        this.$refs[name].resetFields();
+        this.$router.push({
+          name: 'tbzw_forma_courseList',
+          query: {
+            courseId: ''
+          }
+        })
       },
       closeEdit(name) {
         this.$refs[name].resetFields();
-        this.isEdit = false
-        this.getList()
+        if (this.$route.query.courseId) {
+          this.getList()
+        }
       },
       handleSize() {
         this.isFetching = false
@@ -207,6 +258,12 @@
         if (res.code === 200) {
           this.$Message.success('上传成功')
           this.addInfo.qrCode = res.resultData.url
+        }
+      },
+      handleSuccessVerticalPhoto(res) {
+        if (res.code === 200) {
+          this.$Message.success('上传成功')
+          this.addInfo.verticalPhoto = res.resultData.url
         }
       },
       //分页查询
@@ -235,6 +292,8 @@
               return this.$Message.error('请上传封面图片')
             } else if (!this.addInfo.qrCode && this.radioType === '1') {
               return this.$Message.error('请上传咨询图片')
+            } else if (!this.addInfo.verticalPhoto && this.radioType === '1') {
+              return this.$Message.error('请上传竖版封面')
             } else if (this.radioType === '2' && (!this.addInfo.aloneInfo || this.addInfo.aloneInfo == '<p><br></p>')) {
               return this.$Message.error('请输入单独购买帮助信息')
             } else if (this.radioType === '2' && (!this.addInfo.groupInfo || this.addInfo.groupInfo == '<p><br></p>')) {

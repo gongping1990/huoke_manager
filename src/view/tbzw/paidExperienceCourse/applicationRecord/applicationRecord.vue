@@ -21,6 +21,22 @@
         <Row style="margin-top: 29px">
           <Col :span="4" class="g-t-left">
             <div class="g-flex-a-j-center">
+              <div class="-search-select-text">课程名称</div>
+              <Select v-model="searchInfo.visited" @on-change="getList()" class="-search-selectOne">
+                <Option v-for="(item,index) in visitedStatusList" :label="item.name" :value="item.id" :key="index"></Option>
+              </Select>
+            </div>
+          </Col>
+          <Col :span="4" class="g-t-left">
+            <div class="g-flex-a-j-center">
+              <div class="-search-select-text">是否付费</div>
+              <Select v-model="searchInfo.buyed" @on-change="getList()" class="-search-selectOne">
+                <Option v-for="(item,index) in visitedStatusList" :label="item.name" :value="item.id" :key="index"></Option>
+              </Select>
+            </div>
+          </Col>
+          <Col :span="4" class="g-t-left">
+            <div class="g-flex-a-j-center">
               <div class="-search-select-text">是否上课</div>
               <Select v-model="searchInfo.visited" @on-change="getList()" class="-search-selectOne">
                 <Option v-for="(item,index) in visitedStatusList" :label="item.name" :value="item.id" :key="index"></Option>
@@ -37,15 +53,7 @@
           </Col>
           <Col :span="4" class="g-t-left">
             <div class="g-flex-a-j-center">
-              <div class="-search-select-text">是否购买</div>
-              <Select v-model="searchInfo.buyed" @on-change="getList()" class="-search-selectOne">
-                <Option v-for="(item,index) in visitedStatusList" :label="item.name" :value="item.id" :key="index"></Option>
-              </Select>
-            </div>
-          </Col>
-          <Col :span="4" class="g-t-left">
-            <div class="g-flex-a-j-center">
-              <div class="-search-select-text">是否购买</div>
+              <div class="-search-select-text">是否回访</div>
               <Select v-model="searchInfo.buyed" @on-change="getList()" class="-search-selectOne">
                 <Option v-for="(item,index) in visitedStatusList" :label="item.name" :value="item.id" :key="index"></Option>
               </Select>
@@ -79,11 +87,11 @@
 </template>
 
 <script>
-  import DatePickerTemplate from "../../../components/datePickerTemplate";
+  import DatePickerTemplate from "@/components/datePickerTemplate";
   import dayjs from 'dayjs'
 
   export default {
-    name: 'bookingList',
+    name: 'tbzw_paid_applicationRecord',
     components: {DatePickerTemplate},
     data() {
       return {
@@ -133,16 +141,31 @@
             align: 'center'
           },
           {
-            title: '是否购买',
-            render: (h,p)=> {
-              return h('div',p.row.buyed ? '是' : '否')
+            title: '课程名称',
+            key: 'nickname',
+            align: 'center'
+          },
+          {
+            title: '领取时间',
+            render: (h, params) => {
+              return h('div', dayjs(+params.row.gmtModified).format('YYYY-MM-DD HH:mm:ss'))
             },
             align: 'center'
           },
           {
-            title: '是否回访',
+            title: '领课节数',
+            key: 'nickname',
+            align: 'center'
+          },
+          {
+            title: '电话号码',
+            key: 'phone',
+            align: 'center'
+          },
+          {
+            title: '正式课是否付费',
             render: (h,p)=> {
-              return h('div',p.row.visited ? '是' : '否')
+              return h('div',p.row.buyed ? '是' : '否')
             },
             align: 'center'
           },
@@ -181,14 +204,9 @@
             align: 'center'
           },
           {
-            title: '电话号码',
-            key: 'phone',
-            align: 'center'
-          },
-          {
-            title: '领取时间',
-            render: (h, params) => {
-              return h('div', dayjs(+params.row.gmtModified).format('YYYY-MM-DD HH:mm:ss'))
+            title: '是否回访',
+            render: (h,p)=> {
+              return h('div',p.row.visited ? '是' : '否')
             },
             align: 'center'
           },

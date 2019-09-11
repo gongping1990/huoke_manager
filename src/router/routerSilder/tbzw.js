@@ -65,17 +65,17 @@ export const tbzwRouter =[
         component: () => import('@/view/tbzw/wheelMessage/wheelMessageList')
       },
       {
-        path: '/tbzw_qrcode',
-        name: 'tbzw_qrcode',
+        path: '/tbzw_banner',
+        name: 'tbzw_banner',
         meta: [
           {
             name: '运营管理'
           },
           {
-            name: '群二维码'
+            name: 'banner管理'
           }
         ],
-        component: () => import('@/view/tbzw/qrcode/qrcodeList')
+        component: () => import('@/view/tbzw/banner/banner')
       },
       {
         path: '/tbzw_patchRecord',
@@ -102,74 +102,176 @@ export const tbzwRouter =[
           }
         ],
         component: () => import('@/view/tbzw/classProgress/classProgress')
+      },
+      {
+        path: '/tbzw_homePageSet',
+        name: 'tbzw_homePageSet',
+        meta: [
+          {
+            name: '运营管理'
+          },
+          {
+            name: '首页信息配置'
+          }
+        ],
+        component: () => import('@/view/tbzw/homePageSet/homePageSet')
       }
     ]
   },
   {
-    path: '/orderManager',
-    name: 'orderManager',
-    title: '订单管理',
+    path: 'formalcourse',
+    name: 'formalcourse',
+    title: '正式课管理',
     component: Main,
     children: [
       {
-        path: '/tbzw_orderList',
-        name: 'tbzw_orderList',
+        path: '/tbzw_forma_courseList',
+        name: 'tbzw_forma_courseList',
         meta: [
-          {
-            name: '订单管理'
-          },
-          {
-            name: '订单列表'
-          }
+          {name: '正式课管理'},
+          {name: '课程列表'}
         ],
-        component: () => import('@/view/tbzw/orderManagement/orderList')
+        component: () => import('@/view/tbzw/formalcourse/formalCourseList/courseList')
+      },
+      {
+        path: '/tbzw_forma_courseInfo',
+        name: 'tbzw_forma_courseInfo',
+        meta: [
+          {name: '正式课管理'},
+          {name: '课程列表', url: 'tbzw_forma_courseList'},
+          {name: '编辑课程'}
+        ],
+        component: () => import('@/view/tbzw/formalcourse/formalCourseList/courseInfo')
+      },
+      {
+        path: '/tbzw_forma_courseContent',
+        name: 'tbzw_forma_courseContent',
+        meta: [
+          {name: '正式课管理'},
+          {name: '课程列表', url: 'tbzw_forma_courseList'},
+          {name: '课时内容'}
+        ],
+        component: () => import('@/view/tbzw/formalcourse/formalCourseList/courseContent')
+      },
+      {
+        path: '/tbzw_formal_order',
+        name: 'tbzw_formal_order',
+        meta: [
+          {name: '正式课管理'},
+          {name: '正式课订单'}
+        ],
+        component: () => import('@/view/tbzw/formalcourse/formalOrder/orderList')
       },
       {
         path: '/tbzw_deliverGoods',
         name: 'tbzw_deliverGoods',
         meta: [
-          {
-            name: '订单管理'
-          },
-          {
-            name: '发货管理'
-          }
+          {name: '正式课管理'},
+          {name: '发货管理'}
         ],
-        component: () => import('@/view/tbzw/deliverGoods/deliverGoods')
+        component: () => import('@/view/tbzw/formalcourse/formalDeliverGoods/deliverGoods')
+      },
+
+    ]
+  },
+  {
+    path: 'paidExperienceCourse',
+    name: 'paidExperienceCourse',
+    title: '付费体验课',
+    component: Main,
+    children: [
+      {
+        path: '/tbzw_paid_courseList',
+        name: 'tbzw_paid_courseList',
+        meta: [
+          {name: '付费体验课'},
+          {name: '课程列表'}
+        ],
+        component: () => import('@/view/tbzw/paidExperienceCourse/paidCourseList/courseList')
+      },
+      {
+        path: '/tbzw_paid_courseInfo',
+        name: 'tbzw_paid_courseInfo',
+        meta: [
+          {name: '付费体验课'},
+          {name: '课程列表', url: 'tbzw_paid_courseList'},
+          {name: '编辑课程'}
+        ],
+        component: () => import('@/view/tbzw/paidExperienceCourse/paidCourseList/courseInfo')
+      },
+      {
+        path: '/tbzw_paid_courseContent',
+        name: 'tbzw_paid_courseContent',
+        meta: [
+          {name: '付费体验课'},
+          {name: '课程列表', url: 'tbzw_paid_courseList'},
+          {name: '课时内容'}
+        ],
+        component: () => import('@/view/tbzw/paidExperienceCourse/paidCourseList/courseContent')
+      },
+      {
+        path: '/tbzw_paid_order',
+        name: 'tbzw_paid_order',
+        meta: [
+          {name: '付费体验课'},
+          {name: '正式课订单'}
+        ],
+        component: () => import('@/view/tbzw/paidExperienceCourse/paidOrder/orderList')
+      },
+      {
+        path: '/tbzw_paid_applicationRecord',
+        name: 'tbzw_paid_applicationRecord',
+        meta: [
+          {name: '付费体验课'},
+          {name: '申请记录'}
+        ],
+        component: () => import('@/view/tbzw/paidExperienceCourse/applicationRecord/applicationRecord')
       }
     ]
   },
   {
-    path: 'task',
-    name: 'task',
-    title: '作业管理',
+    path: 'freeExperienceCourse',
+    name: 'freeExperienceCourse',
+    title: '免费体验课',
     component: Main,
     children: [
       {
-        path: '/tbzw_job',
-        name: 'tbzw_job',
+        path: '/tbzw_free_courseList',
+        name: 'tbzw_free_courseList',
         meta: [
-          {name: '作业管理'},
-          {name: '作业列表'}
+          {name: '免费体验课'},
+          {name: '课程列表'}
         ],
-        component: () => import('@/view/tbzw/jobManagement/jobList')
-      }
-    ]
-  },
-  {
-    path: 'booking',
-    name: 'booking',
-    title: '预约管理',
-    component: Main,
-    children: [
+        component: () => import('@/view/tbzw/freeExperienceCourse/freeCourseList/courseList')
+      },
       {
-        path: '/tbzw_bookingList',
-        name: 'tbzw_bookingList',
+        path: '/tbzw_paid_courseInfo',
+        name: 'tbzw_paid_courseInfo',
         meta: [
-          {name: '预约管理'},
-          {name: '预约列表'}
+          {name: '免费体验课'},
+          {name: '课程列表', url: 'tbzw_free_courseList'},
+          {name: '编辑课程'}
         ],
-        component: () => import('@/view/tbzw/bookingManagement/bookingList')
+        component: () => import('@/view/tbzw/freeExperienceCourse/freeCourseList/courseInfo')
+      },
+      {
+        path: '/tbzw_free_courseContent',
+        name: 'tbzw_free_courseContent',
+        meta: [
+          {name: '免费体验课'},
+          {name: '课程列表', url: 'tbzw_free_courseList'},
+          {name: '课时内容'}
+        ],
+        component: () => import('@/view/tbzw/freeExperienceCourse/freeCourseList/courseContent')
+      },
+      {
+        path: '/tbzw_free_applicationRecord',
+        name: 'tbzw_free_applicationRecord',
+        meta: [
+          {name: '免费体验课'},
+          {name: '申请记录'}
+        ],
+        component: () => import('@/view/tbzw/freeExperienceCourse/applicationRecord/applicationRecord')
       }
     ]
   },
@@ -191,35 +293,17 @@ export const tbzwRouter =[
     ]
   },
   {
-    path: '/course',
-    name: 'course',
-    title: '课程管理',
+    path: 'teacher',
+    name: 'teacher',
+    title: '教师信息',
     component: Main,
     children: [
-      {
-        path: '/tbzw_courseInfo',
-        name: 'tbzw_courseInfo',
-        meta: [
-          {name: '课程管理'},
-          {name: '课程信息'}
-        ],
-        component: () => import('@/view/tbzw/courseManagement/courseInfo')
-      },
-      {
-        path: '/tbzw_courseContent',
-        name: 'tbzw_courseContent',
-        meta: [
-          {name: '课程管理'},
-          {name: '课程内容'}
-        ],
-        component: () => import('@/view/tbzw/courseManagement/courseContent')
-      },
       {
         path: '/tbzw_teacher',
         name: 'tbzw_teacher',
         meta: [
-          {name: '课程管理'},
-          {name: '教师信息'}
+          {name: '教师信息'},
+          {name: '教师列表'}
         ],
         component: () => import('@/view/tbzw/teacher/teacherList')
       }

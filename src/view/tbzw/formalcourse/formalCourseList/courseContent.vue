@@ -109,16 +109,16 @@
 
 <script>
   import {getBaseUrl} from "@/libs/index";
-  import Editor from "../../../components/editor";
-  import UploadImg from "../../../components/uploadImg";
-  import UploadVideo from "../../../components/uploadVideo";
+  import Editor from "@/components/editor";
+  import UploadImg from "@/components/uploadImg";
+  import UploadVideo from "@/components/uploadVideo";
   import Operation from "iview/src/components/transfer/operation";
-  import UploadAudio from "../../../components/uploadAudio";
+  import UploadAudio from "@/components/uploadAudio";
   import ChoiceQuestion from "./choiceQuestion";
 
 
   export default {
-    name: 'courseList',
+    name: 'tbzw_forma_courseContent',
     components: {ChoiceQuestion, UploadAudio, Operation, UploadVideo, UploadImg, Editor},
     data() {
       return {

@@ -64,10 +64,10 @@
 <script>
   import dayjs from 'dayjs'
   import {getBaseUrl} from "@/libs/index";
-  import DatePickerTemplate from "../../../components/datePickerTemplate";
+  import DatePickerTemplate from "@/components/datePickerTemplate";
 
   export default {
-    name: 'deliverGoods',
+    name: 'tbzw_deliverGoods',
     components: {DatePickerTemplate},
     data() {
       return {
