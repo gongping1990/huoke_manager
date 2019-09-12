@@ -12,8 +12,8 @@
           <FormItem label="课程名称" prop="name">
             <Input type="text" :disabled="!isEdit" v-model="addInfo.name" placeholder="请输入课程名称"></Input>
           </FormItem>
-          <FormItem label="课程描述" prop="des">
-            <Input type="text" :disabled="!isEdit" v-model="addInfo.des" placeholder="请输入课程描述"></Input>
+          <FormItem label="课程描述" prop="courseDescribe">
+            <Input type="text" :disabled="!isEdit" v-model="addInfo.courseDescribe" placeholder="请输入课程描述"></Input>
           </FormItem>
           <FormItem label="课时节数" prop="lessonDescribe">
             <Input type="text" :disabled="!isEdit" v-model="addInfo.lessonDescribe" placeholder="请输入课时节数"></Input>
@@ -32,18 +32,18 @@
             <InputNumber style="width: 100%;" type="text" :disabled="!isEdit" v-model="addInfo.groupTime" :min="0"
                          placeholder="请输入拼课时限（小时）"></InputNumber>
           </FormItem>
-          <FormItem label="成团时限" prop="agglomerationTime">
-            <InputNumber style="width: 100%;" type="text" :disabled="!isEdit" v-model="addInfo.agglomerationTime" :min="0"
+          <FormItem label="成团时限" prop="formTime">
+            <InputNumber style="width: 100%;" type="text" :disabled="!isEdit" v-model="addInfo.formTime" :min="0"
                          placeholder="请输入成团时限（小时）"></InputNumber>
           </FormItem>
           <FormItem label="咨询电话" prop="consultPhone">
             <InputNumber style="width: 100%;" type="text" :disabled="!isEdit" v-model="addInfo.consultPhone"
                          placeholder="请输入咨询电话"></InputNumber>
           </FormItem>
-          <FormItem label="实物礼包" prop="consultPhone" class="ivu-form-item-required">
-            <RadioGroup v-model="addInfo.giftPackage">
+          <FormItem label="实物礼包" class="ivu-form-item-required">
+            <RadioGroup v-model="addInfo.hasgift">
               <Radio label="1">是</Radio>
-              <Radio label="否"></Radio>
+              <Radio label="0">否</Radio>
             </RadioGroup>
           </FormItem>
           <Form-item label="封面图片" class="-c-form-item ivu-form-item-required">
@@ -77,9 +77,9 @@
               :on-error="handleErr">
               <Button ghost type="primary">上传图片</Button>
             </Upload>
-            <div class="-c-course-wrap" v-if="addInfo.verticalPhoto">
+            <div class="-c-course-wrap" v-if="addInfo.verticalCover">
               <div class="-c-course-item">
-                <img :src="addInfo.verticalPhoto">
+                <img :src="addInfo.verticalCover">
               </div>
             </div>
             <div class="-c-tips">图片尺寸不低于960px*360px 图片大小：500K以内</div>
@@ -157,18 +157,19 @@
         baseUrl: `${getBaseUrl()}/sch/common/uploadPublicFile`, // 公有 （图片）
         addInfo: {
           name: '',
-          des: '',
+          courseDescribe: '',
           alonePrice: null,
           groupPrice: null,
           lessonDescribe: '',
           consultPhone: null,
-          agglomerationTime: null,
+          formTime: null,
           aloneInfo: '',
           groupInfo: '',
           launchInfo: '',
           coverphoto: "",
-          verticalPhoto: "",
-          giftPackage: "1",
+          verticalCover: "",
+          hasgift: "1",
+          type: 1,
           qrCode: ""
         },
         radioType: '1',
@@ -178,7 +179,7 @@
           name: [
             {required: true, message: '请输入课程名称', trigger: 'blur'},
           ],
-          des: [
+          courseDescribe: [
             {required: true, message: '请输入课程描述', trigger: 'blur'},
           ],
           lessonDescribe: [
@@ -193,7 +194,7 @@
           groupTime: [
             {required: true, type: 'number', message: '请输入拼课时限', trigger: 'blur'},
           ],
-          agglomerationTime: [
+          formTime: [
             {required: true, type: 'number', message: '请输入成团时限', trigger: 'blur'},
           ],
           consultPhone: [
@@ -228,10 +229,7 @@
       backCourse(name) {
         this.$refs[name].resetFields();
         this.$router.push({
-          name: 'tbzw_forma_courseList',
-          query: {
-            courseId: ''
-          }
+          name: 'tbzw_forma_courseList'
         })
       },
       closeEdit(name) {
@@ -263,13 +261,13 @@
       handleSuccessVerticalPhoto(res) {
         if (res.code === 200) {
           this.$Message.success('上传成功')
-          this.addInfo.verticalPhoto = res.resultData.url
+          this.addInfo.verticalCover = res.resultData.url
         }
       },
       //分页查询
       getList() {
         this.isFetching = true
-        this.$api.composition.getDefultCourse()
+        this.$api.tbzwCourse.getById(this.$route.query.courseId)
           .then(
             response => {
               this.addInfo = response.data.resultData
@@ -278,6 +276,7 @@
                 this.addInfo.groupPrice = +this.addInfo.groupPrice
                 this.addInfo.groupTime = +this.addInfo.groupTime
                 this.addInfo.consultPhone = +this.addInfo.consultPhone
+                this.addInfo.hasgift = this.addInfo.hasgift ? '1' : '0'
               }
             })
           .finally(() => {
@@ -292,7 +291,7 @@
               return this.$Message.error('请上传封面图片')
             } else if (!this.addInfo.qrCode && this.radioType === '1') {
               return this.$Message.error('请上传咨询图片')
-            } else if (!this.addInfo.verticalPhoto && this.radioType === '1') {
+            } else if (!this.addInfo.verticalCover && this.radioType === '1') {
               return this.$Message.error('请上传竖版封面')
             } else if (this.radioType === '2' && (!this.addInfo.aloneInfo || this.addInfo.aloneInfo == '<p><br></p>')) {
               return this.$Message.error('请输入单独购买帮助信息')
@@ -301,13 +300,12 @@
             } else if (this.radioType === '2' && (!this.addInfo.launchInfo || this.addInfo.launchInfo == '<p><br></p>')) {
               return this.$Message.error('请输入参加团购帮助信息')
             }
-            let paramsUrl = this.addInfo.id ? this.$api.composition.tbzwCourseUpdate : this.$api.composition.tbzwCourseAdd
+            let paramsUrl = this.addInfo.id ? this.$api.tbzwCourse.tbzwCourseUpdate : this.$api.tbzwCourse.tbzwCourseAdd
             paramsUrl(this.addInfo)
               .then(response => {
                 if (response.data.code == '200') {
-                  this.$Message.success('修改成功');
-                  this.getList()
-                  this.closeEdit(name)
+                  this.$Message.success('操作成功');
+                  this.backCourse(name)
                 }
               })
           }

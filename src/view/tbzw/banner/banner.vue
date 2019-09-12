@@ -34,13 +34,13 @@
         width="500"
         :title="addInfo.id ? '编辑banner' : '创建banner'">
         <Form ref="addInfo" :model="addInfo" :rules="ruleValidate" :label-width="90">
-          <Form-item label="弹窗图片" prop="url" class="ivu-form-item-required">
+          <Form-item label="banner图片" prop="url" class="ivu-form-item-required">
             <upload-img :isDisabled="addInfo.id!=''" v-model="addInfo.url" :option="uploadOption"></upload-img>
           </Form-item>
           <FormItem label="活动名称" prop="name">
             <Input type="text" v-model="addInfo.name" placeholder="请输入活动名称"></Input>
           </FormItem>
-          <FormItem label="排序值" prop="sortnum">
+          <FormItem label="排序值" prop="sortnum" >
             <Select v-model="addInfo.sortnum">{{addInfo.sortnum}}
               <Option v-for="(item,index) of 9" :key="index" :value="item" :label="item"></Option>
             </Select>
@@ -127,7 +127,7 @@
         },
         dataList: [],
         detailList: [],
-        operationalId: '',
+        bannerId: '',
         selectInfo: '1',
         searchInfo: {},
         total: 0,
@@ -159,6 +159,9 @@
           name: [
             {required: true, message: '请输入活动名称', trigger: 'blur'},
             {type: 'string', max: 20, message: '活动名称长度为20字', trigger: 'blur'}
+          ],
+          sortnum: [
+            {required: true, type: 'number', message: '请选择排序值', trigger: 'change'},
           ]
         },
         columns: [
@@ -327,7 +330,7 @@
     },
     methods: {
       toExcel() {
-        let downUrl = `${getBaseUrl()}/poem/operational/excelOperationalStatistics?operationalId=${this.operationalId}`
+        let downUrl = `${getBaseUrl()}/composition/operational/excelBannerStatistics?bannerId=${this.bannerId}`
         window.open(downUrl, '_blank');
       },
       changeDate(data) {
@@ -351,7 +354,7 @@
       },
       openModalData (data) {
         this.isOpenModalData = true
-        this.operationalId = data.id
+        this.bannerId = data.id
         this.getDetailList(data)
       },
       closeModal(name) {
@@ -368,8 +371,8 @@
       },
       getDetailList(data) {
         this.isFetching = true
-        this.$api.gswOperational.getOperationalStatistics({
-          operationalId: data.id
+        this.$api.tbzwOperational.listBannerStatistics({
+          bannerId: data.id
         }).then(response => {
           this.detailList = response.data.resultData.records;
           this.totalDetail = response.data.resultData.total;
@@ -383,13 +386,12 @@
         if (num) {
           this.tab.currentPage = 1
         }
-        this.$api.gswOperational.listOperational({
+        this.$api.tbzwOperational.listBanner({
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
           name: this.searchInfo.nickname,
           showTime: this.getStartTime ? dayjs(this.getStartTime).format("YYYY/MM/DD HH:mm:ss") : '',
-          hideTime: this.getEndTime ? dayjs(this.getEndTime).format("YYYY/MM/DD HH:mm:ss") : '',
-          type: 3
+          hideTime: this.getEndTime ? dayjs(this.getEndTime).format("YYYY/MM/DD HH:mm:ss") : ''
         })
           .then(
             response => {
@@ -405,8 +407,8 @@
           title: '提示',
           content: '确认要删除图片吗？',
           onOk: () => {
-            this.$api.gswOperational.removeOperational({
-              operationalId: param.id
+            this.$api.tbzwOperational.removeBanner({
+              bannerId: param.id
             }).then(
               response => {
                 if (response.data.code == "200") {
@@ -422,8 +424,8 @@
           title: '提示',
           content: '确认要结束吗？',
           onOk: () => {
-            this.$api.gswOperational.finishOperational({
-              operationalId: param.id
+            this.$api.tbzwOperational.finishBanner({
+              bannerId: param.id
             }).then(
               response => {
                 if (response.data.code == "200") {
@@ -449,7 +451,7 @@
         this.$refs[name].validate((valid) => {
           if (valid) {
             this.isSending = true
-            this.$api.gswOperational.saveOperational({
+            this.$api.tbzwOperational.saveBanner({
               id: this.addInfo.id,
               hideTime: dayjs(this.addInfo.hideTime).format("YYYY/MM/DD HH:mm:ss"),
               showTime: dayjs(this.addInfo.showTime).format("YYYY/MM/DD HH:mm:ss"),

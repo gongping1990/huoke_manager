@@ -5,6 +5,8 @@ import tbzwCoupon from "./coupon";
 import tbzwClockin from "./clockin";
 import tbzwStudy from "./study";
 import tbzwInternalChannel from "./internalChannel";
+import tbzwOperational from "./operational";
+import tbzwCourse from "./course";
 
 export const tbzwIndex = {
   composition,
@@ -13,5 +15,7 @@ export const tbzwIndex = {
   tbzwCoupon,
   tbzwClockin,
   tbzwStudy,
-  tbzwInternalChannel
+  tbzwInternalChannel,
+  tbzwOperational,
+  tbzwCourse
 }

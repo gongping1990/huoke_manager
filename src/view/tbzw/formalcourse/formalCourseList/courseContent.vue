@@ -1,18 +1,7 @@
 <template>
   <div class="p-gsw-course-list">
     <Card>
-      <Row class="g-search">
-        <Row class="g-t-left">
-          <Radio-group v-model="gradeType" type="button" @on-change="getList(1)">
-            <Radio :label=3>L1</Radio>
-            <Radio :label=4>L2</Radio>
-            <Radio :label=5>L3</Radio>
-            <Radio :label=6>L4</Radio>
-          </Radio-group>
-        </Row>
-      </Row>
-
-      <div class="g-add-btn g-add-top" @click="openModal()">
+      <div class="g-add-btn" @click="openModal()">
         <Icon class="-btn-icon" color="#fff" type="ios-add" size="24"/>
       </div>
 
@@ -159,7 +148,6 @@
         choiceList: [],
         total: 0,
         totalSource: 0,
-        gradeType: 3,
         isFetching: false,
         isEdit: false,
         isOpenModalAdd: false,
@@ -420,7 +408,6 @@
         } else {
           this.isEdit = false
           this.addInfo = {
-            grade: this.gradeType,
             sortnum: null,
             type: 1,
             coverphoto: '',
@@ -489,9 +476,9 @@
       getList() {
         this.isFetching = true
         this.$api.composition.getQueryLessonPage({
+          courseId: this.$route.query.courseId,
           current: this.tab.page,
-          size: this.tab.pageSize,
-          grade: this.gradeType
+          size: this.tab.pageSize
         })
           .then(
             response => {
@@ -733,11 +720,10 @@
 
             let paramUrl = this.addInfo.id ? this.$api.composition.updateLesson : this.$api.composition.saveLesson
             paramUrl({
+              courseId: this.$route.query.courseId,
               id: this.addInfo.id,
-              grade: this.addInfo.grade,
               name: this.addInfo.name,
               sortnum: this.addInfo.sortnum,
-              type: this.addInfo.type,
               videoUrl: this.addInfo.videoUrl,
               content: this.addInfo.content,
               coverphoto: this.addInfo.coverphoto

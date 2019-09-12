@@ -3,8 +3,8 @@
     <Card class="p-course-info-card">
       <div class="p-course-info-wrap">
         <Form ref="addInfo" :model="addInfo" :rules="ruleValidateOne" :label-width="90">
-          <FormItem label="关联正式课" prop="lesson">
-            <Select v-model="addInfo.lesson" multiple>
+          <FormItem label="关联正式课" prop="linkId">
+            <Select v-model="addInfo.linkId" multiple>
               <Option v-for="(item,index) in experienceLessonList" :label="item.name" :value="item.id"
                       :key="index"></Option>
             </Select>
@@ -12,8 +12,8 @@
           <FormItem label="课程名称" prop="name">
             <Input type="text" :disabled="!isEdit" v-model="addInfo.name" placeholder="请输入课程名称"></Input>
           </FormItem>
-          <FormItem label="课程描述" prop="des">
-            <Input type="text" :disabled="!isEdit" v-model="addInfo.des" placeholder="请输入课程描述"></Input>
+          <FormItem label="课程描述" prop="courseDescribe">
+            <Input type="text" :disabled="!isEdit" v-model="addInfo.courseDescribe" placeholder="请输入课程描述"></Input>
           </FormItem>
           <FormItem label="课时节数" prop="lessonDescribe">
             <Input type="text" :disabled="!isEdit" v-model="addInfo.lessonDescribe" placeholder="请输入课时节数"></Input>
@@ -54,9 +54,9 @@
               :on-error="handleErr">
               <Button ghost type="primary">上传图片</Button>
             </Upload>
-            <div class="-c-course-wrap" v-if="addInfo.verticalPhoto">
+            <div class="-c-course-wrap" v-if="addInfo.verticalCover">
               <div class="-c-course-item">
-                <img :src="addInfo.verticalPhoto">
+                <img :src="addInfo.verticalCover">
               </div>
             </div>
             <div class="-c-tips">图片尺寸不低于960px*360px 图片大小：500K以内</div>
@@ -84,30 +84,23 @@
         baseUrl: `${getBaseUrl()}/sch/common/uploadPublicFile`, // 公有 （图片）
         addInfo: {
           name: '',
-          des: '',
+          courseDescribe: '',
           alonePrice: null,
           lessonDescribe: '',
-          lesson: '-1',
+          linkId: '-1',
+          type: 2,
           coverphoto: "",
-          verticalPhoto: ""
+          verticalCover: ""
         },
-        experienceLessonList: [
-          {
-            id: '-1',
-            name: '不关联'
-          }
-        ],
+        experienceLessonList: [],
         radioType: '1',
         isEdit: true,
         isSending: false,
         ruleValidateOne: {
-          lesson: [
-            {required: true, type:'array', message: '请选择关联的正式课', trigger: 'change'},
-          ],
           name: [
             {required: true, message: '请输入课程名称', trigger: 'blur'},
           ],
-          des: [
+          courseDescribe: [
             {required: true, message: '请输入课程描述', trigger: 'blur'},
           ],
           lessonDescribe: [
@@ -120,6 +113,7 @@
       };
     },
     mounted() {
+      this.getCourseList()
       if (this.$route.query.courseId) {
         this.getList()
       }
@@ -154,13 +148,24 @@
       handleSuccessVerticalPhoto(res) {
         if (res.code === 200) {
           this.$Message.success('上传成功')
-          this.addInfo.verticalPhoto = res.resultData.url
+          this.addInfo.verticalCover = res.resultData.url
         }
+      },
+      getCourseList() {
+        this.$api.tbzwCourse.courseQueryPage({
+          current: 1,
+          size: 1000,
+          type: 1
+        })
+          .then(
+            response => {
+              this.experienceLessonList = response.data.resultData.records;
+            })
       },
       //分页查询
       getList() {
         this.isFetching = true
-        this.$api.composition.getDefultCourse()
+        this.$api.tbzwCourse.getById(this.$route.query.courseId)
           .then(
             response => {
               this.addInfo = response.data.resultData
@@ -178,16 +183,16 @@
           if (valid) {
             if (!this.addInfo.coverphoto && this.radioType === '1') {
               return this.$Message.error('请上传封面图片')
-            } else if (!this.addInfo.verticalPhoto && this.radioType === '1') {
+            } else if (!this.addInfo.verticalCover && this.radioType === '1') {
               return this.$Message.error('请上传竖版封面')
             }
+            this.addInfo.linkId = `${this.addInfo.linkId}`
             let paramsUrl = this.addInfo.id ? this.$api.composition.tbzwCourseUpdate : this.$api.composition.tbzwCourseAdd
             paramsUrl(this.addInfo)
               .then(response => {
                 if (response.data.code == '200') {
-                  this.$Message.success('修改成功');
-                  this.getList()
-                  this.closeEdit(name)
+                  this.$Message.success('操作成功');
+                  this.backCourse(name)
                 }
               })
           }

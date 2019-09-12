@@ -33,13 +33,31 @@
         columns: [
           {
             title: '课程名称',
-            key: 'periods',
+            key: 'name',
             align: 'center'
           },
           {
             title: '课程封面',
-            key: 'count',
-            align: 'center'
+            align: 'center',
+            render: (h, params) => {
+              return h('div', {
+                style: {
+                  'display': 'flex',
+                  'align-items': 'center',
+                  'justify-content': 'center'
+                }
+              }, [
+                h('img', {
+                  attrs: {
+                    src: params.row.coverphoto
+                  },
+                  style: {
+                    width: '50px',
+                    margin: '10px'
+                  }
+                })
+              ])
+            }
           },
           {
             title: '落地页链接',
@@ -92,11 +110,11 @@
       this.getList()
     },
     methods: {
-      toCourseContent () {
+      toCourseContent (data) {
         this.$router.push({
           name: 'tbzw_forma_courseContent',
           query: {
-            courseId: ''
+            courseId: data ? data.id : ''
           }
         })
       },
@@ -104,7 +122,7 @@
         this.$router.push({
           name: 'tbzw_forma_courseInfo',
           query: {
-            courseId: data ? '1' : ''
+            courseId: data ? data.id : ''
           }
         })
       },
@@ -119,10 +137,10 @@
         if (num) {
           this.tab.currentPage = 1
         }
-        this.$api.gswActive.listActiveConfig({
+        this.$api.tbzwCourse.courseQueryPage({
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
-          type: 2
+          type: 1
         })
           .then(
             response => {

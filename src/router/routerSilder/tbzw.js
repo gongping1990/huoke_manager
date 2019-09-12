@@ -245,8 +245,8 @@ export const tbzwRouter =[
         component: () => import('@/view/tbzw/freeExperienceCourse/freeCourseList/courseList')
       },
       {
-        path: '/tbzw_paid_courseInfo',
-        name: 'tbzw_paid_courseInfo',
+        path: '/tbzw_free_courseInfo',
+        name: 'tbzw_free_courseInfo',
         meta: [
           {name: '免费体验课'},
           {name: '课程列表', url: 'tbzw_free_courseList'},

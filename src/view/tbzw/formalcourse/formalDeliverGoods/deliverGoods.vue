@@ -2,6 +2,12 @@
   <div class="p-deliverGoods">
     <Card>
       <Row class="g-t-left">
+        <Radio-group v-model="courseType" type="button" @on-change="getList(1)">
+          <Radio :label=item.id v-for="item of courseList" :key="item.id">{{item.name}}</Radio>
+        </Radio-group>
+      </Row>
+
+      <Row class="g-t-left -c-tab">
         <Radio-group v-model="radioType" type="button" @on-change="getList(1)">
           <Radio :label=0>待发货</Radio>
           <Radio :label=1>已发货</Radio>
@@ -87,8 +93,10 @@
         },
         selectInfo: '1',
         dataList: [],
+        courseList: [],
         total: 0,
         radioType: 0,
+        courseType: 0,
         isFetching: false,
         isOpenModal: false,
         isSending: false,
@@ -207,7 +215,7 @@
       };
     },
     mounted() {
-      this.getList()
+      this.getCourseList()
     },
     methods: {
       toExcel() {
@@ -241,6 +249,19 @@
         this.isOpenModal = false
         this.$refs[name].resetFields()
       },
+      getCourseList() {
+        this.$api.tbzwCourse.courseQueryPage({
+          current: 1,
+          size: 1000,
+          type: 1
+        })
+          .then(
+            response => {
+              this.courseList = response.data.resultData.records;
+              this.courseType = this.courseList[0].id
+              this.getList()
+            })
+      },
       //分页查询
       getList(num) {
         this.isFetching = true
@@ -256,6 +277,7 @@
           size: this.tab.pageSize,
           send: this.radioType,
           nickName: this.searchInfo.nickname,
+          courseId: this.courseType,
           startTime: startTime,
           endTime: endTime
         })
