@@ -29,20 +29,20 @@
         <div class="-p-center-item">
           <div class="-c-text">购买数据</div>
           <div>
-            <span>是否购买: {{userInfo.subscripbe ? '是' : '否'}}</span>
-            <span>支付时间: {{userInfo.subscripbe ? '是' : '否'}}</span>
+            <span>是否购买: {{userInfo.buyed ? '是' : '否'}}</span>
+            <span>支付时间: {{userInfo.buyedTime}}</span>
           </div>
         </div>
         <div class="-p-center-item">
           <div class="-c-text">学习数据</div>
           <div>
-            <span>开课日期: {{userInfo.subscripbe ? '是' : '否'}}</span>
-            <span>课程进度: {{10}}</span>
-            <span>交作业课时数: {{10}}</span>
-            <span>老师批改作业数: {{10}}</span>
-            <span>累计打卡: {{10}}</span>
-            <span>最近连续打卡: {{10}}</span>
-            <span>最长连续打卡: {{10}}</span>
+            <span>开课日期: {{userInfo.learnStartDate}}</span>
+            <span>课程进度: {{userInfo.learnProgress}}</span>
+            <span>交作业课时数: {{userInfo.homeworkLesson}}</span>
+            <span>老师批改作业数: {{userInfo.teacherReply}}</span>
+            <span>累计打卡: {{userInfo.totalCards}}</span>
+            <span>最近连续打卡: {{userInfo.continuousCards}}</span>
+            <span>最长连续打卡: {{userInfo.maxContinuousCards}}</span>
           </div>
         </div>
       </Row>
@@ -89,19 +89,19 @@
         columns: [
           {
             title: '课时名称',
-            key: 'inTime'
+            key: 'lessonName'
           },
           {
             title: '首次完成上课时间',
-            key: 'loginIp'
+            key: 'firstLearnTime'
           },
           {
             title: '最后交作业时间',
-            key: 'public_time'
+            key: 'lastSubmitTime'
           },
           {
             title: '老师最后批改时间',
-            key: 'useTime'
+            key: 'lastReplyTime'
           },
           {
             title: '操作',
