@@ -127,8 +127,8 @@
       };
     },
     mounted() {
-      this.getUserInfo()
-      this.userLoginList()
+      this.getLearnDTO()
+      this.listLessonProgress()
     },
     methods: {
       openModal(data) {
@@ -138,13 +138,15 @@
       },
       currentChange(val) {
         this.tab.page = val;
-        this.userLoginList();
+        this.listLessonProgress();
       },
       //分页查询
-      getUserInfo() {
+      getLearnDTO() {
         this.isFetching = true
-        this.$api.user.getUserInfo({
-          userId: this.$route.query.id
+        this.$api.jsdJob.getLearnDTO({
+          uid: this.$route.query.id,
+          system: this.searchInfo.appId,
+          courseId: this.searchInfo.appId == 7 ? '1148165277549838337' : '1133673190743896065'
         })
           .then(
             response => {
@@ -154,9 +156,11 @@
             this.isFetching = false
           })
       },
-      userLoginList() {
-        this.$api.user.userLoginInfo({
-          userId: this.$route.query.id,
+      listLessonProgress() {
+        this.$api.jsdJob.listLessonProgress({
+          uid: this.$route.query.id,
+          system: this.searchInfo.appId,
+          courseId: this.searchInfo.appId == 7 ? '1148165277549838337' : '1133673190743896065',
           current: this.tab.page,
           size: this.tab.pageSize
         })
@@ -165,17 +169,6 @@
               this.dataList = response.data.resultData.records;
               this.total = response.data.resultData.total;
             })
-      },
-      toChangeStatus() {
-        this.$api.user.changeUserStatus({
-          userId: this.$route.query.id,
-          disabled: this.userInfo.disabled
-        }).then(
-          response => {
-            if (response.data.code == '200') {
-              this.$Message.success('操作成功')
-            }
-          })
       }
     }
   };

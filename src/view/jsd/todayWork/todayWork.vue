@@ -5,10 +5,10 @@
         <Row class="g-t-left">
           <Radio-group v-model="radioType" type="button" @on-change="changeJobType">
             <Radio :label=0>待批改</Radio>
-            <Radio :label=5>无需批改</Radio>
+            <Radio :label=4>无需批改</Radio>
             <Radio :label=1>不合格</Radio>
             <Radio :label=3>已批改</Radio>
-            <Radio :label=4>表扬</Radio>
+            <Radio :label=5>表扬</Radio>
           </Radio-group>
         </Row>
         <Row class="p-todayWork-flex" v-if="radioType === 0">
@@ -57,12 +57,12 @@
 
         <search-template ref="searchChild" :option="searchOption" @changeSearch="getSearchInfo"></search-template>
 
-        <Row v-if="(radioType === 1 && unqualifiedType === 1) || radioType === 5" class="p-todayWork-tip">
+        <Row v-if="(radioType === 1 && unqualifiedType === 1) || radioType === 4" class="p-todayWork-tip">
           <div class="-tip-div g-t-left">
             <Checkbox v-model="selectAllData" @on-change="changeAloneSelect">全选所有作业</Checkbox>
           </div>
           <div class="-tip-div g-text-right">
-            <Button @click="sendMessage()" ghost type="primary" style="width: 100px;">{{radioType === 5 ? '移入待批改' :
+            <Button @click="sendMessage()" ghost type="primary" style="width: 100px;">{{radioType === 4 ? '移入待批改' :
               '提醒'}}
             </Button>
           </div>
@@ -499,7 +499,7 @@
                     size: 'small'
                   },
                   style: {
-                    display: this.radioType == 4 ? 'none' : 'inline-block',
+                    display: this.radioType == 5 ? 'none' : 'inline-block',
                     color: 'rgba(218, 55, 75)',
                     marginRight: '5px'
                   },
@@ -523,7 +523,7 @@
                       this.jobPrise(params.row)
                     }
                   }
-                }, this.radioType == '4' ? '移出表扬' : '加入表扬')
+                }, this.radioType == '5' ? '移出表扬' : '加入表扬')
               ])
             }
           }
@@ -696,10 +696,10 @@
         return {
           '0': this.columns,
           '3': this.columnsTwo,
-          '5': this.columns,
+          '4': this.columns,
           '1': this.columnsThree,
           '2': this.columnsThree,
-          '4': this.columnsTwo,
+          '5': this.columnsTwo,
         }
       }
     },
@@ -712,12 +712,23 @@
       noRequired() {
         this.$Modal.confirm({
           title: '提示',
-          content: this.radioType === 5 ? '确认将该作业移入待批改' : '确认移出到无需批改？',
+          content: this.radioType === 4? '确认将该作业移入待批改' : '确认移出到无需批改？',
           onOk: () => {
-            this.$api.jsdJob.removeHomework({
-              system: this.searchInfo.appId || '7',
-              id: param.workId
-            }).then(
+            let paramUrl = ''
+            if (this.radioType === 0 ) {
+              paramUrl = this.$api.jsdJob.replyHomework({
+                system: this.searchInfo.appId || '7',
+                id: data.workId,
+                status: 4
+              })
+            } else {
+              paramUrl = this.$api.jsdJob.moveNOReplyHomework({
+                system: this.searchInfo.appId || '7',
+                workIds: data.workId,
+                range: this.selectAllData ? 1 : 0,
+              })
+            }
+            paramUrl.then(
               response => {
                 if (response.data.code == "200") {
                   this.$Message.success("操作成功");
@@ -731,7 +742,7 @@
         this.$router.push({
           name: 'tbzw_userInfo',
           query: {
-            id: param.userId
+            id: param.uid
           }
         })
       },
@@ -748,12 +759,18 @@
         if (!this.selectUserList.length) {
           return this.$Message.error('请选择需要操作的用户')
         }
-        let tipText = this.radioType === 5 ? `确认将${this.selectAllData ? '所有' : `选中的${this.selectUserList.length}份`}作业移入待批改？` : `确认向${this.selectAllData ? '所有' : `选中的${this.selectUserList.length}位`}用户发送微信消息和短信？`
+        let tipText = this.radioType === 4 ? `确认将${this.selectAllData ? '所有' : `选中的${this.selectUserList.length}份`}作业移入待批改？` : `确认向${this.selectAllData ? '所有' : `选中的${this.selectUserList.length}位`}用户发送微信消息和短信？`
         this.$Modal.confirm({
           title: '提示',
           content: tipText,
           onOk: () => {
-            this.$api.jsdJob.remindReSubmit({
+            let paramUrl = ''
+            if (this.radioType === 4) {
+              paramUrl = this.$api.jsdJob.moveNOReplyHomework
+            } else {
+              paramUrl = this.$api.jsdJob.remindReSubmit
+            }
+            paramUrl({
               range: this.selectAllData ? 1 : 0,
               system: this.searchInfo.appId || '7',
               workIds: this.selectAllData ? [] : this.selectUserList
@@ -770,7 +787,7 @@
       jobPrise(param) {
         this.$Modal.confirm({
           title: '提示',
-          content: `确认要${this.radioType == 4 ? '移出表扬' : '加入表扬'}？`,
+          content: `确认要${this.radioType == 5 ? '移出表扬' : '加入表扬'}？`,
           onOk: () => {
             this.$api.jsdJob.praise({
               system: this.searchInfo.appId || '7',
@@ -795,7 +812,7 @@
           this.$refs.searchChild.initSearch()
         }, 100);
 
-        if (this.radioType === 3 || this.radioType === 4) {
+        if (this.radioType === 3 || this.radioType === 5) {
           this.searchOption = {
             isAppId: true,
             isWorkType: true,
@@ -942,7 +959,7 @@
           hasComment: this.searchInfo.hasComment == '-1' ? '' : this.searchInfo.hasComment,
           hmBegin: this.searchInfo.getStartTime ? new Date(this.searchInfo.getStartTime).getTime() : "",
           hmEnd: this.searchInfo.getEndTime ? new Date(this.searchInfo.getEndTime).getTime() : "",
-          status: this.radioType == 4 ? '' : this.radioType
+          status: this.radioType == 5 ? '' : this.radioType
         }
 
         if (this.searchInfo.workType == '1' && this.searchInfo) {
@@ -957,7 +974,7 @@
           params.phone = this.searchInfo.mannerTwo
         }
 
-        if (this.radioType == 4) {
+        if (this.radioType == 5) {
           params.praise = true
         }
 

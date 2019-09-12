@@ -69,6 +69,15 @@ const jsdJob = {
   },
   getTeacherRemind(params) {
     return axios.get(`/homework/job/getTeacherRemind`, {params})
+  },
+  getLearnDTO(params) {
+    return axios.get(`/homework/job/getLearnDTO`, {params})
+  },
+  listLessonProgress(params) {
+    return axios.get(`/homework/job/listLessonProgress`, {params})
+  },
+  moveNOReplyHomework(params) {
+    return axios.post(`/homework/job/moveNOReplyHomework`, params)
   }
 }
 
