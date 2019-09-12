@@ -724,7 +724,7 @@
             } else {
               paramUrl = this.$api.jsdJob.moveNOReplyHomework({
                 system: this.searchInfo.appId || '7',
-                workIds: data.workId,
+                workIds: [data.workId],
                 range: this.selectAllData ? 1 : 0,
               })
             }
