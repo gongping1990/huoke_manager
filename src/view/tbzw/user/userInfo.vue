@@ -95,19 +95,19 @@
           {
             title: '首次完成上课时间',
             render: (h, params) => {
-              return h('div', dayjs(+params.row.firstLearnTime).format("YYYY-MM-DD HH:mm"))
+              return h('div', params.row.firstLearnTime ? dayjs(+params.row.firstLearnTime).format("YYYY-MM-DD HH:mm") : '暂无')
             }
           },
           {
             title: '最后交作业时间',
             render: (h, params) => {
-              return h('div', dayjs(+params.row.lastSubmitTime).format("YYYY-MM-DD HH:mm"))
+              return h('div', params.row.lastSubmitTime ? dayjs(+params.row.lastSubmitTime).format("YYYY-MM-DD HH:mm") : '暂无')
             }
           },
           {
             title: '老师最后批改时间',
             render: (h, params) => {
-              return h('div', dayjs(+params.row.lastReplyTime).format("YYYY-MM-DD HH:mm"))
+              return h('div', params.row.lastReplyTime ? dayjs(+params.row.lastReplyTime).format("YYYY-MM-DD HH:mm") : '暂无')
             }
           },
           {
