@@ -59,8 +59,8 @@
         this.itemUrl = ''
       },
       beforeUpload(file) {
-        let imgType = ['jpeg', 'png']
-        if (file.type.indexOf(imgType[0]) == -1 && file.type.indexOf(imgType[1]) == -1) {
+        let imgType = ['jpeg', 'png', 'image/gif']
+        if (file.type.indexOf(imgType[0]) == -1 && file.type.indexOf(imgType[1]) == -1 && file.type.indexOf(imgType[2]) == -1) {
           this.$Message.error('上传文件类型错误')
           return false;
         }

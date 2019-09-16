@@ -38,7 +38,7 @@
           <Col :span="4" class="g-t-left">
             <div class="g-flex-a-j-center">
               <div class="-search-select-text">是否上课</div>
-              <Select v-model="searchInfo.visited" @on-change="getList()" class="-search-selectOne">
+              <Select v-model="searchInfo.studyed" @on-change="getList()" class="-search-selectOne">
                 <Option v-for="(item,index) in visitedStatusList" :label="item.name" :value="item.id" :key="index"></Option>
               </Select>
             </div>
@@ -46,7 +46,7 @@
           <Col :span="4" class="g-t-left">
             <div class="g-flex-a-j-center">
               <div class="-search-select-text">是否交作业</div>
-              <Select v-model="searchInfo.buyed" @on-change="getList()" class="-search-selectOne">
+              <Select v-model="searchInfo.homeworked" @on-change="getList()" class="-search-selectOne">
                 <Option v-for="(item,index) in visitedStatusList" :label="item.name" :value="item.id" :key="index"></Option>
               </Select>
             </div>
@@ -54,7 +54,7 @@
           <Col :span="4" class="g-t-left">
             <div class="g-flex-a-j-center">
               <div class="-search-select-text">是否回访</div>
-              <Select v-model="searchInfo.buyed" @on-change="getList()" class="-search-selectOne">
+              <Select v-model="searchInfo.visited" @on-change="getList()" class="-search-selectOne">
                 <Option v-for="(item,index) in visitedStatusList" :label="item.name" :value="item.id" :key="index"></Option>
               </Select>
             </div>
@@ -132,6 +132,8 @@
         searchInfo: {
           courseId: '-1',
           visited: '-1',
+          homeworked: '-1',
+          studyed: '-1',
           buyed: '-1'
         },
         isFetching: false,
@@ -328,6 +330,8 @@
           courseId: this.searchInfo.courseId == '-1' ? '' : this.searchInfo.courseId,
           visited: this.searchInfo.visited == '-1' ? '' : this.searchInfo.visited,
           buyed: this.searchInfo.buyed == '-1' ? '' : this.searchInfo.buyed,
+          studyed: this.searchInfo.studyed == '-1' ? '' : this.searchInfo.studyed,
+          homeworked: this.searchInfo.homeworked == '-1' ? '' : this.searchInfo.homeworked,
           startTime: this.searchInfo.getStartTime ? new Date(this.searchInfo.getStartTime).getTime() : "",
           endTime: this.searchInfo.getEndTime ? new Date(this.searchInfo.getEndTime).getTime() : ""
         }
