@@ -313,6 +313,7 @@
           current: this.tabDetail.page,
           size: this.tabDetail.pageSize,
           userId: data.userId,
+          courseId: data.courseId,
         })
           .then(
             response => {
