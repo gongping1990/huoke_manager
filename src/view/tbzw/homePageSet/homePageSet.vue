@@ -109,7 +109,7 @@
           },
           {
             title: '课程描述',
-            key: 'name',
+            key: 'courseDescribe',
             align: 'center'
           },
           {
