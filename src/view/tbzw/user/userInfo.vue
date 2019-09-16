@@ -22,7 +22,7 @@
       </Row>
 
       <Row class="-c-tab g-t-left">
-        <RadioGroup v-model="searchInfo.appId" type="button">
+        <RadioGroup v-model="searchInfo.appId" type="button" @on-change="changeRadio">
           <Radio label="7">每日一首古诗</Radio>
           <Radio label="8">小语轻作文</Radio>
         </RadioGroup>
@@ -66,6 +66,7 @@
 <script>
 
   import Loading from "@/components/loading";
+  import dayjs from 'dayjs'
   import JobRecordTemplate from "../../../components/jobRecordTemplate";
 
   export default {
@@ -131,6 +132,10 @@
       this.listLessonProgress()
     },
     methods: {
+      changeRadio () {
+        this.getLearnDTO()
+        this.listLessonProgress()
+      },
       openModal(data) {
         this.isOpenModal = true
         this.detailInfo = JSON.parse(JSON.stringify(data))
@@ -151,6 +156,8 @@
           .then(
             response => {
               this.userInfo = response.data.resultData;
+              this.userInfo.learnStartDate =  dayjs(+this.userInfo.learnStartDate).format('YYYY-MM-DD HH:mm')
+              this.userInfo.buyedTime =  dayjs(+this.userInfo.buyedTime).format('YYYY-MM-DD HH:mm')
             })
           .finally(() => {
             this.isFetching = false
