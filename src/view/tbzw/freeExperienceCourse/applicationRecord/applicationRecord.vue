@@ -22,8 +22,9 @@
           <Col :span="4" class="g-t-left">
             <div class="g-flex-a-j-center">
               <div class="-search-select-text">课程名称</div>
-              <Select v-model="searchInfo.visited" @on-change="getList()" class="-search-selectOne">
-                <Option v-for="(item,index) in visitedStatusList" :label="item.name" :value="item.id" :key="index"></Option>
+              <Select v-model="searchInfo.courseId" @on-change="getList()" class="-search-selectOne">
+                <Option v-for="(item,index) in experienceLessonList" :label="item.name" :value="item.id"
+                        :key="index"></Option>
               </Select>
             </div>
           </Col>
@@ -31,7 +32,8 @@
             <div class="g-flex-a-j-center">
               <div class="-search-select-text">是否付费</div>
               <Select v-model="searchInfo.buyed" @on-change="getList()" class="-search-selectOne">
-                <Option v-for="(item,index) in visitedStatusList" :label="item.name" :value="item.id" :key="index"></Option>
+                <Option v-for="(item,index) in visitedStatusList" :label="item.name" :value="item.id"
+                        :key="index"></Option>
               </Select>
             </div>
           </Col>
@@ -39,7 +41,8 @@
             <div class="g-flex-a-j-center">
               <div class="-search-select-text">是否上课</div>
               <Select v-model="searchInfo.visited" @on-change="getList()" class="-search-selectOne">
-                <Option v-for="(item,index) in visitedStatusList" :label="item.name" :value="item.id" :key="index"></Option>
+                <Option v-for="(item,index) in visitedStatusList" :label="item.name" :value="item.id"
+                        :key="index"></Option>
               </Select>
             </div>
           </Col>
@@ -47,7 +50,8 @@
             <div class="g-flex-a-j-center">
               <div class="-search-select-text">是否交作业</div>
               <Select v-model="searchInfo.buyed" @on-change="getList()" class="-search-selectOne">
-                <Option v-for="(item,index) in visitedStatusList" :label="item.name" :value="item.id" :key="index"></Option>
+                <Option v-for="(item,index) in visitedStatusList" :label="item.name" :value="item.id"
+                        :key="index"></Option>
               </Select>
             </div>
           </Col>
@@ -55,7 +59,8 @@
             <div class="g-flex-a-j-center">
               <div class="-search-select-text">是否回访</div>
               <Select v-model="searchInfo.buyed" @on-change="getList()" class="-search-selectOne">
-                <Option v-for="(item,index) in visitedStatusList" :label="item.name" :value="item.id" :key="index"></Option>
+                <Option v-for="(item,index) in visitedStatusList" :label="item.name" :value="item.id"
+                        :key="index"></Option>
               </Select>
             </div>
           </Col>
@@ -111,6 +116,7 @@
         },
         dataList: [],
         dataDetailList: [],
+        experienceLessonList: [],
         visitedStatusList: [
           {
             id: '-1',
@@ -129,6 +135,7 @@
         totalDetail: 0,
         selectInfo: '1',
         searchInfo: {
+          courseId: '-1',
           visited: '-1',
           buyed: '-1'
         },
@@ -142,19 +149,19 @@
           },
           {
             title: '课程名称',
-            key: 'nickname',
+            key: 'courseName',
             align: 'center'
           },
           {
             title: '领取时间',
             render: (h, params) => {
-              return h('div', dayjs(+params.row.gmtModified).format('YYYY-MM-DD HH:mm:ss'))
+              return h('div', dayjs(+params.row.gmtModified).format('YYYY-MM-DD HH:mm'))
             },
             align: 'center'
           },
           {
             title: '领课节数',
-            key: 'nickname',
+            key: 'lessons',
             align: 'center'
           },
           {
@@ -164,15 +171,15 @@
           },
           {
             title: '正式课是否付费',
-            render: (h,p)=> {
-              return h('div',p.row.buyed ? '是' : '否')
+            render: (h, p) => {
+              return h('div', p.row.buyed ? '是' : '否')
             },
             align: 'center'
           },
           {
             title: '是否上课（次）',
-            render: (h,p)=> {
-              return h('div',{
+            render: (h, p) => {
+              return h('div', {
                 style: {
                   cursor: 'pointer',
                   color: '#5444E4'
@@ -182,14 +189,14 @@
                     this.openModal(p.row)
                   }
                 }
-              },`${p.row.visited ? '是' : '否'}(${1})`)
+              }, `${p.row.studyed ? '是' : '否'}(${p.row.studys})`)
             },
             align: 'center'
           },
           {
             title: '是否交作业（次）',
-            render: (h,p)=> {
-              return h('div',{
+            render: (h, p) => {
+              return h('div', {
                 style: {
                   cursor: 'pointer',
                   color: '#5444E4'
@@ -199,14 +206,14 @@
                     this.openModal(p.row)
                   }
                 }
-              },`${p.row.visited ? '是' : '否'}(${2})`)
+              }, `${p.row.homeworked ? '是' : '否'}(${p.row.homeworks})`)
             },
             align: 'center'
           },
           {
             title: '是否回访',
-            render: (h,p)=> {
-              return h('div',p.row.visited ? '是' : '否')
+            render: (h, p) => {
+              return h('div', p.row.visited ? '是' : '否')
             },
             align: 'center'
           },
@@ -235,21 +242,17 @@
         columnsModal: [
           {
             title: '课时名称',
-            key: 'nickname',
+            key: 'lessonName',
             align: 'center'
           },
           {
             title: '首次完成上课时间',
-            render: (h, params) => {
-              return h('div', dayjs(+params.row.gmtModified).format('YYYY-MM-DD HH:mm:ss'))
-            },
+            key: 'studyTime',
             align: 'center'
           },
           {
             title: '最后交作业时间',
-            render: (h, params) => {
-              return h('div', dayjs(+params.row.gmtModified).format('YYYY-MM-DD HH:mm:ss'))
-            },
+            key: 'homeworkTime',
             align: 'center'
           }
         ]
@@ -257,10 +260,12 @@
     },
     mounted() {
       this.getList()
+      this.getCourseList()
     },
     methods: {
-      openModal () {
+      openModal(data) {
         this.isOpenModal = true
+        this.getWorkList(data)
       },
       changeDate(data) {
         this.searchInfo.getStartTime = data.startTime
@@ -284,10 +289,37 @@
         this.getList();
       },
       detailCurrentChange(val) {
-        this.tab.page = val;
-        this.getList();
+        this.tabDetail.page = val;
+        this.getWorkList();
+      },
+      getCourseList() {
+        this.$api.tbzwCourse.courseQueryPage({
+          current: 1,
+          size: 1000,
+          type: 3
+        })
+          .then(
+            response => {
+              this.experienceLessonList = response.data.resultData.records;
+              this.experienceLessonList.unshift({
+                id: '-1',
+                name: '全部'
+              })
+            })
       },
       //分页查询
+      getWorkList(data) {
+        this.$api.tbzwStudy.homeworkNotes({
+          current: this.tabDetail.page,
+          size: this.tabDetail.pageSize,
+          userId: data.userId,
+        })
+          .then(
+            response => {
+              this.dataDetailList = response.data.resultData.records;
+              this.totalDetail = response.data.resultData.total;
+            })
+      },
       getList(num) {
         this.isFetching = true
         if (num) {
@@ -296,6 +328,8 @@
         let params = {
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
+          type: '3',
+          courseId: this.searchInfo.courseId == '-1' ? '' : this.searchInfo.courseId,
           visited: this.searchInfo.visited == '-1' ? '' : this.searchInfo.visited,
           buyed: this.searchInfo.buyed == '-1' ? '' : this.searchInfo.buyed,
           startTime: this.searchInfo.getStartTime ? new Date(this.searchInfo.getStartTime).getTime() : "",

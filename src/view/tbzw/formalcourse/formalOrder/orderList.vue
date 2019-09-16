@@ -5,8 +5,8 @@
         <Col :span="4" class="g-t-left">
           <div class="g-flex-a-j-center">
             <div class="-search-select-text">课程名称：</div>
-            <Select v-model="searchInfo.status" @on-change="selectChange" class="-search-selectOne">
-              <Option v-for="(item,index) in orderStatusList" :label="item.name" :value="item.id" :key="index"></Option>
+            <Select v-model="searchInfo.courseId" @on-change="selectChange" class="-search-selectOne">
+              <Option v-for="(item,index) in experienceLessonList" :label="item.name" :value="item.id" :key="index"></Option>
             </Select>
           </div>
         </Col>
@@ -64,14 +64,14 @@
         <div class="-p-o-title">订单信息</div>
         <div class="-p-o-flex">
           <FormItem label="订单号" class="-p-o-width">{{orderInfo.id}}</FormItem>
-          <FormItem label="课程名称" class="-p-o-width">{{orderInfo.amount | moneyFormatter}} 元</FormItem>
+          <FormItem label="课程名称" class="-p-o-width">{{orderInfo.courseName}}</FormItem>
         </div>
         <div class="-p-o-flex">
           <FormItem label="订单金额" class="-p-o-width">{{orderInfo.amount | moneyFormatter}} 元</FormItem>
-          <FormItem label="优惠金额" class="-p-o-width">{{orderInfo.amount | moneyFormatter}} 元</FormItem>
+          <FormItem label="优惠金额" class="-p-o-width">{{orderInfo.couponAmount | moneyFormatter}} 元</FormItem>
         </div>
         <div class="-p-o-flex">
-          <FormItem label="实付金额" class="-p-o-width">{{orderStatus[orderInfo.payStatus]}}</FormItem>
+          <FormItem label="实付金额" class="-p-o-width">{{orderInfo.payAmount | moneyFormatter}} 元</FormItem>
           <FormItem label="支付时间" class="-p-o-width">{{orderInfo.timeEnd}}</FormItem>
         </div>
         <div class="-p-o-flex">
@@ -80,16 +80,20 @@
         </div>
         <div class="-p-o-title">团购信息</div>
         <div class="-p-o-flex">
-          <FormItem label="团购人数" class="-p-o-width">{{orderInfo.id}}</FormItem>
-          <FormItem label="团购时限" class="-p-o-width">{{orderInfo.amount | moneyFormatter}} 元</FormItem>
+          <FormItem label="团购人数" class="-p-o-width">{{orderInfo.groupOrders.length}}</FormItem>
+          <FormItem label="团购时限" class="-p-o-width">{{orderInfo.groupTime}}</FormItem>
         </div>
         <div class="-p-o-flex">
-          <FormItem label="成团时限" class="-p-o-width">{{orderInfo.amount | moneyFormatter}} 元</FormItem>
-          <FormItem label="成团时间" class="-p-o-width">{{orderInfo.amount | moneyFormatter}} 元</FormItem>
+          <FormItem label="成团时限" class="-p-o-width">{{orderInfo.amount}}</FormItem>
+          <FormItem label="成团时间" class="-p-o-width">{{orderInfo.groupEndTime | timeFormatter}}</FormItem>
         </div>
         <div class="-p-o-flex">
-          <FormItem label="团长" class="-p-o-width">{{orderStatus[orderInfo.payStatus]}}</FormItem>
-          <FormItem label="团员" class="-p-o-width">{{orderInfo.timeEnd}}</FormItem>
+          <FormItem label="团长" class="-p-o-width">
+            {{orderInfo.groupOrders.length ? orderInfo.groupOrders[0].nickName : ''}}
+          </FormItem>
+          <FormItem label="团员" class="-p-o-width">
+            {{orderInfo.groupOrders.length ? orderInfo.groupOrders[1] ? orderInfo.groupOrders[1].nickName : '正在拼团中...' : ''}}
+          </FormItem>
         </div>
       </Form>
       <div slot="footer" class="-p-o-footer">
@@ -114,6 +118,7 @@
           pageSize: 10
         },
         searchInfo: {
+          courseId: '-1',
           status: '-1',
           type: '-1',
           orderMode: '0',
@@ -163,6 +168,7 @@
         orderType: ['单独购买', '开团购买', '跟团购买'],
         orderPageType: ['玖桔成都', '社群', '公众号投放'],
         dataList: [],
+        experienceLessonList: [],
         dateOption: {
           name: '创建时间',
           type: 'datetime',
@@ -173,7 +179,9 @@
         isOpenModal: false,
         getStartTime: '',
         getEndTime: '',
-        orderInfo: {},
+        orderInfo: {
+          groupOrders: []
+        },
         courseInfo: {},
         columns: [
           {
@@ -281,6 +289,7 @@
     },
     mounted() {
       this.getList()
+      this.getCourseList()
     },
     methods: {
       changeDate (data) {
@@ -310,15 +319,17 @@
         this.getList();
       },
       openModal(data) {
+        this.getOrderDetails(data)
         this.isOpenModal = true
-        this.orderInfo = data
       },
       paramsInit() {
         let params = {
           current: this.tab.page,
           size: this.tab.pageSize,
+          type: '1',
           payStatus: this.searchInfo.status,
           orderMode: this.searchInfo.orderMode,
+          courseId: this.searchInfo.courseId == '-1' ? '' : this.searchInfo.courseId,
           startTime: this.getStartTime ? new Date(this.getStartTime).getTime() : "",
           endTime: this.getEndTime ? new Date(this.getEndTime).getTime() : ""
         }
@@ -330,6 +341,30 @@
         }
 
         return params
+      },
+      getOrderDetails(data) {
+        this.$api.tbzwOrder.getOrderDetails({
+          id: data.id
+        })
+          .then(
+            response => {
+              this.orderInfo = response.data.resultData;
+            })
+      },
+      getCourseList() {
+        this.$api.tbzwCourse.courseQueryPage({
+          current: 1,
+          size: 1000,
+          type: 1
+        })
+          .then(
+            response => {
+              this.experienceLessonList = response.data.resultData.records;
+              this.experienceLessonList.unshift({
+                id: '-1',
+                name: '全部'
+              })
+            })
       },
       //分页查询
       getList() {

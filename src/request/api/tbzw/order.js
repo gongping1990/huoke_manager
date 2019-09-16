@@ -8,6 +8,9 @@ const tbzwOrder = {
   getDataDetails(params) {
     return axios.get("/composition/order/getDataDetails", {params: params});
   },
+  getOrderDetails(params) {
+    return axios.get("/composition/order/getOrderDetails", {params: params});
+  },
 };
 
 export default tbzwOrder;

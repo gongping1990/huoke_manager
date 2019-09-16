@@ -11,6 +11,9 @@ const tbzwStudy = {
   listRepairCard(params) {
     return axios.post("/composition/study/listRepairCard", qs.stringify(params));
   },
+  homeworkNotes(params) {
+    return axios.get("/composition/study/homeworkNotes", {params: params});
+  },
 };
 
 export default tbzwStudy;

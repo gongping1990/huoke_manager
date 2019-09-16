@@ -5,8 +5,8 @@
         <Col :span="4" class="g-t-left">
           <div class="g-flex-a-j-center">
             <div class="-search-select-text">课程名称：</div>
-            <Select v-model="searchInfo.status" @on-change="selectChange" class="-search-selectOne">
-              <Option v-for="(item,index) in orderStatusList" :label="item.name" :value="item.id" :key="index"></Option>
+            <Select v-model="searchInfo.courseId" @on-change="selectChange" class="-search-selectOne">
+              <Option v-for="(item,index) in experienceLessonList" :label="item.name" :value="item.id" :key="index"></Option>
             </Select>
           </div>
         </Col>
@@ -52,14 +52,14 @@
       <Form ref="orderInfo" :model="orderInfo" :label-width="90">
         <div class="-p-o-flex">
           <FormItem label="订单号" class="-p-o-width">{{orderInfo.id}}</FormItem>
-          <FormItem label="课程名称" class="-p-o-width">{{orderInfo.amount | moneyFormatter}} 元</FormItem>
+          <FormItem label="课程名称" class="-p-o-width">{{orderInfo.courseName}}</FormItem>
         </div>
         <div class="-p-o-flex">
           <FormItem label="订单金额" class="-p-o-width">{{orderInfo.amount | moneyFormatter}} 元</FormItem>
-          <FormItem label="优惠金额" class="-p-o-width">{{orderInfo.amount | moneyFormatter}} 元</FormItem>
+          <FormItem label="优惠金额" class="-p-o-width">{{orderInfo.couponAmount | moneyFormatter}} 元</FormItem>
         </div>
         <div class="-p-o-flex">
-          <FormItem label="实付金额" class="-p-o-width">{{orderStatus[orderInfo.payStatus]}}</FormItem>
+          <FormItem label="实付金额" class="-p-o-width">{{orderInfo.payAmount | moneyFormatter}} 元</FormItem>
           <FormItem label="支付时间" class="-p-o-width">{{orderInfo.timeEnd}}</FormItem>
         </div>
         <div class="-p-o-flex">
@@ -89,6 +89,7 @@
           pageSize: 10
         },
         searchInfo: {
+          courseId: '-1',
           status: '-1',
           type: '-1',
           antistop: ''
@@ -119,6 +120,7 @@
         orderType: ['单独购买', '开团购买', '跟团购买'],
         orderPageType: ['玖桔成都', '社群', '公众号投放'],
         dataList: [],
+        experienceLessonList: [],
         dateOption: {
           name: '创建时间',
           type: 'datetime',
@@ -223,6 +225,7 @@
     },
     mounted() {
       this.getList()
+      this.getCourseList()
     },
     methods: {
       changeDate (data) {
@@ -259,7 +262,9 @@
         let params = {
           current: this.tab.page,
           size: this.tab.pageSize,
+          type: '2',
           payStatus: this.searchInfo.status,
+          courseId: this.searchInfo.courseId == '-1' ? '' : this.searchInfo.courseId,
           startTime: this.getStartTime ? new Date(this.getStartTime).getTime() : "",
           endTime: this.getEndTime ? new Date(this.getEndTime).getTime() : ""
         }
@@ -271,6 +276,21 @@
         }
 
         return params
+      },
+      getCourseList() {
+        this.$api.tbzwCourse.courseQueryPage({
+          current: 1,
+          size: 1000,
+          type: 2
+        })
+          .then(
+            response => {
+              this.experienceLessonList = response.data.resultData.records;
+              this.experienceLessonList.unshift({
+                id: '-1',
+                name: '全部'
+              })
+            })
       },
       //分页查询
       getList() {

@@ -171,6 +171,7 @@
               this.addInfo = response.data.resultData
               if (this.addInfo.id) {
                 this.addInfo.alonePrice = +this.addInfo.alonePrice
+                this.addInfo.linkId = this.addInfo.linkId.split(',')
               }
             })
           .finally(() => {
