@@ -159,6 +159,7 @@
           .then(
             response => {
               this.addInfo = response.data.resultData
+              this.addInfo.linkId = this.addInfo.linkId.split(',')
             })
           .finally(() => {
             this.isFetching = false

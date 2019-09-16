@@ -45,8 +45,23 @@
               <Option v-for="(item,index) of 9" :key="index" :value="item" :label="item"></Option>
             </Select>
           </FormItem>
-          <FormItem label="链接地址" prop="href">
-            <Input type="text" v-model="addInfo.href" placeholder="请输入链接地址"></Input>
+          <FormItem label="卡片标题" prop="cardtitle">
+            <Input type="text" v-model="addInfo.cardtitle" placeholder="请输入卡片标题"></Input>
+          </FormItem>
+          <FormItem label="卡片图片" class="ivu-form-item-required">
+            <upload-img v-model="addInfo.cardimgurl" :option="uploadOption"></upload-img>
+          </FormItem>
+          <FormItem label="回复链接" prop="href">
+            <Input type="text" v-model="addInfo.href" placeholder="请输入回复链接"></Input>
+          </FormItem>
+          <FormItem label="链接大标题" prop="bigtitle">
+            <Input type="text" v-model="addInfo.bigtitle" placeholder="请输入链接大标题"></Input>
+          </FormItem>
+          <FormItem label="链接小标题" prop="smalltitle">
+            <Input type="text" v-model="addInfo.smalltitle" placeholder="请输入链接小标题"></Input>
+          </FormItem>
+          <FormItem label="链接配图" class="ivu-form-item-required">
+            <upload-img v-model="addInfo.imgurl" :option="uploadOption"></upload-img>
           </FormItem>
           <FormItem label="有效期" class="ivu-form-item-required">
             <Row>
@@ -160,6 +175,18 @@
             {required: true, message: '请输入活动名称', trigger: 'blur'},
             {type: 'string', max: 20, message: '活动名称长度为20字', trigger: 'blur'}
           ],
+          bigtitle: [
+            {required: true, message: '请输入链接大标题', trigger: 'blur'},
+          ],
+          smalltitle: [
+            {required: true, message: '请输入链接小标题', trigger: 'blur'},
+          ],
+          cardtitle: [
+            {required: true, message: '请输入卡片标题', trigger: 'blur'},
+          ],
+          href: [
+            {required: true, message: '请输入回复链接', trigger: 'blur'},
+          ],
           sortnum: [
             {required: true, type: 'number', message: '请选择排序值', trigger: 'change'},
           ]
@@ -198,7 +225,7 @@
             key: 'sortnum'
           },
           {
-            title: '链接地址',
+            title: '回复链接',
             key: 'href',
             align:'center',
             tooltip: true
@@ -253,7 +280,7 @@
                     size: 'small'
                   },
                   style: {
-                    display: params.row.status > 2 ? 'none' : 'inline-block',
+                    display: params.row.status > 1 ? 'none' : 'inline-block',
                     color: 'rgba(218, 55, 75)',
                     marginRight: '5px'
                   },
@@ -439,6 +466,10 @@
       submitInfo(name) {
         if (!this.addInfo.url) {
           return this.$Message.error('请上传图片')
+        } else if (!this.addInfo.cardimgurl) {
+          return this.$Message.error('请上传卡片图片')
+        } else if (!this.addInfo.imgurl) {
+          return this.$Message.error('请上传链接配图')
         } else if (!this.addInfo.showTime) {
           return this.$Message.error('请输入开始时间')
         } else if (!this.addInfo.hideTime) {

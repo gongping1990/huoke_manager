@@ -1,6 +1,10 @@
 <template>
   <div class="p-homePageSet">
     <Card>
+      <div class="g-add-btn" @click="openModal()">
+        <Icon class="-btn-icon" color="#fff" type="ios-add" size="24"/>
+      </div>
+
       <Table class="-c-tab" :loading="isFetching" :columns="columns" :data="dataList"></Table>
 
       <Page class="-p-text-right" :total="total" size="small" show-elevator :page-size="tab.pageSize"
@@ -17,14 +21,32 @@
           <FormItem label="课程名称" prop="name">
             <Input type="text" v-model="addInfo.name" placeholder="请输入课程名称"></Input>
           </FormItem>
-          <FormItem label="课程描述" prop="name">
-            <Input type="text" v-model="addInfo.name" placeholder="请输入课程描述"></Input>
+          <FormItem label="课程描述" prop="courseDescribe">
+            <Input type="text" v-model="addInfo.courseDescribe" placeholder="请输入课程描述"></Input>
           </FormItem>
-          <FormItem label="竖版封面">
-            <upload-img v-model="addInfo.qrcode" :option="uploadOption"></upload-img>
+          <FormItem label="竖版封面" class="ivu-form-item-required">
+            <upload-img v-model="addInfo.verticalCover" :option="uploadOption"></upload-img>
           </FormItem>
-          <FormItem label="横版封面">
-            <upload-img v-model="addInfo.qrcode" :option="uploadOption"></upload-img>
+          <FormItem label="横版封面" class="ivu-form-item-required">
+            <upload-img v-model="addInfo.coverphoto" :option="uploadOption"></upload-img>
+          </FormItem>
+          <FormItem label="卡片标题" prop="cardtitle">
+            <Input type="text" v-model="addInfo.cardtitle" placeholder="请输入卡片标题"></Input>
+          </FormItem>
+          <FormItem label="卡片图片" class="ivu-form-item-required">
+            <upload-img v-model="addInfo.cardimgurl" :option="uploadOption"></upload-img>
+          </FormItem>
+          <FormItem label="回复链接" prop="href">
+            <Input type="text" v-model="addInfo.href" placeholder="请输入回复链接"></Input>
+          </FormItem>
+          <FormItem label="链接大标题" prop="bigtitle">
+            <Input type="text" v-model="addInfo.bigtitle" placeholder="请输入链接大标题"></Input>
+          </FormItem>
+          <FormItem label="链接小标题" prop="smalltitle">
+            <Input type="text" v-model="addInfo.smalltitle" placeholder="请输入链接小标题"></Input>
+          </FormItem>
+          <FormItem label="链接配图" class="ivu-form-item-required">
+            <upload-img v-model="addInfo.imgurl" :option="uploadOption"></upload-img>
           </FormItem>
         </Form>
         <div slot="footer" class="-p-b-flex">
@@ -61,10 +83,22 @@
         addInfo: {},
         ruleValidate: {
           name: [
-            {required: true, message: '请输入二维码名称', trigger: 'blur'}
+            {required: true, message: '请输入课程名称', trigger: 'blur'}
           ],
-          endTime: [
-            {required: true, type: 'date', message: '请选择有效期', trigger: 'change'},
+          courseDescribe: [
+            {required: true, message: '请输入课程描述', trigger: 'blur'}
+          ],
+          bigtitle: [
+            {required: true, message: '请输入链接大标题', trigger: 'blur'},
+          ],
+          smalltitle: [
+            {required: true, message: '请输入链接小标题', trigger: 'blur'},
+          ],
+          cardtitle: [
+            {required: true, message: '请输入卡片标题', trigger: 'blur'},
+          ],
+          href: [
+            {required: true, message: '请输入回复链接', trigger: 'blur'},
           ]
         },
         columns: [
@@ -79,13 +113,18 @@
             align: 'center'
           },
           {
+            title: '回复链接',
+            key: 'href',
+            align: 'center'
+          },
+          {
             title: '竖版封面',
-            align:'center',
+            align: 'center',
             render: (h, params) => {
               return h('div', [
                 h('img', {
                   attrs: {
-                    src: params.row.qrcode
+                    src: params.row.verticalCover
                   },
                   style: {
                     width: '50px',
@@ -98,12 +137,12 @@
           },
           {
             title: '横版封面',
-            align:'center',
+            align: 'center',
             render: (h, params) => {
               return h('div', [
                 h('img', {
                   attrs: {
-                    src: params.row.qrcode
+                    src: params.row.coverphoto
                   },
                   style: {
                     width: '50px',
@@ -147,7 +186,16 @@
     methods: {
       openModal(data) {
         this.isOpenModal = true
-        this.addInfo = JSON.parse(JSON.stringify(data))
+        if (data) {
+          this.addInfo = JSON.parse(JSON.stringify(data))
+        } else {
+          this.addInfo = {
+            cardimgurl: '',
+            coverphoto: '',
+            imgurl: '',
+            verticalCover: ''
+          }
+        }
       },
       closeModal(name) {
         this.isOpenModal = false
@@ -163,7 +211,7 @@
         if (num) {
           this.tab.currentPage = 1
         }
-        this.$api.composition.qrcodeList({
+        this.$api.tbzwHomepage.pageHomePageCourse({
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
         })
@@ -180,16 +228,28 @@
         if (this.isSending) return
         this.$refs[name].validate((valid) => {
           if (valid) {
-            if (!this.addInfo.qrcode) {
+            if (!this.addInfo.verticalCover) {
               return this.$Message.error('请上传竖版图片')
-            } else if (!this.addInfo.qrcode) {
+            } else if (!this.addInfo.coverphoto) {
               return this.$Message.error('请上传横版图片')
+            } else if (!this.addInfo.cardimgurl) {
+              return this.$Message.error('请上传卡片图片')
+            } else if (!this.addInfo.imgurl) {
+              return this.$Message.error('请上传链接配图')
             }
             this.isSending = true
-            this.$api.composition.saveQrcode({
+            this.$api.tbzwHomepage.editHomePageCourse({
               id: this.addInfo.id,
               name: this.addInfo.name,
-              qrcode: this.addInfo.qrcode,
+              coverphoto: this.addInfo.coverphoto,
+              courseDescribe: this.addInfo.courseDescribe,
+              verticalCover: this.addInfo.verticalCover,
+              smalltitle: this.addInfo.smalltitle,
+              imgurl: this.addInfo.imgurl,
+              href: this.addInfo.href,
+              cardtitle: this.addInfo.cardtitle,
+              cardimgurl: this.addInfo.cardimgurl,
+              bigtitle: this.addInfo.bigtitle,
             })
               .then(
                 response => {
