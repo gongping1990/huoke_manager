@@ -10,11 +10,10 @@
             <div class="-p-h-right">
               <div class="-r-name">{{userInfo.nickname}}</div>
               <div class="-r-dev">
-                <span>id: {{userInfo.userId}}</span>
+                <span>id: {{userInfo.uid}}</span>
                 <span><Icon type="ios-call"/>: {{userInfo.phone || '暂无'}}</span>
                 <span><Icon type="ios-time-outline"/>: {{userInfo.createTime}}</span>
-                <span>是否关注古诗词: {{userInfo.subscripbe ? '是' : '否'}}</span>
-                <span>是否关注轻作文: {{userInfo.subscripbe ? '是' : '否'}}</span>
+
               </div>
             </div>
           </div>
@@ -29,6 +28,7 @@
         <div class="-p-center-item">
           <div class="-c-text">购买数据</div>
           <div>
+            <span>是否关注: {{userInfo.subscripbe ? '是' : '否'}}</span>
             <span>是否购买: {{userInfo.buyed ? '是' : '否'}}</span>
             <span>支付时间: {{userInfo.buyedTime}}</span>
           </div>
@@ -59,7 +59,7 @@
     </Card>
     <loading v-if="isFetching"></loading>
 
-    <job-record-template v-model="isOpenModal" :dataInfo="detailInfo"></job-record-template>
+    <job-record-template v-model="isOpenModal" :dataInfo="detailInfo" :type="2"></job-record-template>
   </div>
 </template>
 
@@ -156,8 +156,8 @@
           .then(
             response => {
               this.userInfo = response.data.resultData;
-              this.userInfo.learnStartDate =  dayjs(+this.userInfo.learnStartDate).format('YYYY-MM-DD HH:mm')
-              this.userInfo.buyedTime =  dayjs(+this.userInfo.buyedTime).format('YYYY-MM-DD HH:mm')
+              this.userInfo.learnStartDate = this.userInfo.learnStartDate ? dayjs(+this.userInfo.learnStartDate).format('YYYY-MM-DD HH:mm') : '暂无'
+              this.userInfo.buyedTime =  this.userInfo.buyedTime ? dayjs(+this.userInfo.buyedTime).format('YYYY-MM-DD HH:mm') : '暂无'
             })
           .finally(() => {
             this.isFetching = false
