@@ -94,15 +94,21 @@
           },
           {
             title: '首次完成上课时间',
-            key: 'firstLearnTime'
+            render: (h, params) => {
+              return h('div', dayjs(+params.row.firstLearnTime).format("YYYY-MM-DD HH:mm"))
+            }
           },
           {
             title: '最后交作业时间',
-            key: 'lastSubmitTime'
+            render: (h, params) => {
+              return h('div', dayjs(+params.row.lastSubmitTime).format("YYYY-MM-DD HH:mm"))
+            }
           },
           {
             title: '老师最后批改时间',
-            key: 'lastReplyTime'
+            render: (h, params) => {
+              return h('div', dayjs(+params.row.lastReplyTime).format("YYYY-MM-DD HH:mm"))
+            }
           },
           {
             title: '操作',
@@ -140,6 +146,7 @@
         this.isOpenModal = true
         this.detailInfo = JSON.parse(JSON.stringify(data))
         this.detailInfo.appId = this.searchInfo.appId
+        this.detailInfo.uid = this.$route.query.id
       },
       currentChange(val) {
         this.tab.page = val;

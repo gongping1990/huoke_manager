@@ -27,7 +27,7 @@
   import dayjs from 'dayjs'
 export default {
   name: 'jobRecordTemplate',
-  props: ['value', 'dataInfo'],
+  props: ['value', 'dataInfo', 'type'],
   data () {
     return {
       isOpenDetail: false,
@@ -46,10 +46,22 @@ export default {
   },
   methods: {
     getJobLogList() {
-      this.$api.jsdJob.listHomeWorkLog({
-        workId: this.dataInfo.workId,
-        system: this.dataInfo.appId || '7',
-      }).then(response => {
+      let paramUrl = ''
+      switch (+this.type) {
+        case 2:
+          paramUrl =   this.$api.jsdJob.listHomeWorkLogByLesson({
+            uid: this.dataInfo.uid,
+            lessonId: this.dataInfo.lessonId,
+            system: this.dataInfo.appId || '7',
+          })
+          break
+        default:
+          paramUrl =  this.$api.jsdJob.listHomeWorkLog({
+            workId: this.dataInfo.workId,
+            system: this.dataInfo.appId || '7',
+          })
+      }
+      paramUrl.then(response => {
         this.recordList = response.data.resultData
         for (let item of this.recordList) {
           item.time = dayjs(+item.createTime).format('YYYY-MM-DD HH:mm')

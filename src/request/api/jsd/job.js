@@ -78,6 +78,9 @@ const jsdJob = {
   },
   moveNOReplyHomework(params) {
     return axios.post(`/homework/job/moveNOReplyHomework`, params)
+  },
+  listHomeWorkLogByLesson(params) {
+    return axios.get(`/homework/job/listHomeWorkLogByLesson`, {params})
   }
 }
 
