@@ -19,12 +19,12 @@
             <Input type="text" :disabled="!isEdit" v-model="addInfo.lessonDescribe" placeholder="请输入课时节数"></Input>
           </FormItem>
           <FormItem label="单独购价格" prop="alonePrice">
-            <InputNumber  style="width: 100%;" type="text" :disabled="!isEdit" v-model="addInfo.alonePrice" :min="0"
+            <InputNumber  style="width: 100%;" type="text" :disabled="addInfo.id !=''" v-model="addInfo.alonePrice" :min="0"
                          placeholder="请输入单独购价格（元）"></InputNumber>
             <span class="-c-tips">* 精确到小数点后2位，如99.99</span>
           </FormItem>
           <FormItem label="拼课价格" prop="groupPrice">
-            <InputNumber style="width: 100%;" type="text" :disabled="!isEdit" v-model="addInfo.groupPrice" :min="0"
+            <InputNumber style="width: 100%;" type="text" :disabled="addInfo.id !=''" v-model="addInfo.groupPrice" :min="0"
                          placeholder="请输入拼课价格（元）"></InputNumber>
             <span class="-c-tips">* 精确到小数点后2位，如99.99</span>
           </FormItem>
