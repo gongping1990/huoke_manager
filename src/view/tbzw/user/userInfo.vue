@@ -165,6 +165,7 @@
               this.userInfo = response.data.resultData;
               this.userInfo.learnStartDate = this.userInfo.learnStartDate ? dayjs(+this.userInfo.learnStartDate).format('YYYY-MM-DD HH:mm') : '暂无'
               this.userInfo.buyedTime =  this.userInfo.buyedTime ? dayjs(+this.userInfo.buyedTime).format('YYYY-MM-DD HH:mm') : '暂无'
+              this.userInfo.createTime =  dayjs(+this.userInfo.createTime).format('YYYY-MM-DD HH:mm')
             })
           .finally(() => {
             this.isFetching = false
