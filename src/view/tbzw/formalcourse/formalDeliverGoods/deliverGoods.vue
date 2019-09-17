@@ -221,12 +221,13 @@
       toExcel() {
         let params = {
           send: this.radioType,
+          courseId: this.courseType,
           nickName: this.searchInfo.nickname,
           startTime: this.searchInfo.startTime,
           endTime: this.searchInfo.endTime
         }
 
-        let downUrl = `${getBaseUrl()}/composition/order/downloadExcelByGoods?startTime=${params.startTime}&endTime=${params.endTime}&send=${params.send}&nickName=${params.nickName}`
+        let downUrl = `${getBaseUrl()}/composition/order/downloadExcelByGoods?startTime=${params.startTime}&endTime=${params.endTime}&send=${params.send}&nickName=${params.nickName}&courseId=${params.courseId}`
 
         window.open(downUrl, '_blank');
       },
