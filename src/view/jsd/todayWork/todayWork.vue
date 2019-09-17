@@ -709,7 +709,7 @@
       this.getTeacherRemind()
     },
     methods: {
-      noRequired() {
+      noRequired(data) {
         this.$Modal.confirm({
           title: '提示',
           content: this.radioType === 4? '确认将该作业移入待批改' : '确认移出到无需批改？',
