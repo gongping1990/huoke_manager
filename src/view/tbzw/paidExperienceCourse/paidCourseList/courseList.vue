@@ -38,8 +38,26 @@
           },
           {
             title: '课程封面',
-            key: 'count',
-            align: 'center'
+            align: 'center',
+            render: (h, params) => {
+              return h('div', {
+                style: {
+                  'display': 'flex',
+                  'align-items': 'center',
+                  'justify-content': 'center'
+                }
+              }, [
+                h('img', {
+                  attrs: {
+                    src: params.row.coverphoto
+                  },
+                  style: {
+                    width: '50px',
+                    margin: '10px'
+                  }
+                })
+              ])
+            }
           },
           {
             title: '落地页链接',
