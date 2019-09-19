@@ -46,6 +46,25 @@
               <Radio label="0">否</Radio>
             </RadioGroup>
           </FormItem>
+          <Form-item label="实物图片" v-if="addInfo.hasgift==1" class="-c-form-item ivu-form-item-required">
+            <Upload
+              v-if="isEdit"
+              style="display: inline-block"
+              :action="baseUrl"
+              :show-upload-list="false"
+              :max-size="500"
+              :on-success="handleSuccessGiftShowImg"
+              :on-exceeded-size="handleSize"
+              :on-error="handleErr">
+              <Button ghost type="primary">上传图片</Button>
+            </Upload>
+            <div class="-c-course-wrap" v-if="addInfo.giftShowImg">
+              <div class="-c-course-item">
+                <img :src="addInfo.giftShowImg">
+              </div>
+            </div>
+            <div class="-c-tips">图片尺寸不低于960px*360px 图片大小：500K以内</div>
+          </Form-item>
           <Form-item label="封面图片" class="-c-form-item ivu-form-item-required">
             <Upload
               v-if="isEdit"
@@ -264,6 +283,12 @@
           this.addInfo.verticalCover = res.resultData.url
         }
       },
+      handleSuccessGiftShowImg(res) {
+        if (res.code === 200) {
+          this.$Message.success('上传成功')
+          this.addInfo.giftShowImg = res.resultData.url
+        }
+      },
       //分页查询
       getList() {
         this.isFetching = true
@@ -293,6 +318,8 @@
               return this.$Message.error('请上传咨询图片')
             } else if (!this.addInfo.verticalCover && this.radioType === '1') {
               return this.$Message.error('请上传竖版封面')
+            } else if (!this.addInfo.giftShowImg && this.addInfo.hasgift === '1') {
+              return this.$Message.error('请上传实物图片')
             } else if (this.radioType === '2' && (!this.addInfo.aloneInfo || this.addInfo.aloneInfo == '<p><br></p>')) {
               return this.$Message.error('请输入单独购买帮助信息')
             } else if (this.radioType === '2' && (!this.addInfo.groupInfo || this.addInfo.groupInfo == '<p><br></p>')) {

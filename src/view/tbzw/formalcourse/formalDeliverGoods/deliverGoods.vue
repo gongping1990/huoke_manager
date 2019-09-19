@@ -55,6 +55,9 @@
         <FormItem label="发货信息" prop="sendinfo">
           <Input type="text" v-model="addInfo.sendinfo" placeholder="请输入发货信息"></Input>
         </FormItem>
+        <FormItem label="物流单号" prop="sendinfo">
+          <Input type="text" v-model="addInfo.sendinfo" placeholder="请输入发货信息"></Input>
+        </FormItem>
         <FormItem label="发货时间" prop="sendTime">
           <Date-picker style="width: 100%" type="datetime" placeholder="选择发货时间" v-model="addInfo.sendTime"></Date-picker>
         </FormItem>
