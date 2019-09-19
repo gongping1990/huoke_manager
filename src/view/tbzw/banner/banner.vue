@@ -488,8 +488,13 @@
               showTime: dayjs(this.addInfo.showTime).format("YYYY/MM/DD HH:mm:ss"),
               name : this.addInfo.name,
               href : this.addInfo.href,
+              sortnum : this.addInfo.sortnum,
+              cardtitle : this.addInfo.cardtitle,
+              bigtitle : this.addInfo.bigtitle,
+              smalltitle : this.addInfo.smalltitle,
               url : this.addInfo.url,
-              sortnum : this.addInfo.sortnum
+              cardimgurl : this.addInfo.cardimgurl,
+              imgurl : this.addInfo.imgurl
             })
               .then(
                 response => {
