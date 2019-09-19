@@ -177,8 +177,8 @@
         addInfo: {
           name: '',
           courseDescribe: '',
-          alonePrice: null,
-          groupPrice: null,
+          alonePrice: 999,
+          groupPrice: 999,
           lessonDescribe: '',
           consultPhone: null,
           formTime: null,
