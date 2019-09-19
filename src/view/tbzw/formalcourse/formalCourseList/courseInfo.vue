@@ -185,6 +185,7 @@
           aloneInfo: '',
           groupInfo: '',
           launchInfo: '',
+          giftShowImg: "",
           coverphoto: "",
           verticalCover: "",
           hasgift: "1",
