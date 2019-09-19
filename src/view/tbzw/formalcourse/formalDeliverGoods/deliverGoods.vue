@@ -55,8 +55,8 @@
         <FormItem label="发货信息" prop="sendinfo">
           <Input type="text" v-model="addInfo.sendinfo" placeholder="请输入发货信息"></Input>
         </FormItem>
-        <FormItem label="物流单号" prop="sendinfo">
-          <Input type="text" v-model="addInfo.sendinfo" placeholder="请输入发货信息"></Input>
+        <FormItem label="物流单号" prop="logisticsOddNum">
+          <Input type="text" v-model="addInfo.logisticsOddNum" placeholder="请输入物流单号"></Input>
         </FormItem>
         <FormItem label="发货时间" prop="sendTime">
           <Date-picker style="width: 100%" type="datetime" placeholder="选择发货时间" v-model="addInfo.sendTime"></Date-picker>
@@ -110,6 +110,9 @@
           ],
           sendinfo: [
             {required: true, message: '请输入发货信息', trigger: 'blur'},
+          ],
+          logisticsOddNum: [
+            {required: true, message: '请输入物流单号', trigger: 'blur'},
           ],
           sendTime: [
             {required: true, type: 'date', message: '请选择发货时间', trigger: 'change'},
@@ -202,7 +205,8 @@
               },[
                 h('div',`发货人：${params.row.sendinfo.sender}`),
                 h('div',`发货信息：${params.row.sendinfo.sendinfo}`),
-                h('div',`发货时间：${params.row.sendinfo.sendTime}`)
+                h('div',`发货时间：${params.row.sendinfo.sendTime}`),
+                h('div',`物流单号：${params.row.sendinfo.logisticsOddNum}`)
               ])
             },
             align: 'center'
