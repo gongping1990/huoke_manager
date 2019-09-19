@@ -450,7 +450,7 @@
           replyText: this.addInfo.replyText,
           replyAudio: this.addInfo.replyAudio,
           replyDuration: this.addInfo.replyDuration,
-          isPassed: this.addInfo.isPassed == 1
+          status: this.addInfo.isPassed == 1 ? '3' : '1'
         })
           .then(
             response => {
