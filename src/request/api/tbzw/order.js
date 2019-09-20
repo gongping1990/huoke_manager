@@ -3,13 +3,13 @@ import qs from "qs";
 
 const tbzwOrder = {
   getTotalData(params) {
-    return axios.get("/composition/order/getTotalData", {params: params});
+    return axios.get("/compositionv2/order/getTotalData", {params: params});
   },
   getDataDetails(params) {
-    return axios.get("/composition/order/getDataDetails", {params: params});
+    return axios.get("/compositionv2/order/getDataDetails", {params: params});
   },
   getOrderDetails(params) {
-    return axios.get("/composition/order/getOrderDetails", {params: params});
+    return axios.get("/compositionv2/order/getOrderDetails", {params: params});
   },
 };
 

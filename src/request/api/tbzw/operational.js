@@ -3,19 +3,19 @@ import qs from "qs";
 
 const tbzwOperational = {
   finishBanner(params) {
-    return axios.get('/composition/operational/finishBanner', {params: params})
+    return axios.get('/compositionv2/operational/finishBanner', {params: params})
   },
   removeBanner(params) {
-    return axios.get('/composition/operational/removeBanner', {params: params})
+    return axios.get('/compositionv2/operational/removeBanner', {params: params})
   },
   listBannerStatistics(params) {
-    return axios.get('/composition/operational/listBannerStatistics', {params: params})
+    return axios.get('/compositionv2/operational/listBannerStatistics', {params: params})
   },
   listBanner(params) {
-    return axios.post("/composition/operational/listBanner", qs.stringify(params));
+    return axios.post("/compositionv2/operational/listBanner", qs.stringify(params));
   },
   saveBanner(params) {
-    return axios.post("/composition/operational/saveBanner", qs.stringify(params));
+    return axios.post("/compositionv2/operational/saveBanner", qs.stringify(params));
   },
 };
 

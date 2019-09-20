@@ -4,35 +4,35 @@ import qs from "qs";
 const gswInternalChannel = {
 
   categoryList(params) {
-    return axios.get("/composition/internalChannel/categoryList", {params: params});
+    return axios.get("/compositionv2/internalChannel/categoryList", {params: params});
   },
 
   saveCategory(params) {
-    return axios.post("/composition/internalChannel/saveCategory", qs.stringify(params));
+    return axios.post("/compositionv2/internalChannel/saveCategory", qs.stringify(params));
   },
 
   deleteCategory(params) {
-    return axios.post("/composition/internalChannel/deleteCategory", qs.stringify(params));
+    return axios.post("/compositionv2/internalChannel/deleteCategory", qs.stringify(params));
   },
 
   listChannel(params) {
-    return axios.get("/composition/internalChannel/list", {params: params});
+    return axios.get("/compositionv2/internalChannel/list", {params: params});
   },
 
   getInternalChannelData(params) {
-    return axios.get("/composition/internalChannel/getInternalChannelData", {params: params});
+    return axios.get("/compositionv2/internalChannel/getInternalChannelData", {params: params});
   },
 
   getInternalChannelDataByDate(params) {
-    return axios.get("/composition/internalChannel/getInternalChannelDataByDate", {params: params});
+    return axios.get("/compositionv2/internalChannel/getInternalChannelDataByDate", {params: params});
   },
 
   saveChannel(params) {
-    return axios.post("/composition/internalChannel/save", qs.stringify(params));
+    return axios.post("/compositionv2/internalChannel/save", qs.stringify(params));
   },
 
   deleteChannel(params) {
-    return axios.post("/composition/internalChannel/delete", qs.stringify(params));
+    return axios.post("/compositionv2/internalChannel/delete", qs.stringify(params));
   },
 };
 

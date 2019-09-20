@@ -3,16 +3,16 @@ import qs from "qs";
 
 const tbzwStudy = {
   getUserByPhone(params) {
-    return axios.get('/composition/user/getUserByPhone', {params: params})
+    return axios.get('/compositionv2/user/getUserByPhone', {params: params})
   },
   repairCard(params) {
-    return axios.post("/composition/study/repairCard", qs.stringify(params));
+    return axios.post("/compositionv2/study/repairCard", qs.stringify(params));
   },
   listRepairCard(params) {
-    return axios.post("/composition/study/listRepairCard", qs.stringify(params));
+    return axios.post("/compositionv2/study/listRepairCard", qs.stringify(params));
   },
   homeworkNotes(params) {
-    return axios.get("/composition/study/homeworkNotes", {params: params});
+    return axios.get("/compositionv2/study/homeworkNotes", {params: params});
   },
 };
 

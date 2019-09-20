@@ -3,13 +3,13 @@ import qs from "qs";
 
 const tbzwCoupon = {
   pageCouponConfig(params) {
-    return axios.get("/composition/coupon/pageCouponConfig", {params: params});
+    return axios.get("/compositionv2/coupon/pageCouponConfig", {params: params});
   },
   finishCoupon(params) {
-    return axios.get("/composition/coupon/finishCoupon", {params: params});
+    return axios.get("/compositionv2/coupon/finishCoupon", {params: params});
   },
   editCouponConfig(params) {
-    return axios.post("/composition/coupon/editCouponConfig", qs.stringify(params));
+    return axios.post("/compositionv2/coupon/editCouponConfig", qs.stringify(params));
   },
 };
 
