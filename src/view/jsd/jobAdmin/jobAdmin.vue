@@ -562,8 +562,7 @@
       }
     },
     mounted() {
-      this.getList()
-      this.getTeacherList()
+      this.getSearchInfo()
     },
     methods: {
       noRequired(data) {
@@ -574,13 +573,13 @@
             let paramUrl = ''
             if (this.radioType === 0 ) {
               paramUrl = this.$api.jsdJob.replyHomework({
-                system: this.searchInfo.appId || '7',
+                courseId: this.searchInfo.appId,
                 id: data.workId,
                 status: 4
               })
             } else {
               paramUrl = this.$api.jsdJob.moveNOReplyHomework({
-                system: this.searchInfo.appId || '7',
+                courseId: this.searchInfo.appId,
                 workIds: [data.workId],
                 range: this.selectAllData ? 1 : 0,
               })
@@ -652,6 +651,7 @@
         this.selectAllData = false
         this.selectUserList = []
         this.searchInfo = data
+        console.log( this.searchInfo,111111)
         this.getList(1)
       },
       getAudioInfo(data) {
@@ -685,7 +685,7 @@
       openJobRecord(data) {
         this.isOpenJobRecord = true
         this.detailInfo = JSON.parse(JSON.stringify(data))
-        this.detailInfo.appId = this.searchInfo.appId || '7'
+        this.detailInfo.appId = this.searchInfo.appId
       },
       closeModalPlay() {
         this.$refs.playAudio.load()
@@ -725,7 +725,7 @@
             onOk: () => {
               this.$api.jsdJob.moveNOReplyHomework({
                 range: this.selectAllData ? 1 : 0,
-                system: this.searchInfo.appId || '7',
+                courseId: this.searchInfo.appId,
                 workIds: this.selectAllData ? [] : this.selectUserList
               }).then(
                 response => {
@@ -763,7 +763,7 @@
       getTeacherList() {
         this.teacherList = []
         this.$api.jsdTeacher.selectTeacher({
-          system: this.searchInfo.appId || '7',
+          courseId: this.searchInfo.appId,
         }).then(response => {
           this.teacherList = response.data.resultData
         })
@@ -774,7 +774,7 @@
         let params = {
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
-          system: this.searchInfo.appId || '7',
+          courseId: this.searchInfo.appId,
           evaluation: this.searchInfo.evaluation == '-1' ? '' : this.searchInfo.evaluation,
           payed: this.searchInfo.pay == '-1' ? '' : this.searchInfo.pay,
           evaluationed: this.searchInfo.evaluationed == '-1' ? '' : this.searchInfo.evaluationed,
@@ -824,7 +824,7 @@
 
         this.$api.jsdJob.reAllotJob({
           range: this.selectAllData ? 1 : 0,
-          system: this.searchInfo.appId || '7',
+          courseId: this.searchInfo.appId,
           teacherId: this.addInfo.teacherId,
           workIds: this.selectAllData ? [] : this.selectUserList
         })

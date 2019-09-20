@@ -81,6 +81,9 @@ const jsdJob = {
   },
   listHomeWorkLogByLesson(params) {
     return axios.get(`/homework/job/listHomeWorkLogByLesson`, {params})
+  },
+  listBase(params) {
+    return axios.get(`/homework/job/course/listBase`, {params})
   }
 }
 

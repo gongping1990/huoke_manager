@@ -34,7 +34,8 @@
           <div class="g-flex-a-j-center">
             <div class="-search-select-text">是否付费：</div>
             <Select v-model="searchInfo.pay" @on-change="changeEmit()" class="-search-selectOne">
-              <Option class="-search-option" v-for="(item,index) in payList" :label="item.name" :value="item.id" :key="index"></Option>
+              <Option class="-search-option" v-for="(item,index) in payList" :label="item.name" :value="item.id"
+                      :key="index"></Option>
             </Select>
           </div>
         </Col>
@@ -53,18 +54,20 @@
 
         <Col :span="4" class="g-t-left" v-if="option.isComment">
           <div class="g-flex-a-j-center">
-            <div class="-search-select-text" >是否点评：</div>
+            <div class="-search-select-text">是否点评：</div>
             <Select v-model="searchInfo.evaluationed" @on-change="changeEmit()" class="-search-selectOne">
-              <Option class="-search-option" v-for="(item,index) in commentList" :label="item.name" :value="item.id" :key="index"></Option>
+              <Option class="-search-option" v-for="(item,index) in commentList" :label="item.name" :value="item.id"
+                      :key="index"></Option>
             </Select>
           </div>
         </Col>
 
         <Col :span="4" class="g-t-left" v-if="option.isSituation">
           <div class="g-flex-a-j-center">
-            <div class="-search-select-text" >点评情况：</div>
+            <div class="-search-select-text">点评情况：</div>
             <Select v-model="searchInfo.evaluation" @on-change="changeEmit()" class="-search-selectOne">
-              <Option class="-search-option" v-for="(item,index) in situationList" :label="item.name" :value="item.id" :key="index"></Option>
+              <Option class="-search-option" v-for="(item,index) in situationList" :label="item.name" :value="item.id"
+                      :key="index"></Option>
             </Select>
           </div>
         </Col>
@@ -72,7 +75,8 @@
           <div class="g-flex-a-j-center">
             <div class="-search-select-text">是否留言：</div>
             <Select v-model="searchInfo.hasComment" @on-change="changeEmit()" class="-search-selectOne">
-              <Option class="-search-option" v-for="(item,index) in payList" :label="item.name" :value="item.id" :key="index"></Option>
+              <Option class="-search-option" v-for="(item,index) in payList" :label="item.name" :value="item.id"
+                      :key="index"></Option>
             </Select>
           </div>
         </Col>
@@ -80,7 +84,8 @@
           <div class="g-flex-a-j-center">
             <div class="-search-select-text">点评老师：</div>
             <Select v-model="searchInfo.teacherId" @on-change="changeEmit()" class="-search-selectOne">
-              <Option class="-search-option" v-for="(item,index) in teacherList" :label="item.nickname" :value="item.id" :key="index"></Option>
+              <Option class="-search-option" v-for="(item,index) in teacherList" :label="item.nickname" :value="item.id"
+                      :key="index"></Option>
             </Select>
           </div>
         </Col>
@@ -104,16 +109,7 @@
           type: 'datetime'
         },
         searchInfo: {},
-        appList: [
-          {
-            id: '7',
-            name: '每日一首古诗词'
-          },
-          {
-            id: '8',
-            name: '小语轻作文'
-          }
-        ],
+        appList: [],
         payList: [
           {
             id: '-1',
@@ -160,18 +156,18 @@
             name: '不满意'
           }
         ],
-        teacherList:[]
+        teacherList: []
       }
     },
-    mounted () {
+    mounted() {
       this.initSearch()
-      this.getTeacherList()
+      this.listBase()
     },
     methods: {
       getTeacherList() {
         this.teacherList = []
         this.$api.jsdTeacher.selectTeacher({
-          system: this.searchInfo.appId || '7',
+          courseId: this.searchInfo.appId,
         }).then(response => {
           this.teacherList = response.data.resultData
           this.teacherList.unshift({
@@ -180,10 +176,20 @@
           })
         })
       },
-      initSearch () {
+      listBase() {
+        this.appList = []
+        this.$api.jsdJob.listBase()
+          .then(response => {
+            this.appList = response.data.resultData
+            this.searchInfo.appId = this.appList[0].id
+            this.getTeacherList()
+            this.changeEmit()
+          })
+      },
+      initSearch() {
         console.log('重置')
         this.searchInfo = {
-          appId: this.searchInfo.appId || '7',
+          appId: this.searchInfo.appId,
           workType: '1',
           userType: '1',
           getStartTime: '',
