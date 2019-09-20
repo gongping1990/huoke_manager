@@ -562,7 +562,6 @@
       }
     },
     mounted() {
-      this.getSearchInfo()
     },
     methods: {
       noRequired(data) {
@@ -651,7 +650,6 @@
         this.selectAllData = false
         this.selectUserList = []
         this.searchInfo = data
-        console.log( this.searchInfo,111111)
         this.getList(1)
       },
       getAudioInfo(data) {

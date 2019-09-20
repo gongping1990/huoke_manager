@@ -213,10 +213,7 @@
         ]
       };
     },
-    mounted() {
-      this.getList()
-      this.getTeacherList()
-    },
+    mounted() {},
     methods: {
       changeAloneSelect () {
         this.$refs.selection.selectAll(this.selectAllData);
@@ -251,7 +248,7 @@
           onOk: () => {
             this.$api.jsdJob.removeHomework({
               id: param.workId,
-              system: this.searchInfo.appId || '7'
+              courseId: this.searchInfo.appId
             }).then(
               response => {
                 if (response.data.code == "200") {
@@ -280,7 +277,7 @@
       getTeacherList() {
         this.teacherList = []
         this.$api.jsdTeacher.selectTeacher({
-          system: this.searchInfo.appId || '7',
+          courseId: this.searchInfo.appId,
         }).then(response => {
           this.teacherList = response.data.resultData
         })
@@ -292,7 +289,7 @@
         let params = {
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
-          system: this.searchInfo.appId || '7',
+          courseId: this.searchInfo.appId || '7',
           hmBegin: this.searchInfo.getStartTime ? new Date(this.searchInfo.getStartTime).getTime() : "",
           hmEnd: this.searchInfo.getEndTime ? new Date(this.searchInfo.getEndTime).getTime() : "",
           alloted: false
@@ -335,7 +332,7 @@
 
         this.$api.jsdJob.reAllotJob({
           range: this.selectAllData ? 1 : 0,
-          system: this.searchInfo.appId || '7',
+          courseId: this.searchInfo.appId,
           teacherId: this.addInfo.teacherId,
           workIds: this.selectAllData ? '' : this.selectUserList
         })

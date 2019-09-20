@@ -301,7 +301,6 @@
       };
     },
     mounted() {
-      this.getList()
     },
     methods: {
       changeJobType() {
@@ -339,7 +338,7 @@
           content: '确认要删除吗？',
           onOk: () => {
             this.$api.jsdJob.removeHomework({
-              system: this.searchInfo.appId || '7',
+              courseId: this.searchInfo.appId || '7',
               id: param.workId
             }).then(
               response => {
@@ -357,7 +356,7 @@
           content: `确认要${this.radioType == 4 ? '移出表扬' : '加入表扬'}？`,
           onOk: () => {
             this.$api.jsdJob.praise({
-              system: this.searchInfo.appId || '7',
+              courseId: this.searchInfo.appId,
               praise: this.radioType === 3,
               id: param.workId
             }).then(
@@ -391,7 +390,7 @@
         let params = {
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
-          system: this.searchInfo.appId || '7',
+          courseId: this.searchInfo.appId,
           evaluation: this.searchInfo.evaluation == '-1' ? '' : this.searchInfo.evaluation,
           payed: this.searchInfo.pay == '-1' ? '' : this.searchInfo.pay,
           evaluationed: this.searchInfo.evaluationed == '-1' ? '' : this.searchInfo.evaluationed,
@@ -444,7 +443,7 @@
 
         this.$api.jsdJob.replyHomework({
           id: this.addInfo.workId,
-          system: this.searchInfo.appId || '7',
+          courseId: this.searchInfo.appId,
           replyImg: `${this.addInfo.replyImg}`,
           replyTeacher: this.addInfo.replyTeacher,
           replyText: this.addInfo.replyText,

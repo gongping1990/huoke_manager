@@ -42,10 +42,9 @@
               <!--<Radio label='4'>作业管理员</Radio>-->
             <!--</Radio-group>-->
           <!--</FormItem>-->
-          <FormItem label="所属课程" prop="systems">
-            <CheckboxGroup v-model="addInfo.systems">
-              <Checkbox label="7">每日一首古诗词</Checkbox>
-              <Checkbox label="8">小语轻作文</Checkbox>
+          <FormItem label="所属课程" prop="courses">
+            <CheckboxGroup v-model="addInfo.courses">
+              <Checkbox v-for="item of appList" :label="item.id">{{item.name}}</Checkbox>
             </CheckboxGroup>
           </FormItem>
         </Form>
@@ -105,6 +104,7 @@
         operationalId: '',
         selectInfo: '1',
         oldSystemsLength: [],
+        appList: [],
         searchInfo: {},
         total: 0,
         totalDetail: 0,
@@ -127,7 +127,7 @@
           username: [
             {required: true, message: '请输入教师账号', trigger: 'blur'}
           ],
-          systems: [
+          courses: [
             {required: true, type: 'array', min: 1, message: '请选择所属课程', trigger: 'change'}
           ]
         },
@@ -329,18 +329,20 @@
     },
     mounted() {
       this.getList()
+      this.listBase()
     },
     methods: {
       openModal(data) {
         this.isOpenModal = true
         if (data) {
           this.addInfo = JSON.parse(JSON.stringify(data))
-          this.oldSystemsLength = JSON.parse(JSON.stringify(data)).systems
+          this.addInfo.courses = this.addInfo.courses || []
+          this.oldSystemsLength = JSON.parse(JSON.stringify(data)).courses || []
         } else {
           this.addInfo = {
             id: '',
             amount: null,
-            systems: [],
+            courses: [],
             img: ''
           }
         }
@@ -375,6 +377,13 @@
         }).finally(()=>{
           this.isFetching = false
         })
+      },
+      listBase() {
+        this.appList = []
+        this.$api.jsdJob.listBase()
+          .then(response => {
+            this.appList = response.data.resultData
+          })
       },
       //分页查询
       getList(num) {
@@ -448,7 +457,7 @@
         })
       },
       submitInfo(name) {
-        if (this.addInfo.id && this.addInfo.systems.length < this.oldSystemsLength.length) {
+        if (this.addInfo.id && this.addInfo.courses.length < this.oldSystemsLength.length) {
           this.$Modal.confirm({
             title: '提示',
             content: '取消课程权限后，其“待批改”和“不合格”作业，将平均分配给其他有权限的老师',
@@ -477,7 +486,7 @@
               password : this.addInfo.password,
               headimgurl : this.addInfo.headimgurl,
               amount : this.addInfo.amount,
-              systems : `${this.addInfo.systems}`
+              courses : `${this.addInfo.courses}`
             })
               .then(
                 response => {
