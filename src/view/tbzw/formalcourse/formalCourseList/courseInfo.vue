@@ -124,7 +124,7 @@
             <div class="-c-tips">图片尺寸不低于960px*360px 图片大小：500K以内</div>
           </Form-item>
         </Form>
-        <Form v-show="radioType==='2'" ref="addInfo" :model="addInfo" :rules="ruleValidateTwo" :label-width="80">
+        <Form v-show="radioType==='2'" ref="addInfo" :model="addInfo" :label-width="80">
           <FormItem label="单独购买帮助信息" v-if="isEdit" prop="aloneInfo">
             <Editor v-model="addInfo.aloneInfo" :uploadImgServer="baseUrl"></Editor>
           </FormItem>
@@ -155,7 +155,7 @@
             </Card>
           </div>
         </Form>
-        <Form v-show="radioType==='3'" ref="addInfo" :model="addInfo" :rules="ruleValidateThree" :label-width="90">
+        <Form v-show="radioType==='3'" ref="addInfo" :model="addInfo" :label-width="90">
           <FormItem label="卡片标题" prop="cardtitle">
             <Input type="text" :disabled="!isEdit" v-model="addInfo.cardtitle" placeholder="请输入卡片标题"></Input>
           </FormItem>
@@ -299,31 +299,6 @@
           consultPhone: [
             {required: true, type: 'number', message: '请输入咨询电话', trigger: 'blur'},
           ]
-        },
-        ruleValidateTwo: {
-          aloneInfo: [
-            {required: true, message: '请输入单独购买帮助信息', trigger: 'blur'},
-          ],
-          groupInfo: [
-            {required: true, message: '请输入团购购买帮助信息', trigger: 'blur'},
-          ],
-          launchInfo: [
-            {required: true, message: '请输入参加团购帮助信息', trigger: 'blur'},
-          ]
-        },
-        ruleValidateThree: {
-          smalltitle: [
-            {required: true, message: '请输入链接小标题', trigger: 'blur'},
-          ],
-          bigtitle: [
-            {required: true, message: '请输入链接大标题', trigger: 'blur'},
-          ],
-          href: [
-            {required: true, message: '请输入回复链接', trigger: 'blur'},
-          ],
-          cardtitle: [
-            {required: true, message: '请输入卡片标题', trigger: 'blur'},
-          ]
         }
       };
     },
@@ -444,6 +419,14 @@
               return this.$Message.error('请上传卡片图片')
             } else if (this.radioType === '3' && !this.addInfo.imgurl) {
               return this.$Message.error('请上传链接配图')
+            } else if (this.radioType === '3' && !this.addInfo.smalltitle) {
+              return this.$Message.error('请输入链接小标题')
+            } else if (this.radioType === '3' && !this.addInfo.bigtitle) {
+              return this.$Message.error('请输入链接大标题')
+            } else if (this.radioType === '3' && !this.addInfo.href) {
+              return this.$Message.error('请输入回复链接')
+            } else if (this.radioType === '3' && !this.addInfo.cardtitle) {
+              return this.$Message.error('请输入卡片标题')
             }
             let paramsUrl = this.addInfo.id ? this.$api.tbzwCourse.tbzwCourseUpdate : this.$api.tbzwCourse.tbzwCourseAdd
             paramsUrl(this.addInfo)
