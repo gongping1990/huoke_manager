@@ -227,7 +227,7 @@
           endTime: this.searchInfo.endTime
         }
 
-        let downUrl = `${getBaseUrl()}/composition/order/downloadExcelByGoods?startTime=${params.startTime}&endTime=${params.endTime}&send=${params.send}&nickName=${params.nickName}&courseId=${params.courseId}`
+        let downUrl = `${getBaseUrl()}/compositionv2/order/downloadExcelByGoods?startTime=${params.startTime}&endTime=${params.endTime}&send=${params.send}&nickName=${params.nickName}&courseId=${params.courseId}`
 
         window.open(downUrl, '_blank');
       },
