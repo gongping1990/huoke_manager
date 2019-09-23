@@ -39,10 +39,22 @@
         totalDetail: 0,
         isFetching: false,
         isOpenModal: false,
+        herfList: {
+          '1': 'http://composition.k12.vip/',
+          '2': 'http://composition.k12.vip/one',
+          '3': 'http://composition.k12.vip/two',
+        },
         columns: [
           {
             title: '名称',
             key: 'pageName',
+            align: 'center'
+          },
+          {
+            title: '链接',
+            render: (h, params)=> {
+              return h('div', this.herfList[params.row.page])
+            },
             align: 'center'
           },
           {
@@ -66,7 +78,7 @@
             align: 'center'
           },
           {
-            title: '转化率',
+            title: '下单转化率',
             key: 'percentConversion',
             render: (h, params) => {
               return h('span', `${(params.row.conversionPercent*100).toFixed()}%`)
@@ -74,8 +86,15 @@
             align: 'center'
           },
           {
+            title: '付费转化率',
+            key: 'percentConversion',
+            render: (h, params) => {
+              return h('span', `${(params.row.payConversionPercent*100).toFixed()}%`)
+            },
+            align: 'center'
+          },
+          {
             title: '操作',
-            width: 200,
             align: 'center',
             render: (h, params) => {
               return h('div', [
@@ -93,22 +112,7 @@
                       this.openModal(params.row)
                     }
                   }
-                }, '查看详情'),
-                h('Button', {
-                  props: {
-                    type: 'text',
-                    size: 'small'
-                  },
-                  style: {
-                    color: '#5444E4',
-                    marginRight: '5px'
-                  },
-                  on: {
-                    click: () => {
-                      this.copyUrl(params.row)
-                    }
-                  }
-                }, '复制链接')
+                }, '查看详情')
               ])
             }
           }
@@ -140,9 +144,16 @@
             align: 'center'
           },
           {
-            title: '转化率',
+            title: '下单转化率',
             render: (h, params) => {
               return h('span', `${(params.row.conversionPercent*100).toFixed()}%`)
+            },
+            align: 'center'
+          },
+          {
+            title: '付费转化率',
+            render: (h, params) => {
+              return h('span', `${(params.row.payConversionPercent*100).toFixed()}%`)
             },
             align: 'center'
           }
