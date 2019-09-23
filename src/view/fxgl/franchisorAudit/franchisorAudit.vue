@@ -72,6 +72,14 @@
             key: 'phone'
           },
           {
+            title: '所在城市',
+            key: 'city'
+          },
+          {
+            title: '职业',
+            key: 'phone'
+          },
+          {
             title: '申请时间',
             render: (h, params) => {
               return h('div', dayjs(+params.row.applyTime).format('YYYY-MM-DD HH:mm:ss'))
@@ -114,6 +122,14 @@
           },
           {
             title: '手机号',
+            key: 'phone'
+          },
+          {
+            title: '所在城市',
+            key: 'city'
+          },
+          {
+            title: '职业',
             key: 'phone'
           },
           {
