@@ -223,8 +223,8 @@
           send: this.radioType,
           courseId: this.courseType,
           nickName: this.searchInfo.nickname,
-          startTime: this.searchInfo.startTime,
-          endTime: this.searchInfo.endTime
+          startTime: this.searchInfo.startTime ? new Date(this.searchInfo.startTime).getTime() : '',
+          endTime: this.searchInfo.endTime ? new Date(this.searchInfo.endTime).getTime() : ''
         }
 
         let downUrl = `${getBaseUrl()}/compositionv2/order/downloadExcelByGoods?startTime=${params.startTime}&endTime=${params.endTime}&send=${params.send}&nickName=${params.nickName}&courseId=${params.courseId}`
