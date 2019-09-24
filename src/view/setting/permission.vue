@@ -95,6 +95,7 @@
 
         this.$api.admin.updateRoleMenu({
           roleId: this.roleId,
+          system: this.radioType,
           menuIds: array
         })
           .then(

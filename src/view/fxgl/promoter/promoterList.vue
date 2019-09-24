@@ -440,23 +440,23 @@
           storage = [
             {
               title: '用户昵称',
-              key: 'phoneModel',
+              key: 'nickName',
               align: 'center'
             },
             {
               title: '手机号',
-              key: 'num',
+              key: 'phone',
               align: 'center'
             },
             {
               title: '类型',
-              key: 'num',
+              key: 'type',
               align: 'center'
             },
             {
               title: '邀请时间',
               render: (h, params) => {
-                return h('div', dayjs(+params.row.gmtCreate).format("YYYY-MM-DD HH:mm:ss"))
+                return h('div', dayjs(+params.row.applyTime).format("YYYY-MM-DD HH:mm:ss"))
               },
               align: 'center'
             }
@@ -549,10 +549,10 @@
             if (this.radioType == 0) {
               paramUrl =  this.$api.jsdDistributie.pageBindingRelationship({
                 ...params,
-                operationalId: this.dataItem.id
+                promoterId: this.dataItem.id
               })
             } else {
-              paramUrl =  this.$api.jsdDistributie.pageBindingRelationship({
+              paramUrl =  this.$api.jsdDistributie.pageByInvitationUser({
                 ...params,
                 promoterId: this.dataItem.id
               })
