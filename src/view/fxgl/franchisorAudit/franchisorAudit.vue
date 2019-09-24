@@ -28,7 +28,8 @@
         </Row>
       </Row>
 
-      <Table class="-c-tab" :loading="isFetching" :columns="radioType === 0 ? columns : columnsTwo" :data="dataList"></Table>
+      <Table class="-c-tab" :loading="isFetching" :columns="radioType === 0 ? columns : columnsTwo"
+             :data="dataList"></Table>
 
       <Page class="g-t-center" :total="total" show-elevator :page-size="tab.pageSize"
             :current.sync="tab.currentPage"
@@ -65,29 +66,32 @@
         columns: [
           {
             title: '用户昵称',
-            key: 'userName'
+            key: 'userName',
+            align: 'center'
           },
           {
             title: '手机号',
-            key: 'phone'
+            key: 'phone',
+            align: 'center'
           },
           {
             title: '所在城市',
-            key: 'city'
+            key: 'area',
+            align: 'center'
           },
           {
             title: '职业',
-            key: 'phone'
+            key: 'occupate',
+            align: 'center'
           },
           {
             title: '申请时间',
-            render: (h, params) => {
-              return h('div', dayjs(+params.row.applyTime).format('YYYY-MM-DD HH:mm:ss'))
-            }
+            key: 'applyTime',
+            align: 'center'
           },
           {
             title: '操作',
-            width: 190,
+            align: 'center',
             render: (h, params) => {
               return h('div', [
                 h('Poptip', {
@@ -118,35 +122,37 @@
         columnsTwo: [
           {
             title: '用户昵称',
-            key: 'userName'
+            key: 'userName',
+            align: 'center'
           },
           {
             title: '手机号',
-            key: 'phone'
+            key: 'phone',
+            align: 'center'
           },
           {
             title: '所在城市',
-            key: 'city'
+            key: 'area',
+            align: 'center'
           },
           {
             title: '职业',
-            key: 'phone'
+            key: 'occupate',
+            align: 'center'
           },
           {
             title: '预约时间',
-            render: (h, params) => {
-              return h('div', dayjs(+params.row.gmtModified).format('YYYY-MM-DD HH:mm:ss'))
-            }
+            key: 'applyTime',
+            align: 'center'
           },
           {
             title: '最新审核时间',
-            render: (h, params) => {
-              return h('div', dayjs(+params.row.auditTime).format('YYYY-MM-DD HH:mm:ss'))
-            }
+            key: 'auditTime',
+            align: 'center'
           },
           {
             title: '操作',
-            width: 190,
+            align: 'center',
             render: (h, params) => {
               return h('div', [
                 h('Poptip', {
@@ -185,7 +191,7 @@
       },
       changeAudit(param, num) {
         this.$api.jsdDistributie.audit({
-          auditId: param.id,
+          auditId: param.userId,
           auditStatus: num
         }).then(
           response => {

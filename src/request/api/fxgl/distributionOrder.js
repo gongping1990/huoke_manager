@@ -24,6 +24,9 @@ const jsdDistributionOrder = {
   },
   pageDistributieRatioLog(params) {
     return axios.post(`/distribution/distributionOrder/pageDistributieRatioLog`, qs.stringify(params))
+  },
+  refund(params) {
+    return axios.post(`/distribution/distributionOrder/refund`, qs.stringify(params))
   }
 }
 

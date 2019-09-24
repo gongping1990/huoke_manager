@@ -2,16 +2,16 @@
   <div class="p-customer">
     <Card>
       <Form class="-c-form g-t-left" ref="addInfo" :model="addInfo" :label-width="130" :rules="ruleValidate">
-        <FormItem label="推广指导人微信号" prop="phone" style="width: 400px">
-          <Input type="text" v-model="addInfo.kftel" placeholder="请输入微信号" :disabled="!isEdit"></Input>
+        <FormItem label="推广指导人微信号" prop="wechatId" style="width: 400px">
+          <Input type="text" v-model="addInfo.wechatId" placeholder="请输入微信号" :disabled="!isEdit"></Input>
         </FormItem>
-        <Form-item label="推广指导人二维码"  class="ivu-form-item-required -c-form-item ">
+        <Form-item label="推广指导人二维码" class="ivu-form-item-required -c-form-item ">
           <Upload
-            v-if="!addInfo.kfercode"
+            v-if="!addInfo.directQrcode"
             :action="baseUrl"
             :show-upload-list="false"
-            :max-size="100"
-            :on-success="handleSuccess"
+            :max-size="500"
+            :on-success="handleSuccessDirectQrcode"
             :on-exceeded-size="handleSize"
             :on-error="handleErr">
             <div class="g-course-add-style">
@@ -19,21 +19,21 @@
               <span>上传客服二维码</span>
             </div>
           </Upload>
-          <div class="-c-course-wrap" v-if="addInfo.kfercode">
+          <div class="-c-course-wrap" v-if="addInfo.directQrcode">
             <div class="-c-course-item">
-              <img :src="addInfo.kfercode">
-              <div v-if="isEdit" class="-i-del" @click="addInfo.kfercode= ''">删除</div>
+              <img :src="addInfo.directQrcode">
+              <div v-if="isEdit" class="-i-del" @click="addInfo.directQrcode= ''">删除</div>
             </div>
           </div>
           <div class="-c-tips">图片大小：500K以内</div>
         </Form-item>
         <Form-item label="加盟商审核人二维码" class="ivu-form-item-required -c-form-item ">
           <Upload
-            v-if="!addInfo.kfercode"
+            v-if="!addInfo.reviewQrcode"
             :action="baseUrl"
             :show-upload-list="false"
-            :max-size="100"
-            :on-success="handleSuccess"
+            :max-size="500"
+            :on-success="handleSuccessReviewQrcode"
             :on-exceeded-size="handleSize"
             :on-error="handleErr">
             <div class="g-course-add-style">
@@ -41,10 +41,10 @@
               <span>上传客服二维码</span>
             </div>
           </Upload>
-          <div class="-c-course-wrap" v-if="addInfo.kfercode">
+          <div class="-c-course-wrap" v-if="addInfo.reviewQrcode">
             <div class="-c-course-item">
-              <img :src="addInfo.kfercode">
-              <div v-if="isEdit" class="-i-del" @click="addInfo.kfercode= ''">删除</div>
+              <img :src="addInfo.reviewQrcode">
+              <div v-if="isEdit" class="-i-del" @click="addInfo.reviewQrcode= ''">删除</div>
             </div>
           </div>
           <div class="-c-tips">图片大小：500K以内</div>
@@ -53,7 +53,9 @@
         <FormItem>
           <div class="-c-flex">
             <Button @click="isEdit = !isEdit" ghost type="primary" class="-c-btn">{{isEdit ? '取消' : '进入编辑'}}</Button>
-            <div @click="submitInfo('addInfo')" class="g-primary-btn -c-btn" v-if="isEdit"> {{isSending ? '提交中...' : '确 认'}}</div>
+            <div @click="submitInfo('addInfo')" class="g-primary-btn -c-btn" v-if="isEdit"> {{isSending ? '提交中...' :
+              '确认'}}
+            </div>
           </div>
         </FormItem>
       </Form>
@@ -77,12 +79,13 @@
         isFetching: false,
         isSending: false,
         addInfo: {
-          qrCode: '',
-          phone: '',
+          directQrcode: '',
+          reviewQrcode: '',
+          wechatId: '',
         },
         ruleValidate: {
-          phone: [
-            {required: true, message: '请输入电话号码', trigger: 'blur'},
+          wechatId: [
+            {required: true, message: '请输入微信号', trigger: 'blur'},
           ]
         },
       }
@@ -91,13 +94,18 @@
       this.getList()
     },
     methods: {
-      delImg () {
-        if(!this.isEdit) return
+      delImg() {
+        if (!this.isEdit) return
         this.addInfo.qrCode = ''
       },
-      handleSuccess(res) {
+      handleSuccessDirectQrcode(res) {
         if (res.code === 200) {
-          this.addInfo.qrCode = res.resultData.url
+          this.addInfo.directQrcode = res.resultData.url
+        }
+      },
+      handleSuccessReviewQrcode(res) {
+        if (res.code === 200) {
+          this.addInfo.reviewQrcode = res.resultData.url
         }
       },
       handleSize() {
@@ -110,7 +118,7 @@
       },
       getList() {
         this.isFetching = true
-        this.$api.common.getService()
+        this.$api.jsdCustomer.getBaseConfig()
           .then(
             response => {
               this.addInfo = response.data.resultData
@@ -120,31 +128,30 @@
           })
       },
       submitInfo(name) {
-        if (!this.addInfo.qrCode) {
-          return this.$Message.error('请上传客服二维码')
-        } else if (this.addInfo.phone && !pattern.phone.exec(this.addInfo.phone)) {
-          return this.$Message.error('请输入正确的手机号码')
-        }
+
         this.$refs[name].validate((valid) => {
-          console.log(1)
           if (valid) {
-            // this.isSending = true
-            // let promiseDate = this.addInfo.courseId ? this.$api.course.updateSubject(this.addInfo) : this.$api.course.addSubject(this.addInfo)
-            // promiseDate
-            //   .then(
-            //     response => {
-            //       if (response.data.code == '200') {
-            //         this.$Message.success('提交成功');
-            //         this.getList()
-            //         this.closeModal(name)
-            //       }
-            //     })
-            //   .finally(() => {
-            //     this.isSending = false
-            //   })
+            if (!this.addInfo.directQrcode) {
+              return this.$Message.error('请上传推广指导人二维码')
+            } else if (!this.addInfo.reviewQrcode) {
+              return this.$Message.error('请上传加盟商审核人二维码')
+            }
+            this.isSending = true
+            this.$api.jsdCustomer.editBaseConfig(this.addInfo)
+              .then(
+                response => {
+                  if (response.data.code == '200') {
+                    this.$Message.success('提交成功');
+                    this.getList()
+                    this.isEdit = false
+                    this.$refs[name].resetFields()
+                  }
+                })
+              .finally(() => {
+                this.isSending = false
+              })
           }
         })
-        // this.$refs[name].resetFields()
       },
     }
   };
@@ -154,7 +161,7 @@
   .p-customer {
 
     .-c-form {
-      width:50%;
+      width: 50%;
 
       .-c-form-item {
         padding: 14px 0;

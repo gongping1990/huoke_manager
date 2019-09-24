@@ -10,8 +10,11 @@ const jsdDistributorAccount = {
   getAdminWithdrawRecord(params) {
     return axios.get(`/distribution/distributorAccount/getAdminWithdrawRecord`, {params})
   },
-  withdraw(params) {
-    return axios.post(`/distribution/distributorAccount/withdraw`, qs.stringify(params))
+  getAdminUserIncomeRecord(params) {
+    return axios.get(`/distribution/distributorAccount/getAdminUserIncomeRecord`, {params})
+  },
+  getAdminUserWithDrawRecord(params) {
+    return axios.get(`/distribution/distributorAccount/getAdminUserWithDrawRecord`, {params})
   }
 }
 

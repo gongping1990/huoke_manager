@@ -103,7 +103,7 @@
         },
         searchInfo: {
           payStatus: '-1',
-          orderMode: '-1',
+          orderMode: '0',
           type: '-1',
           antistop: ''
         },
@@ -139,7 +139,7 @@
         orderStatusList: [
           {
             name: '全部',
-            id: '-1'
+            id: '0'
           },
           {
             name: '单独购买',
@@ -314,7 +314,7 @@
                   },
                   on: {
                     'on-ok': () => {
-                      this.changeAudit(params.row, 1)
+                      this.changeAudit(params.row)
                     },
                     'on-cancel': () => {
                     }
@@ -338,7 +338,13 @@
       this.getList()
     },
     methods: {
-      changeAudit() {
+      changeAudit(data) {
+        this.$api.jsdDistributionOrder.refund({
+          id: data.thirdId
+        })
+          .then(response => {
+            this.$Message.success('操作成功')
+            })
 
       },
       changeDate(data) {
@@ -377,7 +383,7 @@
           size: this.tab.pageSize,
           payStatus: this.searchInfo.payStatus === '-1' ? '' : this.searchInfo.payStatus,
           type: this.searchInfo.type === '-1' ? '' : this.searchInfo.type,
-          orderMode: this.searchInfo.orderMode === '-1' ? '' : this.searchInfo.orderMode,
+          orderMode: this.searchInfo.orderMode,
           startTime: this.getStartTime ? new Date(this.getStartTime).getTime() : "",
           endTime: this.getEndTime ? new Date(this.getEndTime).getTime() : ""
         }

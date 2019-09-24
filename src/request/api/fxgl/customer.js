@@ -4,10 +4,10 @@ import qs from 'querystring'
 
 const jsdCustomer = {
 
-  editBaseConfig(params) {
-    return axios.get(`/distribution/customer/editBaseConfig`, {params})
+  getBaseConfig(params) {
+    return axios.get(`/distribution/customer/getBaseConfig`, {params})
   },
-  withdraw(params) {
+  editBaseConfig(params) {
     return axios.post(`/distribution/customer/editBaseConfig`, qs.stringify(params))
   }
 }

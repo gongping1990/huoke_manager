@@ -86,6 +86,18 @@
           type: 'datetime',
           row: '2'
         },
+        statusList: {
+          '0': '未知',
+          '1': '冻结中',
+          '5': '已退款',
+          '10': '已完成'
+        },
+        withdrawStatusList: {
+          '0': '未知',
+          '1': '处理中',
+          '2': '提现成功',
+          '3': '提现失败'
+        },
         total: 0,
         totalDetail: 0,
         isFetching: false,
@@ -96,26 +108,30 @@
         columnsModalTwo: [
           {
             title: '提现金额',
-            key: 'phoneModel',
+            render: (h, params) => {
+              return h('div', `￥ ${params.row.amount / 100}`)
+            },
             align: 'center'
           },
           {
             title: '提现申请时间',
             render: (h, params) => {
-              return h('div', dayjs(+params.row.gmtCreate).format("YYYY-MM-DD HH:mm:ss"))
+              return h('div', dayjs(+params.row.gmtCreate).format("YYYY-MM-DD HH:mm"))
             },
             align: 'center'
           },
           {
             title: '提现到账时间',
             render: (h, params) => {
-              return h('div', dayjs(+params.row.gmtCreate).format("YYYY-MM-DD HH:mm:ss"))
+              return h('div', dayjs(+params.row.intoAccountTime).format("YYYY-MM-DD HH:mm"))
             },
             align: 'center'
           },
           {
             title: '提现状态',
-            key: 'num',
+            render: (h, p)=>{
+              return h('div', this.withdrawStatusList[p.row.withdrawStatus])
+            },
             align: 'center'
           }
         ]
@@ -339,37 +355,44 @@
           storage = [
             {
               title: '订单号',
-              key: 'phoneModel',
+              key: 'thirdId',
               align: 'center'
             },
             {
               title: '商品名称',
-              key: 'num',
+              key: 'courseName',
               align: 'center'
             },
             {
               title: '买家昵称',
-              key: 'num',
+              key: 'thirdUserNickname',
               align: 'center'
             },
             {
               title: '实付金额',
-              key: 'num',
+              render: (h, params) => {
+                return h('div', `￥ ${params.row.payAmount / 100}`)
+              },
               align: 'center'
             },
             {
               title: '佣金比例',
-              key: 'num',
+              key: 'distributorProportion',
               align: 'center'
             },
             {
               title: '佣金金额',
-              key: 'num',
+              render: (h, params) => {
+                return h('div', `￥ ${params.row.amount / 100}`)
+              },
               align: 'center'
             },
             {
               title: '佣金状态',
-              key: 'num',
+              key: 'incomeStatus',
+              render: (h, p)=>{
+                return h('div', this.statusList[p.row.incomeStatus])
+              },
               align: 'center'
             },
             {
@@ -384,22 +407,24 @@
           storage = [
             {
               title: '订单号',
-              key: 'phoneModel',
+              key: 'thirdId',
               align: 'center'
             },
             {
               title: '商品名称',
-              key: 'num',
+              key: 'courseName',
               align: 'center'
             },
             {
               title: '买家昵称',
-              key: 'num',
+              key: 'thirdUserNickname',
               align: 'center'
             },
             {
               title: '实付金额',
-              key: 'num',
+              render: (h, params) => {
+                return h('div', `￥ ${params.row.payAmount / 100}`)
+              },
               align: 'center'
             },
             {
@@ -409,17 +434,21 @@
             },
             {
               title: '佣金比例',
-              key: 'num',
+              key: 'distributorProportion',
               align: 'center'
             },
             {
               title: '佣金金额',
-              key: 'num',
+              render: (h, params) => {
+                return h('div', `￥ ${params.row.amount / 100}`)
+              },
               align: 'center'
             },
             {
               title: '佣金状态',
-              key: 'num',
+              render: (h, p)=>{
+                return h('div', this.statusList[p.row.incomeStatus])
+              },
               align: 'center'
             },
             {
@@ -449,14 +478,9 @@
               align: 'center'
             },
             {
-              title: '类型',
-              key: 'type',
-              align: 'center'
-            },
-            {
               title: '邀请时间',
               render: (h, params) => {
-                return h('div', dayjs(+params.row.applyTime).format("YYYY-MM-DD HH:mm:ss"))
+                return h('div', dayjs(+params.row.applyTime).format("YYYY-MM-DD HH:mm"))
               },
               align: 'center'
             }
@@ -465,18 +489,18 @@
           storage = [
             {
               title: '推广人昵称',
-              key: 'phoneModel',
+              key: 'nickName',
               align: 'center'
             },
             {
               title: '手机号',
-              key: 'num',
+              key: 'phone',
               align: 'center'
             },
             {
               title: '推广人注册时间',
               render: (h, params) => {
-                return h('div', dayjs(+params.row.gmtCreate).format("YYYY-MM-DD HH:mm:ss"))
+                return h('div', dayjs(+params.row.applyTime).format("YYYY-MM-DD HH:mm"))
               },
               align: 'center'
             }
@@ -539,22 +563,27 @@
         }
         switch (+this.openType) {
           case 1:
-            paramUrl =  this.$api.jsdDistributie.getOperationalStatistics({
-              operationalId: this.dataItem.id
+            paramUrl = this.$api.jsdDistributorAccount.getAdminUserIncomeRecord({
+              ...params,
+              userId: this.dataItem.userId
             })
             break
           case 2:
+            paramUrl = this.$api.jsdDistributorAccount.getAdminUserWithDrawRecord({
+              ...params,
+              userId: this.dataItem.userId
+            })
             break
           case 3:
             if (this.radioType == 0) {
               paramUrl =  this.$api.jsdDistributie.pageBindingRelationship({
                 ...params,
-                promoterId: this.dataItem.id
+                promoterId: this.dataItem.userId
               })
             } else {
               paramUrl =  this.$api.jsdDistributie.pageByInvitationUser({
                 ...params,
-                promoterId: this.dataItem.id
+                promoterId: this.dataItem.userId
               })
             }
             break
