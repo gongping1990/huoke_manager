@@ -21,10 +21,9 @@
       </Row>
 
       <Row class="-c-tab g-t-left">
-        <RadioGroup v-model="searchInfo.appId" type="button" @on-change="changeRadio">
-          <Radio label="7">每日一首古诗</Radio>
-          <Radio label="8">小语轻作文</Radio>
-        </RadioGroup>
+        <Select v-model="searchInfo.appId" @on-change="changeRadio" style="width: 300px">
+          <Option v-for="(item,index) in appList" :label="item.name" :value="item.id" :key="index"></Option>
+        </Select>
         <div class="-p-center-item">
           <div class="-c-text">购买数据</div>
           <div>
@@ -84,6 +83,7 @@
           appId: '7'
         },
         dataList: [],
+        appList: [],
         total: 0,
         isFetching: false,
         isOpenModal: false,
@@ -134,8 +134,7 @@
       };
     },
     mounted() {
-      this.getLearnDTO()
-      this.listLessonProgress()
+      this.listBase()
     },
     methods: {
       changeRadio () {
@@ -152,13 +151,22 @@
         this.tab.page = val;
         this.listLessonProgress();
       },
+      listBase() {
+        this.appList = []
+        this.$api.jsdJob.listBase()
+          .then(response => {
+            this.appList = response.data.resultData
+            this.searchInfo.appId = this.appList[0].id
+            this.getLearnDTO()
+            this.listLessonProgress()
+          })
+      },
       //分页查询
       getLearnDTO() {
         this.isFetching = true
         this.$api.jsdJob.getLearnDTO({
           uid: this.$route.query.id,
-          system: this.searchInfo.appId,
-          courseId: this.searchInfo.appId == 7 ? '1148165277549838337' : '1133673190743896065'
+          courseId: this.searchInfo.appId
         })
           .then(
             response => {
@@ -174,8 +182,7 @@
       listLessonProgress() {
         this.$api.jsdJob.listLessonProgress({
           uid: this.$route.query.id,
-          system: this.searchInfo.appId,
-          courseId: this.searchInfo.appId == 7 ? '1148165277549838337' : '1133673190743896065',
+          courseId: this.searchInfo.appId,
           current: this.tab.page,
           size: this.tab.pageSize
         })

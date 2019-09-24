@@ -52,13 +52,13 @@ export default {
           paramUrl =   this.$api.jsdJob.listHomeWorkLogByLesson({
             uid: this.dataInfo.uid,
             lessonId: this.dataInfo.lessonId,
-            system: this.dataInfo.appId || '7',
+            courseId: this.dataInfo.appId,
           })
           break
         default:
           paramUrl =  this.$api.jsdJob.listHomeWorkLog({
             workId: this.dataInfo.workId,
-            system: this.dataInfo.appId || '7',
+            courseId: this.dataInfo.appId,
           })
       }
       paramUrl.then(response => {
