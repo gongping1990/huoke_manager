@@ -5,7 +5,7 @@
         <Col :span="4" class="g-t-left">
           <div class="g-flex-a-j-center">
             <div class="-search-select-text">订单状态</div>
-            <Select v-model="searchInfo.status" @on-change="selectChange" class="-search-selectOne">
+            <Select v-model="searchInfo.orderMode" @on-change="selectChange" class="-search-selectOne">
               <Option v-for="(item,index) in orderStatusList" :label="item.name" :value="item.id" :key="index"></Option>
             </Select>
           </div>
@@ -13,7 +13,7 @@
         <Col :span="4" class="g-t-left">
           <div class="g-flex-a-j-center">
             <div class="-search-select-text">支付状态</div>
-            <Select v-model="searchInfo.status" @on-change="selectChange" class="-search-selectOne">
+            <Select v-model="searchInfo.payStatus" @on-change="selectChange" class="-search-selectOne">
               <Option v-for="(item,index) in payStatusList" :label="item.name" :value="item.id" :key="index"></Option>
             </Select>
           </div>
@@ -21,7 +21,7 @@
         <Col :span="4" class="g-t-left">
           <div class="g-flex-a-j-center">
             <div class="-search-select-text">推广方式</div>
-            <Select v-model="searchInfo.status" @on-change="selectChange" class="-search-selectOne">
+            <Select v-model="searchInfo.type" @on-change="selectChange" class="-search-selectOne">
               <Option v-for="(item,index) in promoterStatusList" :label="item.name" :value="item.id"
                       :key="index"></Option>
             </Select>
@@ -102,7 +102,8 @@
           pageSize: 10
         },
         searchInfo: {
-          status: '-1',
+          payStatus: '-1',
+          orderMode: '-1',
           type: '-1',
           antistop: ''
         },
@@ -142,15 +143,15 @@
           },
           {
             name: '单独购买',
-            id: '0'
+            id: '1'
           },
           {
             name: '开团购买',
-            id: '10'
+            id: '2'
           },
           {
             name: '跟团购买',
-            id: '20'
+            id: '3'
           }
         ],
         promoterStatusList: [
@@ -164,11 +165,11 @@
           },
           {
             name: '开团邀请',
-            id: '10'
+            id: '1'
           },
           {
             name: '海报邀请',
-            id: '20'
+            id: '2'
           }
         ],
         orderType: ['单独购买', '开团购买', '跟团购买'],
@@ -374,15 +375,17 @@
         let params = {
           current: this.tab.page,
           size: this.tab.pageSize,
-          payStatus: this.searchInfo.status,
+          payStatus: this.searchInfo.payStatus === '-1' ? '' : this.searchInfo.payStatus,
+          type: this.searchInfo.type === '-1' ? '' : this.searchInfo.type,
+          orderMode: this.searchInfo.orderMode === '-1' ? '' : this.searchInfo.orderMode,
           startTime: this.getStartTime ? new Date(this.getStartTime).getTime() : "",
           endTime: this.getEndTime ? new Date(this.getEndTime).getTime() : ""
         }
 
         if (this.selectInfo == '0' && this.searchInfo.antistop) {
-          params.id = this.searchInfo.antistop
+          params.thirdId = this.searchInfo.antistop
         } else if (this.selectInfo == '1' && this.searchInfo.antistop) {
-          params.nickName = this.searchInfo.antistop
+          params.nickname = this.searchInfo.antistop
         } else if (this.selectInfo == '2' && this.searchInfo.antistop) {
           params.phone = this.searchInfo.antistop
         }
@@ -392,7 +395,7 @@
       //分页查询
       getList() {
         this.isFetching = true
-        this.$api.gswOrder.gswOrderList(this.paramsInit())
+        this.$api.jsdDistributionOrder.getAdminOrder(this.paramsInit())
           .then(
             response => {
               this.dataList = response.data.resultData.records;

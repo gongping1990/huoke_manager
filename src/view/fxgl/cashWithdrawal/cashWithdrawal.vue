@@ -129,7 +129,7 @@
           {
             title: '提现金额',
             render: (h, params) => {
-              return h('div', `￥ ${params.row.couponAmount / 100}`)
+              return h('div', `￥ ${params.row.amount / 100}`)
             },
             align: 'center'
           },
@@ -143,7 +143,7 @@
           {
             title: '提现到账时间',
             render: (h, params) => {
-              return h('div', dayjs(+params.row.gmtCreate).format("YYYY-MM-DD HH:mm"))
+              return h('div', dayjs(+params.row.intoAccountTime).format("YYYY-MM-DD HH:mm"))
             },
             align: 'center'
           },
@@ -154,7 +154,7 @@
                 class: 'g-flex-a-j-c-center'
               },[
                 h('div', {
-                  class: this.orderColor[params.row.orderPageSource-1],
+                  class: this.orderColor[params.row.withdrawStatus-1],
                   style: {
                     display: 'inline-block',
                     width: '6px',
@@ -163,25 +163,38 @@
                     borderRadius: '50%',
                   }
                 }),
-                h('span', this.orderType[params.row.orderPageSource-1])
+                h('span', this.orderType[params.row.withdrawStatus-1])
               ])
             },
             align: 'center'
           },
           {
             title: '打款凭证截图',
-            key: 'phone',
+            render: (h, params)=> {
+              return h('img', {
+                attrs: {
+                  src: params.row.intoAccountImg,
+                  preview: '0'
+                },
+                style: {
+                  width: '50px',
+                  height: '50px',
+                  margin: '10px',
+                  cursor: 'zoom-in'
+                }
+              })
+            },
             align: 'center'
           },
           {
             title: '操作人',
-            key: 'phone',
+            key: 'operateUserName',
             align: 'center'
           },
           {
             title: '操作时间',
             render: (h, params) => {
-              return h('div', dayjs(+params.row.gmtCreate).format("YYYY-MM-DD HH:mm:ss"))
+              return h('div', dayjs(+params.row.oprateTime).format("YYYY-MM-DD HH:mm:ss"))
             },
             align: 'center'
           },
@@ -243,15 +256,13 @@
         let params = {
           current: this.tab.page,
           size: this.tab.pageSize,
-          payStatus: this.searchInfo.status,
+          withdrawStatus: this.searchInfo.status === '-1' ? '' : this.searchInfo.status,
           startTime: this.getStartTime ? new Date(this.getStartTime).getTime() : "",
           endTime: this.getEndTime ? new Date(this.getEndTime).getTime() : ""
         }
 
-        if (this.selectInfo == '0' && this.searchInfo.antistop) {
-          params.id = this.searchInfo.antistop
-        } else if (this.selectInfo == '1' && this.searchInfo.antistop) {
-          params.nickName = this.searchInfo.antistop
+        if (this.selectInfo == '1' && this.searchInfo.antistop) {
+          params.nickname = this.searchInfo.antistop
         } else if (this.selectInfo == '2' && this.searchInfo.antistop) {
           params.phone = this.searchInfo.antistop
         }
@@ -261,7 +272,7 @@
       //分页查询
       getList() {
         this.isFetching = true
-        this.$api.gswOrder.gswOrderList(this.paramsInit())
+        this.$api.jsdDistributorAccount.getAdminWithdrawRecord(this.paramsInit())
           .then(
             response => {
               this.dataList = response.data.resultData.records;
