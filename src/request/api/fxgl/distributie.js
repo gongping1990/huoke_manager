@@ -24,6 +24,12 @@ const jsdDistributie = {
   },
   pageDistributieRatioLog(params) {
     return axios.post(`/distribution/distributie/pageDistributieRatioLog`, qs.stringify(params))
+  },
+  pageBindingRelationship(params) {
+    return axios.get(`/distribution/distributie/pageBindingRelationship`, {params})
+  },
+  pageByInvitationUser(params) {
+    return axios.get(`/distribution/distributie/pageByInvitationUser`, {params})
   }
 }
 

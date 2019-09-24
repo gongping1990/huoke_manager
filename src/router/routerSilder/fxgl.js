@@ -126,5 +126,26 @@ export const fxglRouter =[
         component: () => import('@/view/fxgl/cashWithdrawal/cashWithdrawal')
       }
     ]
+  },
+  {
+    path: '/operate ',
+    name: 'operate ',
+    title: '运营管理',
+    component: Main,
+    children: [
+      {
+        path: '/fxgl_kefu',
+        name: 'fxgl_kefu',
+        meta: [
+          {
+            name: '运营管理'
+          },
+          {
+            name: '客服管理'
+          }
+        ],
+        component: () => import('@/view/fxgl/kefu/kefu')
+      }
+    ]
   }
 ]

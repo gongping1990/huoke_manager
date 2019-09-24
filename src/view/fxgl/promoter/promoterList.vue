@@ -80,6 +80,7 @@
         selectInfo: '1',
         dataList: [],
         detailList: [],
+        dataItem: '',
         dateOption: {
           name: '注册时间',
           type: 'datetime',
@@ -507,7 +508,9 @@
       },
       openModal (data, num) {
         this.openType = num
+        this.dataItem = data
         this.isOpenModalData = true
+        this.getDetailList()
       },
       changeDate (data) {
         this.getStartTime = data.startTime
@@ -527,11 +530,36 @@
         this.tab.currentPage = 1
         this.getList(1);
       },
-      getDetailList(data) {
+      getDetailList() {
         this.isFetching = true
-        this.$api.gswOperational.getOperationalStatistics({
-          operationalId: data.id
-        }).then(response => {
+        let paramUrl = ''
+        let params = {
+          current: this.tabDetail.page,
+          size: this.tabDetail.pageSize,
+        }
+        switch (+this.openType) {
+          case 1:
+            paramUrl =  this.$api.jsdDistributie.getOperationalStatistics({
+              operationalId: this.dataItem.id
+            })
+            break
+          case 2:
+            break
+          case 3:
+            if (this.radioType == 0) {
+              paramUrl =  this.$api.jsdDistributie.pageBindingRelationship({
+                ...params,
+                operationalId: this.dataItem.id
+              })
+            } else {
+              paramUrl =  this.$api.jsdDistributie.pageBindingRelationship({
+                ...params,
+                promoterId: this.dataItem.id
+              })
+            }
+            break
+        }
+        paramUrl.then(response => {
           this.detailList = response.data.resultData.records;
           this.totalDetail = response.data.resultData.total;
         }).finally(()=>{
