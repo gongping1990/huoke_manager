@@ -19,14 +19,13 @@
               <span>上传客服二维码</span>
             </div>
           </Upload>
-
-          <div class="-c-tips">图片尺寸不低于960px*360px 图片大小：500K以内</div>
-          <div class="-c-course-wrap" v-if="addInfo.coverphoto">
+          <div class="-c-course-wrap" v-if="addInfo.kfercode">
             <div class="-c-course-item">
-              <img :src="addInfo.coverphoto">
-              <div v-if="isEdit" class="-i-del" @click="addInfo.coverphoto= ''">删除</div>
+              <img :src="addInfo.kfercode">
+              <div v-if="isEdit" class="-i-del" @click="addInfo.kfercode= ''">删除</div>
             </div>
           </div>
+          <div class="-c-tips">图片大小：500K以内</div>
         </Form-item>
         <Form-item label="加盟商审核人二维码" class="ivu-form-item-required -c-form-item ">
           <Upload
@@ -42,13 +41,13 @@
               <span>上传客服二维码</span>
             </div>
           </Upload>
-          <div class="-c-wrap">
-            <div class="-c-item">
+          <div class="-c-course-wrap" v-if="addInfo.kfercode">
+            <div class="-c-course-item">
               <img :src="addInfo.kfercode">
-              <div class="-i-del" v-if="isEdit" @click="delImg()">删除</div>
+              <div v-if="isEdit" class="-i-del" @click="addInfo.kfercode= ''">删除</div>
             </div>
           </div>
-          <span class="-c-tips">* 图片大小500k以内</span>
+          <div class="-c-tips">图片大小：500K以内</div>
         </Form-item>
 
         <FormItem>
@@ -173,7 +172,6 @@
         margin: 10px 10px 0 0;
         img {
           width: 100%;
-          height: 70px;
         }
 
         .-i-text {
@@ -201,6 +199,10 @@
 
     .-c-flex {
       display: flex;
+    }
+
+    .-c-tips {
+      color: #39f
     }
 
     .-c-btn {

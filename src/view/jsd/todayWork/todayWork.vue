@@ -32,7 +32,7 @@
                 </Poptip>
               </div>
               <div class="-item-wrap-center">{{countInfo.total}}/{{countInfo.totalHandled}}</div>
-              <div class="-item-wrap-down">{{(countInfo.totalHandled/countInfo.total)*100}}%</div>
+              <div class="-item-wrap-down">{{(countInfo.totalHandled/countInfo.total).toFixed(3)*100}}%</div>
             </Card>
           </Col>
 
@@ -42,7 +42,7 @@
                 <div class="-name-left">重交</div>
               </div>
               <div class="-item-wrap-center">{{countInfo.resubmitnum}}/{{countInfo.handleResubmit}}</div>
-              <div class="-item-wrap-down">{{(countInfo.handleResubmit/countInfo.resubmitnum)*100}}%</div>
+              <div class="-item-wrap-down">{{(countInfo.handleResubmit/countInfo.resubmitnum).toFixed(3)*100}}%</div>
             </Card>
           </Col>
 
@@ -316,7 +316,7 @@
                       this.noRequired(params.row)
                     }
                   }
-                }, this.radioType === 5 ? '移入待批改' : '无需批改'),
+                },'无需批改'),
                 h('Button', {
                   props: {
                     type: 'text',
@@ -689,6 +689,146 @@
             }
           }
         ],
+        columnsFour: [
+          {
+            type: 'selection',
+            width: 60,
+            align: 'center'
+          },
+          {
+            title: '用户昵称',
+            render: (h, params) => {
+              return h('Button', {
+                props: {
+                  type: 'text',
+                  size: 'small'
+                },
+                style: {
+                  color: '#5444E4',
+                  marginRight: '5px'
+                },
+                on: {
+                  click: () => {
+                    this.toDetail(params.row)
+                  }
+                }
+              }, params.row.nickName)
+            },
+            align: 'center'
+          },
+          {
+            title: '课程名称',
+            key: 'lessonName',
+            align: 'center'
+          },
+          {
+            title: '是否付费',
+            render: (h, params) => {
+              return h('div', params.row.buyStatus ? '是' : '否')
+            },
+            align: 'center'
+          },
+          {
+            title: '作业要求',
+            key: 'homeworkRequire',
+            tooltip: true,
+            align: 'center'
+          },
+          {
+            title: '作业内容',
+            width: 200,
+            render: (h, params) => {
+              return h('div', {
+                style: {
+                  display: 'flex',
+                  justifyContent: 'space-around'
+                }
+              }, params.row.homeworkType == '2' ? params.row.workImgSrc.map((item, index) => {
+                return h('div', {
+                  style: {
+                    position: 'relative',
+                  }
+                }, [
+                  h('img', {
+                    attrs: {
+                      src: item,
+                      preview: '0'
+                    },
+                    style: {
+                      width: '50px',
+                      height: '50px',
+                      margin: '10px',
+                      cursor: 'zoom-in'
+                    }
+                  }), h('Icon', {
+                    props: {
+                      type: 'md-download'
+                    },
+                    style: {
+                      position: 'absolute',
+                      bottom: '15px',
+                      right: '10px',
+                      fontSize: '16px',
+                      background: 'rgba(0,0,0,0.7)',
+                      color: '#ffffff',
+                      cursor: 'pointer'
+                    },
+                    on: {
+                      click: () => {
+                        window.open(item.split('?')[0])
+                      }
+                    }
+                  })
+                ])
+              }) : [
+                h('div', {
+                  style: {
+                    textAlign: 'center',
+                    color: '#5444E4',
+                    cursor: 'pointer'
+                  },
+                  on: {
+                    click: () => {
+                      this.openModalPlay(params.row.workAudio)
+                    }
+                  }
+                }, '播放音频')
+              ])
+            },
+            align: 'center'
+          },
+          {
+            title: '提交时间',
+            render: (h, params) => {
+              return h('div', dayjs(+params.row.submitTime).format('YYYY-MM-DD HH:mm'))
+            },
+            align: 'center'
+          },
+          {
+            title: '操作',
+            align: 'center',
+            width: 100,
+            render: (h, params) => {
+              return h('div', [
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: 'rgba(218, 55, 75)',
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.delItem(params.row)
+                    }
+                  }
+                }, '删除')
+              ])
+            }
+          }
+        ],
       };
     },
     computed: {
@@ -696,7 +836,7 @@
         return {
           '0': this.columns,
           '3': this.columnsTwo,
-          '4': this.columns,
+          '4': this.columnsFour,
           '1': this.columnsThree,
           '2': this.columnsThree,
           '5': this.columnsTwo,
