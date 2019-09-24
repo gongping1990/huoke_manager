@@ -226,6 +226,15 @@ export const tbzwRouter =[
           {name: '申请记录'}
         ],
         component: () => import('@/view/tbzw/paidExperienceCourse/applicationRecord/applicationRecord')
+      },
+      {
+        path: '/tbzw_paid_Data',
+        name: 'tbzw_paid_Data',
+        meta: [
+          {name: '付费体验课'},
+          {name: '数据统计'}
+        ],
+        component: () => import('@/view/tbzw/paidLandingPage/paidLandingPage')
       }
     ]
   },

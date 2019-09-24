@@ -2,13 +2,7 @@
   <div class="p-landingPage">
     <input type="text" v-model="copy_url" class="copy-input" ref="copyInput">
     <Card>
-      <Row class="g-search g-t-left">
-        <Radio-group v-model="radioType" type="button" @on-change="getList(1)">
-          <Radio :label=0>小语轻作文</Radio>
-          <Radio :label=1>乐小狮作文</Radio>
-        </Radio-group>
-      </Row>
-      <Table class="-c-tab" :loading="isFetching" :columns="!radioType ? columns : columnsTwo" :data="dataList"></Table>
+      <Table class="-c-tab" :loading="isFetching" :columns="columns" :data="dataList"></Table>
     </Card>
 
     <Modal
@@ -18,7 +12,7 @@
       footer-hide
       width="800"
       title="数据详情">
-      <Table class="-c-tab" :loading="isFetching" :columns="!radioType ? columnsModal : columnsModalTwo " :data="detailList"></Table>
+      <Table class="-c-tab" :loading="isFetching" :columns="columnsModal" :data="detailList"></Table>
 
       <Page class="g-text-right" :total="totalDetail" size="small" show-elevator :page-size="tabDetail.pageSize"
             :current.sync="tabDetail.currentPage"
@@ -40,7 +34,6 @@
         },
         dataList: [],
         detailList: [],
-        radioType: 0,
         pageId: '',
         copy_url: '',
         totalDetail: 0,
@@ -54,89 +47,6 @@
           '7': 'http://composition.k12.vip/try',
         },
         columns: [
-          {
-            title: '名称',
-            key: 'pageName',
-            align: 'center'
-          },
-          {
-            title: '链接',
-            render: (h, params)=> {
-              return h('div', this.herfList[params.row.page])
-            },
-            align: 'center'
-          },
-          {
-            title: '下单数',
-            key: 'orderCount',
-            align: 'center'
-          },
-          {
-            title: '成功订单数',
-            key: 'successOrderCount',
-            align: 'center'
-          },
-          {
-            title: '访问量',
-            key: 'pv',
-            align: 'center'
-          },
-          {
-            title: '独立访客',
-            key: 'uv',
-            align: 'center'
-          },
-          {
-            title: '订单确认页PV',
-            key: 'payPv',
-            align: 'center'
-          },
-          {
-            title: '订单确认页UV',
-            key: 'payUv',
-            align: 'center'
-          },
-          {
-            title: '下单转化率',
-            key: 'percentConversion',
-            render: (h, params) => {
-              return h('span', `${(params.row.conversionPercent*100).toFixed()}%`)
-            },
-            align: 'center'
-          },
-          {
-            title: '付费转化率',
-            key: 'percentConversion',
-            render: (h, params) => {
-              return h('span', `${(params.row.payConversionPercent*100).toFixed()}%`)
-            },
-            align: 'center'
-          },
-          {
-            title: '操作',
-            align: 'center',
-            render: (h, params) => {
-              return h('div', [
-                h('Button', {
-                  props: {
-                    type: 'text',
-                    size: 'small'
-                  },
-                  style: {
-                    color: '#5444E4',
-                    marginRight: '5px'
-                  },
-                  on: {
-                    click: () => {
-                      this.openModal(params.row)
-                    }
-                  }
-                }, '查看详情')
-              ])
-            }
-          }
-        ],
-        columnsTwo: [
           {
             title: '名称',
             key: 'pageName',
@@ -158,16 +68,6 @@
           {
             title: '落地页UV',
             key: 'uv',
-            align: 'center'
-          },
-          {
-            title: '订单确认页PV',
-            key: 'payPv',
-            align: 'center'
-          },
-          {
-            title: '订单确认页UV',
-            key: 'payUv',
             align: 'center'
           },
           {
@@ -218,57 +118,6 @@
             key: 'date',
             align: 'center'
           },
-          {
-            title: '下单数',
-            key: 'orderCount',
-            align: 'center'
-          },
-          {
-            title: '成功订单数',
-            key: 'successOrderCount',
-            align: 'center'
-          },
-          {
-            title: '访问量',
-            key: 'pv',
-            align: 'center'
-          },
-          {
-            title: '访问用户',
-            key: 'uv',
-            align: 'center'
-          },
-          {
-            title: '订单确认页PV',
-            key: 'payPv',
-            align: 'center'
-          },
-          {
-            title: '订单确认页UV',
-            key: 'payUv',
-            align: 'center'
-          },
-          {
-            title: '下单转化率',
-            render: (h, params) => {
-              return h('span', `${(params.row.conversionPercent*100).toFixed()}%`)
-            },
-            align: 'center'
-          },
-          {
-            title: '付费转化率',
-            render: (h, params) => {
-              return h('span', `${(params.row.payConversionPercent*100).toFixed()}%`)
-            },
-            align: 'center'
-          }
-        ],
-        columnsModalTwo: [
-          {
-            title: '日期',
-            key: 'date',
-            align: 'center'
-          },
 
           {
             title: '落地页PV',
@@ -278,16 +127,6 @@
           {
             title: '落地页UV',
             key: 'uv',
-            align: 'center'
-          },
-          {
-            title: '订单确认页PV',
-            key: 'payPv',
-            align: 'center'
-          },
-          {
-            title: '订单确认页UV',
-            key: 'payUv',
             align: 'center'
           },
           {
@@ -314,21 +153,6 @@
       this.getList()
     },
     methods: {
-      copyUrl(param) {
-        if (param.page === 1) {
-          this.copy_url = 'http://composition.k12.vip/'
-        } else if (param.page === 2) {
-          this.copy_url = 'http://composition.k12.vip/one'
-        } else if (param.page === 3) {
-          this.copy_url = 'http://composition.k12.vip/two'
-        }
-
-        setTimeout(() => {
-          this.$refs.copyInput.select();
-          document.execCommand("copy");
-          this.$Message.success('复制成功');
-        }, 500);
-      },
       closeModal() {
         this.isOpenModal = false
       },
@@ -359,7 +183,7 @@
         this.isFetching = true
 
         this.$api.tbzwOrder.getTotalData({
-          type: this.radioType
+          type: 2
         })
           .then(
             response => {
