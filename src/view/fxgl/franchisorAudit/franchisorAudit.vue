@@ -91,7 +91,6 @@
           },
           {
             title: '操作',
-            align: 'center',
             render: (h, params) => {
               return h('div', [
                 h('Poptip', {
@@ -152,7 +151,6 @@
           },
           {
             title: '操作',
-            align: 'center',
             render: (h, params) => {
               return h('div', [
                 h('Poptip', {

@@ -293,13 +293,11 @@
             break
           case 3:
           case 4:
-            if (!this.addInfo.id) {
-              this.courseList.forEach(item=>{
-                if(this.addInfo.courseId === item.courseId) {
-                  this.addInfo.system = item.system
-                }
-              })
-            }
+            this.courseList.forEach(item=>{
+              if(this.addInfo.courseId === item.courseId) {
+                this.addInfo.system = item.system
+              }
+            })
 
             paramUrl =  this.$api.jsdDistributie.editDistributieCourse({
               id: this.addInfo.id,
