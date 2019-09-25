@@ -44,7 +44,7 @@
           <!--</FormItem>-->
           <FormItem label="所属课程" prop="courses">
             <CheckboxGroup v-model="addInfo.courses">
-              <Checkbox v-for="item of appList" :label="item.id">{{item.name}}</Checkbox>
+              <Checkbox v-for="item of appList" :label="item.id" :key="item.id">{{item.name}}</Checkbox>
             </CheckboxGroup>
           </FormItem>
         </Form>

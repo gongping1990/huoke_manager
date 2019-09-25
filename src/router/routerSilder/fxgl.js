@@ -55,8 +55,8 @@ export const fxglRouter =[
     ]
   },
   {
-    path: '/distribution ',
-    name: 'distribution ',
+    path: '/distributionManager',
+    name: 'distributionManager',
     title: '分销管理',
     component: Main,
     children: [

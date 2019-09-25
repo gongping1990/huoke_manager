@@ -1,6 +1,10 @@
 <template>
   <div class="p-distribution">
+
     <Card>
+      <div class="g-add-btn" @click="openModal('',3)">
+        <Icon class="-btn-icon" color="#fff" type="ios-add" size="24"/>
+      </div>
       <Table class="-c-tab" :loading="isFetching" :columns="columns" :data="dataList"></Table>
     </Card>
 
@@ -9,7 +13,7 @@
       v-model="isOpenModal"
       @on-cancel="closeModal"
       width="650"
-      :title="openType === 1 ? '变更记录' : '设置'">
+      :title="titleList[openType]">
 
       <Table class="-c-tab" :loading="isFetching" :columns="columnsModal" :data="detailList"
              v-if="openType ===1"></Table>
@@ -19,12 +23,31 @@
             @on-change="detailCurrentChange"></Page>
 
       <Form ref="addInfo" :model="addInfo" :label-width="140" v-if="openType === 2">
-
+        <FormItem label="课程名称">
+          {{addInfo.courseName}}
+        </FormItem>
+        <FormItem label="单独购价格">
+          {{addInfo.ddgPrice / 100}} 元
+        </FormItem>
+        <FormItem label="拼团价格">
+          {{addInfo.ptPrice / 100}} 元
+        </FormItem>
         <FormItem label="推广人佣金比例(%)" prop="promoterRatio">
           <Input type="text" v-model="addInfo.promoterRatio" placeholder="请输入推广人佣金比例(%)"></Input>
         </FormItem>
         <FormItem label="加盟商佣金比例(%)" prop="franchiseeRatio">
           <Input type="text" v-model="addInfo.franchiseeRatio" placeholder="请输入加盟商佣金比例(%)"></Input>
+        </FormItem>
+      </Form>
+
+      <Form ref="addInfo" :model="addInfo" :label-width="100" v-if="openType === 3 || openType === 4">
+        <FormItem label="选择课程" class="ivu-form-item-required">
+          <Select v-model="addInfo.courseId" class="-search-selectOne">
+            <Option v-for="(item,index) in courseList" :label="item.courseName" :value="item.courseId" :key="index"></Option>
+          </Select>
+        </FormItem>
+        <FormItem label="课程购买链接" class="ivu-form-item-required">
+          <Input type="text" v-model="addInfo.salesUrl" placeholder="请输入课程购买链接"></Input>
         </FormItem>
       </Form>
 
@@ -51,15 +74,24 @@
           currentPage: 1,
           pageSize: 10
         },
+        titleList: {
+          '1': '佣金设置',
+          '2': '变更记录',
+          '3': '添加分销课程',
+          '4': '编辑分销课程'
+        },
         dataList: [],
         detailList: [],
+        courseList: [],
         version: '',
         total: 0,
         totalDetail: 0,
         isFetching: false,
         isOpenModal: false,
         openType: '',
-        addInfo: {},
+        addInfo: {
+          courseId: ''
+        },
         columns: [
           {
             title: '课程名称',
@@ -97,6 +129,7 @@
           },
           {
             title: '操作',
+            width: 250,
             align: 'center',
             render: (h, params) => {
               return h('div', [
@@ -111,10 +144,25 @@
                   },
                   on: {
                     click: () => {
+                      this.openModal(params.row, 4)
+                    }
+                  }
+                }, '编辑'),
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: '#1890FF',
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
                       this.openModal(params.row, 2)
                     }
                   }
-                }, '设置'),
+                }, '佣金设置'),
                 h('Button', {
                   props: {
                     type: 'text',
@@ -176,15 +224,17 @@
       openModal(data, num) {
         this.openType = num
         this.version = data.courseId
-        this.addInfo = JSON.parse(JSON.stringify(data))
+        if (data) {
+          this.addInfo = JSON.parse(JSON.stringify(data))
+        }
         this.isOpenModal = true
         this.getDetailList();
+        this.getCourseList()
       },
       getDetailList() {
         this.isFetching = true
         this.$api.jsdDistributie.pageDistributieRatioLog({
-          courseId: this.version,
-          system: this.addInfo.system,
+          distributieRatioId: this.addInfo.id,
           current: this.tabDetail.page,
           size: this.tabDetail.pageSize
         }).then(response => {
@@ -192,6 +242,12 @@
           this.totalDetail = response.data.resultData.total;
         }).finally(() => {
           this.isFetching = false
+        })
+      },
+      getCourseList() {
+        this.$api.jsdDistributie.listByCourse()
+          .then(response => {
+          this.courseList = response.data.resultData
         })
       },
       //分页查询
@@ -208,25 +264,53 @@
           })
       },
       submitInfo() {
+        let paramUrl = ''
         if (this.openType === 1) {
           return this.closeModal()
         }
 
-        if (!this.addInfo.promoterRatio) {
+        if (!this.addInfo.promoterRatio && this.openType === 2) {
           return this.$Message.error('请输入推广人佣金比例')
-        } else if (!this.addInfo.franchiseeRatio ) {
+        } else if (!this.addInfo.franchiseeRatio && this.openType === 2) {
           return this.$Message.error('请输入加盟商佣金比例')
+        } else if (!this.addInfo.courseId && (this.openType === 3 || this.openType === 4)) {
+          return this.$Message.error('请选择课程')
+        } else if (!this.addInfo.salesUrl && (this.openType === 3 || this.openType === 4)) {
+          return this.$Message.error('请输入课程链接')
         }
 
         if (this.isSending) return
 
         this.isSending = true
-        this.$api.jsdDistributie.editDistributieRatio({
-          courseId: this.version,
-          system: this.addInfo.system,
-          franchiseeRatio: this.addInfo.franchiseeRatio,
-          promoterRatio: this.addInfo.promoterRatio
-        }).then(
+
+        switch (+this.openType) {
+          case 2:
+            paramUrl = this.$api.jsdDistributie.editDistributieRatio({
+              id: this.addInfo.id,
+              franchiseeRatio: this.addInfo.franchiseeRatio,
+              promoterRatio: this.addInfo.promoterRatio
+            })
+            break
+          case 3:
+          case 4:
+            if (!this.addInfo.id) {
+              this.courseList.forEach(item=>{
+                if(this.addInfo.courseId === item.courseId) {
+                  this.addInfo.system = item.system
+                }
+              })
+            }
+
+            paramUrl =  this.$api.jsdDistributie.editDistributieCourse({
+              id: this.addInfo.id,
+              salesUrl: this.addInfo.salesUrl,
+              system: this.addInfo.system,
+              courseId: this.addInfo.courseId
+            })
+            break
+        }
+
+        paramUrl.then(
           response => {
             if (response.data.code == '200') {
               this.$Message.success('提交成功');

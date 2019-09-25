@@ -1,6 +1,6 @@
 <template>
   <div class="side-menu-wrapper">
-    <Menu ref="sideMenu" :active-name="$route.name" theme="light" width="auto" :open-names="openNowName"
+    <Menu ref="sideMenu" :active-name="$route.name" theme="light" width="auto" :open-names="openNowName" accordion
           @on-select='selectMenu'>
       <div class="layout-logo-left">
         <img src="../../../assets/images/share-logo.png"/>

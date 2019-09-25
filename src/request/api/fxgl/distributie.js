@@ -1,5 +1,5 @@
 import axios from '../../http'
-import qs from 'querystring'
+import qs from 'qs'
 
 
 const jsdDistributie = {
@@ -30,6 +30,12 @@ const jsdDistributie = {
   },
   pageByInvitationUser(params) {
     return axios.get(`/distribution/distributie/pageByInvitationUser`, {params})
+  },
+  listByCourse(params) {
+    return axios.get(`/distribution/distributie/listByCourse`, {params})
+  },
+  editDistributieCourse(params) {
+    return axios.post(`/distribution/distributie/editDistributieCourse`, qs.stringify(params))
   }
 }
 

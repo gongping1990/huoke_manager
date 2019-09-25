@@ -39,7 +39,6 @@
       this.$router.options.routes.forEach(item=>{
         this.openNameList.push(item)
       })
-
       for (let item of this.openNameList) {
         if(item.title === this.$route.meta[0].name) {
           this.openName.push(item.name)
