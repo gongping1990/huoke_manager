@@ -185,6 +185,19 @@ export const gswRouter =[
           }
         ],
         component: () => import('@/view/gsw/customer/customer')
+      },
+      {
+        path: '/gsw_homePageSet',
+        name: 'gsw_homePageSet',
+        meta: [
+          {
+            name: '运营管理'
+          },
+          {
+            name: '首页信息配置'
+          }
+        ],
+        component: () => import('@/view/gsw/homePageSet/homePageSet')
       }
     ]
   },

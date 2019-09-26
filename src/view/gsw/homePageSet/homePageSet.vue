@@ -33,24 +33,6 @@
           <FormItem label="小程序链接" prop="wechatAppletUrl">
             <Input type="text" v-model="addInfo.wechatAppletUrl" placeholder="请输入小程序链接"></Input>
           </FormItem>
-          <FormItem label="卡片标题" prop="cardtitle">
-            <Input type="text" v-model="addInfo.cardtitle" placeholder="请输入卡片标题"></Input>
-          </FormItem>
-          <FormItem label="卡片图片" class="ivu-form-item-required">
-            <upload-img v-model="addInfo.cardimgurl" :option="uploadOption"></upload-img>
-          </FormItem>
-          <FormItem label="回复链接" prop="href">
-            <Input type="text" v-model="addInfo.href" placeholder="请输入回复链接"></Input>
-          </FormItem>
-          <FormItem label="链接大标题" prop="bigtitle">
-            <Input type="text" v-model="addInfo.bigtitle" placeholder="请输入链接大标题"></Input>
-          </FormItem>
-          <FormItem label="链接小标题" prop="smalltitle">
-            <Input type="text" v-model="addInfo.smalltitle" placeholder="请输入链接小标题"></Input>
-          </FormItem>
-          <FormItem label="链接配图" class="ivu-form-item-required">
-            <upload-img v-model="addInfo.imgurl" :option="uploadOption"></upload-img>
-          </FormItem>
         </Form>
         <div slot="footer" class="-p-b-flex">
           <Button @click="closeModal('addInfo')" ghost type="primary" style="width: 100px;">取消</Button>
@@ -65,7 +47,7 @@
   import UploadImg from "@/components/uploadImg";
 
   export default {
-    name: 'tbzw_homePageSet',
+    name: 'gsw_homePageSet',
     components: {UploadImg},
     data() {
       return {
@@ -91,18 +73,6 @@
           courseDescribe: [
             {required: true, message: '请输入课程描述', trigger: 'blur'}
           ],
-          bigtitle: [
-            {required: true, message: '请输入链接大标题', trigger: 'blur'},
-          ],
-          smalltitle: [
-            {required: true, message: '请输入链接小标题', trigger: 'blur'},
-          ],
-          cardtitle: [
-            {required: true, message: '请输入卡片标题', trigger: 'blur'},
-          ],
-          href: [
-            {required: true, message: '请输入回复链接', trigger: 'blur'},
-          ],
           wechatAppletUrl: [
             {required: true, message: '请输入小程序链接', trigger: 'blur'},
           ]
@@ -117,12 +87,6 @@
             title: '课程描述',
             key: 'courseDescribe',
             align: 'center'
-          },
-          {
-            title: '回复链接',
-            key: 'href',
-            align: 'center',
-            tooltip: true
           },
           {
             title: '小程序链接',
@@ -224,7 +188,7 @@
         if (num) {
           this.tab.currentPage = 1
         }
-        this.$api.tbzwHomepage.pageHomePageCourse({
+        this.$api.gswHomepage.pageHomePageCourse({
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
         })
@@ -245,25 +209,21 @@
               return this.$Message.error('请上传竖版图片')
             } else if (!this.addInfo.coverphoto) {
               return this.$Message.error('请上传横版图片')
-            } else if (!this.addInfo.cardimgurl) {
-              return this.$Message.error('请上传卡片图片')
-            } else if (!this.addInfo.imgurl) {
-              return this.$Message.error('请上传链接配图')
             }
             this.isSending = true
-            this.$api.tbzwHomepage.editHomePageCourse({
+            this.$api.gswHomepage.editHomePageCourse({
               id: this.addInfo.id,
               name: this.addInfo.name,
               coverphoto: this.addInfo.coverphoto,
               courseDescribe: this.addInfo.courseDescribe,
               verticalCover: this.addInfo.verticalCover,
-              smalltitle: this.addInfo.smalltitle,
-              imgurl: this.addInfo.imgurl,
-              href: this.addInfo.href,
+              smalltitle: null,
+              imgurl: null,
+              href: null,
               wechatAppletUrl: this.addInfo.wechatAppletUrl,
-              cardtitle: this.addInfo.cardtitle,
-              cardimgurl: this.addInfo.cardimgurl,
-              bigtitle: this.addInfo.bigtitle,
+              cardtitle: null,
+              cardimgurl: null,
+              bigtitle: null,
             })
               .then(
                 response => {
