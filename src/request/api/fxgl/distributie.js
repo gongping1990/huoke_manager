@@ -36,6 +36,9 @@ const jsdDistributie = {
   },
   editDistributieCourse(params) {
     return axios.post(`/distribution/distributie/editDistributieCourse`, qs.stringify(params))
+  },
+  editDistributieShare(params) {
+    return axios.post(`/distribution/distributie/editDistributieShare`, qs.stringify(params))
   }
 }
 

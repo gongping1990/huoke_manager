@@ -49,10 +49,39 @@
         <FormItem label="课程购买链接" class="ivu-form-item-required">
           <Input type="text" v-model="addInfo.salesUrl" placeholder="请输入课程购买链接"></Input>
         </FormItem>
+        <FormItem label="页面类别">
+          <Select v-model="addInfo.discernCode" class="ivu-form-item-required -search-selectOne">
+            <Option v-for="(item,index) in pageTypeList" :label="item.text" :value="item.code" :key="index"></Option>
+          </Select>
+        </FormItem>
       </Form>
 
-      <div slot="footer" class="p-distribution-btn">
-        <div @click="submitInfo" class="g-primary-btn"> 确 认</div>
+      <Form ref="addInfo" :model="addInfo" :label-width="100" v-if="openType === 5">
+        <div class="p-distribution-title">直接购买分享信息</div>
+        <FormItem label="分享大标题" >
+          <Input type="text" v-model="addInfo.directbtitle" placeholder="请输入分享大标题"></Input>
+        </FormItem>
+        <FormItem label="分享小标题" >
+          <Input type="text" v-model="addInfo.directstitle" placeholder="请输入分享小标题"></Input>
+        </FormItem>
+        <Form-item label="链接配图" >
+          <upload-img v-model="addInfo.directimgurl" :option="uploadOption"></upload-img>
+        </Form-item>
+        <div class="p-distribution-title">开团购买分享信息</div>
+        <FormItem label="分享大标题" >
+          <Input type="text" v-model="addInfo.groupbtitle" placeholder="请输入分享大标题"></Input>
+        </FormItem>
+        <FormItem label="分享小标题" >
+          <Input type="text" v-model="addInfo.groupstitle" placeholder="请输入分享小标题"></Input>
+        </FormItem>
+        <Form-item label="链接配图" >
+          <upload-img v-model="addInfo.groupimgurl" :option="uploadOption"></upload-img>
+        </Form-item>
+      </Form>
+
+      <div slot="footer" class="p-distribution-btn -p-b-flex">
+        <Button @click="closeModal()" ghost type="primary" style="width: 100px;">取消</Button>
+        <div @click="submitInfo()" class="g-primary-btn ">确认</div>
       </div>
     </Modal>
   </div>
@@ -60,9 +89,11 @@
 
 <script>
   import {getBaseUrl} from "@/libs/index"
+  import UploadImg from "../../../components/uploadImg";
 
   export default {
     name: 'fxgl_distributionMessage',
+    components: {UploadImg},
     data() {
       return {
         tab: {
@@ -74,15 +105,21 @@
           currentPage: 1,
           pageSize: 10
         },
+        uploadOption: {
+          tipText: '只能上传jpg/png文件，且不超过500kb',
+          size: 500
+        },
         titleList: {
           '1': '佣金设置',
           '2': '变更记录',
           '3': '添加分销课程',
-          '4': '编辑分销课程'
+          '4': '编辑分销课程',
+          '5': '编辑分享信息'
         },
         dataList: [],
         detailList: [],
         courseList: [],
+        pageTypeList: [],
         version: '',
         total: 0,
         totalDetail: 0,
@@ -129,7 +166,7 @@
           },
           {
             title: '操作',
-            width: 250,
+            width: 290,
             align: 'center',
             render: (h, params) => {
               return h('div', [
@@ -177,7 +214,22 @@
                       this.openModal(params.row, 1)
                     }
                   }
-                }, '变更记录')
+                }, '变更记录'),
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: '#1890FF',
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.openModal(params.row, 5)
+                    }
+                  }
+                }, '分享信息')
               ])
             }
           }
@@ -229,6 +281,7 @@
         }
         this.isOpenModal = true
         this.getDetailList();
+        this.listByCourseType();
         this.getCourseList()
       },
       getDetailList() {
@@ -248,6 +301,12 @@
         this.$api.jsdDistributie.listByCourse()
           .then(response => {
           this.courseList = response.data.resultData
+        })
+      },
+      listByCourseType() {
+        this.$api.jsdCourseType.listByCourseType()
+          .then(response => {
+          this.pageTypeList = response.data.resultData
         })
       },
       //分页查询
@@ -303,7 +362,19 @@
               id: this.addInfo.id,
               salesUrl: this.addInfo.salesUrl,
               system: this.addInfo.system,
+              discernCode: this.addInfo.discernCode,
               courseId: this.addInfo.courseId
+            })
+            break
+          case 5:
+            paramUrl =  this.$api.jsdDistributie.editDistributieShare({
+              id: this.addInfo.id,
+              directbtitle: this.addInfo.directbtitle,
+              directimgurl: this.addInfo.directimgurl,
+              directstitle: this.addInfo.directstitle,
+              groupbtitle: this.addInfo.groupbtitle,
+              groupimgurl: this.addInfo.groupimgurl,
+              groupstitle: this.addInfo.groupstitle
             })
             break
         }
@@ -327,6 +398,12 @@
 
 <style lang="less" scoped>
   .p-distribution {
+
+    &-title {
+      font-size: 18px;
+      margin-bottom: 16px;
+      font-weight: bold;
+    }
 
     .-num {
       font-size: 20px;

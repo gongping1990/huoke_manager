@@ -124,6 +124,19 @@ export const fxglRouter =[
           }
         ],
         component: () => import('@/view/fxgl/cashWithdrawal/cashWithdrawal')
+      },
+      {
+        path: '/fxgl_pageType',
+        name: 'fxgl_pageType',
+        meta: [
+          {
+            name: '分销管理'
+          },
+          {
+            name: '页面类别'
+          }
+        ],
+        component: () => import('@/view/fxgl/courseType/courseType')
       }
     ]
   },
