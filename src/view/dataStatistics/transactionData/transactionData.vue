@@ -223,7 +223,7 @@
           {
             name: '下单用户',
             type: 'line',
-            data: this.dataInfo.orderUser
+            data: this.dataInfo.orderuser
           },
           {
             name: '付费用户',
