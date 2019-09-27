@@ -42,6 +42,25 @@
             </div>
             <div class="-c-tips">图片尺寸不低于960px*360px 图片大小：500K以内</div>
           </Form-item>
+          <Form-item label="竖版封面" class="-c-form-item ivu-form-item-required">
+            <Upload
+              v-if="isEdit"
+              style="display: inline-block"
+              :action="baseUrl"
+              :show-upload-list="false"
+              :max-size="500"
+              :on-success="handleSuccessVerticalCover"
+              :on-exceeded-size="handleSize"
+              :on-error="handleErr">
+              <Button ghost type="primary">上传图片</Button>
+            </Upload>
+            <div class="-c-course-wrap" v-if="addInfo.verticalCover">
+              <div class="-c-course-item">
+                <img :src="addInfo.verticalCover">
+              </div>
+            </div>
+            <div class="-c-tips">图片尺寸不低于960px*360px 图片大小：500K以内</div>
+          </Form-item>
           <Form-item label="咨询图片" class="-c-form-item ivu-form-item-required">
             <Upload
               v-if="isEdit"
@@ -180,6 +199,7 @@
           groupPrice: null,
           consultPhone: null,
           aloneInfo: '',
+          verticalCover: '',
           groupInfo: '',
           launchInfo: '',
           coverphoto: ""
@@ -235,6 +255,12 @@
         if (res.code === 200) {
           this.$Message.success('上传成功')
           this.addInfo.coverphoto = res.resultData.url
+        }
+      },
+      handleSuccessVerticalCover(res) {
+        if (res.code === 200) {
+          this.$Message.success('上传成功')
+          this.addInfo.verticalCover = res.resultData.url
         }
       },
       handleSuccessQrCode(res) {
@@ -311,6 +337,8 @@
                 return this.$Message.error('请上传封面图片')
               } else if (!this.addInfo.qrCode && this.radioType === '1') {
                 return this.$Message.error('请上传咨询二维码图片')
+              } else if (!this.addInfo.verticalCover && this.radioType === '1') {
+                return this.$Message.error('请上传竖版封面')
               } else if (!this.addInfo.groupNum && this.radioType === '1' && this.addInfo.useGroup == 1) {
                 return this.$Message.error('请输入拼课人数')
               } else if (!this.addInfo.deadline && this.radioType === '1' && this.addInfo.useGroup == 1) {
