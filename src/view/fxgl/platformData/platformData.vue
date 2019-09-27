@@ -348,21 +348,45 @@
       initData() {
         this.titleList = [
           {
-            name: '累计页面访问量',
+            name: '加盟商累计访问量',
             num: this.totalInfo.pv,
             todayName: '今日页面访问量',
             todayNum: '1000'
           },
           {
-            name: '累计访问用户',
+            name: '加盟商累计访问用户',
             num: this.totalInfo.uv,
             todayName: '今日访问用户',
             todayNum: '1000'
           },
           {
-            name: '累计加盟商注册数',
+            name: '推广员累计访问量',
+            num: this.totalInfo.uv,
+            todayName: '今日访问用户',
+            todayNum: '1000'
+          },
+          {
+            name: '推广员累计访问用户',
             num: this.totalInfo.uv,
             todayName: '今日加盟商注册数',
+            todayNum: '1000'
+          },
+          {
+            name: '推广中心累计访问量',
+            num: this.totalInfo.orderUser,
+            todayName: '今日推广人注册数',
+            todayNum: '1000'
+          },
+          {
+            name: '推广中心累计访问用户',
+            num: this.totalInfo.orderUser,
+            todayName: '今日推广人注册数',
+            todayNum: '1000'
+          },
+          {
+            name: '累计加盟商注册数',
+            num: this.totalInfo.orderUser,
+            todayName: '今日推广人注册数',
             todayNum: '1000'
           },
           {
