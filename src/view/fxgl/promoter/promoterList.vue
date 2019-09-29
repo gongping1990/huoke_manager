@@ -488,7 +488,9 @@
             },
             {
               title: '邀请时间',
-              key:'applyTime',
+              render: (h, params) => {
+                return h('div', dayjs(+params.row.applyTime).format("YYYY-MM-DD HH:mm"))
+              },
               align: 'center'
             }
           ]
