@@ -479,9 +479,7 @@
             },
             {
               title: '邀请时间',
-              render: (h, params) => {
-                return h('div', dayjs(+params.row.applyTime).format("YYYY-MM-DD HH:mm"))
-              },
+              key:'applyTime',
               align: 'center'
             }
           ]
