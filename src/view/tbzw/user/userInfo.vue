@@ -69,8 +69,9 @@
   import JobRecordTemplate from "../../../components/jobRecordTemplate";
 
   export default {
-    name: 'userInfo',
+    name: 'tbzwUserInfo',
     components: {JobRecordTemplate, Loading},
+    props: ['userId'],
     data() {
       return {
         tab: {
@@ -145,7 +146,7 @@
         this.isOpenModal = true
         this.detailInfo = JSON.parse(JSON.stringify(data))
         this.detailInfo.appId = this.searchInfo.appId
-        this.detailInfo.uid = this.$route.query.id
+        this.detailInfo.uid = this.$route.query.id || this.userId
       },
       currentChange(val) {
         this.tab.page = val;
@@ -165,13 +166,13 @@
       getLearnDTO() {
         this.isFetching = true
         this.$api.jsdJob.getLearnDTO({
-          uid: this.$route.query.id,
+          uid: this.$route.query.id || this.userId,
           courseId: this.searchInfo.appId
         })
           .then(
             response => {
               this.userInfo = response.data.resultData;
-              this.userInfo.learnStartDate = this.userInfo.learnStartDate ? dayjs(+this.userInfo.learnStartDate).format('YYYY-MM-DD HH:mm') : '暂无'
+              this.userInfo.learnStartDate = this.userInfo.learnStartDate ? dayjs(+this.userInfo.learnStartDate).format('YYYY-MM-DD') : '暂无'
               this.userInfo.buyedTime =  this.userInfo.buyedTime ? dayjs(+this.userInfo.buyedTime).format('YYYY-MM-DD HH:mm') : '暂无'
               this.userInfo.createTime =  dayjs(+this.userInfo.createTime).format('YYYY-MM-DD HH:mm')
             })
@@ -181,7 +182,7 @@
       },
       listLessonProgress() {
         this.$api.jsdJob.listLessonProgress({
-          uid: this.$route.query.id,
+          uid: this.$route.query.id || this.userId,
           courseId: this.searchInfo.appId,
           current: this.tab.page,
           size: this.tab.pageSize

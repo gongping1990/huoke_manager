@@ -61,6 +61,8 @@
 
       <job-record-template v-model="isOpenDetail" :dataInfo="detailInfo"></job-record-template>
 
+      <look-user-info v-model="isOpenUserInfo" :dataInfo="detailInfo"></look-user-info>
+
     </Card>
   </div>
 </template>
@@ -74,10 +76,11 @@
   import JobDetailModel from "../../../components/jobDetailModel";
   import SearchTemplate from "../../../components/searchTemplate";
   import JobRecordTemplate from "../../../components/jobRecordTemplate";
+  import LookUserInfo from "../todayWork/lookUserInfo";
 
   export default {
     name: 'jsd_historicalRecords',
-    components: {JobRecordTemplate, SearchTemplate, UploadImgMultiple, DatePickerTemplate, UploadAudio},
+    components: {LookUserInfo, JobRecordTemplate, SearchTemplate, UploadImgMultiple, DatePickerTemplate, UploadAudio},
     data() {
       return {
         tab: {
@@ -118,6 +121,7 @@
         isOpenModal: false,
         isOpenModalPlay: false,
         isOpenDetail: false,
+        isOpenUserInfo: false,
         isEdit: false,
         addInfo: {},
         detailInfo: {},
@@ -125,7 +129,23 @@
         columns: [
           {
             title: '用户昵称',
-            key: 'nickName',
+            render: (h, params) => {
+              return h('Button', {
+                props: {
+                  type: 'text',
+                  size: 'small'
+                },
+                style: {
+                  color: '#5444E4',
+                  marginRight: '5px'
+                },
+                on: {
+                  click: () => {
+                    this.toDetail(params.row)
+                  }
+                }
+              }, params.row.nickName)
+            },
             align: 'center'
           },
           {
@@ -303,6 +323,10 @@
     mounted() {
     },
     methods: {
+      toDetail(data) {
+        this.isOpenUserInfo = true
+        this.detailInfo = JSON.parse(JSON.stringify(data))
+      },
       changeJobType() {
         setTimeout(() => {
           this.$refs.searchChild.initSearch()

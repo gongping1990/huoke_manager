@@ -121,6 +121,8 @@
 
       <job-record-template v-model="isOpenJobRecord" :dataInfo="detailInfo"></job-record-template>
 
+      <look-user-info v-model="isOpenUserInfo" :dataInfo="detailInfo"></look-user-info>
+
     </Card>
   </div>
 </template>
@@ -133,10 +135,11 @@
   import UploadImgMultiple from "../../../components/uploadImgMultiple";
   import SearchTemplate from "../../../components/searchTemplate";
   import JobRecordTemplate from "../../../components/jobRecordTemplate";
+  import LookUserInfo from "./lookUserInfo";
 
   export default {
     name: 'jobList',
-    components: {JobRecordTemplate, SearchTemplate, UploadImgMultiple, DatePickerTemplate, UploadAudio},
+    components: {LookUserInfo, JobRecordTemplate, SearchTemplate, UploadImgMultiple, DatePickerTemplate, UploadAudio},
     data() {
       return {
         tab: {
@@ -182,6 +185,7 @@
         isOpenModal: false,
         isOpenModalPlay: false,
         isOpenJobRecord: false,
+        isOpenUserInfo: false,
         isEdit: false,
         addInfo: {},
         detailInfo: {},
@@ -354,7 +358,23 @@
         columnsTwo: [
           {
             title: '用户昵称',
-            key: 'nickName',
+            render: (h, params) => {
+              return h('Button', {
+                props: {
+                  type: 'text',
+                  size: 'small'
+                },
+                style: {
+                  color: '#5444E4',
+                  marginRight: '5px'
+                },
+                on: {
+                  click: () => {
+                    this.toDetail(params.row)
+                  }
+                }
+              }, params.row.nickName)
+            },
             align: 'center'
           },
           {
@@ -536,7 +556,23 @@
           },
           {
             title: '用户昵称',
-            key: 'nickName',
+            render: (h, params) => {
+              return h('Button', {
+                props: {
+                  type: 'text',
+                  size: 'small'
+                },
+                style: {
+                  color: '#5444E4',
+                  marginRight: '5px'
+                },
+                on: {
+                  click: () => {
+                    this.toDetail(params.row)
+                  }
+                }
+              }, params.row.nickName)
+            },
             align: 'center'
           },
           {
@@ -877,13 +913,9 @@
           }
         })
       },
-      toDetail(param) {
-        this.$router.push({
-          name: 'tbzw_userInfo',
-          query: {
-            id: param.uid
-          }
-        })
+      toDetail(data) {
+        this.isOpenUserInfo = true
+        this.detailInfo = JSON.parse(JSON.stringify(data))
       },
       changeAloneSelect() {
         this.$refs.selection.selectAll(this.selectAllData);
@@ -1012,7 +1044,7 @@
       openJobRecord(data) {
         this.isOpenJobRecord = true
         this.detailInfo = JSON.parse(JSON.stringify(data))
-        this.detailInfo.appId = this.searchInfo.appId || '7'
+        this.detailInfo.appId = this.searchInfo.appId
       },
       closeModalPlay() {
         this.$refs.playAudio.load()
