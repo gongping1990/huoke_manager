@@ -39,7 +39,7 @@
       class="p-promoter"
       v-model="isOpenModalData"
       @on-cancel="isOpenModalData = false"
-      width="800"
+      width="820"
       title="数据详情">
       <Table class="-c-tab" :loading="isFetching" :columns="columsType[openType]" :data="detailList"></Table>
 
@@ -356,11 +356,13 @@
             {
               title: '订单号',
               key: 'thirdId',
+              tooltip: true,
               align: 'center'
             },
             {
               title: '商品名称',
               key: 'courseName',
+              tooltip: true,
               align: 'center'
             },
             {
@@ -377,7 +379,9 @@
             },
             {
               title: '佣金比例',
-              key: 'distributorProportion',
+              render: (h, params) => {
+                return h('div', `${params.row.distributorProportion}%`)
+              },
               align: 'center'
             },
             {
@@ -397,8 +401,9 @@
             },
             {
               title: '下单时间',
+              width: 150,
               render: (h, params) => {
-                return h('div', dayjs(+params.row.gmtCreate).format("YYYY-MM-DD HH:mm:ss"))
+                return h('div', dayjs(+params.row.gmtCreate).format("YYYY-MM-DD HH:mm"))
               },
               align: 'center'
             }
@@ -408,11 +413,13 @@
             {
               title: '订单号',
               key: 'thirdId',
+              tooltip: true,
               align: 'center'
             },
             {
               title: '商品名称',
               key: 'courseName',
+              tooltip: true,
               align: 'center'
             },
             {
@@ -434,7 +441,9 @@
             },
             {
               title: '佣金比例',
-              key: 'distributorProportion',
+              render: (h, params) => {
+                return h('div', `${params.row.distributorProportion}%`)
+              },
               align: 'center'
             },
             {
@@ -454,7 +463,7 @@
             {
               title: '下单时间',
               render: (h, params) => {
-                return h('div', dayjs(+params.row.gmtCreate).format("YYYY-MM-DD HH:mm:ss"))
+                return h('div', dayjs(+params.row.gmtCreate).format("YYYY-MM-DD HH:mm"))
               },
               align: 'center'
             }
