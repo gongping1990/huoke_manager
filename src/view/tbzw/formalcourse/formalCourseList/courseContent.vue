@@ -76,9 +76,9 @@
         <FormItem label="课时名称" prop="name">
           <Input type="text" v-model="addInfo.name" :maxlength="14" placeholder="请输入课时名称(最多十四个字)"></Input>
         </FormItem>
-        <FormItem label="排序值" prop="sortnum">
-          <InputNumber :max="999" :min="0" v-model="addInfo.sortnum" placeholder="请输入排序值"></InputNumber>
-        </FormItem>
+        <!--<FormItem label="排序值" prop="sortnum">-->
+          <!--<InputNumber :max="999" :min="0" v-model="addInfo.sortnum" placeholder="请输入排序值"></InputNumber>-->
+        <!--</FormItem>-->
         <Form-item label="课程封面" class="-c-form-item ivu-form-item-required">
           <upload-img v-model="addInfo.coverphoto" :option="uploadOption"></upload-img>
         </Form-item>
@@ -165,9 +165,9 @@
           name: [
             {required: true, message: '请输入课时名称', trigger: 'blur'},
           ],
-          sortnum: [
-            {required: true, type: 'number', message: '请输入排序值', trigger: 'blur'},
-          ]
+          // sortnum: [
+          //   {required: true, type: 'number', message: '请输入排序值', trigger: 'blur'},
+          // ]
         },
         columns: [
           {
