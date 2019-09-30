@@ -723,7 +723,7 @@
               id: this.addInfo.id,
               courseId: this.$route.query.courseId,
               name: this.addInfo.name,
-              sortnum: this.addInfo.sortnum,
+              // sortnum: this.addInfo.sortnum,
               videoUrl: this.addInfo.videoUrl,
               content: this.addInfo.content,
               coverphoto: this.addInfo.coverphoto
