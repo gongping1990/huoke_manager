@@ -158,7 +158,9 @@
           .then(response => {
             this.appList = response.data.resultData
             this.searchInfo.appId = this.appList[0].id
-            this.getLearnDTO()
+            if(this.$route.query.id || this.userId) {
+              this.getLearnDTO()
+            }
             this.listLessonProgress()
           })
       },
