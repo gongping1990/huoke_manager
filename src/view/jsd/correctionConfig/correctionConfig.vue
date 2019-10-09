@@ -8,7 +8,7 @@
             <Button @click="changeButtonType()" ghost type="primary" class="-btn">{{!statusType ? '启用' : '停用'}}</Button>
           </div>
 
-          <Select v-model="addInfo.courseId" @on-change="getList(1)" class="-search-selectOne" style="width: 300px">
+          <Select v-model="addInfo.courseId" @on-change="changeSelect()" class="-search-selectOne" style="width: 300px">
             <Option v-for="(item,index) in appList" :label="item.name" :value="item.id" :key="index"></Option>
           </Select>
         </Row>
@@ -201,6 +201,10 @@
       this.listBase()
     },
     methods: {
+      changeSelect() {
+        this.getList(1)
+        this.getRuleStatus()
+      },
       addContent() {
         this.replyContentList.push({
           text: ''
@@ -296,6 +300,21 @@
             this.appList = response.data.resultData
             this.addInfo.courseId = this.appList[0].id
             this.getList()
+            this.getRuleStatus()
+          })
+      },
+      getRuleStatus() {
+        for (let item of this.appList) {
+          if (this.addInfo.courseId === item.id) {
+            this.addInfo.system = item.system
+          }
+        }
+        this.$api.jsdJob.getRuleStatus({
+          courseId: this.addInfo.courseId,
+          system: this.addInfo.system
+        })
+          .then(response => {
+            this.statusType = response.data.resultData
           })
       },
       //分页查询
@@ -336,6 +355,11 @@
         })
       },
       changeButtonType(param) {
+        for (let item of this.appList) {
+          if (this.addInfo.courseId === item.id) {
+            this.addInfo.system = item.system
+          }
+        }
         this.$Modal.confirm({
           title: '提示',
           content: this.statusType ? '确认要停用？' : this.dataList.length ? '确认要启用？' : '请先添加至少1条自动批改规则',
@@ -343,13 +367,14 @@
 
             if (!this.dataList.length && !this.statusType) return
 
-            this.$api.jsdTeacher.removeTeacher({
-              userId: param.id
+            this.$api.jsdJob.changeRuleStatus({
+              courseId: this.addInfo.courseId,
+              system: this.addInfo.system
             }).then(
               response => {
                 if (response.data.code == "200") {
                   this.$Message.success("操作成功");
-                  this.getList();
+                  this.getRuleStatus()
                 }
               })
           }
@@ -359,7 +384,6 @@
         if (this.isSending) return
         this.addInfo.replyRule = []
         this.addInfo.replyContent = []
-        this.addInfo.courseId = this.appList[0].id
         this.$refs[name].validate((valid) => {
           if (valid) {
             let passCondition = this.conditionList.every((item) => {

@@ -93,6 +93,12 @@ const jsdJob = {
   },
   removeRule(params) {
     return axios.post(`/homework/job/removeRule`, qs.stringify(params))
+  },
+  changeRuleStatus(params) {
+    return axios.post(`/homework/job/changeRuleStatus`, qs.stringify(params))
+  },
+  getRuleStatus(params) {
+    return axios.post(`/homework/job/getRuleStatus`, qs.stringify(params))
   }
 }
 
