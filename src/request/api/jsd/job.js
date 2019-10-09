@@ -84,6 +84,15 @@ const jsdJob = {
   },
   listBase(params) {
     return axios.get(`/homework/job/course/listBase`, {params})
+  },
+  listRuleByPage(params) {
+    return axios.get(`/homework/job/listRuleByPage`, {params})
+  },
+  addOrUpdateRule(params) {
+    return axios.post(`/homework/job/addOrUpdateRule`, params)
+  },
+  removeRule(params) {
+    return axios.post(`/homework/job/removeRule`, qs.stringify(params))
   }
 }
 
