@@ -99,7 +99,7 @@
             <upload-audio ref="childAudio" v-model="addInfo.replyAudio" :option="uploadAudioOption"
                           @otherAudioInfo="getAudioInfo"></upload-audio>
           </FormItem>
-          <FormItem label="批改文案" v-if="addInfo.isPassed === 1">
+          <FormItem label="批改文案" class="ivu-form-item-required">
             <Input type="textarea" :rows="5" v-model="addInfo.replyText" placeholder="请输入批改文案"></Input>
           </FormItem>
         </Form>
@@ -1172,6 +1172,8 @@
           return this.$Message.error('请输入教师名称')
         } else if (this.addInfo.replyImg.length > 3) {
           return this.$Message.error('最多上传三张图片')
+        } else if (!this.addInfo.replyText && this.addInfo.isPassed === 0) {
+          return this.$Message.error('请输入不合格评语')
         }
 
         this.$api.jsdJob.replyHomework({
