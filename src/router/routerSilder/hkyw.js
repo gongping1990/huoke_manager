@@ -103,13 +103,22 @@ export const hkywRouter =[
     component: Main,
     children: [
       {
-        path: '/userList2',
-        name: 'userList2',
+        path: '/hkyw_userList',
+        name: 'hkyw_userList',
         meta: [
           {name: '用户管理'},
           {name: '用户列表'}
         ],
-        component: () => import('@/view/user-2/userList')
+        component: () => import('@/view/hkyw/user/userList')
+      },
+      {
+        path: '/hkyw_userInfo',
+        name: 'hkyw_userInfo',
+        meta: [
+          {name: '用户管理'},
+          {name: '用户信息'}
+        ],
+        component: () => import('@/view/hkyw/user/userInfo')
       }
     ]
   }

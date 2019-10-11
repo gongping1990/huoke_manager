@@ -1,0 +1,247 @@
+<template>
+  <div class="p-userInfo">
+    <Card>
+      <Row>
+        <Col :span="20">
+          <div class="-p-header">
+            <div class="-p-h-left">
+              <img :src="userInfo.headimgurl"/>
+            </div>
+            <div class="-p-h-right">
+              <div class="-r-name">{{userInfo.nickname}}</div>
+              <div class="-r-dev">
+                <span>id: {{userInfo.uid}}</span>
+                <span><Icon type="ios-call"/>: {{userInfo.phone || '暂无'}}</span>
+                <span><Icon type="ios-time-outline"/>: {{userInfo.createTime}}</span>
+
+              </div>
+            </div>
+          </div>
+        </Col>
+      </Row>
+
+      <Row class="-c-tab g-t-left">
+        <Select v-model="searchInfo.appId" @on-change="changeRadio" style="width: 300px">
+          <Option v-for="(item,index) in appList" :label="item.name" :value="item.id" :key="index"></Option>
+        </Select>
+        <div class="-p-center-item">
+          <div class="-c-text">购买数据</div>
+          <div>
+            <span>是否关注: {{userInfo.subscripbe ? '是' : '否'}}</span>
+            <span>是否购买: {{userInfo.buyed ? '是' : '否'}}</span>
+            <span>支付时间: {{userInfo.buyedTime}}</span>
+          </div>
+        </div>
+      </Row>
+
+      <div class="-c-tab">
+        <Row>
+          <div class="-c-text">上课作业记录</div>
+          <Table :columns="columns" :data="dataList"></Table>
+        </Row>
+      </div>
+
+      <Page class="-p-text-right" :total="total" size="small" show-elevator :page-size="tab.pageSize"
+            @on-change="currentChange"></Page>
+    </Card>
+    <loading v-if="isFetching"></loading>
+
+    <job-record-template v-model="isOpenModal" :dataInfo="detailInfo" :type="2"></job-record-template>
+  </div>
+</template>
+
+<script>
+
+  import Loading from "@/components/loading";
+  import dayjs from 'dayjs'
+  import JobRecordTemplate from "../../../components/jobRecordTemplate";
+
+  export default {
+    name: 'tbzwUserInfo',
+    components: {JobRecordTemplate, Loading},
+    props: ['userId'],
+    data() {
+      return {
+        tab: {
+          page: 1,
+          pageSize: 10
+        },
+        userInfo: '',
+        detailInfo: '',
+        searchInfo: {
+          appId: '7'
+        },
+        dataList: [],
+        appList: [],
+        total: 0,
+        isFetching: false,
+        isOpenModal: false,
+        columns: [
+          {
+            title: '课时名称',
+            key: 'lessonName'
+          },
+          {
+            title: '首次完成上课时间',
+            render: (h, params) => {
+              return h('div', params.row.firstLearnTime ? dayjs(+params.row.firstLearnTime).format("YYYY-MM-DD HH:mm") : '暂无')
+            }
+          },
+          {
+            title: '最后交作业时间',
+            render: (h, params) => {
+              return h('div', params.row.lastSubmitTime ? dayjs(+params.row.lastSubmitTime).format("YYYY-MM-DD HH:mm") : '暂无')
+            }
+          },
+          {
+            title: '老师最后批改时间',
+            render: (h, params) => {
+              return h('div', params.row.lastReplyTime ? dayjs(+params.row.lastReplyTime).format("YYYY-MM-DD HH:mm") : '暂无')
+            }
+          },
+          {
+            title: '操作',
+            render: (h, params) => {
+              return h('Button', {
+                props: {
+                  type: 'text',
+                  size: 'small'
+                },
+                style: {
+                  color: '#5444E4',
+                  marginRight: '5px'
+                },
+                on: {
+                  click: () => {
+                    this.openModal(params.row)
+                  }
+                }
+              }, '作业记录')
+            }
+          }
+        ],
+      };
+    },
+    mounted() {
+      this.listBase()
+    },
+    methods: {
+      changeRadio () {
+        this.getLearnDTO()
+        this.listLessonProgress()
+      },
+      openModal(data) {
+        this.isOpenModal = true
+        this.detailInfo = JSON.parse(JSON.stringify(data))
+        this.detailInfo.appId = this.searchInfo.appId
+        this.detailInfo.uid = this.$route.query.id || this.userId
+      },
+      currentChange(val) {
+        this.tab.page = val;
+        this.listLessonProgress();
+      },
+      listBase() {
+        this.appList = []
+        this.$api.jsdJob.listBase()
+          .then(response => {
+            this.appList = response.data.resultData
+            this.searchInfo.appId = this.appList[0].id
+            if(this.$route.query.id || this.userId) {
+              this.getLearnDTO()
+            }
+            this.listLessonProgress()
+          })
+      },
+      //分页查询
+      getLearnDTO() {
+        this.isFetching = true
+        this.$api.jsdJob.getLearnDTO({
+          uid: this.$route.query.id || this.userId,
+          courseId: this.searchInfo.appId
+        })
+          .then(
+            response => {
+              this.userInfo = response.data.resultData;
+              this.userInfo.learnStartDate = this.userInfo.learnStartDate ? dayjs(+this.userInfo.learnStartDate).format('YYYY-MM-DD') : '暂无'
+              this.userInfo.buyedTime =  this.userInfo.buyedTime ? dayjs(+this.userInfo.buyedTime).format('YYYY-MM-DD HH:mm') : '暂无'
+              this.userInfo.createTime =  dayjs(+this.userInfo.createTime).format('YYYY-MM-DD HH:mm')
+            })
+          .finally(() => {
+            this.isFetching = false
+          })
+      },
+      listLessonProgress() {
+        this.$api.jsdJob.listLessonProgress({
+          uid: this.$route.query.id || this.userId,
+          courseId: this.searchInfo.appId,
+          current: this.tab.page,
+          size: this.tab.pageSize
+        })
+          .then(
+            response => {
+              this.dataList = response.data.resultData.records;
+              this.total = response.data.resultData.total;
+            })
+      }
+    }
+  };
+</script>
+<style lang="less" scoped>
+  .p-userInfo {
+
+    .-p-header {
+      display: flex;
+
+      .-p-h-left {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        overflow: hidden;
+
+        img {
+          width: 100%;
+        }
+      }
+
+      .-p-h-right {
+        margin-left: 20px;
+        text-align: left;
+
+        .-r-name {
+          font-size: 30px;
+          font-weight: bold;
+        }
+
+        .-r-dev {
+          color: #b3b5b8;
+
+          span {
+            padding-right: 20px;
+          }
+        }
+      }
+    }
+
+    .-p-center-item {
+      margin-top: 20px;
+
+      span {
+        color: #b3b5b8;
+        padding-right: 20px;
+      }
+    }
+    .-p-text-right {
+      text-align: right;
+    }
+
+    .-c-tab {
+      margin: 20px 0 20px 90px;
+
+      .-c-text {
+        font-weight: bold;
+        text-align: left;
+        margin-bottom: 10px;
+      }
+    }
+  }
+</style>

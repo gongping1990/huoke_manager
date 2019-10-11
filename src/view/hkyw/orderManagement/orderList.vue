@@ -10,6 +10,14 @@
             </Select>
           </div>
         </Col>
+        <Col :span="3" class="g-t-left">
+          <div class="g-flex-a-j-center">
+            <div class="-search-select-text">订单类型：</div>
+            <Select v-model="searchInfo.status" @on-change="selectChange" class="-search-selectOne">
+              <Option v-for="(item,index) in orderTypeList" :label="item.name" :value="item.id" :key="index"></Option>
+            </Select>
+          </div>
+        </Col>
         <Col :span="6">
           <div class="-search">
             <Select v-model="selectInfo" class="-search-select">
@@ -21,7 +29,7 @@
                    @on-click="selectChange"></Input>
           </div>
         </Col>
-        <Col :span="10" style="margin-left: 10px" class="g-flex-a-j-center">
+        <Col :span="7" style="margin-left: 10px" class="g-flex-a-j-center">
           <date-picker-template :dataInfo="dateOption" @changeDate="changeDate"></date-picker-template>
         </Col>
         <!--<div class="g-text-right">-->
@@ -109,6 +117,20 @@
             id: '20'
           }
         ],
+        orderTypeList: [
+          {
+            name: '全部',
+            id: '-1'
+          },
+          {
+            name: '直接购买',
+            id: '0'
+          },
+          {
+            name: '邀请好友解锁课程',
+            id: '10'
+          }
+        ],
         orderType: ['单独购买', '团体拼课', '好友助力','秒杀订单'],
         dataList: [],
         dateOption: {
@@ -127,6 +149,7 @@
           {
             title: '订单号',
             key: 'id',
+            tooltip: true,
             align: 'center'
           },
           {
@@ -149,6 +172,13 @@
 
           {
             title: '订单状态',
+            render: (h, params) => {
+              return h('div', this.orderStatus[params.row.orderStatus])
+            },
+            align: 'center'
+          },
+          {
+            title: '订单类型',
             render: (h, params) => {
               return h('div', this.orderStatus[params.row.orderStatus])
             },
