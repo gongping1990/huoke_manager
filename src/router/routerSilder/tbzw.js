@@ -115,6 +115,19 @@ export const tbzwRouter =[
           }
         ],
         component: () => import('@/view/tbzw/homePageSet/homePageSet')
+      },
+      {
+        path: '/tbzw_news',
+        name: 'tbzw_news',
+        meta: [
+          {
+            name: '运营管理'
+          },
+          {
+            name: '新闻管理'
+          }
+        ],
+        component: () => import('@/view/tbzw/news/news')
       }
     ]
   },

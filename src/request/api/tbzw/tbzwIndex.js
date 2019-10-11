@@ -8,6 +8,7 @@ import tbzwInternalChannel from "./internalChannel";
 import tbzwOperational from "./operational";
 import tbzwCourse from "./course";
 import tbzwHomepage from "./homepage";
+import tbzwOfficenews from "./officenews";
 
 export const tbzwIndex = {
   composition,
@@ -19,5 +20,6 @@ export const tbzwIndex = {
   tbzwInternalChannel,
   tbzwOperational,
   tbzwCourse,
-  tbzwHomepage
+  tbzwHomepage,
+  tbzwOfficenews
 }
