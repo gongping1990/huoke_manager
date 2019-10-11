@@ -99,7 +99,7 @@
             <upload-audio ref="childAudio" v-model="addInfo.replyAudio" :option="uploadAudioOption"
                           @otherAudioInfo="getAudioInfo"></upload-audio>
           </FormItem>
-          <FormItem label="批改文案" class="ivu-form-item-required">
+          <FormItem label="批改文案" :class="{'ivu-form-item-required': addInfo.isPassed === 0}">
             <Input type="textarea" :rows="5" v-model="addInfo.replyText" placeholder="请输入批改文案"></Input>
           </FormItem>
         </Form>
