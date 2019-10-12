@@ -47,6 +47,9 @@
               <Radio label="0">否</Radio>
             </RadioGroup>
           </FormItem>
+          <FormItem label="小程序地址"  class="ivu-form-item-required" v-if="addInfo.hasgift == 1">
+            <Input type="text" :disabled="!isEdit" v-model="addInfo.miniUrl" placeholder="请输入小程序地址"></Input>
+          </FormItem>
           <Form-item label="实物图片" v-if="addInfo.hasgift==1" class="-c-form-item ivu-form-item-required">
             <Upload
               v-if="isEdit"
@@ -407,6 +410,8 @@
               return this.$Message.error('请上传竖版封面')
             } else if (!this.addInfo.giftShowImg && this.addInfo.hasgift === '1') {
               return this.$Message.error('请上传实物图片')
+            }  else if (!this.addInfo.miniUrl && this.addInfo.hasgift === '1') {
+              return this.$Message.error('请输入小程序地址')
             } else if (this.radioType === '2' && (!this.addInfo.aloneInfo || this.addInfo.aloneInfo == '<p><br></p>')) {
               return this.$Message.error('请输入单独购买帮助信息')
             } else if (this.radioType === '2' && (!this.addInfo.groupInfo || this.addInfo.groupInfo == '<p><br></p>')) {

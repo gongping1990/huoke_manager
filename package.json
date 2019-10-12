@@ -15,6 +15,7 @@
     "cos-js-sdk-v5": "^0.4.20",
     "dayjs": "^1.7.7",
     "echarts": "^4.2.0-rc.2",
+    "fabric": "^3.4.0",
     "iview": "^3.1.4",
     "less": "^2.7.3",
     "less-loader": "^2.2.3",

@@ -1,15 +1,15 @@
 import Main from '@/view/main'
-import {hkxtRouter} from './routerSilder/hkxt'
-import {hkywRouter} from './routerSilder/hkyw'
-import {tbzwRouter} from './routerSilder/tbzw'
-import {gswRouter} from './routerSilder/gsw'
-import {zlkRouter} from './routerSilder/zlk'
-import {ldRouter} from './routerSilder/ld'
-import {wzjhRouter} from './routerSilder/wzjh'
-import {ylxcxRouter} from './routerSilder/ylxcx'
-import {yhzxRouter} from './routerSilder/yhzx'
-import {jsdRouter} from './routerSilder/jsd'
-import {fxglRouter} from './routerSilder/fxgl'
+import { hkxtRouter } from './routerSilder/hkxt'
+import { hkywRouter } from './routerSilder/hkyw'
+import { tbzwRouter } from './routerSilder/tbzw'
+import { gswRouter } from './routerSilder/gsw'
+import { zlkRouter } from './routerSilder/zlk'
+import { ldRouter } from './routerSilder/ld'
+import { wzjhRouter } from './routerSilder/wzjh'
+import { ylxcxRouter } from './routerSilder/ylxcx'
+import { yhzxRouter } from './routerSilder/yhzx'
+import { jsdRouter } from './routerSilder/jsd'
+import { fxglRouter } from './routerSilder/fxgl'
 // import err404 from '@/pages/404'
 //otherRouter
 // import home from '@/pages/home'
@@ -20,8 +20,8 @@ const loginRouter = {
   meta: {
     requireAuth: false
   },
-  component: () => import("@/view/login/index"),
-};
+  component: () => import('@/view/login/index')
+}
 
 // const page404 = {
 //   path: '*',
@@ -44,38 +44,40 @@ export const otherRouter = {
     {
       path: '/home',
       name: 'Home',
-      meta: [{
-        name: '首页'
-      }],
+      meta: [
+        {
+          name: '首页'
+        }
+      ],
       component: () => import('@/view/home/home')
     },
     {
       path: 'couponEdit',
       name: 'couponEdit',
       meta: [
-        {name: '营销管理'},
-        {name: '优惠券', url: 'coupon'},
-        {name: '编辑优惠券'}
+        { name: '营销管理' },
+        { name: '优惠券', url: 'coupon' },
+        { name: '编辑优惠券' }
       ],
-      component: () => import("@/view/marketingMangement/coupon/couponEdit")
+      component: () => import('@/view/marketingMangement/coupon/couponEdit')
     },
     {
       path: 'userInfo',
       name: 'userInfo',
       meta: [
-        {name: '用户管理'},
-        {name: '用户列表', url: 'userList'},
-        {name: '用户详情'}
+        { name: '用户管理' },
+        { name: '用户列表', url: 'userList' },
+        { name: '用户详情' }
       ],
-      component: () => import("@/view/user/userInfo")
+      component: () => import('@/view/user/userInfo')
     },
     {
       path: '/teachMain',
       name: 'teachMain',
       meta: [
-        {name: '同步学习'},
-        {name: '教材管理', url: 'teachingList'},
-        {name: '章节管理'}
+        { name: '同步学习' },
+        { name: '教材管理', url: 'teachingList' },
+        { name: '章节管理' }
       ],
       component: () => import('@/view/study/teachingManage/teachMain')
     },
@@ -83,10 +85,10 @@ export const otherRouter = {
       path: '/courseInfo',
       name: 'courseInfo',
       meta: [
-        {name: '同步学习'},
-        {name: '教材管理', url: 'teachingList'},
-        {name: '章节管理', url: 'teachMain'},
-        {name: '课程内容管理'},
+        { name: '同步学习' },
+        { name: '教材管理', url: 'teachingList' },
+        { name: '章节管理', url: 'teachMain' },
+        { name: '课程内容管理' }
       ],
       component: () => import('@/view/study/teachingManage/courseInfo')
     },
@@ -94,19 +96,20 @@ export const otherRouter = {
       path: '/channelDetail',
       name: 'channelDetail',
       meta: [
-        {name: '运营管理'},
-        {name: '渠道管理', url: 'channelManagement'},
-        {name: '渠道详情'}
+        { name: '运营管理' },
+        { name: '渠道管理', url: 'channelManagement' },
+        { name: '渠道详情' }
       ],
-      component: () => import('@/view/operate/channelManagement/channelManagementDetail')
+      component: () =>
+        import('@/view/operate/channelManagement/channelManagementDetail')
     },
     {
       path: '/editCourse',
       name: 'editCourse',
       meta: [
-        {name: '课程管理'},
-        {name: '课程列表', url: 'courseList'},
-        {name: '编辑课程'}
+        { name: '课程管理' },
+        { name: '课程列表', url: 'courseList' },
+        { name: '编辑课程' }
       ],
       component: () => import('@/view/courseManagement/course/courseEdit')
     },
@@ -114,9 +117,9 @@ export const otherRouter = {
       path: '/classList',
       name: 'classList',
       meta: [
-        {name: '课程管理'},
-        {name: '课程列表', url: 'courseList'},
-        {name: '课时列表'}
+        { name: '课程管理' },
+        { name: '课程列表', url: 'courseList' },
+        { name: '课时列表' }
       ],
       component: () => import('@/view/courseManagement/course/classList')
     },
@@ -124,9 +127,9 @@ export const otherRouter = {
       path: '/dataManagerList',
       name: 'dataManagerList',
       meta: [
-        {name: '内容管理'},
-        {name: '栏目管理', url: 'zlk_column'},
-        {name: '资料管理'}
+        { name: '内容管理' },
+        { name: '栏目管理', url: 'zlk_column' },
+        { name: '资料管理' }
       ],
       component: () => import('@/view/zlk/content/dataManagerList')
     },
@@ -134,9 +137,9 @@ export const otherRouter = {
       path: '/bannerList',
       name: 'bannerList',
       meta: [
-        {name: '内容管理'},
-        {name: '学科管理', url: 'wzjh_subject'},
-        {name: 'banner管理'},
+        { name: '内容管理' },
+        { name: '学科管理', url: 'wzjh_subject' },
+        { name: 'banner管理' }
       ],
       component: () => import('@/view/wzjh/banner/bannerList')
     },
@@ -144,49 +147,53 @@ export const otherRouter = {
       path: '/teachMain',
       name: 'teachMain',
       meta: [
-        {name: '内容管理'},
-        {name: '同步学习', url: 'wzjh_synchronousLearning'},
-        {name: '栏目管理'}
+        { name: '内容管理' },
+        { name: '同步学习', url: 'wzjh_synchronousLearning' },
+        { name: '栏目管理' }
       ],
-      component: () => import('@/view/wzjh/content/synchronousLearning/teachMain')
+      component: () =>
+        import('@/view/wzjh/content/synchronousLearning/teachMain')
     },
     {
       path: '/articleManager',
       name: 'articleManager',
       meta: [
-        {name: '内容管理'},
-        {name: '同步学习', url: 'wzjh_synchronousLearning'},
-        {name: '文章管理'}
+        { name: '内容管理' },
+        { name: '同步学习', url: 'wzjh_synchronousLearning' },
+        { name: '文章管理' }
       ],
-      component: () => import('@/view/wzjh/content/synchronousLearning/articleManager')
+      component: () =>
+        import('@/view/wzjh/content/synchronousLearning/articleManager')
     },
     {
       path: '/articleManagerTwo',
       name: 'articleManagerTwo',
       meta: [
-        {name: '内容管理'},
-        {name: '学习资源', url: 'wzjh_learningResource'},
-        {name: '文章管理'}
+        { name: '内容管理' },
+        { name: '学习资源', url: 'wzjh_learningResource' },
+        { name: '文章管理' }
       ],
-      component: () => import('@/view/wzjh/content/synchronousLearning/articleManager')
+      component: () =>
+        import('@/view/wzjh/content/synchronousLearning/articleManager')
     },
     {
       path: '/subColumn',
       name: 'subColumn',
       meta: [
-        {name: '内容管理'},
-        {name: '学习资源', url: 'wzjh_learningResource'},
-        {name: '子栏目管理'}
+        { name: '内容管理' },
+        { name: '学习资源', url: 'wzjh_learningResource' },
+        { name: '子栏目管理' }
       ],
-      component: () => import('@/view/wzjh/content/learningResource/learningResource')
+      component: () =>
+        import('@/view/wzjh/content/learningResource/learningResource')
     },
     {
       path: '/gsw_secondChannel',
       name: 'gsw_secondChannel',
       meta: [
-        {name: '数据统计'},
-        {name: '渠道管理', url: 'gsw_channel'},
-        {name: '二级渠道管理'}
+        { name: '数据统计' },
+        { name: '渠道管理', url: 'gsw_channel' },
+        { name: '二级渠道管理' }
       ],
       component: () => import('@/view/gsw/channelManagement/channelSecond')
     },
@@ -194,10 +201,10 @@ export const otherRouter = {
       path: '/gsw_putInChannel',
       name: 'gsw_putInChannel',
       meta: [
-        {name: '数据统计'},
-        {name: '渠道管理', url: 'gsw_channel'},
-        {name: '二级渠道管理', url: 'gsw_secondChannel'},
-        {name: '投放记录'}
+        { name: '数据统计' },
+        { name: '渠道管理', url: 'gsw_channel' },
+        { name: '二级渠道管理', url: 'gsw_secondChannel' },
+        { name: '投放记录' }
       ],
       component: () => import('@/view/gsw/channelManagement/putInChannel')
     },
@@ -205,9 +212,9 @@ export const otherRouter = {
       path: '/fxgl_promoterData',
       name: 'fxgl_promoterData',
       meta: [
-        {name: '分销管理'},
-        {name: '人员列表', url: 'fxgl_promoter'},
-        {name: '数据统计'}
+        { name: '分销管理' },
+        { name: '人员列表', url: 'fxgl_promoter' },
+        { name: '数据统计' }
       ],
       component: () => import('@/view/fxgl/promoter/promoterData')
     },
@@ -215,15 +222,14 @@ export const otherRouter = {
       path: '/tbzw_userInfo',
       name: 'tbzw_userInfo',
       meta: [
-        {name: '用户管理'},
-        {name: '用户列表', url: 'tbzw_userList'},
-        {name: '用户详情'}
+        { name: '用户管理' },
+        { name: '用户列表', url: 'tbzw_userList' },
+        { name: '用户详情' }
       ],
       component: () => import('@/view/tbzw/user/userInfo')
     }
   ]
-};
-
+}
 
 // 所有上面定义的路由都要写在下面的routers里
 // 作为main组件的子页面展示并且在左侧菜单显示的路由写在appRouter里
@@ -241,5 +247,15 @@ export const routers = [
   ...ylxcxRouter,
   ...yhzxRouter,
   ...jsdRouter,
-  ...fxglRouter
+  ...fxglRouter,
+  {
+    path: '/correct',
+    name: 'correct',
+    meta: [
+      {
+        name: '在线批改'
+      }
+    ],
+    component: () => import('@/view/correct')
+  }
 ]
