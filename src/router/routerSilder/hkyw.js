@@ -8,13 +8,13 @@ export const hkywRouter =[
     component: Main,
     children: [
       {
-        path: '/userData2',
-        name: 'userData2',
+        path: '/hkyw_userData',
+        name: 'hkyw_userData',
         meta: [
           {name: '数据统计'},
           {name: '用户数据'}
         ],
-        component: () => import('@/view/dataStatistics2/userData2/userData2')
+        component: () => import('@/view/hkyw/userData/userData')
       },
       {
         path: '/productData',
@@ -24,6 +24,15 @@ export const hkywRouter =[
           {name: '产品数据'}
         ],
         component: () => import('@/view/dataStatistics2/productData/productData')
+      },
+      {
+        path: '/hkyw_activeData',
+        name: 'hkyw_activeData',
+        meta: [
+          {name: '数据统计'},
+          {name: '活动数据'}
+        ],
+        component: () => import('@/view/hkyw/activeData/activeData')
       }
     ]
   },
@@ -86,13 +95,13 @@ export const hkywRouter =[
         component: () => import('@/view/study/subjectManage/subjectList')
       },
       {
-        path: '/teachingList',
-        name: 'teachingList',
+        path: '/hkyw_teachingList',
+        name: 'hkyw_teachingList',
         meta: [
           {name: '同步学习'},
           {name: '教材管理'}
         ],
-        component: () => import('@/view/study/teachingManage/tecchingList')
+        component: () => import('@/view/hkyw/teaching/teachingList')
       },
     ]
   },
