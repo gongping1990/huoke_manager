@@ -336,9 +336,11 @@
     }
 
     .-t-theme-color {
+      padding: 0 10px;
       color: #5444E4;
     }
     .-t-red-color {
+      padding: 0 10px;
       color: rgb(218, 55, 75);
     }
   }

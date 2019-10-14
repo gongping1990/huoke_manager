@@ -36,7 +36,7 @@
 
       <div class="-c-tab">
         <Row>
-          <div class="-c-text">上课作业记录</div>
+          <div class="-c-text">上课数据</div>
           <Table :columns="columns" :data="dataList"></Table>
         </Row>
       </div>
@@ -45,8 +45,6 @@
             @on-change="currentChange"></Page>
     </Card>
     <loading v-if="isFetching"></loading>
-
-    <job-record-template v-model="isOpenModal" :dataInfo="detailInfo" :type="2"></job-record-template>
   </div>
 </template>
 
@@ -54,11 +52,10 @@
 
   import Loading from "@/components/loading";
   import dayjs from 'dayjs'
-  import JobRecordTemplate from "../../../components/jobRecordTemplate";
 
   export default {
     name: 'tbzwUserInfo',
-    components: {JobRecordTemplate, Loading},
+    components: {Loading},
     props: ['userId'],
     data() {
       return {
@@ -82,41 +79,15 @@
             key: 'lessonName'
           },
           {
-            title: '首次完成上课时间',
+            title: '是否完成学习',
             render: (h, params) => {
               return h('div', params.row.firstLearnTime ? dayjs(+params.row.firstLearnTime).format("YYYY-MM-DD HH:mm") : '暂无')
             }
           },
           {
-            title: '最后交作业时间',
+            title: '是否通关',
             render: (h, params) => {
               return h('div', params.row.lastSubmitTime ? dayjs(+params.row.lastSubmitTime).format("YYYY-MM-DD HH:mm") : '暂无')
-            }
-          },
-          {
-            title: '老师最后批改时间',
-            render: (h, params) => {
-              return h('div', params.row.lastReplyTime ? dayjs(+params.row.lastReplyTime).format("YYYY-MM-DD HH:mm") : '暂无')
-            }
-          },
-          {
-            title: '操作',
-            render: (h, params) => {
-              return h('Button', {
-                props: {
-                  type: 'text',
-                  size: 'small'
-                },
-                style: {
-                  color: '#5444E4',
-                  marginRight: '5px'
-                },
-                on: {
-                  click: () => {
-                    this.openModal(params.row)
-                  }
-                }
-              }, '作业记录')
             }
           }
         ],
@@ -130,11 +101,8 @@
         this.getLearnDTO()
         this.listLessonProgress()
       },
-      openModal(data) {
+      openModal() {
         this.isOpenModal = true
-        this.detailInfo = JSON.parse(JSON.stringify(data))
-        this.detailInfo.appId = this.searchInfo.appId
-        this.detailInfo.uid = this.$route.query.id || this.userId
       },
       currentChange(val) {
         this.tab.page = val;
