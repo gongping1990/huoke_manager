@@ -108,6 +108,28 @@
           {
             title: '最后登录时间',
             key: 'lastLoginTime'
+          },
+          {
+            title: '操作',
+            align: 'center',
+            render: (h, params) => {
+              return h('div', [
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: '#5444E4'
+                  },
+                  on: {
+                    click: () => {
+                      this.toDetail(params.row)
+                    }
+                  }
+                }, '详情')
+              ])
+            }
           }
         ],
       };
@@ -116,6 +138,14 @@
       this.getList()
     },
     methods: {
+      toDetail(param) {
+        this.$router.push({
+          name: 'hkyw_userInfo',
+          query: {
+            id: param.userId
+          }
+        })
+      },
       currentChange(val) {
         this.tab.page = val;
         this.getList();

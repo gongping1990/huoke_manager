@@ -88,7 +88,7 @@
           </Select>
         </FormItem>
         <FormItem label="课程封面">
-          <upload-img v-model="addInfo.img" :option="uploadOption"></upload-img>
+          <upload-img v-model="addInfo.coverImgUrl" :option="uploadOption"></upload-img>
         </FormItem>
 
       </Form>
