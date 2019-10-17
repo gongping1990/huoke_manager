@@ -39,7 +39,7 @@
       class="p-promoter"
       v-model="isOpenModalData"
       @on-cancel="isOpenModalData = false"
-      width="820"
+      width="900"
       title="数据详情">
       <Table class="-c-tab" :loading="isFetching" :columns="columsType[openType]" :data="detailList"></Table>
 
@@ -90,7 +90,7 @@
           '0': '未知',
           '1': '冻结中',
           '5': '已退款',
-          '10': '已完成'
+          '10': '已获得'
         },
         withdrawStatusList: {
           '0': '未知',
@@ -376,14 +376,14 @@
             {
               title: '实付金额',
               render: (h, params) => {
-                return h('div', `￥ ${params.row.payAmount / 100}`)
+                return h('div', params.row.payAmount ? `￥ ${params.row.payAmount / 100}` : '-')
               },
               align: 'center'
             },
             {
               title: '佣金比例',
               render: (h, params) => {
-                return h('div', `${params.row.distributorProportion}%`)
+                return h('div', params.row.distributorProportion ? `${params.row.distributorProportion}%` : '-')
               },
               align: 'center'
             },
