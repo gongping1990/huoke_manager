@@ -73,6 +73,9 @@ const book = {
   //音频
   readaudio(params) {
     return axios.post('/fissionprep/book/lesson/readaudio', qs.stringify(params))
+  },//音频
+  listAll(params) {
+    return axios.get('/fissionprep/book/listAll', {params})
   },
 
 }

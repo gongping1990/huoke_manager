@@ -4,11 +4,11 @@ import qs from 'qs'
 const book = {
   // 新增教材
   addTeaching(params) {
-    return axios.post('/fissionprep/book/add', qs.stringify(params))
+    return axios.post('/prep/book/add', qs.stringify(params))
   },
   // 修改学科
   updateTeaching(params) {
-    return axios.post('/fissionprep/book/update', qs.stringify(params))
+    return axios.post('/prep/book/update', qs.stringify(params))
   },
   // 删除学科
   delTeaching(params) {
@@ -16,7 +16,7 @@ const book = {
   },
   //教材列表
   teachingList(params) {
-    return axios.get('/fissionprep/book/listByQuery', {params})
+    return axios.get('/prep/book/listByQuery', {params})
   },
   //教材单元下全部课时
   chapterLessonList(params) {

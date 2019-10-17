@@ -10,10 +10,14 @@
             <div class="-p-h-right">
               <div class="-r-name">{{userInfo.nickname}}</div>
               <div class="-r-dev">
-                <span>id: {{userInfo.uid}}</span>
+                <span>id: {{userInfo.userId}}</span>
                 <span><Icon type="ios-call"/>: {{userInfo.phone || '暂无'}}</span>
                 <span><Icon type="ios-time-outline"/>: {{userInfo.createTime}}</span>
-
+              </div>
+              <div class="-r-dev" style="margin-top: 10px">
+                <span>是否关注: {{userInfo.subscripbe ? '是' : '否'}}</span>
+                <span>是否购买: {{userInfo.buyed ? '是' : '否'}}</span>
+                <span>支付时间: {{userInfo.buyedTime}}</span>
               </div>
             </div>
           </div>
@@ -24,14 +28,6 @@
         <Select v-model="searchInfo.appId" @on-change="changeRadio" style="width: 300px">
           <Option v-for="(item,index) in appList" :label="item.name" :value="item.id" :key="index"></Option>
         </Select>
-        <div class="-p-center-item">
-          <div class="-c-text">购买数据</div>
-          <div>
-            <span>是否关注: {{userInfo.subscripbe ? '是' : '否'}}</span>
-            <span>是否购买: {{userInfo.buyed ? '是' : '否'}}</span>
-            <span>支付时间: {{userInfo.buyedTime}}</span>
-          </div>
-        </div>
       </Row>
 
       <div class="-c-tab">
@@ -54,7 +50,7 @@
   import dayjs from 'dayjs'
 
   export default {
-    name: 'tbzwUserInfo',
+    name: 'hkywhd_userInfo',
     components: {Loading},
     props: ['userId'],
     data() {
@@ -81,13 +77,21 @@
           {
             title: '是否完成学习',
             render: (h, params) => {
-              return h('div', params.row.firstLearnTime ? dayjs(+params.row.firstLearnTime).format("YYYY-MM-DD HH:mm") : '暂无')
+              return h('div', [
+                h('div', params.row.studyNewword),
+                h('div', params.row.studyReaded),
+                h('div', params.row.studyCarefulRead)
+              ])
             }
           },
           {
             title: '是否通关',
             render: (h, params) => {
-              return h('div', params.row.lastSubmitTime ? dayjs(+params.row.lastSubmitTime).format("YYYY-MM-DD HH:mm") : '暂无')
+              return h('div', [
+                h('div', params.row.clearanceNewword),
+                h('div', params.row.clearanceReaded),
+                h('div', params.row.clearanceCarefulRead)
+              ])
             }
           }
         ],
@@ -98,7 +102,6 @@
     },
     methods: {
       changeRadio () {
-        this.getLearnDTO()
         this.listLessonProgress()
       },
       openModal() {
@@ -110,45 +113,27 @@
       },
       listBase() {
         this.appList = []
-        this.$api.jsdJob.listBase()
+        this.$api.hkywhdBook.listAll()
           .then(response => {
             this.appList = response.data.resultData
             this.searchInfo.appId = this.appList[0].id
             if(this.$route.query.id || this.userId) {
-              this.getLearnDTO()
+              this.listLessonProgress()
             }
-            this.listLessonProgress()
           })
       },
       //分页查询
-      getLearnDTO() {
-        this.isFetching = true
-        this.$api.jsdJob.getLearnDTO({
-          uid: this.$route.query.id || this.userId,
-          courseId: this.searchInfo.appId
+      listLessonProgress() {
+        this.$api.hkywhdStatistics.getUserLearnStatistics({
+          userId: this.$route.query.id || this.userId,
+          bookId: this.searchInfo.appId
         })
           .then(
             response => {
-              this.userInfo = response.data.resultData;
+              this.userInfo = response.data.resultData
+              this.dataList = response.data.resultData.dataList;
               this.userInfo.learnStartDate = this.userInfo.learnStartDate ? dayjs(+this.userInfo.learnStartDate).format('YYYY-MM-DD') : '暂无'
               this.userInfo.buyedTime =  this.userInfo.buyedTime ? dayjs(+this.userInfo.buyedTime).format('YYYY-MM-DD HH:mm') : '暂无'
-              this.userInfo.createTime =  dayjs(+this.userInfo.createTime).format('YYYY-MM-DD HH:mm')
-            })
-          .finally(() => {
-            this.isFetching = false
-          })
-      },
-      listLessonProgress() {
-        this.$api.jsdJob.listLessonProgress({
-          uid: this.$route.query.id || this.userId,
-          courseId: this.searchInfo.appId,
-          current: this.tab.page,
-          size: this.tab.pageSize
-        })
-          .then(
-            response => {
-              this.dataList = response.data.resultData.records;
-              this.total = response.data.resultData.total;
             })
       }
     }

@@ -122,7 +122,7 @@
     },
     methods: {
       changeLessonStatus (item) {
-        this.$api.book.changeStatus({
+        this.$api.hkywhdBook.changeStatus({
           id: item.id
         }).then((response)=>{
           if (response.data.code == "200") {
@@ -194,7 +194,7 @@
       },
       getList(num) {
         this.isFetching = true
-        this.$api.book.treeList({
+        this.$api.hkywhdBook.treeList({
           courseId: this.paramsInfo.courseId,
           grade: this.paramsInfo.grade,
           edition: this.paramsInfo.edition,
@@ -240,9 +240,9 @@
           title: '提示',
           content: '确认要删除吗？',
           onOk: () => {
-            let delInterface = num == '1' ? this.$api.book.delChapter({
+            let delInterface = num == '1' ? this.$api.hkywhdBook.delChapter({
               id: param
-            }) : this.$api.book.delLesson({
+            }) : this.$api.hkywhdBook.delLesson({
               id: param
             })
             delInterface
@@ -270,11 +270,11 @@
         this.addInfo.bookId = this.paramsInfo.bookId
 
         if (this.rootNode.num == '1') {
-          promiseDate = this.addInfo.id ? this.$api.book.updateChapter(this.addInfo) : this.$api.book.addChapter(this.addInfo)
+          promiseDate = this.addInfo.id ? this.$api.hkywhdBook.updateChapter(this.addInfo) : this.$api.hkywhdBook.addChapter(this.addInfo)
         } else {
           this.addInfo.pinyin = this.pinyinInfo
           this.addInfo.chapterId = this.addInfo.id ? this.rootNode.chapterId : this.rootNode.id
-          promiseDate = this.addInfo.id ? this.$api.book.updateLesson(this.addInfo) : this.$api.book.addLesson(this.addInfo)
+          promiseDate = this.addInfo.id ? this.$api.hkywhdBook.updateLesson(this.addInfo) : this.$api.hkywhdBook.addLesson(this.addInfo)
         }
 
         promiseDate

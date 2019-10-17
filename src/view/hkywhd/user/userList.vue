@@ -30,18 +30,19 @@
       <Page class="-p-text-right" :total="total" size="small" show-elevator :page-size="tab.pageSize"
             :current.sync="tab.currentPage"
             @on-change="currentChange"></Page>
-
     </Card>
+    <hkywhd-look-user-info v-model="isShow" :dataInfo="detailInfo"></hkywhd-look-user-info>
   </div>
 </template>
 
 <script>
   import dayjs from 'dayjs'
   import Operation from "iview/src/components/transfer/operation";
+  import HkywhdLookUserInfo from "./hkywhdLookUserInfo";
 
   export default {
     name: 'userList2',
-    components: {Operation},
+    components: {HkywhdLookUserInfo, Operation},
     data() {
       return {
         switch1: '',
@@ -56,7 +57,9 @@
         selectInfo: '1',
         dataList: [],
         total: 0,
+        detailInfo: '',
         isFetching: false,
+        isShow: false,
         columns: [
           {
             title: '用户头像/昵称',
@@ -95,19 +98,23 @@
           },
           {
             title: '创建时间',
-            key: 'creatTime'
+            key: 'creatTime',
+            align: 'center'
           },
           {
             title: '最长连续打卡时间',
-            key: 'longestCard'
+            key: 'longestCard',
+            align: 'center'
           },
           {
             title: '连续打卡时间',
-            key: 'continuCard'
+            key: 'continuCard',
+            align: 'center'
           },
           {
             title: '最后登录时间',
-            key: 'lastLoginTime'
+            key: 'lastLoginTime',
+            align: 'center'
           },
           {
             title: '操作',
@@ -139,12 +146,8 @@
     },
     methods: {
       toDetail(param) {
-        this.$router.push({
-          name: 'hkyw_userInfo',
-          query: {
-            id: param.userId
-          }
-        })
+        this.isShow = true
+        this.detailInfo = param
       },
       currentChange(val) {
         this.tab.page = val;
@@ -168,7 +171,7 @@
         }
 
         this.isFetching = true
-        this.$api.hkywUser.getPrepUserList(params)
+        this.$api.hkywhdUser.getPrepUserList(params)
           .then(
             response => {
               this.dataList = response.data.resultData.records;

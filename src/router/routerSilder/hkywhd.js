@@ -64,6 +64,16 @@ export const hkywhdRouter =[
         ],
         component: () => import('@/view/hkywhd/teaching/teachingList')
       },
+      {
+        path: '/hkywhd_teachMain',
+        name: 'hkywhd_teachMain',
+        meta: [
+          {name: '获课语文'},
+          {name: '教材管理', url: 'hkywhd_teachingList'},
+          {name: '章节管理'}
+        ],
+        component: () => import('@/view/hkywhd/teaching/teachMain')
+      },
     ]
   },
   {

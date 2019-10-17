@@ -278,7 +278,7 @@
       //分页查询
       getList() {
         this.isFetching = true
-        this.$api.hkywOrder.hkywOrderList(this.paramsInit())
+        this.$api.hkywhdOrder.hkywOrderList(this.paramsInit())
           .then(
             response => {
               this.dataList = response.data.resultData.records;
