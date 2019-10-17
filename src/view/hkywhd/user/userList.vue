@@ -99,6 +99,7 @@
           {
             title: '创建时间',
             key: 'creatTime',
+            tooltip: true,
             align: 'center'
           },
           {
