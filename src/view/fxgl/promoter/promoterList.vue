@@ -362,6 +362,9 @@
             {
               title: '商品名称',
               key: 'courseName',
+              render: (h, params)=> {
+                return h('div', (params.row.accountIncomeType ==3 || params.row.accountIncomeType ==4)? '新手任务' : params.row.courseName)
+              },
               tooltip: true,
               align: 'center'
             },
@@ -403,7 +406,7 @@
               title: '下单时间',
               width: 150,
               render: (h, params) => {
-                return h('div', dayjs(+params.row.gmtCreate).format("YYYY-MM-DD HH:mm"))
+                return h('div', params.row.gmtCreate  ? dayjs(+params.row.gmtCreate).format("YYYY-MM-DD HH:mm") : '-')
               },
               align: 'center'
             }
