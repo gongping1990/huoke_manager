@@ -9,6 +9,7 @@ import tbzwOperational from "./operational";
 import tbzwCourse from "./course";
 import tbzwHomepage from "./homepage";
 import tbzwOfficenews from "./officenews";
+import tbzwStudent from "./student";
 
 export const tbzwIndex = {
   composition,
@@ -21,5 +22,6 @@ export const tbzwIndex = {
   tbzwOperational,
   tbzwCourse,
   tbzwHomepage,
-  tbzwOfficenews
+  tbzwOfficenews,
+  tbzwStudent
 }

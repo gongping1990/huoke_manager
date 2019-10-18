@@ -2,7 +2,7 @@
   <div class="p-userInfo">
     <Card>
       <Row>
-        <Col :span="20">
+        <Col :span="24">
           <div class="-p-header">
             <div class="-p-h-left">
               <img :src="userInfo.headimgurl"/>
@@ -13,7 +13,14 @@
                 <span>id: {{userInfo.uid}}</span>
                 <span><Icon type="ios-call"/>: {{userInfo.phone || '暂无'}}</span>
                 <span><Icon type="ios-time-outline"/>: {{userInfo.createTime}}</span>
-
+              </div>
+              <div class="-r-dev" style="margin-top: 10px">
+                <span>孩子昵称: {{studentInfo.nickname || '暂无'}}</span>
+                <span>孩子性别: {{studentInfo.sex ? searchInfo.sex === 1 ? '男' : '女' : '暂无'}}</span>
+                <span>与孩子关系: {{studentInfo.relationText || '暂无'}}</span>
+                <span>在读年级: {{studentInfo.gradeText || '暂无'}}</span>
+                <span>所在城市: {{studentInfo.areasText || '暂无'}}</span>
+                <Button @click="openModalChild" ghost type="primary" style="width: 100px;">完善孩子信息</Button>
               </div>
             </div>
           </div>
@@ -59,11 +66,47 @@
     <loading v-if="isFetching"></loading>
 
     <job-record-template v-model="isOpenModal" :dataInfo="detailInfo" :type="2"></job-record-template>
+
+    <Modal
+      class="p-userInfo"
+      v-model="isOpenModalChild"
+      @on-cancel="closeModal('addInfo')"
+      width="500"
+      title="完善信息">
+      <Form ref="addInfo" :model="addInfo" :label-width="100">
+        <FormItem label="孩子昵称" prop="nickname">
+          <Input type="text" v-model="addInfo.nickname" placeholder="请输入孩子昵称"></Input>
+        </FormItem>
+        <FormItem label="孩子性别" prop="sex">
+          <Radio-group v-model="addInfo.sex">
+            <Radio :label=1>男</Radio>
+            <Radio :label=2>女</Radio>
+          </Radio-group>
+        </FormItem>
+        <FormItem label="与孩子关系" prop="relation">
+          <Select v-model="addInfo.relation">
+            <Option v-for="(item,index) in relationList" :label="item.name" :value="item.key" :key="index"></Option>
+          </Select>
+        </FormItem>
+        <FormItem label="在读年级" prop="grade">
+          <Select v-model="addInfo.grade">
+            <Option v-for="(item,index) in gradeList" :label="item.name" :value="item.key" :key="index"></Option>
+          </Select>
+        </FormItem>
+        <FormItem label="所在城市">
+          <Cascader :data="addressList" v-model="addInfo.areasId" @on-change="changeCascarder"></Cascader>
+        </FormItem>
+      </Form>
+      <div slot="footer" class="g-flex-j-sa">
+        <Button @click="closeModal('addInfo')" ghost type="primary" style="width: 100px;">取消</Button>
+        <div @click="submitInfo('addInfo')" class="g-primary-btn "> {{isSending ? '提交中...' : '确 认'}}</div>
+      </div>
+    </Modal>
   </div>
 </template>
 
 <script>
-
+  import areaList from '@/libs/area'
   import Loading from "@/components/loading";
   import dayjs from 'dayjs'
   import JobRecordTemplate from "../../../components/jobRecordTemplate";
@@ -78,16 +121,95 @@
           page: 1,
           pageSize: 10
         },
-        userInfo: '',
-        detailInfo: '',
+        userInfo: {},
+        detailInfo: {},
+        studentInfo: {},
         searchInfo: {
           appId: '7'
         },
+        addInfo: {
+          nickname: '',
+          sex: '',
+          relation: '',
+          grade: '',
+          areasId: ''
+        },
+        addressList: areaList.list,
         dataList: [],
         appList: [],
+        relationList: [
+          {
+            key: 1,
+            name: '爸爸'
+          },
+          {
+            key: 2,
+            name: '妈妈'
+          },
+          {
+            key: 3,
+            name: '爷爷'
+          },
+          {
+            key: 4,
+            name: '奶奶'
+          },
+          {
+            key: 5,
+            name: '外公'
+          },
+          {
+            key: 6,
+            name: '外婆'
+          },
+          {
+            key: 0,
+            name: '亲友'
+          }
+        ],
+        gradeList: [
+          {
+            name: '一年级',
+            key: 2
+          },
+          {
+            name: '二年级',
+            key: 3
+          },
+          {
+            name: '三年级',
+            key: 4
+          },
+          {
+            name: '四年级',
+            key: 5
+          },
+          {
+            name: '五年级',
+            key: 6
+          },
+          {
+            name: '六年级',
+            key: 7
+          },
+          {
+            name: '初中',
+            key: 8
+          },
+          {
+            name: '幼儿园',
+            key: 1
+          },
+          {
+            name: '其他',
+            key: 0
+          }
+        ],
         total: 0,
         isFetching: false,
         isOpenModal: false,
+        isOpenModalChild: false,
+        isSending: false,
         columns: [
           {
             title: '课时名称',
@@ -138,9 +260,34 @@
       this.listBase()
     },
     methods: {
-      changeRadio () {
+      changeCascarder(value, selectedData) {
+        this.addInfo.areasText = selectedData[2].__label
+        console.log(selectedData[2].__label)
+      },
+      changeRadio() {
         this.getLearnDTO()
         this.listLessonProgress()
+      },
+      openModalChild() {
+        if (!this.addInfo.id) {
+          this.addInfo = {
+            nickname: '',
+            sex: '',
+            relation: '',
+            grade: '',
+            areasId: ''
+          }
+        } else {
+          if(!Array.isArray(this.addInfo.areasId)) {
+            this.addInfo.areasId = this.addInfo.areasId.split(',')
+          }
+        }
+        this.isOpenModalChild = true
+      },
+      closeModal(name) {
+        this.isOpenModalChild = false
+        this.getStudent()
+        this.$refs[name].resetFields()
       },
       openModal(data) {
         this.isOpenModal = true
@@ -158,8 +305,9 @@
           .then(response => {
             this.appList = response.data.resultData
             this.searchInfo.appId = this.appList[0].id
-            if(this.$route.query.id || this.userId) {
+            if (this.$route.query.id || this.userId) {
               this.getLearnDTO()
+              this.getStudent()
             }
             this.listLessonProgress()
           })
@@ -175,8 +323,8 @@
             response => {
               this.userInfo = response.data.resultData;
               this.userInfo.learnStartDate = this.userInfo.learnStartDate ? dayjs(+this.userInfo.learnStartDate).format('YYYY-MM-DD') : '暂无'
-              this.userInfo.buyedTime =  this.userInfo.buyedTime ? dayjs(+this.userInfo.buyedTime).format('YYYY-MM-DD HH:mm') : '暂无'
-              this.userInfo.createTime =  dayjs(+this.userInfo.createTime).format('YYYY-MM-DD HH:mm')
+              this.userInfo.buyedTime = this.userInfo.buyedTime ? dayjs(+this.userInfo.buyedTime).format('YYYY-MM-DD HH:mm') : '暂无'
+              this.userInfo.createTime = dayjs(+this.userInfo.createTime).format('YYYY-MM-DD HH:mm')
             })
           .finally(() => {
             this.isFetching = false
@@ -194,7 +342,70 @@
               this.dataList = response.data.resultData.records;
               this.total = response.data.resultData.total;
             })
-      }
+      },
+      getStudent() {
+        this.$api.tbzwStudent.getStudent({
+          puid: this.$route.query.id || this.userId,
+        })
+          .then(
+            response => {
+              if (response.data.resultData) {
+                this.addInfo = response.data.resultData
+                this.studentInfo = JSON.parse(JSON.stringify(this.addInfo))
+              } else {
+                this.addInfo = {
+                  nickname: '',
+                  sex: '',
+                  relation: '',
+                  grade: '',
+                  gradeText: '',
+                  areasIdText: '',
+                  areasId: ''
+                }
+                this.userInfo.relationText= '',
+                this.userInfo.gradeText= '',
+                this.userInfo.areasIdText= '',
+                this.userInfo.sexText= ''
+              }
+            })
+      },
+      submitInfo(name) {
+        this.$refs[name].validate((valid) => {
+          if (valid) {
+            this.isSending = true
+            let promiseDate = this.addInfo.id ? this.$api.tbzwStudent.updateStudent({
+              id: this.addInfo.id,
+              puid: this.$route.query.id || this.userId,
+              areasId: `${this.addInfo.areasId}`,
+              relation: this.addInfo.relation,
+              grade: this.addInfo.grade,
+              sex: this.addInfo.sex,
+              areasText: this.addInfo.areasText,
+              nickname: this.addInfo.nickname
+            }) : this.$api.tbzwStudent.addStudent({
+              puid: this.$route.query.id || this.userId,
+              areasId: `${this.addInfo.areasId}`,
+              relation: this.addInfo.relation,
+              grade: this.addInfo.grade,
+              sex: this.addInfo.sex,
+              areasText: this.addInfo.areasText,
+              nickname: this.addInfo.nickname
+            })
+            promiseDate
+              .then(
+                response => {
+                  if (response.data.code == '200') {
+                    this.$Message.success('提交成功');
+                    this.getStudent()
+                    this.closeModal(name)
+                  }
+                })
+              .finally(() => {
+                this.isSending = false
+              })
+          }
+        })
+      },
     }
   };
 </script>
