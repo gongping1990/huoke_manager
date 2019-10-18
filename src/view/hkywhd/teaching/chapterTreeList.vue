@@ -45,7 +45,7 @@
             <Tag :color="item2.disabled ? 'default' : 'success'">{{item2.disabled ? '已禁用' : '已启用'}}</Tag>
           </Col>
           <Col :span="3">
-            <Tag :color="item2.disabled ? 'default' : 'success'">{{item2.disabled ? '否' : '是'}}</Tag>
+            <Tag :color="!item2.listen ? 'default' : 'success'">{{!item2.listen ? '否' : '是'}}</Tag>
           </Col>
           <Col :span="6" class="g-t-left">
             <Button type="text" class="-t-theme-color" @click="toDetail(item1,item2)">&nbsp;&nbsp;&nbsp;&nbsp;课程内容
@@ -53,7 +53,7 @@
             <Button type="text" class="-t-theme-color" @click="editModal(item1,item2,2)">编辑</Button>
             <Button type="text" class="-t-red-color" @click="delItem(item2.id,2)">删除</Button>
             <Button type="text" class="-t-theme-color" @click="changeLessonStatus(item2)">{{item2.disabled ? '启用' : '禁用'}}</Button>
-            <Button type="text" class="-t-theme-color" @click="changeLessonStatus(item2)">{{item2.disabled ? '开启试听' : '关闭试听'}}</Button>
+            <Button type="text" class="-t-theme-color" @click="changeListenStatus(item2)">{{!item2.listen ? '开启试听' : '关闭试听'}}</Button>
           </Col>
         </Col>
         <Col class="-t-border" :span="24" v-if="!item1.lessons.length && item1.isShowChild">暂无课时内容</Col>
@@ -123,6 +123,16 @@
     methods: {
       changeLessonStatus (item) {
         this.$api.hkywhdBook.changeStatus({
+          id: item.id
+        }).then((response)=>{
+          if (response.data.code == "200") {
+            this.$Message.success("操作成功");
+            this.getList();
+          }
+        })
+      },
+      changeListenStatus (item) {
+        this.$api.hkywhdBook.listen({
           id: item.id
         }).then((response)=>{
           if (response.data.code == "200") {
