@@ -501,7 +501,7 @@
           storage = [
             {
               title: '推广人昵称',
-              key: 'userName',
+              key: 'nickName',
               align: 'center'
             },
             {
@@ -511,7 +511,9 @@
             },
             {
               title: '推广人注册时间',
-              key: 'applyTime',
+              render: (h, params) => {
+                return h('div', dayjs(+params.row.applyTime).format("YYYY-MM-DD HH:mm"))
+              },
               align: 'center'
             }
           ]
