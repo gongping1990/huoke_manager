@@ -138,34 +138,36 @@
           {
             name: '下单用户',
             type: 'line',
-            data: dataList.orderUser
+            data: dataList.orderuser
           },
           {
             name: '付费用户',
             type: 'line',
-            data: dataList.payedUser
+            data: dataList.payeduser
           },
           {
             name: '下单数',
             type: 'line',
-            data: dataList.payedMoney
+            data: dataList.ordernum
           },
           {
             name: '支付成功订单数',
             type: 'line',
-            data: dataList.payedMoney
+            data: dataList.payedordernum
           },
           {
             name: '付费金额',
             type: 'line',
-            data: dataList.payedMoney
+            data: dataList.totalmoney
           }
         ]
         return optionSeriesLine
       },
     },
     mounted() {
-      this.getChannelList()
+      this.getList()
+      this.getTodayInfo()
+      this.getTotalInfo()
     },
     methods: {
       changeTimeTwo () {
@@ -192,26 +194,6 @@
         this.getStartTimeThree = data.startTime
         this.getEndTimeThree = data.endTime
         this.getList()
-      },
-      getChannelList() {
-        this.$api.composition.listByChannel({
-          current: 1,
-          size: 10000
-        })
-          .then(
-            response => {
-              this.channelList = response.data.resultData.records;
-              this.channelList.unshift({
-                id: '0',
-                name: '全部'
-              })
-              this.getList()
-              this.getTodayInfo()
-              this.getTotalInfo()
-            })
-          .finally(() => {
-            this.isFetching = false
-          })
       },
       drawLine() {
         let self = this;
@@ -300,9 +282,8 @@
         })
 
         this.isFetching = true
-        this.$api.composition.userStatisticsLineChart({
-          chId: this.radioType,
-          begin: this.getStartTimeThree && new Date(this.getStartTimeThree).getTime(),
+        this.$api.hkywhdOrder.listOrderDayCount({
+          start: this.getStartTimeThree && new Date(this.getStartTimeThree).getTime(),
           end: this.getEndTimeThree && new Date(this.getEndTimeThree).getTime()
         })
           .then(
@@ -315,18 +296,15 @@
           })
       },
       getTodayInfo() {
-        this.$api.composition.userStatisticsToday({
-          chId: this.radioType
-        }).then(
+        this.$api.hkywhdOrder.getOrderDayCountVOByToday().then(
           response => {
             this.todayInfo = response.data.resultData;
             this.initData()
           })
       },
       getTotalInfo() {
-        this.$api.composition.userStatisticsTotal({
-          chId: this.radioType,
-          begin: this.getStartTimeTwo && new Date(this.getStartTimeTwo).getTime(),
+        this.$api.hkywhdOrder.sumOrderDayCount({
+          start: this.getStartTimeTwo && new Date(this.getStartTimeTwo).getTime(),
           end: this.getEndTimeTwo && new Date(this.getEndTimeTwo).getTime()
         }).then(
           response => {
@@ -340,43 +318,43 @@
             name: '累计页面访问量',
             num: this.totalInfo.pv,
             todayName: '今日页面访问量',
-            todayNum: '1000'
+            todayNum: this.todayInfo.pv
           },
           {
             name: '累计访问用户',
             num: this.totalInfo.uv,
             todayName: '今日访问用户',
-            todayNum: '1000'
+            todayNum: this.todayInfo.uv
           },
           {
             name: '累计下单用户',
-            num: this.totalInfo.uv,
+            num: this.totalInfo.orderuser,
             todayName: '今日下单用户',
-            todayNum: '1000'
+            todayNum: this.todayInfo.orderuser
           },
           {
             name: '累计付费用户',
-            num: this.totalInfo.uv,
+            num: this.totalInfo.payeduser,
             todayName: '今日付费用户',
-            todayNum: '1000'
+            todayNum: this.todayInfo.payeduser
           },
           {
             name: '累计下单数',
-            num: this.totalInfo.orderUser,
+            num: this.totalInfo.ordernum,
             todayName: '今日下单数',
-            todayNum: '1000'
+            todayNum:this.todayInfo.ordernum
           },
           {
             name: '累计支付成功订单数',
-            num: this.totalInfo.orderUser,
+            num: this.totalInfo.payedordernum,
             todayName: '今日支付成功订单数',
-            todayNum: '1000'
+            todayNum: this.todayInfo.payedordernum
           },
           {
             name: '累计付费金额',
-            num: this.totalInfo.orderUser,
+            num: this.totalInfo.totalmoney,
             todayName: '今日付费金额',
-            todayNum: '1000'
+            todayNum: this.todayInfo.totalmoney
           }
         ]
       }
