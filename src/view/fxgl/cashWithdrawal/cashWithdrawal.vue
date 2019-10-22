@@ -42,7 +42,7 @@
       :title="addInfo.intoAccountImg ? '查看详情' : '您确认已经将提现金额打款到加盟商账户了吗?'">
       <Form ref="addInfo" :model="addInfo"  :label-width="100" class="ivu-form-item-required">
         <FormItem label="打款凭证截图" v-if="!addInfo.intoAccountImg">
-          <upload-img v-model="addInfo.qrcode" :option="uploadOption"></upload-img>
+          <upload-img v-model="addInfo.deliverImg" :option="uploadOption"></upload-img>
         </FormItem>
          <FormItem label="打款凭证截图" v-if="addInfo.intoAccountImg">
           <img class="p-cashWithdrawal-img" :src="addInfo.intoAccountImg"/>
@@ -271,7 +271,23 @@
           })
       },
       submitInfo () {
-
+        if(!this.addInfo.deliverImg) {
+          return this.$Message.error('请上传打款凭证')
+        }
+        this.$api.jsdDistributorAccount.uploadDeliverImg({
+          id: this.addInfo.id,
+          deliverImg: this.addInfo.deliverImg
+        })
+          .then(
+            response => {
+              if (response.data.code == '200') {
+                this.$Message.success('提交成功');
+                this.getList()
+              }
+            })
+          .finally(() => {
+            this.isSending = false
+          })
       }
     }
   };
