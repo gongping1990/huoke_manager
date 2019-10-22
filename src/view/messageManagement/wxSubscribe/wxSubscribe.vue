@@ -132,6 +132,10 @@
           {
             name: '小学作文大师',
             appid: 'wxfff8c33608ce647b'
+          },
+          {
+            name: '小学作文满分',
+            appid: 'wx7ea9c24a31f78c45'
           }
         ],
         ruleValidate: {
