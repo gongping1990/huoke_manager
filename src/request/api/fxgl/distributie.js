@@ -39,6 +39,9 @@ const jsdDistributie = {
   },
   editDistributieShare(params) {
     return axios.post(`/distribution/distributie/editDistributieShare`, qs.stringify(params))
+  },
+  listByPromoterByFranchisee(params) {
+    return axios.get(`/distribution/distributie/listByPromoterByFranchisee`, {params})
   }
 }
 

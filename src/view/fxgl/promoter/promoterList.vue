@@ -501,7 +501,7 @@
           storage = [
             {
               title: '推广人昵称',
-              key: 'nickName',
+              key: 'userName',
               align: 'center'
             },
             {
@@ -511,9 +511,7 @@
             },
             {
               title: '推广人注册时间',
-              render: (h, params) => {
-                return h('div', dayjs(+params.row.applyTime).format("YYYY-MM-DD HH:mm"))
-              },
+              key: 'applyTime',
               align: 'center'
             }
           ]
@@ -593,7 +591,7 @@
                 promoterId: this.dataItem.userId
               })
             } else {
-              paramUrl =  this.$api.jsdDistributie.pageByInvitationUser({
+              paramUrl =  this.$api.jsdDistributie.listByPromoterByFranchisee({
                 ...params,
                 promoterId: this.dataItem.userId
               })
