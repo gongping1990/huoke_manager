@@ -1,7 +1,18 @@
 <template>
   <div class="p-wxSubscribe">
     <Card>
-      <div class="g-add-btn" @click="openModal()">
+      <Row class="g-search">
+        <Col :span="5" class="g-t-left">
+          <div class="g-flex-a-j-center">
+            <div class="-search-select-text">当前平台：</div>
+            <Select v-model="searchInfo.status" @on-change="getList(1)" class="-search-selectOne">
+              <Option v-for="(item,index) in appList" :label="item.name" :value="item.appid" :key="index"></Option>
+            </Select>
+          </div>
+        </Col>
+      </Row>
+
+      <div class="g-add-btn g-add-top" @click="openModal()">
         <Icon class="-btn-icon" color="#fff" type="ios-add" size="24"/>
       </div>
 
@@ -81,6 +92,7 @@
           tipText: '只能上传jpg/png文件，且不超过500kb',
           size: 500
         },
+        searchInfo: {},
         dataList: [],
         total: 0,
         radioType: 1,
@@ -104,6 +116,22 @@
           {
             name: '获好物',
             appid: 'wx2b4ea0bae3a7d83a'
+          },
+          {
+            name: '小学作文精品课',
+            appid: 'wxb6218459e8c63dbf'
+          },
+          {
+            name: '小学作文课',
+            appid: 'wx86dd75af41172544'
+          },
+          {
+            name: '小学作文网',
+            appid: 'wx5239f8052b47a50d'
+          },
+          {
+            name: '小学作文大师',
+            appid: 'wxfff8c33608ce647b'
           }
         ],
         ruleValidate: {
@@ -129,11 +157,13 @@
         columns: [
           {
             title: '触发平台',
-            key: 'appName'
+            key: 'appName',
+            tooltip: true
           },
           {
             title: '触发名称',
-            key: 'name'
+            key: 'name',
+            tooltip: true
           },
           {
             title: '触发类型',
@@ -145,7 +175,8 @@
           {
             title: '触发时间',
             key: 'time',
-            align: 'center'
+            align: 'center',
+            tooltip: true
           },
           {
             title: '内容类型',
@@ -158,7 +189,8 @@
             title: '文字内容',
             width: 400,
             key: 'content',
-            align: 'center'
+            align: 'center',
+            tooltip: true
           },
           {
             title: '图片',
@@ -180,7 +212,8 @@
           {
             title: '页面key',
             key: 'pageKey',
-            align: 'center'
+            align: 'center',
+            tooltip: true
           },
           {
             title: '操作',
@@ -226,6 +259,7 @@
     },
     mounted() {
       this.getList()
+      this.searchInfo.status = this.appList[0].appid
     },
     methods: {
       openModal(data) {
@@ -253,7 +287,8 @@
         }
         this.$api.wxSubscribeKfMsg.getList({
           current: num ? num : this.tab.page,
-          size: this.tab.pageSize
+          size: this.tab.pageSize,
+          appid: this.searchInfo.status,
         })
           .then(
             response => {
@@ -330,6 +365,16 @@
   .p-wxSubscribe {
     .-c-tips {
       color: #39f
+    }
+
+    .-search-select-text {
+      min-width: 70px;
+    }
+    .-search-selectOne {
+      width: 200px;
+      border: 1px solid #dcdee2;
+      border-radius: 4px;
+      margin-right: 20px;
     }
 
     .-c-course-wrap {
