@@ -143,7 +143,7 @@
       },
       toDetail(item1, item2) {
         this.$router.push({
-          name: 'courseInfo',
+          name: 'hkywhd_courseInfo',
           query: {
             ...this.paramsInfo,
             chapterName: item1.name,
