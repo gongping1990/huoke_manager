@@ -181,14 +181,14 @@
           {
             title: '订单类型',
             render: (h, params) => {
-              return h('div', this.orderStatus[params.row.orderStatus])
+              return h('div', this.orderTypeList[params.row.orderType+1].name)
             },
             align: 'center'
           },
           {
             title: '创建时间',
             render: (h, params) => {
-              return h('div', dayjs(+params.row.gmtCreate).format("YYYY-MM-DD HH:mm:ss"))
+              return h('div', dayjs(+params.row.gmtCreate).format("YYYY-MM-DD HH:mm"))
             },
             align: 'center'
           },
@@ -264,7 +264,7 @@
           current: this.tab.page,
           size: this.tab.pageSize,
           orderStatus: this.searchInfo.status,
-          orderType: this.searchInfo.orderType,
+          orderType: this.searchInfo.orderType === '-1' ? '' : this.searchInfo.orderType,
           createStart: this.getStartTime ? new Date(this.getStartTime).getTime() : "",
           createEnd: this.getEndTime ? new Date(this.getEndTime).getTime() : ""
         }
