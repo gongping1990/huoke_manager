@@ -79,7 +79,7 @@
     </div>
 
     <div v-if="isOpenWordModal">
-      <word-modal @closeWordModal="closeWord"></word-modal>
+      <word-modal @closeWordModal="closeWord" :type="1"></word-modal>
     </div>
 
     <div v-if="isOpenImgModal">

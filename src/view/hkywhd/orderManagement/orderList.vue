@@ -13,7 +13,7 @@
         <Col :span="3" class="g-t-left">
           <div class="g-flex-a-j-center">
             <div class="-search-select-text">订单类型：</div>
-            <Select v-model="searchInfo.status" @on-change="selectChange" class="-search-selectOne">
+            <Select v-model="searchInfo.orderType" @on-change="selectChange" class="-search-selectOne">
               <Option v-for="(item,index) in orderTypeList" :label="item.name" :value="item.id" :key="index"></Option>
             </Select>
           </div>
@@ -90,6 +90,7 @@
         },
         searchInfo: {
           status: '-1',
+          orderType: '-1',
           type: '-1',
           antistop: ''
         },
@@ -128,7 +129,7 @@
           },
           {
             name: '邀请好友解锁课程',
-            id: '10'
+            id: '1'
           }
         ],
         orderType: ['单独购买', '团体拼课', '好友助力','秒杀订单'],
@@ -263,6 +264,7 @@
           current: this.tab.page,
           size: this.tab.pageSize,
           orderStatus: this.searchInfo.status,
+          orderType: this.searchInfo.orderType,
           createStart: this.getStartTime ? new Date(this.getStartTime).getTime() : "",
           createEnd: this.getEndTime ? new Date(this.getEndTime).getTime() : ""
         }

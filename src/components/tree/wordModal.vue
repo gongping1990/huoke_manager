@@ -20,7 +20,7 @@
 <script>
   export default {
     name: 'wordModal',
-    props: ['dataProp'],
+    props: ['dataProp', 'type'],
     data() {
       return {
         isOpenModal: false,
@@ -55,7 +55,8 @@
         this.$refs[name].validate((valid) => {
           if (valid) {
             this.isSending = true
-            this.$api.mission.addWord(this.addInfo)
+            let params = this.type == '1' ? this.$api.hkywhdMission.addWord : this.$api.mission.addWord
+            params(this.addInfo)
               .then(
                 response => {
                   if (response.data.code == '200') {
