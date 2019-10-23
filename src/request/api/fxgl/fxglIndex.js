@@ -3,6 +3,7 @@ import jsdDistributionOrder from "./distributionOrder";
 import jsdDistributorAccount from "./distributorAccount";
 import jsdCustomer from "./customer";
 import jsdCourseType from "./courseType";
+import fxglDataCenter from "./dataCenter";
 
 
 export const fxglIndex = {
@@ -10,5 +11,6 @@ export const fxglIndex = {
   jsdDistributionOrder,
   jsdDistributorAccount,
   jsdCustomer,
-  jsdCourseType
+  jsdCourseType,
+  fxglDataCenter
 }

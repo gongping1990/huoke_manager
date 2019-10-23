@@ -43,6 +43,9 @@
           <FormItem label="活动时限" prop="activityTimelimit">
             <Input type="text" v-model="activeInfo.activityTimelimit" placeholder="请输入活动时限（小时）" :disabled="!isShowEdit"></Input>
           </FormItem>
+          <FormItem label="解锁课时数" >
+            <Input type="text" v-model="activeInfo.unlockNums" placeholder="请输入解锁课时数" :disabled="!isShowEdit"></Input>
+          </FormItem>
           <FormItem>
             <div class="-c-flex">
               <Button @click="isShowEdit = true" ghost type="primary" class="-c-btn" v-if="!isShowEdit">进入编辑</Button>
@@ -461,6 +464,8 @@
           return this.$Message.error('请输入邀请人数')
         } else if (!this.activeInfo.activityTimelimit) {
           return this.$Message.error('请输入活动时限')
+        } else if (!this.activeInfo.unlockNums) {
+          return this.$Message.error('请输入活动价解锁课时数')
         }
         this.isSending = true
         let promiseDate = this.activeInfo.id ? this.$api.activity.uptActivity({
