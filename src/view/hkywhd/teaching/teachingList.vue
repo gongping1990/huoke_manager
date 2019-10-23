@@ -23,16 +23,16 @@
       <div v-show="radioType === 2" >
         <Form class="g-t-left ivu-form-item-required -c-tab p-teach-form" ref="addInfo" :model="addInfo"
               :label-width="100">
+          <FormItem label="单独购价格" prop="ddgPrice">
+            <Input type="text" v-model="activeInfo.ddgPrice" placeholder="请输入单独购价格" :disabled="!isShowEdit"></Input>
+            <span class="-c-tips">* 精确到小数点后2位，如99.99</span>
+          </FormItem>
           <Form-item label="是否开启" class=" -c-form-item ">
             <Radio-group v-model="activeInfo.open">
               <Radio :label=1 :disabled="!isShowEdit">开启</Radio>
               <Radio :label=0 :disabled="!isShowEdit">关闭</Radio>
             </Radio-group>
           </Form-item>
-          <FormItem label="单独购价格" prop="ddgPrice">
-            <Input type="text" v-model="activeInfo.ddgPrice" placeholder="请输入单独购价格" :disabled="!isShowEdit"></Input>
-            <span class="-c-tips">* 精确到小数点后2位，如99.99</span>
-          </FormItem>
           <Form-item label="活动价格" prop="activityPrice">
             <Input type="text" v-model="activeInfo.activityPrice" placeholder="请输入活动价格" :disabled="!isShowEdit"></Input>
             <span class="-c-tips">* 精确到小数点后2位，如99.99</span>
