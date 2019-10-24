@@ -128,50 +128,71 @@
       dateTypesLine() {
         let arrayX = []
         for (let item of this.dataInfo) {
-          arrayX.push(item.day)
+          arrayX.push(item.date)
         }
         return arrayX
       },
       optionSeriesLine() {
         let dataList = {
-          orderUser: [],
-          payedMoney: [],
-          payedUser: [],
-          pv: [],
-          uv: []
+          promotionUserCount: [],
+          promotionEarningsUserCount: [],
+          promotionEarningsAmount: [],
+          directInviteShareCount: [],
+          groupInviteShareCount: [],
+          posterInviteShareCount: [],
+          secondTaskFinishCount: [],
+          firstTaskFinishCount: [],
         }
         for (let item of this.dataInfo) {
-          dataList.orderUser.push(item.orderUser)
-          dataList.payedMoney.push(item.payedMoney)
-          dataList.payedUser.push(item.payedUser)
-          dataList.pv.push(item.pv)
-          dataList.uv.push(item.uv)
+          dataList.promotionUserCount.push(item.promotionUserCount)
+          dataList.promotionEarningsUserCount.push(item.promotionEarningsUserCount)
+          dataList.promotionEarningsAmount.push(item.promotionEarningsAmount)
+          dataList.directInviteShareCount.push(item.directInviteShareCount)
+          dataList.groupInviteShareCount.push(item.groupInviteShareCount)
+          dataList.posterInviteShareCount.push(item.posterInviteShareCount)
+          dataList.secondTaskFinishCount.push(item.secondTaskFinishCount)
+          dataList.firstTaskFinishCount.push(item.firstTaskFinishCount)
         }
         let optionSeriesLine = [
           {
-            name: '商品页面访问数量',
+            name: '推广人数',
             type: 'line',
-            data: dataList.pv
+            data: dataList.promotionUserCount
           },
           {
-            name: '商品页面访问用户',
+            name: '推广获益人数',
             type: 'line',
-            data: dataList.uv
+            data: dataList.promotionEarningsUserCount
           },
           {
-            name: '下单用户',
+            name: '推广收益',
             type: 'line',
-            data: dataList.orderUser
+            data: dataList.promotionEarningsAmount
           },
           {
-            name: '付费用户',
+            name: '直接分享次数',
             type: 'line',
-            data: dataList.payedUser
+            data: dataList.directInviteShareCount
           },
           {
-            name: '付费金额',
+            name: '开团分享次数',
             type: 'line',
-            data: dataList.payedMoney
+            data: dataList.groupInviteShareCount
+          },
+          {
+            name: '海报分享次数',
+            type: 'line',
+            data: dataList.posterInviteShareCount
+          },
+          {
+            name: '完成1阶任务人数',
+            type: 'line',
+            data: dataList.firstTaskFinishCount
+          },
+          {
+            name: '完成2阶任务人数',
+            type: 'line',
+            data: dataList.secondTaskFinishCount
           }
         ]
         return optionSeriesLine
@@ -234,23 +255,35 @@
           legend: {
             data: [
               {
-                name: '商品页面访问数量',
+                name: '推广人数',
                 icon: 'circle'
               },
               {
-                name: '商品页面访问用户',
+                name: '推广获益人数',
                 icon: 'circle'
               },
               {
-                name: '下单用户',
+                name: '推广收益',
                 icon: 'circle'
               },
               {
-                name: '付费用户',
+                name: '直接分享次数',
                 icon: 'circle'
               },
               {
-                name: '付费金额',
+                name: '开团分享次数',
+                icon: 'circle'
+              },
+              {
+                name: '海报分享次数',
+                icon: 'circle'
+              },
+              {
+                name: '完成1阶任务人数',
+                icon: 'circle'
+              },
+              {
+                name: '完成2阶任务人数',
                 icon: 'circle'
               }
             ],
@@ -323,51 +356,51 @@
         this.titleList = [
           {
             name: '累计推广人数',
-            num: this.totalInfo.pv,
+            num: '0',
             todayName: '今日推广人数',
-            todayNum: '100'
+            todayNum: this.totalInfo.promotionUserCount || 0
           },
           {
             name: '累计推广获益人数',
-            num: this.totalInfo.pv,
+            num: '0',
             todayName: '今日推广获益人数',
-            todayNum: '100'
+            todayNum: this.totalInfo.promotionEarningsUserCount || 0
           },
           {
             name: '累计推广收益',
-            num: this.totalInfo.pv,
+            num: this.totalInfo.allPromotionEarningsAmount || 0,
             todayName: '今日推广收益',
-            todayNum: '100'
+            todayNum: this.totalInfo.promotionEarningsAmount || 0
           },
           {
             name: '直接邀请累计分享次数',
-            num: this.totalInfo.uv,
+            num: this.totalInfo.allDirectInviteShareCount || 0,
             todayName: '直接邀请今日分享次数',
-            todayNum: '100'
+            todayNum: this.totalInfo.directInviteShareCount || 0
           },
           {
             name: '开团邀请累计分享次数',
-            num: this.totalInfo.orderUser,
+            num: this.totalInfo.allGroupInviteShareCount || 0,
             todayName: '开团邀请今日分享次数',
-            todayNum: '100'
+            todayNum: this.totalInfo.groupInviteShareCount || 0
           },
           {
             name: '海报邀请累计分享次数',
-            num: this.totalInfo.orderUser,
+            num: this.totalInfo.allPosterInviteShareCount || 0,
             todayName: '海报邀请今日分享次数',
-            todayNum: '100'
+            todayNum: this.totalInfo.posterInviteShareCount || 0
           },
           {
             name: '累计完成1阶新手任务人数',
-            num: this.totalInfo.orderUser,
+            num: this.totalInfo.allFirstTaskFinishCount || 0,
             todayName: '今日完成1阶新手任务人数',
-            todayNum: '100'
+            todayNum: this.totalInfo.firstTaskFinishCount || 0
           },
           {
             name: '累计完成2阶新手任务人数',
-            num: this.totalInfo.orderUser,
+            num: this.totalInfo.allSecondTaskFinishCount || 0,
             todayName: '今日完成2阶新手任务人数',
-            todayNum: '100'
+            todayNum: this.totalInfo.secondTaskFinishCount || 0
           }
         ]
       }
@@ -421,6 +454,10 @@
         .-col-name {
           padding: 18px 0 18px 15px ;
           min-width: 100px;
+          max-width: 100%;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          overflow: hidden;
           border-bottom: 1px solid #E9EAEC;
           font-size:16px;
           font-weight:500;

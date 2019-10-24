@@ -308,45 +308,45 @@
         this.titleList = [
           {
             name: '累计页面访问量',
-            num: this.totalInfo.allPv,
+            num: this.totalInfo.allPv || 0,
             todayName: '今日页面访问量',
-            todayNum: this.totalInfo.pv
+            todayNum: this.totalInfo.pv || 0
           },
           {
             name: '累计访问用户',
-            num: this.totalInfo.allUv,
+            num: this.totalInfo.allUv || 0,
             todayName: '今日访问用户',
-            todayNum: this.totalInfo.uv
+            todayNum: this.totalInfo.uv || 0
           },
           {
             name: '累计下单用户',
-            num: this.totalInfo.allOrderUser,
+            num: this.totalInfo.allOrderUser || 0,
             todayName: '今日下单用户',
-            todayNum: this.totalInfo.orderUser
+            todayNum: this.totalInfo.orderUser || 0
           },
           {
             name: '累计付费用户',
-            num: this.totalInfo.allPayUser,
+            num: this.totalInfo.allPayUser || 0,
             todayName: '今日付费用户',
-            todayNum: this.totalInfo.payUser
+            todayNum: this.totalInfo.payUser || 0
           },
           {
             name: '累计下单数',
-            num: this.totalInfo.allOrderCount,
+            num: this.totalInfo.allOrderCount || 0,
             todayName: '今日下单数',
-            todayNum: this.totalInfo.orderCount
+            todayNum: this.totalInfo.orderCount || 0
           },
           {
             name: '累计支付成功订单数',
-            num: this.totalInfo.allSuccessOrderCount,
+            num: this.totalInfo.allSuccessOrderCount || 0,
             todayName: '今日支付成功订单数',
-            todayNum: this.totalInfo.successOrderCount
+            todayNum: this.totalInfo.successOrderCount || 0
           },
           {
             name: '累计付费金额',
-            num: this.totalInfo.allPayAmount,
+            num: this.totalInfo.allPayAmount || 0,
             todayName: '今日付费金额',
-            todayNum: this.totalInfo.payAmount
+            todayNum: this.totalInfo.payAmount || 0
           }
         ]
       }

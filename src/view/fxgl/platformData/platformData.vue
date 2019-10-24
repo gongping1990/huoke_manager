@@ -2,7 +2,7 @@
   <div class="p-platformData">
     <Row class="g-search">
       <Col :span="3" class="g-flex-a-j-center -s-radio">
-        <Radio-group v-model="radioType" type="button" @on-change="changeChannel">
+        <Radio-group v-model="radioType" type="button" @on-change="getDataInfo">
           <Radio :label=0>用户数据</Radio>
           <Radio :label=1>支出数据</Radio>
         </Radio-group>
@@ -103,7 +103,7 @@
     components: {DatePickerTemplate},
     data() {
       return {
-        radioType: 0,
+        radioType: 1,
         selectTypeTwo: 1,
         selectTypeThree: 1,
         dateOptionOne: {
@@ -117,7 +117,6 @@
         },
         isFetching: false,
         dataInfo: '',
-        todayInfo: '',
         totalInfo: '',
         selectTime: new Date(new Date().getTime() - 24 * 60 * 60 * 1000),
         getStartTimeThree: '',
@@ -134,103 +133,250 @@
       dateTypesLine() {
         let arrayX = []
         for (let item of this.dataInfo) {
-          arrayX.push(item.day)
+          arrayX.push(item.date)
         }
         return arrayX
       },
       optionSeriesLine() {
         let dataList = {
-          orderUser: [],
-          payedMoney: [],
-          payedUser: [],
-          pv: [],
-          uv: []
+          franchiseeIntroducePv: [],
+          franchiseeIntroduceUv: [],
+          promoterIntroducePv: [],
+          promoterIntroduceUv: [],
+          promoterCenterPv: [],
+          promoterCenterUv: [],
+          franchiseeRegisterCount: [],
+          promoterRegisterCount: [],
         }
         for (let item of this.dataInfo) {
-          dataList.orderUser.push(item.orderUser)
-          dataList.payedMoney.push(item.payedMoney)
-          dataList.payedUser.push(item.payedUser)
-          dataList.pv.push(item.pv)
-          dataList.uv.push(item.uv)
+          dataList.franchiseeIntroducePv.push(item.franchiseeIntroducePv)
+          dataList.franchiseeIntroduceUv.push(item.franchiseeIntroduceUv)
+          dataList.promoterIntroducePv.push(item.promoterIntroducePv)
+          dataList.promoterIntroduceUv.push(item.promoterIntroduceUv)
+          dataList.promoterCenterPv.push(item.promoterCenterPv)
+          dataList.promoterCenterUv.push(item.promoterCenterUv)
+          dataList.franchiseeRegisterCount.push(item.franchiseeRegisterCount)
+          dataList.promoterRegisterCount.push(item.promoterRegisterCount)
         }
         let optionSeriesLine = [
           {
-            name: '商品页面访问数量',
+            name: '加盟商访问量',
             type: 'line',
-            data: dataList.pv
+            data: dataList.franchiseeIntroducePv
           },
           {
-            name: '商品页面访问用户',
+            name: '加盟商访问用户',
             type: 'line',
-            data: dataList.uv
+            data: dataList.franchiseeIntroduceUv
           },
           {
-            name: '下单用户',
+            name: '推广员访问量',
             type: 'line',
-            data: dataList.orderUser
+            data: dataList.promoterIntroducePv
           },
           {
-            name: '付费用户',
+            name: '推广员访问用户',
             type: 'line',
-            data: dataList.payedUser
+            data: dataList.promoterIntroduceUv
           },
           {
-            name: '付费金额',
+            name: '推广中心访问量',
             type: 'line',
-            data: dataList.payedMoney
+            data: dataList.promoterCenterPv
+          },
+          {
+            name: '推广中心访问用户',
+            type: 'line',
+            data: dataList.promoterCenterUv
+          },
+          {
+            name: '加盟商注册数',
+            type: 'line',
+            data: dataList.franchiseeRegisterCount
+          },
+          {
+            name: '推广人注册数',
+            type: 'line',
+            data: dataList.promoterRegisterCount
           }
         ]
         return optionSeriesLine
       },
+
+      optionSeriesLineTwo() {
+        let dataList = {
+          withdrawCount: [],
+          withdrawUserCount: [],
+          withdrawAmount: [],
+          franchiseeWithdrawCount: [],
+          franchiseeWithdrawUserCount: [],
+          franchiseeWithdrawAmount: [],
+          promoterWithdrawCount: [],
+          promoterWithdrawUserCount: [],
+          promoterWithdrawAmount: [],
+        }
+        for (let item of this.dataInfo) {
+          dataList.withdrawCount.push(item.withdrawCount)
+          dataList.withdrawUserCount.push(item.withdrawUserCount)
+          dataList.withdrawAmount.push(item.withdrawAmount)
+          dataList.franchiseeWithdrawCount.push(item.franchiseeWithdrawCount)
+          dataList.franchiseeWithdrawUserCount.push(item.franchiseeWithdrawUserCount)
+          dataList.franchiseeWithdrawAmount.push(item.franchiseeWithdrawAmount)
+          dataList.promoterWithdrawCount.push(item.promoterWithdrawCount)
+          dataList.promoterWithdrawUserCount.push(item.promoterWithdrawUserCount)
+          dataList.promoterWithdrawAmount.push(item.promoterWithdrawAmount)
+        }
+        let optionSeriesLineTwo = [
+          {
+            name: '提现笔数',
+            type: 'line',
+            data: dataList.withdrawCount
+          },
+          {
+            name: '提现人数',
+            type: 'line',
+            data: dataList.withdrawUserCount
+          },
+          {
+            name: '提现金额',
+            type: 'line',
+            data: dataList.withdrawAmount
+          },
+          {
+            name: '加盟商提现笔数',
+            type: 'line',
+            data: dataList.franchiseeWithdrawCount
+          },
+          {
+            name: '加盟商提现人数',
+            type: 'line',
+            data: dataList.franchiseeWithdrawUserCount
+          },
+          {
+            name: '加盟商提现金额',
+            type: 'line',
+            data: dataList.franchiseeWithdrawAmount
+          },
+          {
+            name: '推广人提现笔数',
+            type: 'line',
+            data: dataList.promoterWithdrawCount
+          },
+          {
+            name: '推广人提现人数',
+            type: 'line',
+            data: dataList.promoterWithdrawUserCount
+          },
+          {
+            name: '推广人提现金额',
+            type: 'line',
+            data: dataList.promoterWithdrawAmount
+          }
+        ]
+        return optionSeriesLineTwo
+      },
+
+      legendData () {
+        let dataList = [
+          {
+            name: '加盟商访问量',
+            icon: 'circle'
+          },
+          {
+            name: '加盟商访问用户',
+            icon: 'circle'
+          },
+          {
+            name: '推广员访问量',
+            icon: 'circle'
+          },
+          {
+            name: '推广员访问用户',
+            icon: 'circle'
+          },
+          {
+            name: '推广中心访问量',
+            icon: 'circle'
+          },
+          {
+            name: '推广中心访问用户',
+            icon: 'circle'
+          },
+          {
+            name: '加盟商注册数',
+            icon: 'circle'
+          },
+          {
+            name: '推广人注册数',
+            icon: 'circle'
+          }
+        ]
+
+        let dataListTwo = [
+          {
+            name: '提现笔数',
+            icon: 'circle'
+          },
+          {
+            name: '提现人数',
+            icon: 'circle'
+          },
+          {
+            name: '提现金额',
+            icon: 'circle'
+          },
+          {
+            name: '加盟商提现笔数',
+            icon: 'circle'
+          },
+          {
+            name: '加盟商提现人数',
+            icon: 'circle'
+          },
+          {
+            name: '加盟商提现金额',
+            icon: 'circle'
+          },
+          {
+            name: '推广人提现笔数',
+            icon: 'circle'
+          },
+          {
+            name: '推广人提现人数',
+            icon: 'circle'
+          },
+          {
+            name: '推广人提现金额',
+            icon: 'circle'
+          }
+        ]
+
+        return  this.radioType == '0' ? dataList : dataListTwo
+      }
     },
     mounted() {
-      this.getChannelList()
+      this.getDataInfo()
     },
     methods: {
       changeTimeTwo () {
         if(this.selectTypeTwo == 1) {
-          this.getTotalInfo()
+          this.getDataInfo()
         }
       },
       changeTimeThree () {
         if(this.selectTypeThree == 1) {
-          this.getList()
+          this.getDataInfo()
         }
-      },
-      changeChannel () {
-        this.getTotalInfo()
-        this.getTodayInfo()
-        this.getList()
       },
       changeDateTwo(data) {
         this.getStartTimeTwo = data.startTime
         this.getEndTimeTwo = data.endTime
-        this.getTotalInfo()
+        this.getDataInfo()
       },
       changeDateThree(data) {
         this.getStartTimeThree = data.startTime
         this.getEndTimeThree = data.endTime
-        this.getList()
-      },
-      getChannelList() {
-        this.$api.composition.listByChannel({
-          current: 1,
-          size: 10000
-        })
-          .then(
-            response => {
-              this.channelList = response.data.resultData.records;
-              this.channelList.unshift({
-                id: '0',
-                name: '全部'
-              })
-              this.getList()
-              this.getTodayInfo()
-              this.getTotalInfo()
-            })
-          .finally(() => {
-            this.isFetching = false
-          })
+        this.getDataInfo()
       },
       drawLine() {
         let self = this;
@@ -249,28 +395,7 @@
             }
           },
           legend: {
-            data: [
-              {
-                name: '商品页面访问数量',
-                icon: 'circle'
-              },
-              {
-                name: '商品页面访问用户',
-                icon: 'circle'
-              },
-              {
-                name: '下单用户',
-                icon: 'circle'
-              },
-              {
-                name: '付费用户',
-                icon: 'circle'
-              },
-              {
-                name: '付费金额',
-                icon: 'circle'
-              }
-            ],
+            data: this.legendData,
             right: '5%'
           },
           xAxis: {
@@ -288,7 +413,7 @@
           yAxis: {
             name: '单位（人）'
           },
-          series: this.optionSeriesLine,
+          series: this.radioType == '0' ? this.optionSeriesLine : this.optionSeriesLineTwo,
           dataZoom: [
             {
               type: "slider"
@@ -310,129 +435,169 @@
           zlevel: 0
         })
 
-        this.isFetching = true
-        this.$api.composition.userStatisticsLineChart({
-          chId: this.radioType,
-          begin: this.getStartTimeThree && new Date(this.getStartTimeThree).getTime(),
-          end: this.getEndTimeThree && new Date(this.getEndTimeThree).getTime()
-        })
-          .then(
-            response => {
-              this.dataInfo = response.data.resultData;
-              this.drawLine()
-            })
-          .finally(() => {
-            this.isFetching = false
-          })
+        this.drawLine()
       },
-      getTodayInfo() {
-        this.$api.composition.userStatisticsToday({
-          chId: this.radioType
-        }).then(
-          response => {
-            this.todayInfo = response.data.resultData;
-            this.initData()
-          })
-      },
-      getTotalInfo() {
-        this.$api.composition.userStatisticsTotal({
-          chId: this.radioType,
-          begin: this.getStartTimeTwo && new Date(this.getStartTimeTwo).getTime(),
-          end: this.getEndTimeTwo && new Date(this.getEndTimeTwo).getTime()
+      getDataInfo() {
+        let paramsUrl = this.radioType == '1' ? this.$api.fxglDataCenter.getPlatformOutData : this.$api.fxglDataCenter.getPlatformUserData
+        paramsUrl({
+          startTime: this.getStartTimeTwo && new Date(this.getStartTimeTwo).getTime(),
+          startTime1: this.getStartTimeThree && new Date(this.getStartTimeThree).getTime(),
+          endTime: this.getEndTimeTwo && new Date(this.getEndTimeTwo).getTime(),
+          endTime1: this.getEndTimeThree && new Date(this.getEndTimeThree).getTime()
         }).then(
           response => {
             this.totalInfo = response.data.resultData;
+            this.dataInfo = this.totalInfo.list
+            this.getList()
             this.initData()
           })
       },
       initData() {
-        this.titleList = [
+        let userData = [
           {
             name: '加盟商累计访问量',
-            num: this.totalInfo.pv,
-            todayName: '今日页面访问量',
-            todayNum: '1000'
+            num: this.totalInfo.franchiseeIntroduceTotalPv,
+            todayName: '今日加盟商访问量',
+            todayNum: this.totalInfo.franchiseeIntroducePv
           },
           {
             name: '加盟商累计访问用户',
-            num: this.totalInfo.uv,
-            todayName: '今日访问用户',
-            todayNum: '1000'
+            num: this.totalInfo.franchiseeIntroduceTotalUv,
+            todayName: '今日加盟商访问用户',
+            todayNum: this.totalInfo.franchiseeIntroduceUv
           },
           {
             name: '推广员累计访问量',
-            num: this.totalInfo.uv,
-            todayName: '今日访问用户',
-            todayNum: '1000'
+            num: this.totalInfo.promoterIntroduceTotalPv,
+            todayName: '今日推广员访问量',
+            todayNum: this.totalInfo.promoterIntroducePv
           },
           {
             name: '推广员累计访问用户',
-            num: this.totalInfo.uv,
-            todayName: '今日加盟商注册数',
-            todayNum: '1000'
+            num: this.totalInfo.promoterIntroduceTotalUv,
+            todayName: '今日加推广员访问用户',
+            todayNum: this.totalInfo.promoterIntroduceUv
           },
           {
             name: '推广中心累计访问量',
-            num: this.totalInfo.orderUser,
-            todayName: '今日推广人注册数',
-            todayNum: '1000'
+            num: this.totalInfo.promoterCenterTotalPv,
+            todayName: '今日推广中心访问量',
+            todayNum: this.totalInfo.promoterCenterPv
           },
           {
             name: '推广中心累计访问用户',
-            num: this.totalInfo.orderUser,
-            todayName: '今日推广人注册数',
-            todayNum: '1000'
+            num: this.totalInfo.promoterCenterTotalUv,
+            todayName: '今日推广中心访问用户',
+            todayNum: this.totalInfo.promoterCenterUv
           },
           {
             name: '累计加盟商注册数',
-            num: this.totalInfo.orderUser,
-            todayName: '今日推广人注册数',
-            todayNum: '1000'
+            num: this.totalInfo.franchiseeRegisterTotalCount,
+            todayName: '今日加盟商注册数',
+            todayNum: this.totalInfo.franchiseeRegisterCount
           },
           {
             name: '累计推广人注册数',
-            num: this.totalInfo.orderUser,
+            num: this.totalInfo.promoterRegisterTotalCount,
             todayName: '今日推广人注册数',
-            todayNum: '1000'
+            todayNum: this.totalInfo.promoterRegisterCount
           }
         ]
 
+        let payData = [
+          {
+            name: '累计提现笔数',
+            num: this.totalInfo.withdrawTotalCount,
+            todayName: '今日提现笔数',
+            todayNum: this.totalInfo.withdrawCount
+          },
+          {
+            name: '累计提现金额',
+            num: this.totalInfo.withdrawTotalAmount,
+            todayName: '今日提现金额',
+            todayNum: this.totalInfo.withdrawAmount
+          },
+          {
+            name: '累计提现人数',
+            num: '0',
+            todayName: '今日提现人数',
+            todayNum: this.totalInfo.withdrawUserCount
+          },
+          {
+            name: '加盟商累计提现笔数',
+            num: this.totalInfo. franchiseeWithdrawTotalCount,
+            todayName: '加盟商今日提现笔数',
+            todayNum: this.totalInfo.franchiseeWithdrawCount
+          },
+          {
+            name: '加盟商累计提现金额',
+            num: this.totalInfo.franchiseeWithdrawTotalAmount,
+            todayName: '加盟商今日提现金额',
+            todayNum: this.totalInfo.franchiseeWithdrawAmount
+          },
+          {
+            name: '加盟商累计提现人数',
+            num: '0',
+            todayName: '加盟商今日提现人数',
+            todayNum: this.totalInfo.franchiseeWithdrawUserCount
+          },
+          {
+            name: '推广人累计提现笔数',
+            num: this.totalInfo.promoterWithdrawTotalCount,
+            todayName: '推广人今日提现笔数',
+            todayNum: this.totalInfo.promoterWithdrawCount
+          },
+          {
+            name: '推广人累计提现金额',
+            num: this.totalInfo.promoterWithdrawTotalAmount,
+            todayName: '推广人今日提现金额',
+            todayNum: this.totalInfo.promoterWithdrawAmount
+          },
+          {
+            name: '推广人累计提现人数',
+            num: '0',
+            todayName: '推广人今日提现人数',
+            todayNum: this.totalInfo.promoterWithdrawUserCount
+          }
+        ]
+
+        this.titleList = this.radioType == '0' ? userData : payData
         this.titleListThree = [
           {
             name: '当前收益余额',
-            num: this.todayInfo.pv
+            num: this.totalInfo.nowAllAmount
           },
           {
             name: '当前可提现金额',
-            num: this.todayInfo.pv
+            num: this.totalInfo.nowAllBalance
           },
           {
             name: '当前冻结金额',
-            num: this.todayInfo.uv
+            num: this.totalInfo.nowAllBlockingAmount
           },
           {
             name: '加盟商当前收益余额',
-            num: this.todayInfo.orderUser
+            num: this.totalInfo.franchiseeNowAllAmount
           },
           {
             name: '加盟商当前可提现金额',
-            num: this.todayInfo.orderUser
+            num: this.totalInfo.franchiseeNowAllBalance
           },
           {
             name: '加盟商当前冻结金额',
-            num: this.todayInfo.orderUser
+            num: this.totalInfo.franchiseeNowAllBlockingAmount
           },
           {
             name: '推广人当前收益余额',
-            num: this.todayInfo.orderUser
+            num: this.totalInfo.promoterNowAllAmount
           },
           {
             name: '推广人当前可提现金额',
-            num: this.todayInfo.orderUser
+            num: this.totalInfo.promoterNowAllBalance
           },
           {
             name: '推广人当前冻结金额',
-            num: this.todayInfo.orderUser
+            num: this.totalInfo.promoterNowAllBlockingAmount
           }
         ]
       }
@@ -485,6 +650,10 @@
         .-col-name {
           padding: 18px 0 18px 15px ;
           min-width: 100px;
+          max-width: 100%;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          overflow: hidden;
           border-bottom: 1px solid #E9EAEC;
           font-size:16px;
           font-weight:500;
