@@ -130,7 +130,7 @@
             appid: 'wx9280dee9296558be'
           },
           {
-            name: '小学作文网',
+            name: '小学作文营',
             appid: 'wx5239f8052b47a50d'
           },
           {
