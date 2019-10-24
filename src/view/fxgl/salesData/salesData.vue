@@ -125,22 +125,22 @@
       dateTypesLine() {
         let arrayX = []
         for (let item of this.dataInfo) {
-          arrayX.push(item.day)
+          arrayX.push(item.date)
         }
         return arrayX
       },
       optionSeriesLine() {
         let dataList = {
           orderUser: [],
-          payedMoney: [],
-          payedUser: [],
+          payAmount: [],
+          payUser: [],
           pv: [],
           uv: []
         }
         for (let item of this.dataInfo) {
           dataList.orderUser.push(item.orderUser)
-          dataList.payedMoney.push(item.payedMoney)
-          dataList.payedUser.push(item.payedUser)
+          dataList.payAmount.push(item.payAmount)
+          dataList.payUser.push(item.payUser)
           dataList.pv.push(item.pv)
           dataList.uv.push(item.uv)
         }
@@ -163,12 +163,12 @@
           {
             name: '付费用户',
             type: 'line',
-            data: dataList.payedUser
+            data: dataList.payUser
           },
           {
             name: '付费金额',
             type: 'line',
-            data: dataList.payedMoney
+            data: dataList.payAmount
           }
         ]
         return optionSeriesLine
@@ -308,45 +308,45 @@
         this.titleList = [
           {
             name: '累计页面访问量',
-            num: this.totalInfo.pv,
+            num: this.totalInfo.allPv,
             todayName: '今日页面访问量',
-            todayNum: '100'
+            todayNum: this.totalInfo.pv
           },
           {
             name: '累计访问用户',
-            num: this.totalInfo.uv,
+            num: this.totalInfo.allUv,
             todayName: '今日访问用户',
-            todayNum: '100'
+            todayNum: this.totalInfo.uv
           },
           {
             name: '累计下单用户',
-            num: this.totalInfo.orderUser,
+            num: this.totalInfo.allOrderUser,
             todayName: '今日下单用户',
-            todayNum: '100'
+            todayNum: this.totalInfo.orderUser
           },
           {
             name: '累计付费用户',
-            num: this.totalInfo.orderUser,
+            num: this.totalInfo.allPayUser,
             todayName: '今日付费用户',
-            todayNum: '100'
+            todayNum: this.totalInfo.payUser
           },
           {
             name: '累计下单数',
-            num: this.totalInfo.orderUser,
+            num: this.totalInfo.allOrderCount,
             todayName: '今日下单数',
-            todayNum: '100'
+            todayNum: this.totalInfo.orderCount
           },
           {
             name: '累计支付成功订单数',
-            num: this.totalInfo.orderUser,
+            num: this.totalInfo.allSuccessOrderCount,
             todayName: '今日支付成功订单数',
-            todayNum: '100'
+            todayNum: this.totalInfo.successOrderCount
           },
           {
             name: '累计付费金额',
-            num: this.totalInfo.orderUser,
+            num: this.totalInfo.allPayAmount,
             todayName: '今日付费金额',
-            todayNum: '100'
+            todayNum: this.totalInfo.payAmount
           }
         ]
       }
