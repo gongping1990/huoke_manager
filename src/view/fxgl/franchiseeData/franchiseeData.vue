@@ -3,10 +3,8 @@
     <Row class="g-search">
       <Col :span="3" class="g-flex-a-j-center -s-radio">
         <div class="-search-select-text-two">课程名称</div>
-        <Select v-model="searchInfo.name" @on-change="changeChannel" class="-search-selectOne">
-          <Option label="全部" value="-1"></Option>
-          <Option label="小语轻作文" value="7"></Option>
-          <Option label="每日一首古诗词" value="8"></Option>
+        <Select v-model="searchInfo.courseId" @on-change="getTotalInfo" class="-search-selectOne">
+          <Option v-for="(item,index) of courseList" :label="item.courseName" :value="item.courseId"  :key="index" ></Option>
         </Select>
       </Col>
     </Row>
@@ -90,10 +88,9 @@
     data() {
       return {
         searchInfo: {
-          name: '-1',
-          mode: '-1'
+          courseId: ''
         },
-        radioType: '0',
+        courseList: [],
         selectTypeTwo: 1,
         selectTypeThree: 1,
         dateOptionOne: {
@@ -182,13 +179,8 @@
       },
       changeTimeThree () {
         if(this.selectTypeThree == 1) {
-          this.getList()
+          this.getTotalInfo()
         }
-      },
-      changeChannel () {
-        this.getTotalInfo()
-        this.getTodayInfo()
-        this.getList()
       },
       changeDateTwo(data) {
         this.getStartTimeTwo = data.startTime
@@ -198,22 +190,14 @@
       changeDateThree(data) {
         this.getStartTimeThree = data.startTime
         this.getEndTimeThree = data.endTime
-        this.getList()
+        this.getTotalInfo()
       },
       getChannelList() {
-        this.$api.composition.listByChannel({
-          current: 1,
-          size: 10000
-        })
+        this.$api.jsdDistributie.listByCourse()
           .then(
             response => {
-              this.channelList = response.data.resultData.records;
-              this.channelList.unshift({
-                id: '0',
-                name: '全部'
-              })
-              this.getList()
-              this.getTodayInfo()
+              this.courseList = response.data.resultData;
+              this.searchInfo.courseId = this.courseList[0].courseId
               this.getTotalInfo()
             })
           .finally(() => {
@@ -298,38 +282,20 @@
           zlevel: 0
         })
 
-        this.isFetching = true
-        this.$api.composition.userStatisticsLineChart({
-          chId: this.radioType,
-          begin: this.getStartTimeThree && new Date(this.getStartTimeThree).getTime(),
-          end: this.getEndTimeThree && new Date(this.getEndTimeThree).getTime()
-        })
-          .then(
-            response => {
-              this.dataInfo = response.data.resultData;
-              this.drawLine()
-            })
-          .finally(() => {
-            this.isFetching = false
-          })
-      },
-      getTodayInfo() {
-        this.$api.composition.userStatisticsToday({
-          chId: this.radioType
-        }).then(
-          response => {
-            this.todayInfo = response.data.resultData;
-            this.initData()
-          })
+        this.drawLine()
       },
       getTotalInfo() {
-        this.$api.composition.userStatisticsTotal({
-          chId: this.radioType,
-          begin: this.getStartTimeTwo && new Date(this.getStartTimeTwo).getTime(),
-          end: this.getEndTimeTwo && new Date(this.getEndTimeTwo).getTime()
+        this.$api.fxglDataCenter.getFranchiseeData({
+          courseId: this.searchInfo.courseId,
+          startTime: this.getStartTimeTwo && new Date(this.getStartTimeTwo).getTime(),
+          startTime1: this.getStartTimeThree && new Date(this.getStartTimeThree).getTime(),
+          endTime: this.getEndTimeTwo && new Date(this.getEndTimeTwo).getTime(),
+          endTime1: this.getEndTimeThree && new Date(this.getEndTimeThree).getTime()
         }).then(
           response => {
             this.totalInfo = response.data.resultData;
+            this.dataInfo = this.totalInfo.list
+            this.getList()
             this.initData()
           })
       },
