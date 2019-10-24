@@ -122,8 +122,12 @@
             appid: 'wxb6218459e8c63dbf'
           },
           {
-            name: '小学作文课',
+            name: '小学作文库',
             appid: 'wx86dd75af41172544'
+          },
+          {
+            name: '小学作文课',
+            appid: 'wx9280dee9296558be'
           },
           {
             name: '小学作文网',
