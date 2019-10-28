@@ -4,7 +4,7 @@
       <Row class="g-search">
         <Col :span="5" class="g-t-left">
           <div class="g-flex-a-j-center">
-            <div class="-search-select-text-two">是否关注获课网：</div>
+            <div class="-search-select-text-two">是否关注公众号：</div>
             <Select v-model="searchInfo.subscribe" @on-change="getList(1)" class="-search-selectOne">
               <Option value="-1" >全部</Option>
               <Option value="1" >是</Option>
