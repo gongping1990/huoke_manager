@@ -90,7 +90,7 @@
             key: 'phone'
           },
           {
-            title: '是否关注获课网',
+            title: '是否关注公众号',
             render: (h, params) => {
               return h('span', params.row.subscripbe ? '是' : '否')
             },
@@ -100,16 +100,6 @@
             title: '创建时间',
             key: 'creatTime',
             tooltip: true,
-            align: 'center'
-          },
-          {
-            title: '最长连续打卡时间',
-            key: 'longestCard',
-            align: 'center'
-          },
-          {
-            title: '连续打卡时间',
-            key: 'continuCard',
             align: 'center'
           },
           {

@@ -99,6 +99,9 @@ const jsdJob = {
   },
   getRuleStatus(params) {
     return axios.post(`/homework/job/getRuleStatus`, qs.stringify(params))
+  },
+  reviewReplyHomework(params) {
+    return axios.post(`/homework/job/reviewReplyHomework`, qs.stringify(params))
   }
 }
 

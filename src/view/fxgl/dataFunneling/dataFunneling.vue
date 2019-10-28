@@ -74,7 +74,7 @@
             <Option label='自定义' :value="2"></Option>
           </Select>
           <date-picker-template v-if="selectTypeTwo===2" :dataInfo="dateOption"
-                                @changeDate="changeDateTwo"></date-picker-template>
+                                @changeDate="changeDateThree"></date-picker-template>
         </div>
       </div>
 
@@ -265,7 +265,7 @@
       },
     },
     mounted() {
-      this.getChannelList()
+      this.getDataFunnel()
     },
     methods: {
       changeTime() {
@@ -301,10 +301,14 @@
         this.getEndTimeThree = data.endTime
         this.getList()
       },
-      getChannelList() {
-        this.$api.composition.listByChannel({
-          current: 1,
-          size: 10000
+      getDataFunnel() {
+        this.$api.fxglDataCenter.getDataFunnel({
+          startTime1: this.getStartTime && new Date(this.getStartTime).getTime(),
+          startTime2: this.getStartTimeTwo && new Date(this.getStartTimeTwo).getTime(),
+          startTime3: this.getStartTimeThree && new Date(this.getStartTimeThree).getTime(),
+          endTime1: this.getEndTime && new Date(this.getEndTime).getTime(),
+          endTime2: this.getEndTimeTwo && new Date(this.getEndTimeTwo).getTime(),
+          endTime3: this.getEndTimeThree && new Date(this.getEndTimeThree).getTime()
         })
           .then(
             response => {
