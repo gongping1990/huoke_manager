@@ -72,27 +72,30 @@
         columns: [
           {
             title: '课时名称',
-            key: 'lessonName'
+            key: 'lessonName',
+            align: 'center'
           },
           {
             title: '是否完成学习',
             render: (h, params) => {
               return h('div', [
-                h('div', params.row.studyNewword),
-                h('div', params.row.studyReaded),
-                h('div', params.row.studyCarefulRead)
+                h('div', `生字：${params.row.studyNewword ? '是' : '否'}`),
+                h('div', `朗读：${params.row.studyReaded ? '是' : '否'}`),
+                h('div', `精读：${params.row.studyCarefulRead ? '是' : '否'}`)
               ])
-            }
+            },
+            align: 'center'
           },
           {
             title: '是否通关',
             render: (h, params) => {
-              return h('div', [
-                h('div', params.row.clearanceNewword),
-                h('div', params.row.clearanceReaded),
-                h('div', params.row.clearanceCarefulRead)
+              return h('div',[
+                h('div', `生字：${params.row.clearanceNewword ? '是' : '否'}`),
+                h('div', `朗读：${params.row.clearanceReaded ? '是' : '否'}`),
+                h('div', `精读：${params.row.clearanceCarefulRead ? '是' : '否'}`)
               ])
-            }
+            },
+            align: 'center'
           }
         ],
       };

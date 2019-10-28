@@ -164,7 +164,7 @@
           .then(
             response => {
               this.todayInfo = response.data.resultData;
-              this.dataInfo = this.totalInfo.list
+              this.dataInfo = this.todayInfo.list
               this.getList()
               this.initData()
             })

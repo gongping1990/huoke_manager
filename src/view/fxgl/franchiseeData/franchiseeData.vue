@@ -119,50 +119,29 @@
       dateTypesLine() {
         let arrayX = []
         for (let item of this.dataInfo) {
-          arrayX.push(item.day)
+          arrayX.push(item.date)
         }
         return arrayX
       },
       optionSeriesLine() {
         let dataList = {
-          orderUser: [],
-          payedMoney: [],
-          payedUser: [],
-          pv: [],
-          uv: []
+          franchiseeInvitePrometerCount: [],
+          franchiseeEarnsAmount: []
         }
         for (let item of this.dataInfo) {
-          dataList.orderUser.push(item.orderUser)
-          dataList.payedMoney.push(item.payedMoney)
-          dataList.payedUser.push(item.payedUser)
-          dataList.pv.push(item.pv)
-          dataList.uv.push(item.uv)
+          dataList.franchiseeInvitePrometerCount.push(item.franchiseeInvitePrometerCount)
+          dataList.franchiseeEarnsAmount.push(item.franchiseeEarnsAmount)
         }
         let optionSeriesLine = [
           {
-            name: '商品页面访问数量',
+            name: '邀请推广人人数',
             type: 'line',
-            data: dataList.pv
+            data: dataList.franchiseeInvitePrometerCount
           },
           {
-            name: '商品页面访问用户',
+            name: '加盟商收益',
             type: 'line',
-            data: dataList.uv
-          },
-          {
-            name: '下单用户',
-            type: 'line',
-            data: dataList.orderUser
-          },
-          {
-            name: '付费用户',
-            type: 'line',
-            data: dataList.payedUser
-          },
-          {
-            name: '付费金额',
-            type: 'line',
-            data: dataList.payedMoney
+            data: dataList.franchiseeEarnsAmount
           }
         ]
         return optionSeriesLine
@@ -223,23 +202,11 @@
           legend: {
             data: [
               {
-                name: '商品页面访问数量',
+                name: '邀请推广人人数',
                 icon: 'circle'
               },
               {
-                name: '商品页面访问用户',
-                icon: 'circle'
-              },
-              {
-                name: '下单用户',
-                icon: 'circle'
-              },
-              {
-                name: '付费用户',
-                icon: 'circle'
-              },
-              {
-                name: '付费金额',
+                name: '加盟商收益',
                 icon: 'circle'
               }
             ],
@@ -303,15 +270,15 @@
         this.titleList = [
           {
             name: '累计邀请推广人人数',
-            num: this.totalInfo.pv,
+            num: this.totalInfo.allFranchiseeInvitePrometerCount,
             todayName: '今日邀请推广人人数',
-            todayNum: '100'
+            todayNum: this.totalInfo.franchiseeInvitePrometerCount
           },
           {
             name: '加盟商累计收益',
-            num: this.totalInfo.pv,
+            num: this.totalInfo.allFranchiseeEarnsAmount,
             todayName: '加盟商今日收益',
-            todayNum: '100'
+            todayNum: this.totalInfo.franchiseeEarnsAmount
           }
         ]
       }

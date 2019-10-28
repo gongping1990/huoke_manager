@@ -20,7 +20,7 @@
 
       <div class="-p-d-echart">
         <div class="-p-c-tip-wrap">
-          <div class="-item" :style="{'color': item.color}" v-for="(item, index) of optionSeriesLine" :key="item.value">
+          <div class="-item" :style="{'color': item.color}" v-for="(item, index) of optionSeriesLine" :key="index">
             <div class="-item-div">
               <div>{{item.name}}</div>
               <div>{{item.text}}</div>
@@ -50,7 +50,7 @@
 
       <div class="-p-d-echart">
         <div class="-p-c-tip-wrap">
-          <div class="-item -item-two" :style="{'color': item.color}" v-for="(item, index) of optionSeriesLineTwo" :key="item.value">
+          <div class="-item -item-two" :style="{'color': item.color}" v-for="(item, index) of optionSeriesLineTwo" :key="index">
             <div class="-item-div">
               <div>{{item.name}}</div>
               <div>{{item.text}}</div>
@@ -80,7 +80,7 @@
 
       <div class="-p-d-echart">
         <div class="-p-c-tip-wrap">
-          <div class="-item" :style="{'color': item.color}" v-for="(item, index) of optionSeriesLineThree" :key="item.value">
+          <div class="-item" :style="{'color': item.color}" v-for="(item, index) of optionSeriesLineThree" :key="index">
             <div class="-item-div">
               <div>{{item.name}}</div>
               <div>{{item.text}}</div>
@@ -139,83 +139,52 @@
       }
     },
     computed: {
-      dateTypesLine() {
-        let arrayX = []
-        for (let item of this.dataInfo) {
-          arrayX.push(item.day)
-        }
-        return arrayX
-      },
       optionSeriesLine() {
-        let dataList = {
-          orderUser: [],
-          payedMoney: [],
-          payedUser: [],
-          pv: []
-        }
-        for (let item of this.dataInfo) {
-          dataList.orderUser.push(item.orderUser)
-          dataList.payedMoney.push(item.payedMoney)
-          dataList.payedUser.push(item.payedUser)
-          dataList.pv.push(item.pv)
-        }
         let optionSeriesLine = [
           {
             name: '代理人注册人数',
-            value: 160,
+            value: this.dataInfo.disributorRegisterCount,
             color: '#FF6F43',
             text: ''
           },
           {
             name: '完成1阶人数',
-            value: 110,
+            value: this.dataInfo.firstTaskFinishCount,
             color: '#FFAB40',
-            text: `注册代理1阶任务完成率${(110 / 160).toFixed(2)*100}%`
+            text: `注册代理1阶任务完成率${(this.dataInfo.firstTaskFinishCount / this.dataInfo.disributorRegisterCount).toFixed(2)*100}%`
           },
           {
             name: '完成2阶人数',
-            value: 80,
+            value: this.dataInfo.secondTaskFinishCount,
             color: '#FFD54F',
-            text: `注册代理2阶任务完成率${(80 / 160).toFixed(2)*100}%`
+            text: `注册代理2阶任务完成率${(this.dataInfo.secondTaskFinishCount / this.dataInfo.disributorRegisterCount).toFixed(2)*100}%`
           },
           {
             name: '销售五单',
-            value: 40,
+            value: this.dataInfo.saleFiveOrderCount,
             color: '#80CBC4',
-            text: `代理人成单率${(40 / 160).toFixed(2)*100}%`
+            text: `代理人成单率${(this.dataInfo.saleFiveOrderCount / this.dataInfo.disributorRegisterCount).toFixed(2)*100}%`
           }
         ]
         return optionSeriesLine
       },
       optionSeriesLineTwo() {
-        let dataList = {
-          orderUser: [],
-          payedMoney: [],
-          payedUser: [],
-          pv: []
-        }
-        for (let item of this.dataInfo) {
-          dataList.orderUser.push(item.orderUser)
-          dataList.payedMoney.push(item.payedMoney)
-          dataList.payedUser.push(item.payedUser)
-          dataList.pv.push(item.pv)
-        }
         let optionSeriesLine = [
           {
             name: '访问人数',
-            value: 160,
+            value: 0,
             color: '#FF6F43',
             text: ''
           },
           {
             name: '下单人数',
-            value: 110,
+            value: this.dataInfo.orderUserCount,
             color: '#FFAB40',
-            text: `访问下单转化率${(110 / 160).toFixed(2)*100}% / 下单支付转化率${(80 / 110).toFixed(2)*100}%`
+            text: `访问下单转化率${(110 / 160).toFixed(2)*100}% / 下单支付转化率${this.dataInfo.orderToPayPer*100}%`
           },
           {
             name: '支付人数',
-            value: 80,
+            value: this.dataInfo.payUserCount,
             color: '#FFD54F',
             text: `访问支付转化率${(80 / 160).toFixed(2)*100}%`
           }
@@ -223,42 +192,30 @@
         return optionSeriesLine
       },
       optionSeriesLineThree() {
-        let dataList = {
-          orderUser: [],
-          payedMoney: [],
-          payedUser: [],
-          pv: []
-        }
-        for (let item of this.dataInfo) {
-          dataList.orderUser.push(item.orderUser)
-          dataList.payedMoney.push(item.payedMoney)
-          dataList.payedUser.push(item.payedUser)
-          dataList.pv.push(item.pv)
-        }
         let optionSeriesLine = [
           {
             name: '进入系统的代理人人数',
-            value: 160,
+            value: this.dataInfo.promoterCenterUv,
             color: '#FF6F43',
             text: ''
           },
           {
             name: '代理人分享1次人数',
-            value: 110,
+            value: this.dataInfo.shareOneUserCount,
             color: '#FFAB40',
-            text: `代理人分享1次比例${(110 / 160).toFixed(2)*100}%`
+            text: `代理人分享1次比例${(this.dataInfo.shareOneUserCount / this.dataInfo.promoterCenterUv).toFixed(2)*100}%`
           },
           {
             name: '代理人分享2次人数',
-            value: 80,
+            value: this.dataInfo.shareTwoUserCount,
             color: '#FFD54F',
-            text: `代理人分享2次比例${(80 / 160).toFixed(2)*100}%`
+            text: `代理人分享2次比例${(this.dataInfo.shareTwoUserCount / this.dataInfo.promoterCenterUv).toFixed(2)*100}%`
           },
           {
             name: '代理人分享3次人数',
-            value: 40,
+            value: this.dataInfo.shareThreeUserCount,
             color: '#80CBC4',
-            text: `代理人分享3次比例${(40 / 160).toFixed(2)*100}%`
+            text: `代理人分享3次比例${(this.dataInfo.shareThreeUserCount / this.dataInfo.promoterCenterUv).toFixed(2)*100}%`
           }
         ]
         return optionSeriesLine
@@ -270,17 +227,17 @@
     methods: {
       changeTime() {
         if (this.selectType == 1) {
-          this.getTotalInfo()
+          this.getDataFunnel()
         }
       },
       changeTimeTwo() {
         if (this.selectTypeTwo == 1) {
-          this.getTotalInfo()
+          this.getDataFunnel()
         }
       },
       changeTimeThree() {
         if (this.selectTypeThree == 1) {
-          this.getList()
+          this.getDataFunnel()
         }
       },
       changeChannel() {
@@ -289,17 +246,17 @@
       changeDate(data) {
         this.getStartTime = data.startTime
         this.getEndTime = data.endTime
-        this.getTotalInfo()
+        this.getDataFunnel()
       },
       changeDateTwo(data) {
         this.getStartTimeTwo = data.startTime
         this.getEndTimeTwo = data.endTime
-        this.getTotalInfo()
+        this.getDataFunnel()
       },
       changeDateThree(data) {
         this.getStartTimeThree = data.startTime
         this.getEndTimeThree = data.endTime
-        this.getList()
+        this.getDataFunnel()
       },
       getDataFunnel() {
         this.$api.fxglDataCenter.getDataFunnel({
@@ -312,11 +269,7 @@
         })
           .then(
             response => {
-              this.channelList = response.data.resultData.records;
-              this.channelList.unshift({
-                id: '0',
-                name: '全部'
-              })
+              this.dataInfo = response.data.resultData;
               this.getList()
             })
           .finally(() => {
@@ -484,23 +437,9 @@
           textColor: '#000',
           zlevel: 0
         })
-
-        this.isFetching = true
-        this.$api.composition.userStatisticsLineChart({
-          chId: this.radioType,
-          begin: this.getStartTimeThree && new Date(this.getStartTimeThree).getTime(),
-          end: this.getEndTimeThree && new Date(this.getEndTimeThree).getTime()
-        })
-          .then(
-            response => {
-              this.dataInfo = response.data.resultData;
-              this.drawLine()
-              this.drawLineTwo()
-              this.drawLineThree()
-            })
-          .finally(() => {
-            this.isFetching = false
-          })
+        this.drawLine()
+        this.drawLineTwo()
+        this.drawLineThree()
       }
     }
   }
