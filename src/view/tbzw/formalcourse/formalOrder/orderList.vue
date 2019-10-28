@@ -193,6 +193,7 @@
           {
             title: '课程名称',
             key: 'courseName',
+            tooltip: true,
             align: 'center'
           },
           {
@@ -219,11 +220,13 @@
           {
             title: '用户昵称',
             key: 'nickName',
+            tooltip: true,
             align: 'center'
           },
           {
             title: '手机号码',
             key: 'phone',
+            tooltip: true,
             align: 'center'
           },
           {
