@@ -132,7 +132,7 @@
           sex: '',
           relation: '',
           grade: '',
-          areasId: ''
+          areasId: []
         },
         addressList: areaList.list,
         dataList: [],
@@ -275,11 +275,7 @@
             sex: '',
             relation: '',
             grade: '',
-            areasId: ''
-          }
-        } else {
-          if(!Array.isArray(this.addInfo.areasId)) {
-            this.addInfo.areasId = this.addInfo.areasId.split(',')
+            areasId: []
           }
         }
         this.isOpenModalChild = true
@@ -351,7 +347,9 @@
             response => {
               if (response.data.resultData) {
                 this.addInfo = response.data.resultData
-                this.studentInfo = JSON.parse(JSON.stringify(this.addInfo))
+                if(!Array.isArray(this.addInfo.areasId)) {
+                  this.addInfo.areasId = this.addInfo.areasId.split(',')
+                }
               } else {
                 this.addInfo = {
                   nickname: '',
@@ -360,13 +358,15 @@
                   grade: '',
                   gradeText: '',
                   areasIdText: '',
-                  areasId: ''
+                  areasId: []
                 }
                 this.userInfo.relationText= '',
                 this.userInfo.gradeText= '',
                 this.userInfo.areasIdText= '',
                 this.userInfo.sexText= ''
               }
+
+              this.studentInfo = JSON.parse(JSON.stringify(this.addInfo))
             })
       },
       submitInfo(name) {
