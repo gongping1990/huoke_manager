@@ -3,6 +3,9 @@ import qs from 'qs'
 
 
 const activity = {
+  getActivityData(params) {
+    return axios.get(`/fissionprep/activity/getActivityData`, {params})
+  },
   pageByActivityLog(params) {
     return axios.get(`/fissionprep/activity/pageByActivityLog`, {params})
   },

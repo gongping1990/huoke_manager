@@ -1,6 +1,6 @@
 import hkywhdBook from "./book";
 import hkywhdCourse from "./course";
-import activity from "./activity";
+import hkywhdActivity from "./activity";
 import hkywhdOrder from "./order";
 import hkywhdUser from "./user";
 import hkywhdStatistics from "./statistics";
@@ -14,5 +14,5 @@ export const hkywhdIndex = {
   hkywhdUser,
   hkywhdStatistics,
   hkywhdMission,
-  activity
+  hkywhdActivity
 }

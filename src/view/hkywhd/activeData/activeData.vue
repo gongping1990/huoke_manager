@@ -63,7 +63,6 @@
     data() {
       return {
         radioType: 0,
-        selectTypeTwo: 1,
         selectTypeThree: 1,
         dateOptionOne: {
           disabledDate(date) {
@@ -77,14 +76,10 @@
         isFetching: false,
         dataInfo: '',
         todayInfo: '',
-        totalInfo: '',
         selectTime: new Date(new Date().getTime() - 24 * 60 * 60 * 1000),
         getStartTimeThree: '',
-        getStartTimeTwo: '',
         getEndTimeThree: '',
-        getEndTimeTwo: '',
-        titleListThree: [],
-        channelList: []
+        titleListThree: []
       }
     },
     computed: {
@@ -97,98 +92,81 @@
       },
       optionSeriesLine() {
         let dataList = {
-          orderUser: [],
-          payedMoney: [],
-          payedUser: [],
-          pv: [],
-          uv: []
+          firstStartActivityCount: [],
+          firstEndActivityCount: [],
+          secondStartActivityCount: [],
+          shareCount: [],
+          joinActivityCount: [],
+          activitySuccessCount: []
         }
         for (let item of this.dataInfo) {
-          dataList.orderUser.push(item.orderUser)
-          dataList.payedMoney.push(item.payedMoney)
-          dataList.payedUser.push(item.payedUser)
-          dataList.pv.push(item.pv)
-          dataList.uv.push(item.uv)
+          dataList.firstStartActivityCount.push(item.firstStartActivityCount)
+          dataList.firstEndActivityCount.push(item.firstEndActivityCount)
+          dataList.secondStartActivityCount.push(item.secondStartActivityCount)
+          dataList.shareCount.push(item.shareCount)
+          dataList.joinActivityCount.push(item.joinActivityCount)
+          dataList.activitySuccessCount.push(item.activitySuccessCount)
         }
         let optionSeriesLine = [
           {
             name: '首次活动发起数量',
             type: 'line',
-            data: dataList.pv
+            data: dataList.firstStartActivityCount
           },
           {
             name: '首次活动过期数量',
             type: 'line',
-            data: dataList.uv
+            data: dataList.firstEndActivityCount
           },
           {
             name: '二次活动发起数量',
             type: 'line',
-            data: dataList.orderUser
+            data: dataList.secondStartActivityCount
           },
           {
             name: '参加活动助力人数',
             type: 'line',
-            data: dataList.payedUser
+            data: dataList.joinActivityCount
           },
           {
             name: '活动助力成功数',
             type: 'line',
-            data: dataList.payedMoney
+            data: dataList.activitySuccessCount
           },
           {
             name: '分享次数',
             type: 'line',
-            data: dataList.payedMoney
+            data: dataList.shareCount
           }
         ]
         return optionSeriesLine
       },
     },
     mounted() {
-      this.getChannelList()
+      this.getActivityData()
     },
     methods: {
-      changeTimeTwo () {
-        if(this.selectTypeTwo == 1) {
-          this.getTotalInfo()
-        }
-      },
       changeTimeThree () {
         if(this.selectTypeThree == 1) {
-          this.getList()
+          this.getActivityData()
         }
-      },
-      changeChannel () {
-        this.getTotalInfo()
-        this.getTodayInfo()
-        this.getList()
-      },
-      changeDateTwo(data) {
-        this.getStartTimeTwo = data.startTime
-        this.getEndTimeTwo = data.endTime
-        this.getTotalInfo()
       },
       changeDateThree(data) {
         this.getStartTimeThree = data.startTime
         this.getEndTimeThree = data.endTime
-        this.getList()
+        this.getActivityData()
       },
-      getChannelList() {
-        this.$api.composition.listByChannel({
-          current: 1,
-          size: 10000
+      getActivityData() {
+        this.$api.hkywhdActivity.getActivityData({
+          startTime: this.getStartTimeThree && new Date(this.getStartTimeThree).getTime(),
+          endTime: this.getEndTimeThree && new Date(this.getEndTimeThree).getTime()
         })
           .then(
             response => {
-              this.channelList = response.data.resultData.records;
-              this.channelList.unshift({
-                id: '0',
-                name: '全部'
-              })
+              this.todayInfo = response.data.resultData;
+              this.dataInfo = this.totalInfo.list
               this.getList()
-              this.getTodayInfo()
-              this.getTotalInfo()
+              this.initData()
             })
           .finally(() => {
             this.isFetching = false
@@ -276,66 +254,33 @@
           zlevel: 0
         })
 
-        this.isFetching = true
-        this.$api.composition.userStatisticsLineChart({
-          chId: this.radioType,
-          begin: this.getStartTimeThree && new Date(this.getStartTimeThree).getTime(),
-          end: this.getEndTimeThree && new Date(this.getEndTimeThree).getTime()
-        })
-          .then(
-            response => {
-              this.dataInfo = response.data.resultData;
-              this.drawLine()
-            })
-          .finally(() => {
-            this.isFetching = false
-          })
-      },
-      getTodayInfo() {
-        this.$api.composition.userStatisticsToday({
-          chId: this.radioType
-        }).then(
-          response => {
-            this.todayInfo = response.data.resultData;
-            this.initData()
-          })
-      },
-      getTotalInfo() {
-        this.$api.composition.userStatisticsTotal({
-          chId: this.radioType,
-          begin: this.getStartTimeTwo && new Date(this.getStartTimeTwo).getTime(),
-          end: this.getEndTimeTwo && new Date(this.getEndTimeTwo).getTime()
-        }).then(
-          response => {
-            this.totalInfo = response.data.resultData;
-            this.initData()
-          })
+        this.drawLine()
       },
       initData() {
         this.titleListThree = [
           {
             name: '首次活动发起数量',
-            num: this.todayInfo.pv
+            num: this.todayInfo.firstStartActivityCount
           },
           {
             name: '首次活动过期数量',
-            num: this.todayInfo.pv
+            num: this.todayInfo.firstEndActivityCount
           },
           {
             name: '二次活动发起数量',
-            num: this.todayInfo.uv
+            num: this.todayInfo.secondStartActivityCount
           },
           {
             name: '分享次数',
-            num: this.todayInfo.orderUser
+            num: this.todayInfo.shareCount
           },
           {
             name: '参与活动助力人数',
-            num: this.todayInfo.orderUser
+            num: this.todayInfo.joinActivityCount
           },
           {
             name: '活动助力成功数',
-            num: this.todayInfo.orderUser
+            num: this.todayInfo.activitySuccessCount
           }
         ]
       }
