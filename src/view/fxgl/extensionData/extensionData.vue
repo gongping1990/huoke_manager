@@ -3,7 +3,7 @@
     <Row class="g-search">
       <Col :span="3" class="g-flex-a-j-center -s-radio">
         <div class="-search-select-text-two">课程名称</div>
-        <Select v-model="searchInfo.courseId" @on-change="getTotalInfo" class="-search-selectOne">
+        <Select v-model="searchInfo.courseId" @on-change="getTotalInfo" class="-search-selectOne -width">
           <Option v-for="(item,index) of courseList" :label="item.courseName" :value="item.courseId"  :key="index" ></Option>
         </Select>
       </Col>
@@ -516,6 +516,10 @@
       border-radius: 4px;
       text-align: left;
     }
+
+    .-width {
+      width: 300px;
+    }
     .-margin-left {
       margin-left: 30px;
     }
@@ -530,6 +534,7 @@
       margin: 20px 0;
     }
     .-search-select-text-two {
+      min-width: 70px;
       text-align: left;
       margin-right: 20px;
       font-size:16px;

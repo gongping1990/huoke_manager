@@ -1,17 +1,17 @@
 <template>
-  <div class="p-extensionData">
+  <div class="p-franchiseeData">
     <Row class="g-search">
-      <Col :span="3" class="g-flex-a-j-center -s-radio">
+      <Col :span="5" class="g-flex-a-j-center -s-radio">
         <div class="-search-select-text-two">课程名称</div>
-        <Select v-model="searchInfo.courseId" @on-change="getTotalInfo" class="-search-selectOne">
+        <Select v-model="searchInfo.courseId" @on-change="getTotalInfo" class="-search-selectOne -width">
           <Option v-for="(item,index) of courseList" :label="item.courseName" :value="item.courseId"  :key="index" ></Option>
         </Select>
       </Col>
     </Row>
 
 
-    <Card class="p-extensionData-top">
-      <div class="p-extensionData-title">
+    <Card class="p-franchiseeData-top">
+      <div class="p-franchiseeData-title">
         <div class="-left">
           <img src="../../../assets/images/icon/icon1.png"/>
           <span>加盟商数据</span>
@@ -26,7 +26,7 @@
                                 @changeDate="changeDateTwo"></date-picker-template>
         </div>
       </div>
-      <Row class="p-extensionData-flex" :gutter="10" style="margin-top: 20px">
+      <Row class="p-franchiseeData-flex" :gutter="10" style="margin-top: 20px">
         <Col v-for="(item,index) of titleList" :key="index" class="-p-d-col">
           <div class="g-t-left -card-wrap">
             <div class="-col-name">{{item.name}}</div>
@@ -43,8 +43,8 @@
     </Card>
 
 
-    <Card class="p-extensionData-top">
-      <div class="p-extensionData-title -three">
+    <Card class="p-franchiseeData-top">
+      <div class="p-franchiseeData-title -three">
         <div class="-left">
           <img src="../../../assets/images/icon/icon7.png"/>
           <span>趋势数据</span>
@@ -288,7 +288,7 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="less">
-  .p-extensionData {
+  .p-franchiseeData {
 
     &-top {
       margin-top: 30px;
@@ -390,6 +390,10 @@
       border-radius: 4px;
       text-align: left;
     }
+
+    .-width {
+      width: 300px;
+    }
     .-margin-left {
       margin-left: 30px;
     }
@@ -406,6 +410,7 @@
     .-search-select-text-two {
       text-align: left;
       margin-right: 20px;
+      min-width: 70px;
       font-size:16px;
       font-weight:400;
       color:rgba(23,34,62,1);
