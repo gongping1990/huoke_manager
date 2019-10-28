@@ -360,10 +360,6 @@
                   areasIdText: '',
                   areasId: []
                 }
-                this.userInfo.relationText= '',
-                this.userInfo.gradeText= '',
-                this.userInfo.areasIdText= '',
-                this.userInfo.sexText= ''
               }
 
               this.studentInfo = JSON.parse(JSON.stringify(this.addInfo))
@@ -373,24 +369,19 @@
         this.$refs[name].validate((valid) => {
           if (valid) {
             this.isSending = true
+            let params = {
+              puid: this.$route.query.id || this.userId,
+              areasId: `${this.addInfo.areasId}`,
+              relation: this.addInfo.relation,
+              grade: this.addInfo.grade,
+              sex: this.addInfo.sex,
+              areasText: this.addInfo.areasText,
+              nickname: this.addInfo.nickname
+            }
             let promiseDate = this.addInfo.id ? this.$api.tbzwStudent.updateStudent({
               id: this.addInfo.id,
-              puid: this.$route.query.id || this.userId,
-              areasId: `${this.addInfo.areasId}`,
-              relation: this.addInfo.relation,
-              grade: this.addInfo.grade,
-              sex: this.addInfo.sex,
-              areasText: this.addInfo.areasText,
-              nickname: this.addInfo.nickname
-            }) : this.$api.tbzwStudent.addStudent({
-              puid: this.$route.query.id || this.userId,
-              areasId: `${this.addInfo.areasId}`,
-              relation: this.addInfo.relation,
-              grade: this.addInfo.grade,
-              sex: this.addInfo.sex,
-              areasText: this.addInfo.areasText,
-              nickname: this.addInfo.nickname
-            })
+              ...params
+            }) : this.$api.tbzwStudent.addStudent(params)
             promiseDate
               .then(
                 response => {
