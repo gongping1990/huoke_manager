@@ -17,7 +17,7 @@
               <div class="-r-dev" style="margin-top: 10px">
                 <span>是否关注: {{userInfo.subscripbe ? '是' : '否'}}</span>
                 <span>是否购买: {{userInfo.buyed ? '是' : '否'}}</span>
-                <span>支付时间: {{userInfo.buyedTime}}</span>
+                <span>支付时间: {{userInfo.buyTime || '未购买'}}</span>
               </div>
             </div>
           </div>
