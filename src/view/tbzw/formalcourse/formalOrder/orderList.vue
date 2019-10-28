@@ -58,7 +58,7 @@
       class="p-order"
       v-model="isOpenModal"
       @on-cancel="isOpenModal = false"
-      width="600"
+      width="700"
       title="订单详情">
       <Form ref="orderInfo" :model="orderInfo" :label-width="90">
         <div class="-p-o-title">订单信息</div>
@@ -78,16 +78,16 @@
           <FormItem label="三方交易号" class="-p-o-width">{{orderInfo.transactionNo}}</FormItem>
           <FormItem label="" class="-p-o-width"></FormItem>
         </div>
-        <div class="-p-o-title">团购信息</div>
-        <div class="-p-o-flex">
+        <div class="-p-o-title" v-if="orderInfo.orderMode !== 1">团购信息</div>
+        <div class="-p-o-flex" v-if="orderInfo.orderMode !== 1">
           <FormItem label="团购人数" class="-p-o-width">{{orderInfo.groupOrders.length}}</FormItem>
           <FormItem label="团购时限" class="-p-o-width">{{orderInfo.groupTime}}</FormItem>
         </div>
-        <div class="-p-o-flex">
+        <div class="-p-o-flex" v-if="orderInfo.orderMode !== 1">
           <FormItem label="成团时限" class="-p-o-width">{{orderInfo.amount}}</FormItem>
           <FormItem label="成团时间" class="-p-o-width">{{orderInfo.groupEndTime | timeFormatter}}</FormItem>
         </div>
-        <div class="-p-o-flex">
+        <div class="-p-o-flex" v-if="orderInfo.orderMode !== 1">
           <FormItem label="团长" class="-p-o-width">
             {{orderInfo.groupOrders.length ? orderInfo.groupOrders[0].nickName : ''}}
           </FormItem>
