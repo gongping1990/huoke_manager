@@ -376,7 +376,7 @@
           })
       },
       pageByActivityLog() {
-        this.$api.activity.pageByActivityLog({
+        this.$api.hkywhdActivity.pageByActivityLog({
           current: this.tab.page,
           size: this.tab.pageSize,
         })
@@ -390,7 +390,7 @@
       },
       getActivityById() {
 
-        this.$api.activity.getActivityById()
+        this.$api.hkywhdActivity.getActivityById()
           .then(
             response => {
               this.activeInfo = response.data.resultData;
@@ -468,11 +468,11 @@
           return this.$Message.error('请输入活动价解锁课时数')
         }
         this.isSending = true
-        let promiseDate = this.activeInfo.id ? this.$api.activity.uptActivity({
+        let promiseDate = this.activeInfo.id ? this.$api.hkywhdActivity.uptActivity({
           ...this.activeInfo,
           ddgPrice: this.activeInfo.ddgPrice*100,
           activityPrice: this.activeInfo.activityPrice*100
-        }) : this.$api.activity.saveActivity({
+        }) : this.$api.hkywhdActivity.saveActivity({
           ...this.activeInfo,
           ddgPrice: this.activeInfo.ddgPrice*100,
           activityPrice: this.activeInfo.activityPrice*100
