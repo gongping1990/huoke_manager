@@ -216,7 +216,8 @@
           {
             title: '课程名称',
             key: 'lessonName',
-            align: 'center'
+            align: 'center',
+            tooltip:true
           },
           {
             title: '是否付费',
@@ -303,7 +304,7 @@
           },
           {
             title: '操作',
-            width: 210,
+            width: 270,
             render: (h, params) => {
               return h('div', [
                 h('Button', {
@@ -336,6 +337,22 @@
                     }
                   }
                 }, params.row.reviewStatus == '1' ? '审核' : '批改'),
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: '#5444E4',
+                    display: params.row.homeworkType === 1 ? 'none' : 'inline-block',
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.toPictures(params.row)
+                    }
+                  }
+                },'批改图片'),
                 h('Button', {
                   props: {
                     type: 'text',
@@ -884,6 +901,16 @@
       this.getTeacherRemind()
     },
     methods: {
+      toPictures (data) {
+        this.$router.push({
+          name: 'correct',
+          query: {
+            system: this.searchInfo.system,
+            courseId: data.courseId,
+            workId: data.workId
+          }
+        })
+      },
       noRequired(data) {
         this.$Modal.confirm({
           title: '提示',
@@ -1029,6 +1056,7 @@
       },
       getSearchInfo(data) {
         this.searchInfo = data
+        console.log(data, '000')
         this.getList(1)
       },
       getAudioInfo(data) {
