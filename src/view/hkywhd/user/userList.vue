@@ -4,7 +4,7 @@
       <Row class="g-search">
         <Col :span="5" class="g-t-left">
           <div class="g-flex-a-j-center">
-            <div class="-search-select-text-two">是否关注获课网：</div>
+            <div class="-search-select-text-two">是否关注公众号：</div>
             <Select v-model="searchInfo.subscribe" @on-change="getList(1)" class="-search-selectOne">
               <Option value="-1" >全部</Option>
               <Option value="1" >是</Option>
@@ -30,18 +30,19 @@
       <Page class="-p-text-right" :total="total" size="small" show-elevator :page-size="tab.pageSize"
             :current.sync="tab.currentPage"
             @on-change="currentChange"></Page>
-
     </Card>
+    <hkywhd-look-user-info v-model="isShow" :dataInfo="detailInfo"></hkywhd-look-user-info>
   </div>
 </template>
 
 <script>
   import dayjs from 'dayjs'
   import Operation from "iview/src/components/transfer/operation";
+  import HkywhdLookUserInfo from "./hkywhdLookUserInfo";
 
   export default {
     name: 'userList2',
-    components: {Operation},
+    components: {HkywhdLookUserInfo, Operation},
     data() {
       return {
         switch1: '',
@@ -56,7 +57,9 @@
         selectInfo: '1',
         dataList: [],
         total: 0,
+        detailInfo: '',
         isFetching: false,
+        isShow: false,
         columns: [
           {
             title: '用户头像/昵称',
@@ -87,7 +90,7 @@
             key: 'phone'
           },
           {
-            title: '是否关注获课网',
+            title: '是否关注公众号',
             render: (h, params) => {
               return h('span', params.row.subscripbe ? '是' : '否')
             },
@@ -95,19 +98,36 @@
           },
           {
             title: '创建时间',
-            key: 'creatTime'
-          },
-          {
-            title: '最长连续打卡时间',
-            key: 'longestCard'
-          },
-          {
-            title: '连续打卡时间',
-            key: 'continuCard'
+            key: 'creatTime',
+            tooltip: true,
+            align: 'center'
           },
           {
             title: '最后登录时间',
-            key: 'lastLoginTime'
+            key: 'lastLoginTime',
+            align: 'center'
+          },
+          {
+            title: '操作',
+            align: 'center',
+            render: (h, params) => {
+              return h('div', [
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: '#5444E4'
+                  },
+                  on: {
+                    click: () => {
+                      this.toDetail(params.row)
+                    }
+                  }
+                }, '详情')
+              ])
+            }
           }
         ],
       };
@@ -116,6 +136,10 @@
       this.getList()
     },
     methods: {
+      toDetail(param) {
+        this.isShow = true
+        this.detailInfo = param
+      },
       currentChange(val) {
         this.tab.page = val;
         this.getList();
@@ -138,7 +162,7 @@
         }
 
         this.isFetching = true
-        this.$api.hkywUser.getPrepUserList(params)
+        this.$api.hkywhdUser.getPrepUserList(params)
           .then(
             response => {
               this.dataList = response.data.resultData.records;

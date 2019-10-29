@@ -8,7 +8,7 @@
           <Radio :label=3>历史记录</Radio>
         </Radio-group>
       </Row>
-      <Row v-if="radioType === 1" class="-c-tab">
+      <Row v-show="radioType === 1" class="-c-tab">
         <Col :span="3">
           <Select v-model="selectInfo" @on-change="getList">
             <Option value='0'>全部年级</Option>
@@ -16,45 +16,48 @@
           </Select>
         </Col>
       </Row>
-      <div v-if="radioType === 1" class="g-add-btn -t-add-icon" @click="openModal">
+      <div v-show="radioType === 1" class="g-add-btn -t-add-icon" @click="openModal">
         <Icon class="-btn-icon" color="#fff" type="ios-add" size="24"/>
       </div>
-      <Table v-if="radioType === 1" class="-c-tab" :loading="isFetching" :columns="columns" :data="dataList"></Table>
-      <div v-if="radioType === 2" >
+      <Table v-show="radioType === 1" class="-c-tab" :loading="isFetching" :columns="columns" :data="dataList"></Table>
+      <div v-show="radioType === 2" >
         <Form class="g-t-left ivu-form-item-required -c-tab p-teach-form" ref="addInfo" :model="addInfo"
               :label-width="100">
-          <Form-item label="是否开启" prop="turn" class=" -c-form-item ">
-            <Radio-group v-model="addInfo.enable">
-              <Radio :label=0 :disabled="!isShowEdit">开启</Radio>
-              <Radio :label=1 :disabled="!isShowEdit">关闭</Radio>
+          <FormItem label="单独购价格" prop="ddgPrice">
+            <Input type="text" v-model="activeInfo.ddgPrice" placeholder="请输入单独购价格" :disabled="!isShowEdit"></Input>
+            <span class="-c-tips">* 精确到小数点后2位，如99.99</span>
+          </FormItem>
+          <Form-item label="是否开启" class=" -c-form-item ">
+            <Radio-group v-model="activeInfo.open">
+              <Radio :label=1 :disabled="!isShowEdit">开启</Radio>
+              <Radio :label=0 :disabled="!isShowEdit">关闭</Radio>
             </Radio-group>
           </Form-item>
-          <FormItem label="单独购价格" prop="couponMoney">
-            <Input type="text" v-model="addInfo.couponMoney" placeholder="请输入单独购价格" :disabled="!isShowEdit"></Input>
-            <span class="-c-tips">* 精确到小数点后2位，如99.99</span>
-          </FormItem>
-          <Form-item label="活动价格" prop="minMoney">
-            <Input type="text" v-model="addInfo.couponMoney" placeholder="请输入活动价格" :disabled="!isShowEdit"></Input>
+          <Form-item label="活动价格" prop="activityPrice">
+            <Input type="text" v-model="activeInfo.activityPrice" placeholder="请输入活动价格" :disabled="!isShowEdit"></Input>
             <span class="-c-tips">* 精确到小数点后2位，如99.99</span>
           </Form-item>
-          <FormItem label="邀请人数" prop="keepTime">
-            <Input type="text" v-model="addInfo.keepTime" placeholder="请输入邀请人数" :disabled="!isShowEdit"></Input>
+          <FormItem label="邀请人数" prop="invites">
+            <Input type="text" v-model="activeInfo.invites" placeholder="请输入邀请人数" :disabled="!isShowEdit"></Input>
           </FormItem>
-          <FormItem label="活动时限" prop="keepTime">
-            <Input type="text" v-model="addInfo.keepTime" placeholder="请输入活动时限（小时）" :disabled="!isShowEdit"></Input>
+          <FormItem label="活动时限" prop="activityTimelimit">
+            <Input type="text" v-model="activeInfo.activityTimelimit" placeholder="请输入活动时限（小时）" :disabled="!isShowEdit"></Input>
+          </FormItem>
+          <FormItem label="解锁课时数" >
+            <Input type="text" v-model="activeInfo.unlockNums" placeholder="请输入解锁课时数" :disabled="!isShowEdit"></Input>
           </FormItem>
           <FormItem>
             <div class="-c-flex">
               <Button @click="isShowEdit = true" ghost type="primary" class="-c-btn" v-if="!isShowEdit">进入编辑</Button>
               <Button @click="isShowEdit = false" ghost type="primary" style="width: 100px" class="-c-btn" v-else>取消</Button>
-              <div v-if="isShowEdit" @click="submitInfo('addInfo')" class="g-primary-btn -c-btn"> {{isSending ? '提交中...' :
+              <div v-if="isShowEdit" @click="submitInfoActive('addInfo')" class="g-primary-btn -c-btn"> {{isSending ? '提交中...' :
                 '确 认'}}
               </div>
             </div>
           </FormItem>
         </Form>
       </div>
-      <Table v-if="radioType === 3" class="-c-tab" :loading="isFetching" :columns="columnsTwo" :data="dataListTwo"></Table>
+      <Table v-show="radioType === 3" class="-c-tab" :loading="isFetching" :columns="columnsTwo" :data="dataListTwo"></Table>
     </Card>
 
     <Modal
@@ -88,7 +91,7 @@
           </Select>
         </FormItem>
         <FormItem label="课程封面">
-          <upload-img v-model="addInfo.img" :option="uploadOption"></upload-img>
+          <upload-img v-model="addInfo.coverImgUrl" :option="uploadOption"></upload-img>
         </FormItem>
 
       </Form>
@@ -101,6 +104,7 @@
 </template>
 
 <script>
+  import dayjs from 'dayjs'
   import UploadImg from "../../../components/uploadImg";
   export default {
     name: 'teachingList',
@@ -170,21 +174,22 @@
           semester: '',
           courseId: '',
         },
+        activeInfo: {},
         ruleValidate: {
           name: [
             {required: true, message: '请输入教材名称',  trigger: 'blur'}
           ],
           edition: [
-            {required: true, message: '请选择教材版本', type: 'number', trigger: 'blur'}
+            {required: true, message: '请选择教材版本', type: 'number', trigger: 'change'}
           ],
           grade: [
-            {required: true, message: '请选择年级', type: 'number', trigger: 'blur'}
+            {required: true, message: '请选择年级', type: 'number', trigger: 'change'}
           ],
           semester: [
-            {required: true, message: '请选择学期', type: 'number', trigger: 'blur'}
+            {required: true, message: '请选择学期', type: 'number', trigger: 'change'}
           ],
           courseId: [
-            {required: true, message: '请选择学科', trigger: 'blur'}
+            {required: true, message: '请选择学科', trigger: 'change'}
           ],
 
         },
@@ -270,17 +275,28 @@
         columnsTwo: [
           {
             title: '修改内容（修改前 -> 修改后）',
-            key: 'name',
+            render: (h, params)=> {
+              return h('div',[
+                h('div', `活动${params.row.open}`),
+                h('div', `单独购价格${params.row.ddgPrice}`),
+                h('div', `活动价格${params.row.activityPrice}`),
+                h('div', `邀请人数${params.row.invites}`),
+                h('div', `活动时限${params.row.activityTimelimit}`),
+                h('div', `活动价解锁课时数${params.row.unlockNums}`),
+              ])
+            },
             align: 'center'
           },
           {
             title: '操作人',
-            key: 'editionText',
+            key: 'compiler',
             align: 'center'
           },
           {
             title: '操作时间',
-            key: 'gradeText',
+            render: (h, params) => {
+              return h('div', dayjs(+params.row.gmtCreate).format("YYYY-MM-DD HH:mm:ss"))
+            },
             align: 'center'
           }
         ],
@@ -293,14 +309,23 @@
     },
     methods: {
       changeRadioType () {
-
+        switch (+this.radioType) {
+          case 1:
+            this.getList()
+            break
+          case 2:
+            this.getActivityById()
+            break
+          case 3:
+            this.pageByActivityLog()
+            break
+        }
       },
       currentChange(val) {
         this.tab.page = val;
         this.getList();
       },
       openModal(data) {
-
         this.isOpenModal = true
         this.addInfo = JSON.parse(JSON.stringify(data))
       },
@@ -311,7 +336,7 @@
       toJump (data) {
         localStorage.setItem('chapterId','')
         this.$router.push({
-          name: 'teachMain',
+          name: 'hkywhd_teachMain',
           query: {
             bookId: data.id,
             courseName: data.courseName,
@@ -328,7 +353,7 @@
       //分页查询
       getList() {
         this.isFetching = true
-        this.$api.book.teachingList({
+        this.$api.hkywhdBook.teachingList({
           grade: this.selectInfo == '0' ? '' : this.selectInfo
         })
           .then(
@@ -341,7 +366,7 @@
       },
       getSubjectList() {
 
-        this.$api.course.teachSubjectList()
+        this.$api.hkywhdCourse.teachSubjectList()
           .then(
             response => {
               this.courseList = response.data.resultData;
@@ -350,8 +375,35 @@
 
           })
       },
+      pageByActivityLog() {
+        this.$api.hkywhdActivity.pageByActivityLog({
+          current: this.tab.page,
+          size: this.tab.pageSize,
+        })
+          .then(
+            response => {
+              this.dataListTwo = response.data.resultData.records;
+            })
+          .finally(() => {
+
+          })
+      },
+      getActivityById() {
+
+        this.$api.hkywhdActivity.getActivityById()
+          .then(
+            response => {
+              this.activeInfo = response.data.resultData;
+              this.activeInfo.open = this.activeInfo.open ? 1 : 0
+              this.activeInfo.activityPrice = (+this.activeInfo.activityPrice/100).toFixed(2)
+              this.activeInfo.ddgPrice = (+this.activeInfo.ddgPrice/100).toFixed(2)
+            })
+          .finally(() => {
+
+          })
+      },
       getEditionList() {
-        this.$api.course.editionList()
+        this.$api.hkywhdCourse.editionList()
           .then(
             response => {
               let array = Object.keys(response.data.resultData).map(key=> response.data.resultData[key])
@@ -371,7 +423,7 @@
           title: '提示',
           content: '确认要删除该教材吗？',
           onOk: () => {
-            this.$api.book.delTeaching({
+            this.$api.hkywhdBook.delTeaching({
               id: param.id
             }).then(
               response => {
@@ -387,8 +439,7 @@
         this.$refs[name].validate((valid) => {
           if (valid) {
             this.isSending = true
-            console.log(this.addInfo, 1)
-            let promiseDate = this.addInfo.id ? this.$api.book.updateTeaching(this.addInfo) : this.$api.book.addTeaching(this.addInfo)
+            let promiseDate = this.addInfo.id ? this.$api.hkywhdBook.updateTeaching(this.addInfo) : this.$api.hkywhdBook.addTeaching(this.addInfo)
             promiseDate
               .then(
                 response => {
@@ -403,6 +454,40 @@
               })
           }
         })
+      },
+      submitInfoActive() {
+        if (!this.activeInfo.activityPrice) {
+          return this.$Message.error('请输入活动价格')
+        } else if (!this.activeInfo.ddgPrice) {
+          return this.$Message.error('请输入单独购价格')
+        } else if (!this.activeInfo.invites) {
+          return this.$Message.error('请输入邀请人数')
+        } else if (!this.activeInfo.activityTimelimit) {
+          return this.$Message.error('请输入活动时限')
+        } else if (!this.activeInfo.unlockNums) {
+          return this.$Message.error('请输入活动价解锁课时数')
+        }
+        this.isSending = true
+        let promiseDate = this.activeInfo.id ? this.$api.hkywhdActivity.uptActivity({
+          ...this.activeInfo,
+          ddgPrice: this.activeInfo.ddgPrice*100,
+          activityPrice: this.activeInfo.activityPrice*100
+        }) : this.$api.hkywhdActivity.saveActivity({
+          ...this.activeInfo,
+          ddgPrice: this.activeInfo.ddgPrice*100,
+          activityPrice: this.activeInfo.activityPrice*100
+        })
+        promiseDate
+          .then(
+            response => {
+              if (response.data.code == '200') {
+                this.$Message.success('提交成功');
+                this.isShowEdit = false
+              }
+            })
+          .finally(() => {
+            this.isSending = false
+          })
       }
     }
   };

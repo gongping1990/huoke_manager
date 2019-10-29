@@ -335,7 +335,7 @@
                       this.openModal(params.row)
                     }
                   }
-                }, '批改'),
+                }, params.row.reviewStatus == '1' ? '审核' : '批改'),
                 h('Button', {
                   props: {
                     type: 'text',

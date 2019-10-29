@@ -8,6 +8,7 @@ import {ylxcxIndex} from './ylxcx/ylxcxIndex'
 import {hkywIndex} from './hkyw/hkywIndex'
 import {jsdIndex} from './jsd/jsdIndex'
 import {fxglIndex} from './fxgl/fxglIndex'
+import {hkywhdIndex} from './hkywhd/hkywhdIndex'
 
 export default {
   ...hkxtIndex,
@@ -19,5 +20,6 @@ export default {
   ...ylxcxIndex,
   ...hkywIndex,
   ...jsdIndex,
-  ...fxglIndex
+  ...fxglIndex,
+  ...hkywhdIndex
 }

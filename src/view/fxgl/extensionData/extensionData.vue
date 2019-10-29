@@ -3,21 +3,19 @@
     <Row class="g-search">
       <Col :span="3" class="g-flex-a-j-center -s-radio">
         <div class="-search-select-text-two">课程名称</div>
-        <Select v-model="searchInfo.name" @on-change="changeChannel" class="-search-selectOne">
-          <Option label="全部" value="-1"></Option>
-          <Option label="小语轻作文" value="7"></Option>
-          <Option label="每日一首古诗词" value="8"></Option>
+        <Select v-model="searchInfo.courseId" @on-change="getTotalInfo" class="-search-selectOne -width">
+          <Option v-for="(item,index) of courseList" :label="item.courseName" :value="item.courseId"  :key="index" ></Option>
         </Select>
       </Col>
-      <Col :span="3" class="g-flex-a-j-center -s-radio -margin-left">
-        <div class="-search-select-text-two">推广方式</div>
-        <Select v-model="searchInfo.mode" @on-change="changeChannel" class="-search-selectOne">
-          <Option label="全部" value="-1"></Option>
-          <Option label="直接邀请" value="1"></Option>
-          <Option label="开团邀请" value="2"></Option>
-          <Option label="海报邀请" value="3"></Option>
-        </Select>
-      </Col>
+      <!--<Col :span="3" class="g-flex-a-j-center -s-radio -margin-left">-->
+        <!--<div class="-search-select-text-two">推广方式</div>-->
+        <!--<Select v-model="searchInfo.mode" @on-change="changeChannel" class="-search-selectOne">-->
+          <!--<Option label="全部" value="-1"></Option>-->
+          <!--<Option label="直接邀请" value="1"></Option>-->
+          <!--<Option label="开团邀请" value="2"></Option>-->
+          <!--<Option label="海报邀请" value="3"></Option>-->
+        <!--</Select>-->
+      <!--</Col>-->
     </Row>
 
 
@@ -99,10 +97,9 @@
     data() {
       return {
         searchInfo: {
-          name: '-1',
-          mode: '-1'
+          courseId: ''
         },
-        radioType: '0',
+        courseList: [],
         selectTypeTwo: 1,
         selectTypeThree: 1,
         dateOptionOne: {
@@ -131,50 +128,71 @@
       dateTypesLine() {
         let arrayX = []
         for (let item of this.dataInfo) {
-          arrayX.push(item.day)
+          arrayX.push(item.date)
         }
         return arrayX
       },
       optionSeriesLine() {
         let dataList = {
-          orderUser: [],
-          payedMoney: [],
-          payedUser: [],
-          pv: [],
-          uv: []
+          promotionUserCount: [],
+          promotionEarningsUserCount: [],
+          promotionEarningsAmount: [],
+          directInviteShareCount: [],
+          groupInviteShareCount: [],
+          posterInviteShareCount: [],
+          secondTaskFinishCount: [],
+          firstTaskFinishCount: [],
         }
         for (let item of this.dataInfo) {
-          dataList.orderUser.push(item.orderUser)
-          dataList.payedMoney.push(item.payedMoney)
-          dataList.payedUser.push(item.payedUser)
-          dataList.pv.push(item.pv)
-          dataList.uv.push(item.uv)
+          dataList.promotionUserCount.push(item.promotionUserCount)
+          dataList.promotionEarningsUserCount.push(item.promotionEarningsUserCount)
+          dataList.promotionEarningsAmount.push(item.promotionEarningsAmount)
+          dataList.directInviteShareCount.push(item.directInviteShareCount)
+          dataList.groupInviteShareCount.push(item.groupInviteShareCount)
+          dataList.posterInviteShareCount.push(item.posterInviteShareCount)
+          dataList.secondTaskFinishCount.push(item.secondTaskFinishCount)
+          dataList.firstTaskFinishCount.push(item.firstTaskFinishCount)
         }
         let optionSeriesLine = [
           {
-            name: '商品页面访问数量',
+            name: '推广人数',
             type: 'line',
-            data: dataList.pv
+            data: dataList.promotionUserCount
           },
           {
-            name: '商品页面访问用户',
+            name: '推广获益人数',
             type: 'line',
-            data: dataList.uv
+            data: dataList.promotionEarningsUserCount
           },
           {
-            name: '下单用户',
+            name: '推广收益',
             type: 'line',
-            data: dataList.orderUser
+            data: dataList.promotionEarningsAmount
           },
           {
-            name: '付费用户',
+            name: '直接分享次数',
             type: 'line',
-            data: dataList.payedUser
+            data: dataList.directInviteShareCount
           },
           {
-            name: '付费金额',
+            name: '开团分享次数',
             type: 'line',
-            data: dataList.payedMoney
+            data: dataList.groupInviteShareCount
+          },
+          {
+            name: '海报分享次数',
+            type: 'line',
+            data: dataList.posterInviteShareCount
+          },
+          {
+            name: '完成1阶任务人数',
+            type: 'line',
+            data: dataList.firstTaskFinishCount
+          },
+          {
+            name: '完成2阶任务人数',
+            type: 'line',
+            data: dataList.secondTaskFinishCount
           }
         ]
         return optionSeriesLine
@@ -191,13 +209,8 @@
       },
       changeTimeThree () {
         if(this.selectTypeThree == 1) {
-          this.getList()
+          this.getTotalInfo()
         }
-      },
-      changeChannel () {
-        this.getTotalInfo()
-        this.getTodayInfo()
-        this.getList()
       },
       changeDateTwo(data) {
         this.getStartTimeTwo = data.startTime
@@ -207,22 +220,15 @@
       changeDateThree(data) {
         this.getStartTimeThree = data.startTime
         this.getEndTimeThree = data.endTime
-        this.getList()
+        this.getTotalInfo()
       },
       getChannelList() {
-        this.$api.composition.listByChannel({
-          current: 1,
-          size: 10000
-        })
+        this.$api.jsdDistributie.listByCourse()
           .then(
             response => {
-              this.channelList = response.data.resultData.records;
-              this.channelList.unshift({
-                id: '0',
-                name: '全部'
-              })
-              this.getList()
-              this.getTodayInfo()
+              this.courseList = response.data.resultData;
+              this.searchInfo.courseId = this.courseList[0].courseId
+
               this.getTotalInfo()
             })
           .finally(() => {
@@ -243,28 +249,41 @@
             },
             textStyle: {
               align: 'left'
+
             }
           },
           legend: {
             data: [
               {
-                name: '商品页面访问数量',
+                name: '推广人数',
                 icon: 'circle'
               },
               {
-                name: '商品页面访问用户',
+                name: '推广获益人数',
                 icon: 'circle'
               },
               {
-                name: '下单用户',
+                name: '推广收益',
                 icon: 'circle'
               },
               {
-                name: '付费用户',
+                name: '直接分享次数',
                 icon: 'circle'
               },
               {
-                name: '付费金额',
+                name: '开团分享次数',
+                icon: 'circle'
+              },
+              {
+                name: '海报分享次数',
+                icon: 'circle'
+              },
+              {
+                name: '完成1阶任务人数',
+                icon: 'circle'
+              },
+              {
+                name: '完成2阶任务人数',
                 icon: 'circle'
               }
             ],
@@ -307,20 +326,7 @@
           zlevel: 0
         })
 
-        this.isFetching = true
-        this.$api.composition.userStatisticsLineChart({
-          chId: this.radioType,
-          begin: this.getStartTimeThree && new Date(this.getStartTimeThree).getTime(),
-          end: this.getEndTimeThree && new Date(this.getEndTimeThree).getTime()
-        })
-          .then(
-            response => {
-              this.dataInfo = response.data.resultData;
-              this.drawLine()
-            })
-          .finally(() => {
-            this.isFetching = false
-          })
+        this.drawLine()
       },
       getTodayInfo() {
         this.$api.composition.userStatisticsToday({
@@ -332,13 +338,17 @@
           })
       },
       getTotalInfo() {
-        this.$api.composition.userStatisticsTotal({
-          chId: this.radioType,
-          begin: this.getStartTimeTwo && new Date(this.getStartTimeTwo).getTime(),
-          end: this.getEndTimeTwo && new Date(this.getEndTimeTwo).getTime()
+        this.$api.fxglDataCenter.getPromotionData({
+          courseId: this.searchInfo.courseId,
+          startTime: this.getStartTimeTwo && new Date(this.getStartTimeTwo).getTime(),
+          startTime1: this.getStartTimeThree && new Date(this.getStartTimeThree).getTime(),
+          endTime: this.getEndTimeTwo && new Date(this.getEndTimeTwo).getTime(),
+          endTime1: this.getEndTimeThree && new Date(this.getEndTimeThree).getTime()
         }).then(
           response => {
             this.totalInfo = response.data.resultData;
+            this.dataInfo = this.totalInfo.list
+            this.getList()
             this.initData()
           })
       },
@@ -346,51 +356,51 @@
         this.titleList = [
           {
             name: '累计推广人数',
-            num: this.totalInfo.pv,
+            num: '0',
             todayName: '今日推广人数',
-            todayNum: '100'
+            todayNum: this.totalInfo.promotionUserCount || 0
           },
           {
             name: '累计推广获益人数',
-            num: this.totalInfo.pv,
+            num: '0',
             todayName: '今日推广获益人数',
-            todayNum: '100'
+            todayNum: this.totalInfo.promotionEarningsUserCount || 0
           },
           {
             name: '累计推广收益',
-            num: this.totalInfo.pv,
+            num: this.totalInfo.allPromotionEarningsAmount || 0,
             todayName: '今日推广收益',
-            todayNum: '100'
+            todayNum: this.totalInfo.promotionEarningsAmount || 0
           },
           {
             name: '直接邀请累计分享次数',
-            num: this.totalInfo.uv,
+            num: this.totalInfo.allDirectInviteShareCount || 0,
             todayName: '直接邀请今日分享次数',
-            todayNum: '100'
+            todayNum: this.totalInfo.directInviteShareCount || 0
           },
           {
             name: '开团邀请累计分享次数',
-            num: this.totalInfo.orderUser,
+            num: this.totalInfo.allGroupInviteShareCount || 0,
             todayName: '开团邀请今日分享次数',
-            todayNum: '100'
+            todayNum: this.totalInfo.groupInviteShareCount || 0
           },
           {
             name: '海报邀请累计分享次数',
-            num: this.totalInfo.orderUser,
+            num: this.totalInfo.allPosterInviteShareCount || 0,
             todayName: '海报邀请今日分享次数',
-            todayNum: '100'
+            todayNum: this.totalInfo.posterInviteShareCount || 0
           },
           {
             name: '累计完成1阶新手任务人数',
-            num: this.totalInfo.orderUser,
+            num: this.totalInfo.allFirstTaskFinishCount || 0,
             todayName: '今日完成1阶新手任务人数',
-            todayNum: '100'
+            todayNum: this.totalInfo.firstTaskFinishCount || 0
           },
           {
             name: '累计完成2阶新手任务人数',
-            num: this.totalInfo.orderUser,
+            num: this.totalInfo.allSecondTaskFinishCount || 0,
             todayName: '今日完成2阶新手任务人数',
-            todayNum: '100'
+            todayNum: this.totalInfo.secondTaskFinishCount || 0
           }
         ]
       }
@@ -444,6 +454,10 @@
         .-col-name {
           padding: 18px 0 18px 15px ;
           min-width: 100px;
+          max-width: 100%;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          overflow: hidden;
           border-bottom: 1px solid #E9EAEC;
           font-size:16px;
           font-weight:500;
@@ -502,6 +516,10 @@
       border-radius: 4px;
       text-align: left;
     }
+
+    .-width {
+      width: 300px;
+    }
     .-margin-left {
       margin-left: 30px;
     }
@@ -516,6 +534,7 @@
       margin: 20px 0;
     }
     .-search-select-text-two {
+      min-width: 70px;
       text-align: left;
       margin-right: 20px;
       font-size:16px;

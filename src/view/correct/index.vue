@@ -172,7 +172,7 @@ export default {
       showTip: false,
       showLeftNav: false,
       showRightNav: false,
-      imgShow: true,
+      imgShow: false,
       left: 0,
       top: 0,
       imgActive: 0,
