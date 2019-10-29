@@ -367,7 +367,7 @@ export default {
       let img = fabric.Image.fromURL(this.image, (img) => {
         this.canvas.setBackgroundColor('#fff')
         this.canvas.setBackgroundImage(img, width / img.width, 783 / img.height)
-      })
+      }, { crossOrigin: 'anonymous' })
     },
     setBackgroud () {
       let { width, mode } = this
@@ -375,7 +375,7 @@ export default {
       let img = fabric.Image.fromURL(imgUrl, (img) => {
         this.canvas.setBackgroundColor('#fff')
         this.canvas.setBackgroundImage(img, width / img.width, 120 / img.height)
-      })
+      }, { crossOrigin: 'anonymous' })
       // img.onload = () => {
       //   this.canvas.setBackgroundImage(img)
       // }
