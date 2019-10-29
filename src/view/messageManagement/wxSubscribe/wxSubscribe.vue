@@ -140,6 +140,10 @@
           {
             name: '小学作文满分',
             appid: 'wx7ea9c24a31f78c45'
+          },
+          {
+            name: '乐小狮福利社',
+            appid: 'wx650c047987664716'
           }
         ],
         ruleValidate: {
