@@ -199,7 +199,7 @@ export default {
     document.oncontextmenu = function (e) {
       e.preventDefault();
     };
-    this.fullScreen()
+    // this.fullScreen()
   },
   methods: {
     getViewWork (fn) {

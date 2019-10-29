@@ -445,7 +445,7 @@
             {
               title: '佣金比例',
               render: (h, params) => {
-                return h('div', `${params.row.distributorProportion}%`)
+                return h('div', `${params.row.commercialProportion}%`)
               },
               align: 'center'
             },
