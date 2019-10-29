@@ -344,6 +344,7 @@
                   },
                   style: {
                     color: '#5444E4',
+                    display: params.row.homeworkType === 1 ? 'none' : 'inline-block',
                     marginRight: '5px'
                   },
                   on: {
