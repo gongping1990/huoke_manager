@@ -95,23 +95,23 @@
           },
           {
             name: '提现成功',
-            id: '1'
-          },
-          {
-            name: '提现失败',
             id: '2'
           },
           {
-            name: '处理中',
+            name: '提现失败',
             id: '3'
+          },
+          {
+            name: '处理中',
+            id: '1'
           }
         ],
         orderColor: {
-          '0': 'g-success-bg',
-          '1': 'g-error-bg',
-          '2': 'g-gary-bg'
+          '1': 'g-success-bg',
+          '2': 'g-error-bg',
+          '0': 'g-gary-bg'
         },
-        orderType: ['提现成功', '提现失败', '处理中'],
+        orderType: ['处理中','提现成功', '提现失败'],
         dataList: [],
         dateOption: {
           name: '申请时间',
