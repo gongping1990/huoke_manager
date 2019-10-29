@@ -120,6 +120,19 @@ export const jsdRouter = [
         ],
         component: () => import('@/view/jsd/correctionRecord/correctionRecord')
       },
+      {
+        path: '/jsd_score',
+        name: 'jsd_score',
+        meta: [
+          {
+            name: '管理人员'
+          },
+          {
+            name: '评分维度'
+          }
+        ],
+        component: () => import('@/view/jsd/score/scoreList')
+      },
 
     ]
   }

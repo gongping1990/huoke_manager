@@ -315,46 +315,46 @@
       initData() {
         this.titleList = [
           {
-            name: '累计页面访问量',
-            num: this.totalInfo.pv,
-            todayName: '今日页面访问量',
-            todayNum: this.todayInfo.pv
+            name: '今日页面访问量',
+            num: this.todayInfo.pv,
+            todayName: '累计页面访问量',
+            todayNum: this.totalInfo.pv
           },
           {
-            name: '累计访问用户',
-            num: this.totalInfo.uv,
-            todayName: '今日访问用户',
-            todayNum: this.todayInfo.uv
+            name: '今日访问用户',
+            num: this.todayInfo.uv,
+            todayName: '累计访问用户',
+            todayNum: this.totalInfo.uv
           },
           {
-            name: '累计下单用户',
-            num: this.totalInfo.orderuser,
-            todayName: '今日下单用户',
-            todayNum: this.todayInfo.orderuser
+            name: '今日下单用户',
+            num: this.todayInfo.orderuser,
+            todayName: '累计下单用户',
+            todayNum: this.totalInfo.orderuser
           },
           {
-            name: '累计付费用户',
-            num: this.totalInfo.payeduser,
-            todayName: '今日付费用户',
-            todayNum: this.todayInfo.payeduser
+            name: '今日付费用户',
+            num: this.todayInfo.payeduser,
+            todayName: '累计付费用户',
+            todayNum: this.totalInfo.payeduser
           },
           {
-            name: '累计下单数',
-            num: this.totalInfo.ordernum,
-            todayName: '今日下单数',
-            todayNum:this.todayInfo.ordernum
+            name: '今日下单数',
+            num: this.todayInfo.ordernum,
+            todayName: '累计下单数',
+            todayNum:this.totalInfo.ordernum
           },
           {
-            name: '累计支付成功订单数',
-            num: this.totalInfo.payedordernum,
-            todayName: '今日支付成功订单数',
-            todayNum: this.todayInfo.payedordernum
+            name: '今日支付成功订单数',
+            num: this.todayInfo.payedordernum,
+            todayName: '累计支付成功订单数',
+            todayNum: this.totalInfo.payedordernum
           },
           {
-            name: '累计付费金额',
-            num: this.totalInfo.totalmoney,
-            todayName: '今日付费金额',
-            todayNum: this.todayInfo.totalmoney
+            name: '今日付费金额',
+            num: this.todayInfo.totalmoney,
+            todayName: '累计付费金额',
+            todayNum: this.totalInfo.totalmoney
           }
         ]
       }

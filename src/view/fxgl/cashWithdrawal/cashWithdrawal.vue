@@ -39,7 +39,9 @@
       class="p-cashWithdrawal"
       v-model="isOpenModal"
       width="600"
-      :title="addInfo.intoAccountImg ? '查看详情' : '您确认已经将提现金额打款到加盟商账户了吗?'">
+      :title="addInfo.intoAccountImg ? '查看详情' : '提示'">
+      <div class="p-cashWithdrawal-tip -c-tips" v-if="!addInfo.intoAccountImg">您确认已经将提现金额打款到加盟商账户了吗?</div>
+      <div class="p-cashWithdrawal-tip -c-tips -small" v-if="!addInfo.intoAccountImg">提示：打款是在线下进行的，这里只对金额进行记录</div>
       <Form ref="addInfo" :model="addInfo"  :label-width="100" class="ivu-form-item-required">
         <FormItem label="打款凭证截图" v-if="!addInfo.intoAccountImg">
           <upload-img v-model="addInfo.deliverImg" :option="uploadOption"></upload-img>
@@ -54,7 +56,7 @@
            {{dayjs(+addInfo.oprateTime).format("YYYY-MM-DD HH:mm")}}
         </FormItem>
       </Form>
-      <div class="p-cashWithdrawal-tip -c-tips" v-if="!addInfo.intoAccountImg">提示：打款是在线下进行的，这里只对金额进行记录</div>
+
       <div slot="footer" class="-p-v-flex">
         <Button @click="isOpenModal = false" ghost type="primary" style="width: 100px;">{{addInfo.intoAccountImg ? '确认' : '取消'}}</Button>
         <div @click="submitInfo()" class="g-primary-btn " v-if="!addInfo.intoAccountImg">确认</div>
@@ -296,7 +298,13 @@
 <style lang="less" scoped>
   .p-cashWithdrawal {
 
+    .-small {
+      font-size: 12px;
+      margin-bottom: 20px;
+    }
+
     &-tip {
+      text-align: center;
       font-size: 16px;
       font-weight: bold;
       margin: 10px 0;

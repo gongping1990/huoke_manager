@@ -102,6 +102,16 @@
           <FormItem label="批改文案" :class="{'ivu-form-item-required': addInfo.isPassed === 0}">
             <Input type="textarea" :rows="5" v-model="addInfo.replyText" placeholder="请输入批改文案"></Input>
           </FormItem>
+          <FormItem label="综合评分" v-if="addInfo.isPassed === 1" :class="{'ivu-form-item-required': addInfo.isPassed === 1}">
+            <p class="-c-tips">此评分主要用于其他老师在查看作业记录时，能快速的对用户的作业情况有一个大致的了解，用户不可见</p>
+            <div class="p-todayWork-score">
+              <div class="p-todayWork-scoreItem" v-for="(item, index) of 6" :key="index">
+                <span>维度1</span>
+                <Input class="-input" type="text" v-model="addInfo.replyTeacher" placeholder="满分一百分"></Input>
+              </div>
+            </div>
+
+          </FormItem>
         </Form>
         <div slot="footer" class="-p-b-flex">
           <Button @click="closeModal('addInfo')" ghost type="primary" style="width: 100px;">取消</Button>
@@ -1298,6 +1308,22 @@
 
       .-tip-div {
         width: 50%;
+      }
+    }
+
+    &-score {
+      display:flex;
+      flex-direction:row;
+      flex-wrap:wrap;
+    }
+
+    &-scoreItem {
+      margin-top: 10px;
+      width: 50%;
+
+      .-input {
+        width: 80%;
+        margin-left: 10px;
       }
     }
 
