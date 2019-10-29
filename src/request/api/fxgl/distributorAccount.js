@@ -15,6 +15,9 @@ const jsdDistributorAccount = {
   },
   getAdminUserWithDrawRecord(params) {
     return axios.get(`/distribution/distributorAccount/getAdminUserWithDrawRecord`, {params})
+  },
+  uploadDeliverImg(params) {
+    return axios.get(`/distribution/distributorAccount/uploadDeliverImg`, {params})
   }
 }
 

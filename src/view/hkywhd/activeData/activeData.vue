@@ -1,39 +1,26 @@
 <template>
-  <div class="p-userData">
-    <Card>
-      <div class="p-userData-title">
+  <div class="p-activeData">
+    <Card class="p-activeData-top">
+      <div class="p-activeData-title">
         <div class="-left">
-          <img src="../../../assets/images/icon/icon1.png"/>
-          <span>数据统计</span>
-        </div>
-        <div class="g-flex-a-j-center">
-          <div class="-search-select-text">日期查询：</div>
-          <Select v-model="selectTypeTwo" class="-search-selectOne" @on-change="changeTimeTwo">
-            <Option label='全部' :value="1"></Option>
-            <Option label='自定义' :value="2"></Option>
-          </Select>
-          <date-picker-template v-if="selectTypeTwo===2" :dataInfo="dateOption"
-                                @changeDate="changeDateTwo"></date-picker-template>
+          <img src="../../../assets/images/icon/icon6.png"/>
+          <span>今日数据</span>
         </div>
       </div>
-      <Row class="p-userData-flex" :gutter="10" style="margin-top: 20px">
-        <Col v-for="(item,index) of titleList" :key="index" class="-p-d-col">
-          <div class="g-t-left -card-wrap">
-            <div class="-col-name">{{item.name}}</div>
-            <div class="-col-down">
-              {{item.num}}
+      <div>
+        <Row class="p-activeData-flex" :gutter="10" style="margin-top: 20px">
+          <Col v-for="(item,index) of titleListThree" :key="index" class="-p-d-col">
+            <div class="g-t-left -card-wrap -card-wrap-two">
+              <div class="-col-name">{{item.name}}</div>
+              <div class="-col-down">{{item.num}}</div>
             </div>
-            <div class="-col-today">
-              <span class="-col-today-width">{{item.todayName}}</span>
-              <span class="-col-today-color">{{item.todayNum}}</span>
-            </div>
-          </div>
-        </Col>
-      </Row>
+          </Col>
+        </Row>
+      </div>
     </Card>
 
-    <Card class="p-userData-top">
-      <div class="p-userData-title -three">
+    <Card class="p-activeData-top">
+      <div class="p-activeData-title -three">
         <div class="-left">
           <img src="../../../assets/images/icon/icon7.png"/>
           <span>趋势数据</span>
@@ -76,7 +63,6 @@
     data() {
       return {
         radioType: 0,
-        selectTypeTwo: 1,
         selectTypeThree: 1,
         dateOptionOne: {
           disabledDate(date) {
@@ -90,15 +76,10 @@
         isFetching: false,
         dataInfo: '',
         todayInfo: '',
-        totalInfo: '',
         selectTime: new Date(new Date().getTime() - 24 * 60 * 60 * 1000),
         getStartTimeThree: '',
-        getStartTimeTwo: '',
         getEndTimeThree: '',
-        getEndTimeTwo: '',
-        titleList: [],
-        titleListTwo: [],
-        channelList: []
+        titleListThree: []
       }
     },
     computed: {
@@ -111,103 +92,81 @@
       },
       optionSeriesLine() {
         let dataList = {
-          orderUser: [],
-          payedMoney: [],
-          payedUser: [],
-          pv: [],
-          uv: []
+          firstStartActivityCount: [],
+          firstEndActivityCount: [],
+          secondStartActivityCount: [],
+          shareCount: [],
+          joinActivityCount: [],
+          activitySuccessCount: []
         }
         for (let item of this.dataInfo) {
-          dataList.orderUser.push(item.orderUser)
-          dataList.payedMoney.push(item.payedMoney)
-          dataList.payedUser.push(item.payedUser)
-          dataList.pv.push(item.pv)
-          dataList.uv.push(item.uv)
+          dataList.firstStartActivityCount.push(item.firstStartActivityCount)
+          dataList.firstEndActivityCount.push(item.firstEndActivityCount)
+          dataList.secondStartActivityCount.push(item.secondStartActivityCount)
+          dataList.shareCount.push(item.shareCount)
+          dataList.joinActivityCount.push(item.joinActivityCount)
+          dataList.activitySuccessCount.push(item.activitySuccessCount)
         }
         let optionSeriesLine = [
           {
-            name: '页面访问数量',
+            name: '首次活动发起数量',
             type: 'line',
-            data: dataList.pv
+            data: dataList.firstStartActivityCount
           },
           {
-            name: '页面访问用户',
+            name: '首次活动过期数量',
             type: 'line',
-            data: dataList.uv
+            data: dataList.firstEndActivityCount
           },
           {
-            name: '下单用户',
+            name: '二次活动发起数量',
             type: 'line',
-            data: dataList.orderUser
+            data: dataList.secondStartActivityCount
           },
           {
-            name: '付费用户',
+            name: '参加活动助力人数',
             type: 'line',
-            data: dataList.payedUser
+            data: dataList.joinActivityCount
           },
           {
-            name: '下单数',
+            name: '活动助力成功数',
             type: 'line',
-            data: dataList.payedMoney
+            data: dataList.activitySuccessCount
           },
           {
-            name: '支付成功订单数',
+            name: '分享次数',
             type: 'line',
-            data: dataList.payedMoney
-          },
-          {
-            name: '付费金额',
-            type: 'line',
-            data: dataList.payedMoney
+            data: dataList.shareCount
           }
         ]
         return optionSeriesLine
       },
     },
     mounted() {
-      this.getChannelList()
+      this.getActivityData()
     },
     methods: {
-      changeTimeTwo () {
-        if(this.selectTypeTwo == 1) {
-          this.getTotalInfo()
-        }
-      },
       changeTimeThree () {
         if(this.selectTypeThree == 1) {
-          this.getList()
+          this.getActivityData()
         }
-      },
-      changeChannel () {
-        this.getTotalInfo()
-        this.getTodayInfo()
-        this.getList()
-      },
-      changeDateTwo(data) {
-        this.getStartTimeTwo = data.startTime
-        this.getEndTimeTwo = data.endTime
-        this.getTotalInfo()
       },
       changeDateThree(data) {
         this.getStartTimeThree = data.startTime
         this.getEndTimeThree = data.endTime
-        this.getList()
+        this.getActivityData()
       },
-      getChannelList() {
-        this.$api.composition.listByChannel({
-          current: 1,
-          size: 10000
+      getActivityData() {
+        this.$api.hkywhdActivity.getActivityData({
+          startTime: this.getStartTimeThree && new Date(this.getStartTimeThree).getTime(),
+          endTime: this.getEndTimeThree && new Date(this.getEndTimeThree).getTime()
         })
           .then(
             response => {
-              this.channelList = response.data.resultData.records;
-              this.channelList.unshift({
-                id: '0',
-                name: '全部'
-              })
+              this.todayInfo = response.data.resultData;
+              this.dataInfo = this.todayInfo.list
               this.getList()
-              this.getTodayInfo()
-              this.getTotalInfo()
+              this.initData()
             })
           .finally(() => {
             this.isFetching = false
@@ -232,31 +191,27 @@
           legend: {
             data: [
               {
-                name: '页面访问数量',
+                name: '首次活动发起数量',
                 icon: 'circle'
               },
               {
-                name: '页面访问用户',
+                name: '首次活动过期数量',
                 icon: 'circle'
               },
               {
-                name: '下单用户',
+                name: '二次活动发起数量',
                 icon: 'circle'
               },
               {
-                name: '付费用户',
+                name: '参加活动助力人数',
                 icon: 'circle'
               },
               {
-                name: '下单数',
+                name: '活动助力成功数',
                 icon: 'circle'
               },
               {
-                name: '支付成功订单数',
-                icon: 'circle'
-              },
-              {
-                name: '付费金额',
+                name: '分享次数',
                 icon: 'circle'
               }
             ],
@@ -299,84 +254,33 @@
           zlevel: 0
         })
 
-        this.isFetching = true
-        this.$api.composition.userStatisticsLineChart({
-          chId: this.radioType,
-          begin: this.getStartTimeThree && new Date(this.getStartTimeThree).getTime(),
-          end: this.getEndTimeThree && new Date(this.getEndTimeThree).getTime()
-        })
-          .then(
-            response => {
-              this.dataInfo = response.data.resultData;
-              this.drawLine()
-            })
-          .finally(() => {
-            this.isFetching = false
-          })
-      },
-      getTodayInfo() {
-        this.$api.composition.userStatisticsToday({
-          chId: this.radioType
-        }).then(
-          response => {
-            this.todayInfo = response.data.resultData;
-            this.initData()
-          })
-      },
-      getTotalInfo() {
-        this.$api.composition.userStatisticsTotal({
-          chId: this.radioType,
-          begin: this.getStartTimeTwo && new Date(this.getStartTimeTwo).getTime(),
-          end: this.getEndTimeTwo && new Date(this.getEndTimeTwo).getTime()
-        }).then(
-          response => {
-            this.totalInfo = response.data.resultData;
-            this.initData()
-          })
+        this.drawLine()
       },
       initData() {
-        this.titleList = [
+        this.titleListThree = [
           {
-            name: '累计页面访问量',
-            num: this.totalInfo.pv,
-            todayName: '今日页面访问量',
-            todayNum: '1000'
+            name: '首次活动发起数量',
+            num: this.todayInfo.firstStartActivityCount
           },
           {
-            name: '累计访问用户',
-            num: this.totalInfo.uv,
-            todayName: '今日访问用户',
-            todayNum: '1000'
+            name: '首次活动过期数量',
+            num: this.todayInfo.firstEndActivityCount
           },
           {
-            name: '累计下单用户',
-            num: this.totalInfo.uv,
-            todayName: '今日下单用户',
-            todayNum: '1000'
+            name: '二次活动发起数量',
+            num: this.todayInfo.secondStartActivityCount
           },
           {
-            name: '累计付费用户',
-            num: this.totalInfo.uv,
-            todayName: '今日付费用户',
-            todayNum: '1000'
+            name: '分享次数',
+            num: this.todayInfo.shareCount
           },
           {
-            name: '累计下单数',
-            num: this.totalInfo.orderUser,
-            todayName: '今日下单数',
-            todayNum: '1000'
+            name: '参与活动助力人数',
+            num: this.todayInfo.joinActivityCount
           },
           {
-            name: '累计支付成功订单数',
-            num: this.totalInfo.orderUser,
-            todayName: '今日支付成功订单数',
-            todayNum: '1000'
-          },
-          {
-            name: '累计付费金额',
-            num: this.totalInfo.orderUser,
-            todayName: '今日付费金额',
-            todayNum: '1000'
+            name: '活动助力成功数',
+            num: this.todayInfo.activitySuccessCount
           }
         ]
       }
@@ -386,7 +290,7 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="less">
-  .p-userData {
+  .p-activeData {
     &-top {
       margin-top: 30px;
 

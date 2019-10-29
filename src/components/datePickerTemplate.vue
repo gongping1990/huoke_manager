@@ -1,6 +1,11 @@
 <template>
   <div class="p-date g-flex-a-j-center" :class="{'p-date-left': dataInfo.row != '2'}">
-    <Col span="2" class="-search-select-text" v-if="dataInfo.name">{{dataInfo.name}}</Col>
+    <Col span="2" class="-search-select-text" v-if="dataInfo.name && !dataInfo.isMore">{{dataInfo.name}}</Col>
+    <Col span="2" class="-search-select-text -width" v-if="dataInfo.isMore">
+      <Select v-model="dateTime.index" class="-search-selectOne" @on-change="changeSelect">
+        <Option v-for="(item,index) in dataInfo.name" :label="item.name" :value="item.id" :key="index"></Option>
+      </Select>
+    </Col>
     <Col span="14" class="g-flex-a-j-center">
       <div>
         <Date-picker class="date-time"
@@ -37,7 +42,8 @@
       return {
         dateTime: {
           startTime: '',
-          endTime: ''
+          endTime: '',
+          index: this.dataInfo.isMore ? this.dataInfo.name[0].id : ''
         },
         dateOption: {
           // disabledDate(date) {
@@ -56,9 +62,15 @@
       }
     },
     methods: {
+      changeSelect () {
+        if(this.dateTime.startTime && this.dateTime.endTime) {
+          this.changeDateFn(false)
+        }
+      },
       resetDate() {
         this.dateTime.startTime = ''
         this.dateTime.endTime = ''
+        this.dateTime.index = '0'
         this.$emit('changeDate', this.dateTime)
       },
       changeStartClick(date) {
@@ -101,6 +113,19 @@
     .-search-select-text {
       min-width: 70px;
     }
+
+    .-search-selectOne {
+      width: 100%;
+      border: 1px solid #dcdee2;
+      border-radius: 4px;
+      margin-right: 20px;
+    }
+
+    .-width {
+      min-width: 120px;
+      margin-right: 20px;
+    }
+
   }
 
   .p-date-left {

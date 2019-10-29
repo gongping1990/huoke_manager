@@ -14,6 +14,14 @@
                      @on-click="getList(1)"></Input>
             </div>
           </Col>
+          <Col :span="4" class="g-t-left" style="margin-left: 10px">
+            <div class="g-flex-a-j-center">
+              <div class="-search-select-text">排序方式</div>
+              <Select v-model="searchInfo.sortType" @on-change="getList()" class="-search-selectOne">
+                <Option v-for="(item,index) in sortList" :label="item.name" :value="item.id" :key="index"></Option>
+              </Select>
+            </div>
+          </Col>
           <Col :span="10" class="g-flex-a-j-center">
             <date-picker-template :dataInfo="dateOption" @changeDate="changeDate"></date-picker-template>
           </Col>
@@ -83,16 +91,19 @@
             :current.sync="tabDetail.currentPage"
             @on-change="detailCurrentChange"></Page>
     </Modal>
+
+    <look-user-info v-model="isOpenUserInfo" :dataInfo="detailInfo"></look-user-info>
   </div>
 </template>
 
 <script>
   import DatePickerTemplate from "@/components/datePickerTemplate";
   import dayjs from 'dayjs'
+  import LookUserInfo from "../../../jsd/todayWork/lookUserInfo";
 
   export default {
     name: 'tbzw_paid_applicationRecord',
-    components: {DatePickerTemplate},
+    components: {LookUserInfo, DatePickerTemplate},
     data() {
       return {
         tab: {
@@ -106,8 +117,22 @@
           pageSize: 10
         },
         dateOption: {
-          name: '领取时间',
-          type: 'datetime'
+          name: [
+            {
+              id: '0',
+              name: '领取时间'
+            },
+            {
+              id: '1',
+              name: '初次上课时间'
+            },
+            {
+              id: '2',
+              name: '初次作业时间'
+            }
+          ],
+          type: 'datetime',
+          isMore: true,
         },
         dataList: [],
         dataDetailList: [],
@@ -126,22 +151,55 @@
             name: '否'
           }
         ],
+        sortList: [
+          {
+            id: '0',
+            name: '领取时间降序排列'
+          },
+          {
+            id: '1',
+            name: '初次上课时间降序'
+          },
+          {
+            id: '2',
+            name: '初次作业时间降序'
+          }
+        ],
         total: 0,
         totalDetail: 0,
         selectInfo: '1',
+        detailInfo: '',
         searchInfo: {
           courseId: '-1',
           visited: '-1',
           homeworked: '-1',
           studyed: '-1',
-          buyed: '-1'
+          buyed: '-1',
+          sortType: '0'
         },
         isFetching: false,
         isOpenModal: false,
+        isOpenUserInfo: false,
         columns: [
           {
             title: '用户昵称',
-            key: 'nickname',
+            render: (h, params) => {
+              return h('Button', {
+                props: {
+                  type: 'text',
+                  size: 'small'
+                },
+                style: {
+                  color: '#5444E4',
+                  marginRight: '5px'
+                },
+                on: {
+                  click: () => {
+                    this.toDetail(params.row)
+                  }
+                }
+              }, params.row.nickname)
+            },
             align: 'center'
           },
           {
@@ -260,6 +318,11 @@
       this.getCourseList()
     },
     methods: {
+      toDetail(data) {
+        this.isOpenUserInfo = true
+        this.detailInfo = JSON.parse(JSON.stringify(data))
+        this.detailInfo.uid = this.detailInfo.userId
+      },
       openModal (data) {
         this.getWorkList(data)
         this.isOpenModal = true
@@ -267,6 +330,7 @@
       changeDate(data) {
         this.searchInfo.getStartTime = data.startTime
         this.searchInfo.getEndTime = data.endTime
+        this.searchInfo.timeType = data.index
         this.getList(1)
       },
       changeAudit(param) {
@@ -332,6 +396,8 @@
           buyed: this.searchInfo.buyed == '-1' ? '' : this.searchInfo.buyed,
           studyed: this.searchInfo.studyed == '-1' ? '' : this.searchInfo.studyed,
           homeworked: this.searchInfo.homeworked == '-1' ? '' : this.searchInfo.homeworked,
+          sortType: this.searchInfo.sortType,
+          timeType: this.searchInfo.timeType,
           startTime: this.searchInfo.getStartTime ? new Date(this.searchInfo.getStartTime).getTime() : "",
           endTime: this.searchInfo.getEndTime ? new Date(this.searchInfo.getEndTime).getTime() : ""
         }

@@ -39,16 +39,25 @@
       class="p-cashWithdrawal"
       v-model="isOpenModal"
       width="600"
-      title="您确认已经将提现金额打款到加盟商账户了吗?">
+      :title="addInfo.intoAccountImg ? '查看详情' : '您确认已经将提现金额打款到加盟商账户了吗?'">
       <Form ref="addInfo" :model="addInfo"  :label-width="100" class="ivu-form-item-required">
-        <FormItem label="打款凭证截图">
-          <upload-img v-model="addInfo.qrcode" :option="uploadOption"></upload-img>
+        <FormItem label="打款凭证截图" v-if="!addInfo.intoAccountImg">
+          <upload-img v-model="addInfo.deliverImg" :option="uploadOption"></upload-img>
+        </FormItem>
+         <FormItem label="打款凭证截图" v-if="addInfo.intoAccountImg">
+          <img class="p-cashWithdrawal-img" :src="addInfo.intoAccountImg"/>
+        </FormItem>
+         <FormItem label="操作人" v-if="addInfo.intoAccountImg">
+          {{addInfo.operateUserName}}
+        </FormItem>
+         <FormItem label="操作时间" v-if="addInfo.intoAccountImg">
+           {{dayjs(+addInfo.oprateTime).format("YYYY-MM-DD HH:mm")}}
         </FormItem>
       </Form>
-      <div class="p-cashWithdrawal-tip -c-tips">提示：打款是在线下进行的，这里只对金额进行记录</div>
+      <div class="p-cashWithdrawal-tip -c-tips" v-if="!addInfo.intoAccountImg">提示：打款是在线下进行的，这里只对金额进行记录</div>
       <div slot="footer" class="-p-v-flex">
-        <Button @click="isOpenModal = false" ghost type="primary" style="width: 100px;">取消</Button>
-        <div @click="submitInfo()" class="g-primary-btn ">确认</div>
+        <Button @click="isOpenModal = false" ghost type="primary" style="width: 100px;">{{addInfo.intoAccountImg ? '确认' : '取消'}}</Button>
+        <div @click="submitInfo()" class="g-primary-btn " v-if="!addInfo.intoAccountImg">确认</div>
       </div>
     </Modal>
   </div>
@@ -86,15 +95,15 @@
           },
           {
             name: '提现成功',
-            id: '0'
+            id: '1'
           },
           {
             name: '提现失败',
-            id: '10'
+            id: '2'
           },
           {
             name: '处理中',
-            id: '20'
+            id: '3'
           }
         ],
         orderColor: {
@@ -118,7 +127,14 @@
         columns: [
           {
             title: '用户昵称',
-            key: 'nickName',
+            key: 'userName',
+            align: 'center'
+          },
+          {
+            title: '用户类型',
+            render: (h,params)=> {
+              return h('div', params.row.type ===0 ? '推广人' : '加盟商')
+            },
             align: 'center'
           },
           {
@@ -169,36 +185,6 @@
             align: 'center'
           },
           {
-            title: '打款凭证截图',
-            render: (h, params)=> {
-              return h('img', {
-                attrs: {
-                  src: params.row.intoAccountImg,
-                  preview: '0'
-                },
-                style: {
-                  width: '50px',
-                  height: '50px',
-                  margin: '10px',
-                  cursor: 'zoom-in'
-                }
-              })
-            },
-            align: 'center'
-          },
-          {
-            title: '操作人',
-            key: 'operateUserName',
-            align: 'center'
-          },
-          {
-            title: '操作时间',
-            render: (h, params) => {
-              return h('div', dayjs(+params.row.oprateTime).format("YYYY-MM-DD HH:mm:ss"))
-            },
-            align: 'center'
-          },
-          {
             title: '操作',
             align: 'center',
             render: (h, params) => {
@@ -209,6 +195,7 @@
                     size: 'small'
                   },
                   style: {
+                    display: params.row.type === 1 ? 'inline-block' : 'none' ,
                     color: '#1890FF'
                   },
                   on: {
@@ -216,7 +203,7 @@
                       this.openModal(params.row)
                     }
                   }
-                }, '确认打款')
+                }, params.row.intoAccountImg ? '详情' : '确认打款')
               ])
             }
           }
@@ -235,7 +222,8 @@
       this.getList()
     },
     methods: {
-      openModal () {
+      openModal (data) {
+        this.addInfo = data
         this.isOpenModal = true
       },
       changeDate (data) {
@@ -283,7 +271,23 @@
           })
       },
       submitInfo () {
-
+        if(!this.addInfo.deliverImg) {
+          return this.$Message.error('请上传打款凭证')
+        }
+        this.$api.jsdDistributorAccount.uploadDeliverImg({
+          id: this.addInfo.id,
+          deliverImg: this.addInfo.deliverImg
+        })
+          .then(
+            response => {
+              if (response.data.code == '200') {
+                this.$Message.success('提交成功');
+                this.getList()
+              }
+            })
+          .finally(() => {
+            this.isSending = false
+          })
       }
     }
   };
@@ -296,6 +300,11 @@
       font-size: 16px;
       font-weight: bold;
       margin: 10px 0;
+    }
+
+    &-img {
+      width: 200px;
+      height: 100px;
     }
 
     .-title {

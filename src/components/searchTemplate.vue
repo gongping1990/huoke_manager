@@ -89,6 +89,15 @@
             </Select>
           </div>
         </Col>
+        <Col :span="4" class="g-t-left" v-if="option.isExamine">
+          <div class="g-flex-a-j-center">
+            <div class="-search-select-text">审核状态：</div>
+            <Select v-model="searchInfo.reviewStatus" @on-change="changeEmit()" class="-search-selectOne">
+              <Option class="-search-option" v-for="(item,index) in examineList" :label="item.name" :value="item.id"
+                      :key="index"></Option>
+            </Select>
+          </div>
+        </Col>
       </Row>
     </Row>
   </div>
@@ -156,6 +165,24 @@
             name: '不满意'
           }
         ],
+        examineList: [
+          {
+            id: '0',
+            name: '全部'
+          },
+          {
+            id: '1',
+            name: '待审核'
+          },
+          {
+            id: '2',
+            name: '已通过'
+          },
+          {
+            id: '3',
+            name: '未通过'
+          }
+        ],
         teacherList: []
       }
     },
@@ -201,7 +228,8 @@
           evaluationed: '-1',
           evaluation: '-1',
           hasComment: '-1',
-          teacherId: '-1'
+          teacherId: '-1',
+          reviewStatus: '0'
         }
       },
       changeMore() {

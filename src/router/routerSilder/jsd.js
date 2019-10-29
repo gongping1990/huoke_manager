@@ -107,6 +107,19 @@ export const jsdRouter = [
         ],
         component: () => import('@/view/jsd/correctionConfig/correctionConfig')
       },
+      {
+        path: '/jsd_correctionRecord',
+        name: 'jsd_correctionRecord',
+        meta: [
+          {
+            name: '管理人员'
+          },
+          {
+            name: '批改记录'
+          }
+        ],
+        component: () => import('@/view/jsd/correctionRecord/correctionRecord')
+      },
 
     ]
   }

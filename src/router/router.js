@@ -10,6 +10,7 @@ import { ylxcxRouter } from './routerSilder/ylxcx'
 import { yhzxRouter } from './routerSilder/yhzx'
 import { jsdRouter } from './routerSilder/jsd'
 import { fxglRouter } from './routerSilder/fxgl'
+import { hkywhdRouter } from './routerSilder/hkywhd'
 // import err404 from '@/pages/404'
 //otherRouter
 // import home from '@/pages/home'
@@ -257,5 +258,6 @@ export const routers = [
       }
     ],
     component: () => import('@/view/correct')
-  }
+  },
+  ...hkywhdRouter
 ]

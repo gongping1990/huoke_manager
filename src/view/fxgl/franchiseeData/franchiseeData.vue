@@ -1,19 +1,17 @@
 <template>
-  <div class="p-extensionData">
+  <div class="p-franchiseeData">
     <Row class="g-search">
-      <Col :span="3" class="g-flex-a-j-center -s-radio">
+      <Col :span="5" class="g-flex-a-j-center -s-radio">
         <div class="-search-select-text-two">课程名称</div>
-        <Select v-model="searchInfo.name" @on-change="changeChannel" class="-search-selectOne">
-          <Option label="全部" value="-1"></Option>
-          <Option label="小语轻作文" value="7"></Option>
-          <Option label="每日一首古诗词" value="8"></Option>
+        <Select v-model="searchInfo.courseId" @on-change="getTotalInfo" class="-search-selectOne -width">
+          <Option v-for="(item,index) of courseList" :label="item.courseName" :value="item.courseId"  :key="index" ></Option>
         </Select>
       </Col>
     </Row>
 
 
-    <Card class="p-extensionData-top">
-      <div class="p-extensionData-title">
+    <Card class="p-franchiseeData-top">
+      <div class="p-franchiseeData-title">
         <div class="-left">
           <img src="../../../assets/images/icon/icon1.png"/>
           <span>加盟商数据</span>
@@ -28,7 +26,7 @@
                                 @changeDate="changeDateTwo"></date-picker-template>
         </div>
       </div>
-      <Row class="p-extensionData-flex" :gutter="10" style="margin-top: 20px">
+      <Row class="p-franchiseeData-flex" :gutter="10" style="margin-top: 20px">
         <Col v-for="(item,index) of titleList" :key="index" class="-p-d-col">
           <div class="g-t-left -card-wrap">
             <div class="-col-name">{{item.name}}</div>
@@ -45,8 +43,8 @@
     </Card>
 
 
-    <Card class="p-extensionData-top">
-      <div class="p-extensionData-title -three">
+    <Card class="p-franchiseeData-top">
+      <div class="p-franchiseeData-title -three">
         <div class="-left">
           <img src="../../../assets/images/icon/icon7.png"/>
           <span>趋势数据</span>
@@ -90,10 +88,9 @@
     data() {
       return {
         searchInfo: {
-          name: '-1',
-          mode: '-1'
+          courseId: ''
         },
-        radioType: '0',
+        courseList: [],
         selectTypeTwo: 1,
         selectTypeThree: 1,
         dateOptionOne: {
@@ -122,50 +119,29 @@
       dateTypesLine() {
         let arrayX = []
         for (let item of this.dataInfo) {
-          arrayX.push(item.day)
+          arrayX.push(item.date)
         }
         return arrayX
       },
       optionSeriesLine() {
         let dataList = {
-          orderUser: [],
-          payedMoney: [],
-          payedUser: [],
-          pv: [],
-          uv: []
+          franchiseeInvitePrometerCount: [],
+          franchiseeEarnsAmount: []
         }
         for (let item of this.dataInfo) {
-          dataList.orderUser.push(item.orderUser)
-          dataList.payedMoney.push(item.payedMoney)
-          dataList.payedUser.push(item.payedUser)
-          dataList.pv.push(item.pv)
-          dataList.uv.push(item.uv)
+          dataList.franchiseeInvitePrometerCount.push(item.franchiseeInvitePrometerCount)
+          dataList.franchiseeEarnsAmount.push(item.franchiseeEarnsAmount)
         }
         let optionSeriesLine = [
           {
-            name: '商品页面访问数量',
+            name: '邀请推广人人数',
             type: 'line',
-            data: dataList.pv
+            data: dataList.franchiseeInvitePrometerCount
           },
           {
-            name: '商品页面访问用户',
+            name: '加盟商收益',
             type: 'line',
-            data: dataList.uv
-          },
-          {
-            name: '下单用户',
-            type: 'line',
-            data: dataList.orderUser
-          },
-          {
-            name: '付费用户',
-            type: 'line',
-            data: dataList.payedUser
-          },
-          {
-            name: '付费金额',
-            type: 'line',
-            data: dataList.payedMoney
+            data: dataList.franchiseeEarnsAmount
           }
         ]
         return optionSeriesLine
@@ -182,13 +158,8 @@
       },
       changeTimeThree () {
         if(this.selectTypeThree == 1) {
-          this.getList()
+          this.getTotalInfo()
         }
-      },
-      changeChannel () {
-        this.getTotalInfo()
-        this.getTodayInfo()
-        this.getList()
       },
       changeDateTwo(data) {
         this.getStartTimeTwo = data.startTime
@@ -198,22 +169,14 @@
       changeDateThree(data) {
         this.getStartTimeThree = data.startTime
         this.getEndTimeThree = data.endTime
-        this.getList()
+        this.getTotalInfo()
       },
       getChannelList() {
-        this.$api.composition.listByChannel({
-          current: 1,
-          size: 10000
-        })
+        this.$api.jsdDistributie.listByCourse()
           .then(
             response => {
-              this.channelList = response.data.resultData.records;
-              this.channelList.unshift({
-                id: '0',
-                name: '全部'
-              })
-              this.getList()
-              this.getTodayInfo()
+              this.courseList = response.data.resultData;
+              this.searchInfo.courseId = this.courseList[0].courseId
               this.getTotalInfo()
             })
           .finally(() => {
@@ -239,23 +202,11 @@
           legend: {
             data: [
               {
-                name: '商品页面访问数量',
+                name: '邀请推广人人数',
                 icon: 'circle'
               },
               {
-                name: '商品页面访问用户',
-                icon: 'circle'
-              },
-              {
-                name: '下单用户',
-                icon: 'circle'
-              },
-              {
-                name: '付费用户',
-                icon: 'circle'
-              },
-              {
-                name: '付费金额',
+                name: '加盟商收益',
                 icon: 'circle'
               }
             ],
@@ -298,38 +249,20 @@
           zlevel: 0
         })
 
-        this.isFetching = true
-        this.$api.composition.userStatisticsLineChart({
-          chId: this.radioType,
-          begin: this.getStartTimeThree && new Date(this.getStartTimeThree).getTime(),
-          end: this.getEndTimeThree && new Date(this.getEndTimeThree).getTime()
-        })
-          .then(
-            response => {
-              this.dataInfo = response.data.resultData;
-              this.drawLine()
-            })
-          .finally(() => {
-            this.isFetching = false
-          })
-      },
-      getTodayInfo() {
-        this.$api.composition.userStatisticsToday({
-          chId: this.radioType
-        }).then(
-          response => {
-            this.todayInfo = response.data.resultData;
-            this.initData()
-          })
+        this.drawLine()
       },
       getTotalInfo() {
-        this.$api.composition.userStatisticsTotal({
-          chId: this.radioType,
-          begin: this.getStartTimeTwo && new Date(this.getStartTimeTwo).getTime(),
-          end: this.getEndTimeTwo && new Date(this.getEndTimeTwo).getTime()
+        this.$api.fxglDataCenter.getFranchiseeData({
+          courseId: this.searchInfo.courseId,
+          startTime: this.getStartTimeTwo && new Date(this.getStartTimeTwo).getTime(),
+          startTime1: this.getStartTimeThree && new Date(this.getStartTimeThree).getTime(),
+          endTime: this.getEndTimeTwo && new Date(this.getEndTimeTwo).getTime(),
+          endTime1: this.getEndTimeThree && new Date(this.getEndTimeThree).getTime()
         }).then(
           response => {
             this.totalInfo = response.data.resultData;
+            this.dataInfo = this.totalInfo.list
+            this.getList()
             this.initData()
           })
       },
@@ -337,15 +270,15 @@
         this.titleList = [
           {
             name: '累计邀请推广人人数',
-            num: this.totalInfo.pv,
+            num: this.totalInfo.allFranchiseeInvitePrometerCount,
             todayName: '今日邀请推广人人数',
-            todayNum: '100'
+            todayNum: this.totalInfo.franchiseeInvitePrometerCount
           },
           {
             name: '加盟商累计收益',
-            num: this.totalInfo.pv,
+            num: this.totalInfo.allFranchiseeEarnsAmount,
             todayName: '加盟商今日收益',
-            todayNum: '100'
+            todayNum: this.totalInfo.franchiseeEarnsAmount
           }
         ]
       }
@@ -355,7 +288,7 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="less">
-  .p-extensionData {
+  .p-franchiseeData {
 
     &-top {
       margin-top: 30px;
@@ -457,6 +390,10 @@
       border-radius: 4px;
       text-align: left;
     }
+
+    .-width {
+      width: 300px;
+    }
     .-margin-left {
       margin-left: 30px;
     }
@@ -473,6 +410,7 @@
     .-search-select-text-two {
       text-align: left;
       margin-right: 20px;
+      min-width: 70px;
       font-size:16px;
       font-weight:400;
       color:rgba(23,34,62,1);
