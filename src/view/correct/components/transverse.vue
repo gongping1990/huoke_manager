@@ -191,16 +191,11 @@ export default {
 
     },
     save () {
+      let { width } = this
       let base64 = this.toDataUrl()
       this.canvas.clear()
-      this.canvas.createImage(base64, {
-        width: 1100,
-        height: 783,
-        left: 0,
-        top: 0,
-        id: 'saveImg'
-      }, (target) => {
-        target.selectable = false
+      let img = fabric.Image.fromURL(base64, (img) => {
+        this.canvas.setBackgroundImage(img, width / img.width, 783 / img.height)
       })
     },
     clear () {

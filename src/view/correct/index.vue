@@ -202,7 +202,7 @@ export default {
     this.fullScreen()
   },
   methods: {
-    getViewWork () {
+    getViewWork (fn) {
       this.$api.jsdJob.viewWork({
         system: this.$route.query.system,
         workId: this.$route.query.workId
@@ -211,27 +211,27 @@ export default {
         let workData = data.resultData
         let workImgSrc = workData.workImgSrc ? workData.workImgSrc.split(',') : []
         let replyImg = workData.replyImg ? workData.replyImg.split(',') : []
-        workImgSrc = workImgSrc.map((e, i) => {
+        workData.workImgSrc = workImgSrc.map((e, i) => {
           return {
             type: 1,
             url: e,
             index: i
           }
         })
-        replyImg = replyImg.map((e, i) => {
+        workData.replyImg = replyImg.map((e, i) => {
           return {
             type: 2,
             url: e,
             index: i
           }
         })
-        workData.imgArr = [...workImgSrc, ...replyImg]
+        workData.imgArr = [...workData.workImgSrc, ...workData.replyImg]
         this.workData = workData
         this.imgActiveObj = workData.imgArr[0]
+        fn && fn()
       })
     },
     uploadReplyImg (replyImg) {
-      console.log(this.workData.imgArr[this.imgActiveObj.index])
       let { canvas } = this.$refs
       this.$api.jsdJob.uploadReplyImg({
         courseId: this.$route.query.courseId,
@@ -241,8 +241,11 @@ export default {
       }).then(({ data }) => {
         this.$Spin.hide();
         this.$Message.success('图片上传成功');
-        canvas.save()
-        this.getViewWork()
+        this.getViewWork(() => {
+          this.imgActive += this.workData.workImgSrc.length
+          this.imgActiveObj = this.workData.imgArr[this.imgActive]
+        })
+
       })
     },
     fullScreen () {
