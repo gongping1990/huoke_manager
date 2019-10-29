@@ -209,6 +209,7 @@
           .then(response => {
             this.appList = response.data.resultData
             this.searchInfo.appId = this.appList[0].id
+            this.searchInfo.system = this.appList[0].system
             this.getTeacherList()
             this.changeEmit()
           })
@@ -217,6 +218,7 @@
         console.log('重置')
         this.searchInfo = {
           appId: this.searchInfo.appId,
+          system: '',
           workType: '1',
           userType: '1',
           getStartTime: '',
@@ -257,6 +259,11 @@
         this.changeEmit()
       },
       changeEmit(bool) {
+        this.appList.forEach((item)=>{
+          if(item.id === this.searchInfo.appId) {
+            this.searchInfo.system = item.system
+          }
+        })
         bool && this.getTeacherList()
         this.$emit('changeSearch', this.searchInfo)
       }
