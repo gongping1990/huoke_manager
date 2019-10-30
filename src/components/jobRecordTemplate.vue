@@ -15,16 +15,18 @@
                  :src="item.audio"
                  controls="controls" preload="auto"></audio>
         </div>
-        <div class="p-jobRecord-wrap">
-          <div class="p-jobRecord-wrap-left">
-            <div class="-left-item" v-for="(item1,index1) of 6" :key="index1">维度1</div>
-          </div>
-          <div class="p-jobRecord-wrap-right">
-            <div :ref="item.ref" class="-echart" ></div>
-          </div>
-        </div>
         <div class="g-flex-a-j-center">
           <img class="-img" preview="0" v-for="url of item.img" :src="url"/>
+        </div>
+        <div class="p-jobRecord-wrap">
+          <div class="p-jobRecord-wrap-left">
+            <div>
+              <div class="-left-item" v-for="(item1,index1) of 6" :key="index1">维度1</div>
+            </div>
+          </div>
+          <div class="p-jobRecord-wrap-right">
+            <div :id="'item'+index" class="-echart" ></div>
+          </div>
         </div>
       </TimelineItem>
     </Timeline>
@@ -58,6 +60,9 @@ export default {
       this.isOpenDetail = _n
       _n && this.getJobLogList()
       this.$previewRefresh()
+    },
+    recordList (_n) {
+      console.log(_n,121212)
     }
   },
   methods: {
@@ -83,13 +88,14 @@ export default {
           item.time = dayjs(+item.createTime).format('YYYY-MM-DD HH:mm')
           item.img = item.img ? item.img.split(',') : []
         }
-        if(this.type != '2') {
-          this.recordList.forEach((item,index)=>{
-            item.ref = `radarEcharts${index}`
-            this.drawLine(`radarEcharts${index}`)
-          })
-        }
-        console.log(this.recordList,11)
+
+        this.$nextTick(()=>{
+          if(this.type != '2') {
+            this.recordList.forEach((item,index)=>{
+              this.drawLine(`item${index}`)
+            })
+          }
+        })
       })
     },
     closeModal () {
@@ -98,8 +104,7 @@ export default {
     },
     drawLine(name) {
       let self = this;
-      let refsName = name
-      let myChart = echarts.init(refsName);
+      let myChart = echarts.init(document.getElementById(name));
       myChart.clear();
       myChart.resize();
       // 绘制图表
@@ -182,13 +187,20 @@ export default {
 
     &-wrap {
       display: flex;
+      margin: 10px 0;
 
       &-left {
         width: 30%;
         text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
 
         .-left-item {
-          margin-bottom: 16px;
+          margin-bottom: 30px;
+          &:last-child {
+            margin-bottom: 0;
+          }
         }
       }
 

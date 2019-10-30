@@ -184,7 +184,7 @@
         dataList: [],
         selectUserList: [],
         total: 0,
-        radioType: 0,
+        radioType: +localStorage.todayWork_type || 0,
         unqualifiedType: 1,
         getStartTime: '',
         getEndTime: '',
@@ -506,7 +506,7 @@
           },
           {
             title: '操作',
-            width: 300,
+            width: 360,
             align: 'left',
             render: (h, params) => {
               return h('div', [
@@ -525,6 +525,22 @@
                     }
                   }
                 }, '修改评价'),
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: '#5444E4',
+                    display: params.row.homeworkType === 1 ? 'none' : 'inline-block',
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.editPictures(params.row)
+                    }
+                  }
+                }, '修改图片'),
                 h('Button', {
                   props: {
                     type: 'text',
@@ -911,6 +927,15 @@
       this.getTeacherRemind()
     },
     methods: {
+      editPictures (data) {
+        this.$Modal.confirm({
+          title: '确认要修改图片吗？',
+          content: '修改图片后，修改后的图片会替换掉之前的批改图片',
+          onOk: () => {
+            this.toPictures(data)
+          }
+        })
+      },
       toPictures (data) {
         this.$router.push({
           name: 'correct',
@@ -1012,6 +1037,7 @@
         })
       },
       changeJobType() {
+        localStorage.setItem('todayWork_type', this.radioType)
         if (this.radioType === 1) {
           this.noticeText()
         }
