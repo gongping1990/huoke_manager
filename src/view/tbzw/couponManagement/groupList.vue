@@ -374,7 +374,7 @@
           title: '提示',
           content: '确认要结束吗？',
           onOk: () => {
-            this.$api.tbzwCoupon.finishCoupon({
+            this.$api.tbzwGroupConfig.finish({
               couponId: param.id
             }).then(
               response => {

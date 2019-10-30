@@ -5,8 +5,8 @@ const tbzwGroupConfig = {
   adminList(params) {
     return axios.get("/compositionv2/groupConfig/adminList", {params: params});
   },
-  finishCoupon(params) {
-    return axios.get("/compositionv2/tbzwGroupConfig/finishCoupon", {params: params});
+  finish(params) {
+    return axios.get("/compositionv2/groupConfig/finish", {params: params});
   },
   save(params) {
     return axios.post("/compositionv2/groupConfig/save", qs.stringify(params));
