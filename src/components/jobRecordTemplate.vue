@@ -144,6 +144,16 @@ export default {
               padding: [3, 5]
             }
           },
+          splitArea: {
+            areaStyle: {
+              color: ['rgba(114, 172, 209, 0.2)',
+                'rgba(114, 172, 209, 0.4)', 'rgba(114, 172, 209, 0.6)',
+                'rgba(114, 172, 209, 0.8)', 'rgba(114, 172, 209, 1)'],
+              shadowColor: 'rgba(0, 0, 0, 0.3)',
+              shadowBlur: 10
+            }
+          },
+          radius: 70,
           indicator: [
             { name: '销售1', max: 6500},
             { name: '管理2', max: 16000},
@@ -163,7 +173,12 @@ export default {
           data: [
             {
               value : [4300, 10000, 28000, 35000, 50000, 19000],
-              name : '预算分配'
+              name : '预算分配',
+              areaStyle: {
+                normal: {
+                  color: 'rgba(255, 255, 255, 0.5)'
+                }
+              }
             }
           ]
         },
@@ -197,7 +212,7 @@ export default {
         justify-content: center;
 
         .-left-item {
-          margin-bottom: 30px;
+          margin-bottom: 15px;
           &:last-child {
             margin-bottom: 0;
           }
@@ -209,8 +224,8 @@ export default {
 
         .-echart {
           margin: 0 auto;
-          width: 400px;
-          height: 300px;
+          width: 300px;
+          height: 230px;
         }
       }
     }
