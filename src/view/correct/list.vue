@@ -285,10 +285,10 @@ export default {
       background-size: 100%;
       background-repeat: no-repeat;
       &.sb {
-        background-image: url('../../../assets/images/correct/sb.png');
+        background-image: url('../../assets/images/correct/sb.png');
       }
       &.hb {
-        background-image: url('../../../assets/images/correct/hb.png');
+        background-image: url('../../assets/images/correct/hb.png');
       }
     }
   }

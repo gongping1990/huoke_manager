@@ -31,10 +31,10 @@
 <script>
 
 import Fabric from './fabric/fabric'
-import titleImg from '../../../assets/images/correct/title.png'
-import pzImg from '../../../assets/images/correct/pz.png'
-import titleSbImg from '../../../assets/images/correct/title_sb.png'
-import pzSbImg from '../../../assets/images/correct/pz_sb.png'
+import titleImg from '../../assets/images/correct/title.png'
+import pzImg from '../../assets/images/correct/pz.png'
+import titleSbImg from '../../assets/images/correct/title_sb.png'
+import pzSbImg from '../../assets/images/correct/pz_sb.png'
 export default {
   props: {
     image: {

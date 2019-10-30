@@ -276,9 +276,9 @@
           },
           {
             name: '加盟商累计收益',
-            num: this.totalInfo.allFranchiseeEarnsAmount,
+            num: this.totalInfo.allFranchiseeEarnsAmount/100,
             todayName: '加盟商今日收益',
-            todayNum: this.totalInfo.franchiseeEarnsAmount
+            todayNum: this.totalInfo.franchiseeEarnsAmount/100
           }
         ]
       }

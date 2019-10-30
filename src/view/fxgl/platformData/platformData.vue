@@ -103,7 +103,7 @@
     components: {DatePickerTemplate},
     data() {
       return {
-        radioType: 1,
+        radioType: 0,
         selectTypeTwo: 1,
         selectTypeThree: 1,
         dateOptionOne: {
@@ -565,39 +565,39 @@
         this.titleListThree = [
           {
             name: '当前收益余额',
-            num: this.totalInfo.nowAllAmount
+            num: this.totalInfo.nowAllAmount/100
           },
           {
             name: '当前可提现金额',
-            num: this.totalInfo.nowAllBalance
+            num: this.totalInfo.nowAllBalance/100
           },
           {
             name: '当前冻结金额',
-            num: this.totalInfo.nowAllBlockingAmount
+            num: this.totalInfo.nowAllBlockingAmount/100
           },
           {
             name: '加盟商当前收益余额',
-            num: this.totalInfo.franchiseeNowAllAmount
+            num: this.totalInfo.franchiseeNowAllAmount/100
           },
           {
             name: '加盟商当前可提现金额',
-            num: this.totalInfo.franchiseeNowAllBalance
+            num: this.totalInfo.franchiseeNowAllBalance/100
           },
           {
             name: '加盟商当前冻结金额',
-            num: this.totalInfo.franchiseeNowAllBlockingAmount
+            num: this.totalInfo.franchiseeNowAllBlockingAmount/100
           },
           {
             name: '推广人当前收益余额',
-            num: this.totalInfo.promoterNowAllAmount
+            num: this.totalInfo.promoterNowAllAmount/100
           },
           {
             name: '推广人当前可提现金额',
-            num: this.totalInfo.promoterNowAllBalance
+            num: this.totalInfo.promoterNowAllBalance/100
           },
           {
             name: '推广人当前冻结金额',
-            num: this.totalInfo.promoterNowAllBlockingAmount
+            num: this.totalInfo.promoterNowAllBlockingAmount/100
           }
         ]
       }

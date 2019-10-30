@@ -1,5 +1,5 @@
 import axios from '../../http'
-import qs from 'querystring'
+import qs from 'qs'
 
 
 const jsdDistributorAccount = {
@@ -17,7 +17,7 @@ const jsdDistributorAccount = {
     return axios.get(`/distribution/distributorAccount/getAdminUserWithDrawRecord`, {params})
   },
   uploadDeliverImg(params) {
-    return axios.get(`/distribution/distributorAccount/uploadDeliverImg`, {params})
+    return axios.post(`/distribution/distributorAccount/uploadDeliverImg`, qs.stringify(params))
   }
 }
 

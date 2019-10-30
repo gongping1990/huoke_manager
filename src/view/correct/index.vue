@@ -136,9 +136,9 @@
 
 <script>
 import axios from 'axios'
-import Vertical from './components/vertical'
-import Transverse from './components/transverse'
-import List from './components/List'
+import Vertical from './vertical'
+import Transverse from './transverse'
+import List from './list'
 import { getBaseUrl } from '@/libs/index'
 import xzImg1 from '../../assets/images/correct/xz/1.png'
 import xzImg2 from '../../assets/images/correct/xz/2.png'

@@ -6,7 +6,7 @@
           <Row class="g-flex-a-j-center -s-radio">
             <div class="-search-select-text-two">课程名称：</div>
             <Select v-model="radioType" @on-change="getList(1)" class="-search-selectOne">
-              <Option v-for="(item,index) in courselList" :label="item.name" :value="item.id" :key="index"></Option>
+              <Option v-for="(item,index) in courseList" :label="item.name" :value="item.id" :key="index"></Option>
             </Select>
           </Row>
         </Col>
@@ -27,22 +27,39 @@
         class="p-openCourse"
         v-model="isOpenModal"
         @on-cancel="closeModal('addInfo')"
-        width="500"
+        width="700"
         title="添加学习营">
         <Form ref="addInfo" :model="addInfo" :label-width="90">
           <FormItem label="期数">
             {{addInfo.periods}}
           </FormItem>
           <FormItem label="生效课程">
-            {{addInfo.periods}}
+            {{addInfo.courseName}}
           </FormItem>
           <Form-item label="开营日期" class="ivu-form-item-required">
             <Date-picker style="width: 100%" :options="dateOption" type="date" placeholder="选择日期"
                          v-model="addInfo.opentime"></Date-picker>
           </Form-item>
           <FormItem label="排课天数" class="ivu-form-item-required">
-            <div class="p-openCourse-btnWrap" v-for="(item, index) of courselList" :key="index">
-              <button>{{item.name}}</button>
+            <div class="p-openCourse-btnWrap">
+              <CheckboxGroup v-model="addInfo.rules">
+                <Checkbox :label="item.id" v-for="(item, index) of weekList" :key="index">{{item.name}}</Checkbox>
+              </CheckboxGroup>
+              <span class="-c-tips">请选择每周需要排课的天数，新建立即生效，更改5分钟后生效，更改不会影响已经排出的课时</span>
+            </div>
+          </FormItem>
+          <FormItem label="开课时间" class="ivu-form-item-required">
+            <div class="p-openCourse-tabList">
+              <div class="-tabList-item" v-for="(item1,index) of addInfo.details">
+                <div class="-tabList-item-left">
+                  <span>{{item1.sortnum}}</span>
+                  <span>{{item1.lessonName}}</span>
+                </div>
+                <div class="-tabList-item-right">
+                  <TimePicker format="HH:mm" placeholder="选择时间" :value="addInfo.opentime"
+                              style="width: 112px"></TimePicker>
+                </div>
+              </div>
             </div>
           </FormItem>
         </Form>
@@ -68,13 +85,15 @@
           pageSize: 10
         },
         dataList: [],
-        courselList: [],
+        courseList: [],
         total: 0,
-        radioType: 1,
+        radioType: '',
         isFetching: false,
         isOpenModal: false,
         isSending: false,
-        addInfo: {},
+        addInfo: {
+          rules: []
+        },
         weekList: [
           {
             id: '1',
@@ -157,12 +176,13 @@
       };
     },
     mounted() {
-      this.getList()
+      this.getCourseList()
     },
     methods: {
       openModal() {
         this.isOpenModal = true
         this.addInfo = {}
+        this.getActiveDetails()
       },
       closeModal() {
         this.isOpenModal = false
@@ -171,16 +191,46 @@
         this.tab.page = val;
         this.getList();
       },
+      getCourseList() {
+        this.$api.tbzwCourse.courseQueryPage({
+          current: 1,
+          size: 1000,
+          type: 2
+        })
+          .then(
+            response => {
+              this.courseList = response.data.resultData.records;
+              this.radioType = this.courseList[0].id
+              this.getList()
+            })
+          .finally(() => {
+            this.isFetching = false
+          })
+      },
+      getActiveDetails() {
+        this.$api.tbzwActiveconfig.getActiveDetails({
+          courseId: this.radioType
+        })
+          .then(
+            response => {
+              this.addInfo = response.data.resultData;
+              this.addInfo.rules = this.addInfo.rules ? this.addInfo.rules : []
+              console.log(this.addInfo, 111)
+            })
+          .finally(() => {
+            this.isFetching = false
+          })
+      },
       //分页查询
       getList(num) {
         this.isFetching = true
         if (num) {
           this.tab.currentPage = 1
         }
-        this.$api.gswActive.listActiveConfig({
+        this.$api.tbzwActiveconfig.listActiveConfig({
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
-          type: 2
+          courseId: this.radioType
         })
           .then(
             response => {
@@ -196,7 +246,7 @@
           title: '提示',
           content: '确认要删除吗？',
           onOk: () => {
-            this.$api.gswActive.removeActive({
+            this.$api.tbzwActiveconfig.remove({
               activeConfigId: param.id
             }).then(
               response => {
@@ -211,12 +261,17 @@
       submitInfo() {
         if (!this.addInfo.opentime) {
           return this.$Message.error("请选择开营时间");
+        } else if (!this.addInfo.rules.length) {
+          return this.$Message.error("请选择排课时间");
         }
         if (this.isSending) return
         this.isSending = true
-        this.$api.gswActive.addActiveConfig({
+        console.log(this.addInfo,1111)
+        this.$api.tbzwActiveconfig.editActiveConfig({
           opentime: dayjs(this.addInfo.opentime).format("YYYY-MM-DD"),
-          type: 2
+          courseId: this.addInfo.courseId,
+          rules: this.addInfo.rules.toString(),
+          details: this.addInfo.details
         })
           .then(
             response => {
@@ -238,8 +293,27 @@
 <style lang="less" scoped>
   .p-openCourse {
 
-    &-btnWrap {
+    &-tabList {
+      border: 1px solid #dcdee2;
+      width: 300px;
 
+      .-tabList-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px;
+        border-bottom: 1px solid #dcdee2;
+
+        &-left {
+
+        }
+
+        &-right {
+        }
+
+        &:last-child {
+          border: none;
+        }
+      }
     }
     .-c-tips {
       color: #39f
@@ -249,7 +323,7 @@
       min-width: 80px;
     }
     .-search-selectOne {
-      width: 100px;
+      width: 150px;
       border: 1px solid #dcdee2;
       border-radius: 4px;
       margin-right: 20px;

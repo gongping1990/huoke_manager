@@ -161,7 +161,7 @@
           {
             title: '提现到账时间',
             render: (h, params) => {
-              return h('div', dayjs(+params.row.intoAccountTime).format("YYYY-MM-DD HH:mm"))
+              return h('div', params.row.intoAccountTime ? dayjs(+params.row.intoAccountTime).format("YYYY-MM-DD HH:mm"): '-')
             },
             align: 'center'
           },

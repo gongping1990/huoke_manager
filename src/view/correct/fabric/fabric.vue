@@ -7,11 +7,11 @@
 </template>
 
 <script type='text/ecmascript-6'>
-import Utils from '../../../../utils';
-const removeImg = require('../../../../assets/images/correct/remove.png');
-const scaleImg = require('../../../../assets/images/correct/scale.png');
-const degreesImg = require('../../../../assets/images/correct/degrees.png');
-const rotateMdrImg = require('../../../../assets/images/correct/rotate.png');
+import Utils from '../../../utils/index';
+const removeImg = require('../../../assets/images/correct/remove.png');
+const scaleImg = require('../../../assets/images/correct/scale.png');
+const degreesImg = require('../../../assets/images/correct/degrees.png');
+const rotateMdrImg = require('../../../assets/images/correct/rotate.png');
 export default {
   name: 'VueFabric',
   props: {
