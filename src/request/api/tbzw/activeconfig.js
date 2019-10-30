@@ -20,7 +20,7 @@ const tbzwActiveconfig = {
   },
   // 修改课程信息
   editActiveConfig(params) {
-    return axios.post('/compositionv2/activeconfig/editActiveConfig', qs.stringify(params))
+    return axios.post('/compositionv2/activeconfig/editActiveConfig', params)
   },
 };
 

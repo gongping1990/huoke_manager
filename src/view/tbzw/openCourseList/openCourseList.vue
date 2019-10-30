@@ -50,13 +50,13 @@
           </FormItem>
           <FormItem label="开课时间" class="ivu-form-item-required">
             <div class="p-openCourse-tabList">
-              <div class="-tabList-item" v-for="(item1,index) of addInfo.details">
+              <div class="-tabList-item" v-for="(item1,index1) of addInfo.details" :key="index1">
                 <div class="-tabList-item-left">
                   <span>{{item1.sortnum}}</span>
                   <span>{{item1.lessonName}}</span>
                 </div>
                 <div class="-tabList-item-right">
-                  <TimePicker format="HH:mm" placeholder="选择时间" :value="item1.opentime"
+                  <TimePicker format="HH:mm" placeholder="选择时间" v-model="item1.opentime"
                               style="width: 112px"></TimePicker>
                 </div>
               </div>
@@ -92,7 +92,8 @@
         isOpenModal: false,
         isSending: false,
         addInfo: {
-          rules: []
+          rules: [],
+          classList: []
         },
         weekList: [
           {
@@ -214,6 +215,7 @@
           .then(
             response => {
               this.addInfo = response.data.resultData;
+              this.addInfo.classList = []
               this.addInfo.rules = this.addInfo.rules ? this.addInfo.rules : []
               console.log(this.addInfo, 111)
             })
@@ -264,9 +266,23 @@
         } else if (!this.addInfo.rules.length) {
           return this.$Message.error("请选择排课时间");
         }
+
+        let passContent = this.addInfo.details.every((item) => {
+          return (item.opentime !== '')
+        })
+
+        if (!passContent) {
+          return this.$Message.error('每一项开课时间不能为空')
+        }
+
         if (this.isSending) return
         this.isSending = true
-        console.log(this.addInfo,1111)
+        // this.addInfo.details.forEach(item=>{
+        //   this.addInfo.classList.push({
+        //     lessonId: item.lessonId,
+        //     opentime: item.opentime
+        //   })
+        // })
         this.$api.tbzwActiveconfig.editActiveConfig({
           opentime: dayjs(this.addInfo.opentime).format("YYYY-MM-DD"),
           courseId: this.addInfo.courseId,
