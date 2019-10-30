@@ -248,6 +248,15 @@ export const tbzwRouter =[
           {name: '数据统计'}
         ],
         component: () => import('@/view/tbzw/paidLandingPage/paidLandingPage')
+      },
+      {
+        path: '/tbzw_paid_openCourse',
+        name: 'tbzw_paid_openCourse',
+        meta: [
+          {name: '付费体验课'},
+          {name: '开营管理'}
+        ],
+        component: () => import('@/view/tbzw/openCourseList/openCourseList')
       }
     ]
   },

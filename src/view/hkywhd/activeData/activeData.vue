@@ -86,7 +86,7 @@
       dateTypesLine() {
         let arrayX = []
         for (let item of this.dataInfo) {
-          arrayX.push(item.day)
+          arrayX.push(item.date)
         }
         return arrayX
       },
