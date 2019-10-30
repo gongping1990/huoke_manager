@@ -319,7 +319,7 @@
     },
     methods: {
       copyUrl(param) {
-        this.copy_url = param.couponUrl
+        this.copy_url = param.url
         setTimeout(() => {
           this.$refs.copyInput.select();
           document.execCommand("copy");
@@ -375,7 +375,7 @@
           content: '确认要结束吗？',
           onOk: () => {
             this.$api.tbzwGroupConfig.finish({
-              couponId: param.id
+              id: param.id
             }).then(
               response => {
                 if (response.data.code == "200") {

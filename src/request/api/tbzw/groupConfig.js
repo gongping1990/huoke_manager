@@ -6,7 +6,7 @@ const tbzwGroupConfig = {
     return axios.get("/compositionv2/groupConfig/adminList", {params: params});
   },
   finish(params) {
-    return axios.get("/compositionv2/groupConfig/finish", {params: params});
+    return axios.post("/compositionv2/groupConfig/finish", qs.stringify(params));
   },
   save(params) {
     return axios.post("/compositionv2/groupConfig/save", qs.stringify(params));
