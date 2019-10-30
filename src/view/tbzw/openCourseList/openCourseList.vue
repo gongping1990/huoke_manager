@@ -133,11 +133,13 @@
         columns: [
           {
             title: '期数',
-            key: 'periods'
+            key: 'periods',
+            align: 'center'
           },
           {
             title: '报名人数',
-            key: 'count'
+            key: 'count',
+            align: 'center'
           },
           {
             title: '开营日期',
@@ -277,17 +279,17 @@
 
         if (this.isSending) return
         this.isSending = true
-        // this.addInfo.details.forEach(item=>{
-        //   this.addInfo.classList.push({
-        //     lessonId: item.lessonId,
-        //     opentime: item.opentime
-        //   })
-        // })
+        this.addInfo.details.forEach(item=>{
+          this.addInfo.classList.push({
+            lessonId: item.lessonId,
+            opentime: item.opentime
+          })
+        })
         this.$api.tbzwActiveconfig.editActiveConfig({
-          opentime: dayjs(this.addInfo.opentime).format("YYYY-MM-DD"),
+          opentime: dayjs(this.addInfo.opentime).format("YYYY/MM/DD"),
           courseId: this.addInfo.courseId,
           rules: this.addInfo.rules.toString(),
-          details: this.addInfo.details
+          details: this.addInfo.classList
         })
           .then(
             response => {

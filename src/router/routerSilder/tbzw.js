@@ -320,6 +320,15 @@ export const tbzwRouter =[
           {name: '优惠券列表'}
         ],
         component: () => import('@/view/tbzw/couponManagement/couponList')
+      },
+      {
+        path: '/tbzw_groupList',
+        name: 'tbzw_groupList',
+        meta: [
+          {name: '营销管理'},
+          {name: '团购列表'}
+        ],
+        component: () => import('@/view/tbzw/couponManagement/groupList')
       }
     ]
   },

@@ -111,16 +111,20 @@
       },
       optionSeriesLine() {
         let dataList = {
-          orderUser: [],
-          payedMoney: [],
-          payedUser: [],
+          orderuser: [],
+          payeduser: [],
+          ordernum: [],
+          payedordernum: [],
+          totalmoney: [],
           pv: [],
           uv: []
         }
         for (let item of this.dataInfo) {
-          dataList.orderUser.push(item.orderUser)
-          dataList.payedMoney.push(item.payedMoney)
-          dataList.payedUser.push(item.payedUser)
+          dataList.orderuser.push(item.orderuser)
+          dataList.payeduser.push(item.payeduser)
+          dataList.ordernum.push(item.ordernum)
+          dataList.payedordernum.push(item.payedordernum)
+          dataList.totalmoney.push(item.totalmoney)
           dataList.pv.push(item.pv)
           dataList.uv.push(item.uv)
         }
