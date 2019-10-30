@@ -56,7 +56,7 @@
                   <span>{{item1.lessonName}}</span>
                 </div>
                 <div class="-tabList-item-right">
-                  <TimePicker format="HH:mm" placeholder="选择时间" :value="addInfo.opentime"
+                  <TimePicker format="HH:mm" placeholder="选择时间" :value="item1.opentime"
                               style="width: 112px"></TimePicker>
                 </div>
               </div>

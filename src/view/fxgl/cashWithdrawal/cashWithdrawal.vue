@@ -53,7 +53,7 @@
           {{addInfo.operateUserName}}
         </FormItem>
          <FormItem label="操作时间" v-if="addInfo.intoAccountImg">
-           {{dayjs(+addInfo.oprateTime).format("YYYY-MM-DD HH:mm")}}
+           {{addInfo.oprateTime | timeFormatter}}
         </FormItem>
       </Form>
 
@@ -217,7 +217,7 @@
         return (value / 100.0).toFixed(2);
       },
       timeFormatter(value) {
-        return (dayjs(+value).format('YYYY-MM-DD HH:mm:ss'));
+        return (dayjs(+value).format('YYYY-MM-DD HH:mm'));
       }
     },
     mounted() {
@@ -284,6 +284,7 @@
             response => {
               if (response.data.code == '200') {
                 this.$Message.success('提交成功');
+                this.isOpenModal = false
                 this.getList()
               }
             })
