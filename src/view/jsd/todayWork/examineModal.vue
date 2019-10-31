@@ -9,28 +9,28 @@
     <Timeline>
       <TimelineItem v-for="(item,index) of recordList" :key="index">
         <div>{{item.time}} &emsp; {{'赵老师'}}批改</div>
-        <div class="-list-item">
-          <div class="-list-item-left">评分情况</div>
-          <div class="-list-item-right">
-            <div v-for="(item1,index1) of item.scoreList" :key="index1">
-              {{item1}}
-            </div>
-          </div>
-        </div>
-        <div class="-list-item">
-          <div class="-list-item-left">匹配规则</div>
-          <div class="-list-item-right">
-            <div v-for="(item1,index1) of item.ruleList" :key="index1">
-              {{item1}}
-            </div>
-          </div>
-        </div>
-        <div class="-list-item">
-          <div class="-list-item-left">批改内容</div>
-          <div class="-list-item-right">
-            {{item.content}}
-          </div>
-        </div>
+        <!--<div class="-list-item">-->
+          <!--<div class="-list-item-left">评分情况</div>-->
+          <!--<div class="-list-item-right">-->
+            <!--<div v-for="(item1,index1) of item.scoreList" :key="index1">-->
+              <!--{{item1}}-->
+            <!--</div>-->
+          <!--</div>-->
+        <!--</div>-->
+        <!--<div class="-list-item">-->
+          <!--<div class="-list-item-left">匹配规则</div>-->
+          <!--<div class="-list-item-right">-->
+            <!--<div v-for="(item1,index1) of item.ruleList" :key="index1">-->
+              <!--{{item1}}-->
+            <!--</div>-->
+          <!--</div>-->
+        <!--</div>-->
+        <!--<div class="-list-item">-->
+          <!--<div class="-list-item-left">批改内容</div>-->
+          <!--<div class="-list-item-right">-->
+            <!--{{item.content}}-->
+          <!--</div>-->
+        <!--</div>-->
       </TimelineItem>
     </Timeline>
     <RadioGroup v-model="radioType">
@@ -75,10 +75,10 @@ export default {
         this.recordList = response.data.resultData
         for (let item of this.recordList) {
           item.time = dayjs(+item.createTime).format('YYYY-MM-DD HH:mm')
-          item.replyText = item.replyText.split('#')
-          item.scoreList = item.replyText[0].split(',')
-          item.ruleList = item.replyText[1].split(',')
-          item.content = item.replyText[3]
+          // item.replyText = item.replyText.split('#')
+          // item.scoreList = item.replyText[0].split(',')
+          // item.ruleList = item.replyText[1].split(',')
+          // item.content = item.replyText[3]
         }
       })
     },

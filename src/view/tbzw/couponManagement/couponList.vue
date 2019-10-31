@@ -205,9 +205,6 @@
           couponNum: [
             {required: true, type: 'number', message: '请输入优惠券发行量', trigger: 'blur'},
           ],
-          expiryStartDate: [
-            {required: true, type: 'date', message: '请输入有效期开始时间', trigger: 'blur'},
-          ],
           expiryEndDate: [
             {required: true, type: 'date', message: '请输入有效期结束时间', trigger: 'blur'},
           ],
