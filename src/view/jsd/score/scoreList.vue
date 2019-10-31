@@ -20,7 +20,7 @@
             <span v-if="nowStatus === 1" class="-del" @click="delScoreList(index)">删除</span>
           </FormItem>
         </Form>
-        <div class="g-t-center">
+        <div class="g-t-center" v-if="nowStatus === 1">
           <Button class="-btn" @click="addScoreList" ghost type="primary" style="width: 100px;">新增维度</Button>
         </div>
         <div slot="footer" class="-p-b-flex">
@@ -111,7 +111,6 @@
                   },
                   style: {
                     color: '#5444E4',
-                    display: !params.row.evaluate ? 'inline-block' : 'none',
                     marginRight: '5px'
                   },
                   on: {

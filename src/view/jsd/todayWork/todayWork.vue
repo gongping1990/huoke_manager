@@ -1145,7 +1145,9 @@
       },
       successAudit (data) {
         this.getList(1)
-        this.openModal(data)
+        if (data.reviewStatus === 3) {
+          this.openModal(data)
+        }
       },
       openModal(data) {
 

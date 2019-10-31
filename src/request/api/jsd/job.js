@@ -105,7 +105,7 @@ const jsdJob = {
     return axios.post('/homework/job/uploadReplyImg', qs.stringify(params))
   },
   reviewReplyHomework(params) {
-    return axios.post(`/homework/job/reviewReplyHomework`, qs.stringify(params))
+    return axios.get(`/homework/job/reviewReplyHomework`, { params })
   }
 }
 

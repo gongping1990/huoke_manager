@@ -3,12 +3,12 @@
     class="p-jobRecord"
     v-model="isOpenDetail"
     @on-cancel="closeModal"
-    footer-hide
     width="500"
     title="审核">
     <Timeline>
       <TimelineItem v-for="(item,index) of recordList" :key="index">
         <div>{{item.time}} &emsp; {{'赵老师'}}批改</div>
+        <div>{{item.replyText}}</div>
         <!--<div class="-list-item">-->
           <!--<div class="-list-item-left">评分情况</div>-->
           <!--<div class="-list-item-right">-->
@@ -33,10 +33,13 @@
         <!--</div>-->
       </TimelineItem>
     </Timeline>
-    <RadioGroup v-model="radioType">
-      <Radio label="2">通过</Radio>
-      <Radio label="3">不通过</Radio>
-    </RadioGroup>
+
+    <div class="p-jobRecord-radio">
+      <RadioGroup v-model="radioType" class="g-t-center">
+        <Radio label="2">通过</Radio>
+        <Radio label="3">不通过</Radio>
+      </RadioGroup>
+    </div>
 
     <div slot="footer" class="-p-b-flex">
       <Button @click="closeModal()" ghost type="primary" style="width: 100px;">取消</Button>
@@ -94,9 +97,10 @@ export default {
         workId: this.dataInfo.workId
       })
         .then(response => {
-          if(this.radioType === '3') {
-            this.$emit('successAudit', this.dataInfo)
-          }
+          this.$emit('successAudit', {
+            reviewStatus: 3,
+            ...this.dataInfo
+          })
           this.closeModal()
         })
     },
@@ -109,6 +113,10 @@ export default {
 
   .p-jobRecord{
 
+    &-radio {
+      text-align: center;
+      width: 100%;
+    }
 
     &-wrap {
       display: flex;
@@ -152,6 +160,11 @@ export default {
 
     .-audio {
       margin: 10px 0;
+    }
+
+    .-p-b-flex{
+      display: flex;
+      justify-content: space-between;
     }
 
   }
