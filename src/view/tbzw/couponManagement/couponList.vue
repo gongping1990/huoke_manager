@@ -72,8 +72,8 @@
             <Row>
               <Col span="11">
                 <Form-item prop="expiryStartDate">
-                  <Date-picker style="width: 100%" type="datetime" placeholder="选择开始日期" :disabled="addInfo.id!=''"
-                               v-model="addInfo.expiryStartDate" :options="dateStartOption"></Date-picker>
+                  <Date-picker style="width: 100%" type="datetime" placeholder="选择开始日期" :disabled="true"
+                               v-model="addInfo.receiveStartDate" :options="dateStartOption"></Date-picker>
                 </Form-item>
               </Col>
               <Col span="2" style="text-align: center">-</Col>
@@ -422,7 +422,7 @@
             this.$api.tbzwCoupon.editCouponConfig({
               id: this.addInfo.id,
               type: this.radioType === 0 ? 1 : 3,
-              expiryStartDate: dayjs(this.addInfo.expiryStartDate).format("YYYY/MM/DD HH:mm:ss"),
+              expiryStartDate: dayjs(this.addInfo.receiveStartDate).format("YYYY/MM/DD HH:mm:ss"),
               expiryEndDate: dayjs(this.addInfo.expiryEndDate).format("YYYY/MM/DD HH:mm:ss"),
               receiveStartDate: dayjs(this.addInfo.receiveStartDate).format("YYYY/MM/DD HH:mm:ss"),
               receiveEndDate: dayjs(this.addInfo.receiveEndDate).format("YYYY/MM/DD HH:mm:ss"),
