@@ -112,28 +112,6 @@ export default {
         tooltip: {
           trigger: 'item'
         },
-        legend: {
-          data: [
-            {
-              name: '维度1'
-            },
-            {
-              name: '维度2'
-            },
-            {
-              name: '维度3'
-            },
-            {
-              name: '维度4'
-            },
-            {
-              name: '维度5'
-            },
-            {
-              name: '维度6'
-            }
-          ]
-        },
         radar: {
           // shape: 'circle',
           name: {
@@ -155,24 +133,19 @@ export default {
           },
           radius: 70,
           indicator: [
-            { name: '销售1', max: 6500},
-            { name: '管理2', max: 16000},
-            { name: '信息技术3', max: 30000},
-            { name: '客服4', max: 38000},
-            { name: '研发5', max: 52000},
-            { name: '市场6', max: 25000}
+            { name: '销售1', max: 100},
+            { name: '管理2', max: 100},
+            { name: '信息技术3', max: 100},
+            { name: '客服4', max: 100},
+            { name: '研发5', max: 100},
+            { name: '市场6', max: 100}
           ]
         },
         series: {
           type: 'radar',
-          // label: {
-          //   show: true,
-          //   position: 'center',
-          //   formatter: '{c}人'
-          // },
           data: [
             {
-              value : [4300, 10000, 28000, 35000, 50000, 19000],
+              value : [55, 66, 89, 25, 99, 100],
               name : '预算分配',
               areaStyle: {
                 normal: {
@@ -182,7 +155,7 @@ export default {
             }
           ]
         },
-        color: ['#FF6F43', '#FFAB40', '#FFD54F', '#80CBC4']
+        color: [ '#80CBC4']
       })
 
       window.addEventListener("resize", () => {
