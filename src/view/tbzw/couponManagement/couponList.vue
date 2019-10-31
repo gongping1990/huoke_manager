@@ -108,7 +108,7 @@
           <FormItem label="分享小标题">
             <Input type="text" v-model="addInfo.title" placeholder="请输入分享小标题"></Input>
           </FormItem>
-          <Form-item label="领取海报">
+          <Form-item label="链接配图">
             <upload-img v-model="addInfo.playbill" :option="uploadOption"></upload-img>
           </Form-item>
         </Form>

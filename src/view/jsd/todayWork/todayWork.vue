@@ -105,9 +105,9 @@
           <FormItem label="综合评分" v-if="addInfo.isPassed === 1" :class="{'ivu-form-item-required': addInfo.isPassed === 1}">
             <p class="-c-tips">此评分主要用于其他老师在查看作业记录时，能快速的对用户的作业情况有一个大致的了解，用户不可见</p>
             <div class="p-todayWork-score">
-              <div class="p-todayWork-scoreItem" v-for="(item, index) of 6" :key="index">
-                <span>维度1</span>
-                <Input class="-input" type="text" v-model="addInfo.replyTeacher" placeholder="满分一百分"></Input>
+              <div class="p-todayWork-scoreItem" v-for="(item, index) of addInfo.scores" :key="index">
+                <span>{{item.name}}</span>
+                <Input class="-input" type="text" v-model="item.score" placeholder="满分一百分"></Input>
               </div>
             </div>
 
@@ -1147,8 +1147,9 @@
         if (data) {
           this.addInfo = JSON.parse(JSON.stringify(data))
           this.addInfo.isPassed = this.radioType != 1 ? 1 : 0
+          this.viewWork()
         }
-        console.log(this.addInfo)
+        console.log(this.addInfo, 'ce')
       },
       closeModal(name) {
         this.isOpenModal = false
@@ -1179,6 +1180,16 @@
                 ratio: `${(this.countInfo.allotHandled / this.countInfo.allotnum) * 100}%`
               }
             ]
+          })
+      },
+      viewWork() {
+        this.$api.jsdJob.viewWork({
+          system: this.searchInfo.system,
+          workId: this.addInfo.workId
+        })
+          .then(response => {
+            this.addInfo.scores = response.data.resultData.scores;
+            this.$forceUpdate()
           })
       },
       //分页查询
@@ -1232,12 +1243,20 @@
           })
       },
       submitInfo(name) {
+        let passContent = this.addInfo.scores.every((item) => {
+          return (item.score != null)
+        })
+
         if (!this.addInfo.replyTeacher) {
           return this.$Message.error('请输入教师名称')
         } else if (this.addInfo.replyImg.length > 3) {
           return this.$Message.error('最多上传三张图片')
         } else if (!this.addInfo.replyText && this.addInfo.isPassed === 0) {
           return this.$Message.error('请输入不合格评语')
+        }
+
+        if (!passContent) {
+          return this.$Message.error('每一项评分不能为空')
         }
 
         this.$api.jsdJob.replyHomework({
@@ -1248,6 +1267,7 @@
           replyText: this.addInfo.replyText,
           replyAudio: this.addInfo.replyAudio,
           replyDuration: this.addInfo.replyDuration,
+          score: this.addInfo.scores,
           status: this.addInfo.isPassed == 1 ? '3' : '1'
         })
           .then(
@@ -1347,8 +1367,14 @@
       margin-top: 10px;
       width: 50%;
 
+      span{
+        text-align: center;
+        display: inline-block;
+        width: 20%;
+      }
+
       .-input {
-        width: 80%;
+        width: 75%;
         margin-left: 10px;
       }
     }

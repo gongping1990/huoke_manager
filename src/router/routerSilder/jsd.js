@@ -37,6 +37,40 @@ export const jsdRouter = [
     ]
   },
   {
+    path: '/automaticCorrection',
+    name: 'automaticCorrection',
+    title: '自动批改',
+    component: Main,
+    children: [
+      {
+        path: '/jsd_correctionConfig',
+        name: 'jsd_correctionConfig',
+        meta: [
+          {
+            name: '自动批改'
+          },
+          {
+            name: '批改配置'
+          }
+        ],
+        component: () => import('@/view/jsd/correctionConfig/correctionConfig')
+      },
+      {
+        path: '/jsd_correctionRecord',
+        name: 'jsd_correctionRecord',
+        meta: [
+          {
+            name: '自动批改'
+          },
+          {
+            name: '批改记录'
+          }
+        ],
+        component: () => import('@/view/jsd/correctionRecord/correctionRecord')
+      }
+    ]
+  },
+  {
     path: '/adminUser',
     name: 'adminUser',
     title: '管理人员',
@@ -93,32 +127,6 @@ export const jsdRouter = [
           }
         ],
         component: () => import('@/view/jsd/dataBoard/dataBoard')
-      },
-      {
-        path: '/jsd_correctionConfig',
-        name: 'jsd_correctionConfig',
-        meta: [
-          {
-            name: '管理人员'
-          },
-          {
-            name: '批改配置'
-          }
-        ],
-        component: () => import('@/view/jsd/correctionConfig/correctionConfig')
-      },
-      {
-        path: '/jsd_correctionRecord',
-        name: 'jsd_correctionRecord',
-        meta: [
-          {
-            name: '管理人员'
-          },
-          {
-            name: '批改记录'
-          }
-        ],
-        component: () => import('@/view/jsd/correctionRecord/correctionRecord')
       },
       {
         path: '/jsd_score',

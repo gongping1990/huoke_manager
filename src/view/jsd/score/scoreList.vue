@@ -12,11 +12,11 @@
         v-model="isOpenModal"
         @on-cancel="closeModal('addInfo')"
         width="500"
-        :title="addInfo.id ? '编辑版本' : '新增评分版本'">
+        :title="addInfo.courseId ? '编辑版本' : '新增评分版本'">
         <Form ref="addInfo" :model="addInfo" :label-width="20">
           <FormItem class="p-score-formItem" v-for="(item,index) of scoreStorageList" :key="index">
             <span>{{index+1}}、</span>
-            <Input class="-input" type="text" v-model="item.value" placeholder="请填写名称，默认满分100分"></Input>
+            <Input class="-input" type="text" v-model="item.name" placeholder="请填写名称，默认满分100分"></Input>
             <span v-if="nowStatus === 1" class="-del" @click="delScoreList(index)">删除</span>
           </FormItem>
         </Form>
@@ -37,28 +37,12 @@
         width="500"
         title="版本记录">
         <Timeline>
-          <TimelineItem>
-            <p class="time">1976年</p>
-            <p class="content">Apple I 问世</p>
-          </TimelineItem>
-          <TimelineItem>
-            <p class="time">1984年</p>
-            <p class="content">发布 Macintosh</p>
-          </TimelineItem>
-          <TimelineItem>
-            <p class="time">2007年</p>
-            <p class="content">发布 iPhone</p>
-          </TimelineItem>
-          <TimelineItem>
-            <p class="time">2010年</p>
-            <p class="content">发布 iPad</p>
-          </TimelineItem>
-          <TimelineItem>
-            <p class="time">2011年10月5日</p>
-            <p class="content">史蒂夫·乔布斯去世</p>
+          <TimelineItem v-for="(item, index) of versionList">
+            <p class="time">{{item.time | timeFormatter}}</p>
+            <p class="content">{{item.names}}</p>
           </TimelineItem>
         </Timeline>
-        <div slot="footer" class="p-adminTeacher-btn">
+        <div slot="footer" class="p-score-btn">
           <div @click="isOpenModalData = false" class="g-primary-btn"> 确 认</div>
         </div>
       </Modal>
@@ -83,9 +67,10 @@
           pageSize: 10
         },
         dataList: [],
+        versionList: [],
         scoreStorageList: [
           {
-            value: ''
+            name: ''
           }
         ],
         nowStatus: '',
@@ -98,17 +83,19 @@
         columns: [
           {
             title: '课程名称',
-            key: 'nickname',
+            key: 'courseName',
             align: 'center'
           },
           {
             title: '评分维度',
-            key: 'username',
+            key: 'evaluate',
             align: 'center'
           },
           {
             title: '创建时间',
-            key: 'createDate',
+            render: (h, params) => {
+              return h('div', params.row.createTime ? dayjs(+params.row.createTime).format('YYYY-MM-DD HH:mm') : '-')
+            },
             align: 'center'
           },
           {
@@ -124,6 +111,7 @@
                   },
                   style: {
                     color: '#5444E4',
+                    display: !params.row.evaluate ? 'inline-block' : 'none',
                     marginRight: '5px'
                   },
                   on: {
@@ -139,6 +127,7 @@
                   },
                   style: {
                     color: '#5444E4',
+                    display: params.row.evaluate ? 'inline-block' : 'none',
                     marginRight: '5px'
                   },
                   on: {
@@ -154,6 +143,7 @@
                   },
                   style: {
                     color: '#5444E4',
+                    display: params.row.evaluate ? 'inline-block' : 'none',
                     marginRight: '5px'
                   },
                   on: {
@@ -169,6 +159,7 @@
                   },
                   style: {
                     color: 'rgba(218, 55, 75)',
+                    display: params.row.evaluate ? 'inline-block' : 'none',
                     marginRight: '5px'
                   },
                   on: {
@@ -185,12 +176,16 @@
     },
     mounted() {
       this.getList()
-      this.listBase()
+    },
+    filters: {
+      timeFormatter(value) {
+        return (dayjs(+value).format('YYYY-MM-DD HH:mm'));
+      }
     },
     methods: {
       addScoreList () {
         this.scoreStorageList.push({
-          value: ''
+          name: ''
         })
       },
       delScoreList(index) {
@@ -201,19 +196,21 @@
         this.isOpenModal = true
         if (num === 2) {
           this.addInfo = JSON.parse(JSON.stringify(data))
+          this.scoreStorageList = this.addInfo.folist
         } else {
           this.scoreStorageList = [
             {
-              value: ''
+              name: ''
             }
           ]
           this.addInfo = {
-            id: '',
+            courseId: data.courseId,
           }
         }
       },
-      openModalData() {
+      openModalData(data) {
         this.isOpenModalData = true
+        this.listBase(data)
       },
       closeModal(name) {
         this.isOpenModal = false
@@ -223,11 +220,12 @@
         this.tab.page = val;
         this.getList();
       },
-      listBase() {
-        this.appList = []
-        this.$api.jsdJob.listBase()
+      listBase(data) {
+        this.$api.jsdEvaluate.listAllVersion({
+          courseId: data.courseId
+        })
           .then(response => {
-            this.appList = response.data.resultData
+            this.versionList = response.data.resultData
           })
       },
       //分页查询
@@ -236,15 +234,10 @@
         if (num) {
           this.tab.currentPage = 1
         }
-        this.$api.jsdTeacher.listTeachByPage({
-          current: num ? num : this.tab.page,
-          size: this.tab.pageSize,
-          type: 0
-        })
+        this.$api.jsdEvaluate.listAllCourse()
           .then(
             response => {
-              this.dataList = response.data.resultData.records;
-              this.total = response.data.resultData.total;
+              this.dataList = response.data.resultData;
             })
           .finally(() => {
             this.isFetching = false
@@ -255,8 +248,8 @@
           title: '提示',
           content: '确认取消评分？',
           onOk: () => {
-            this.$api.jsdTeacher.removeTeacher({
-              userId: param.id
+            this.$api.jsdEvaluate.disabled({
+              courseId: param.courseId
             }).then(
               response => {
                 if (response.data.code == "200") {
@@ -269,7 +262,7 @@
       },
       submitInfo(name) {
         let passContent = this.scoreStorageList.every((item) => {
-          return (item.value !== '')
+          return (item.name !== '')
         })
 
         if (!passContent) {
@@ -278,15 +271,9 @@
 
         let param = ''
 
-        param = this.addInfo.id ? this.$api.jsdTeacher.updateTeacher : this.$api.jsdTeacher.addTeacher
-        param({
-          id: this.addInfo.id,
-          nickname: this.addInfo.nickname,
-          username: this.addInfo.username,
-          password: this.addInfo.password,
-          headimgurl: this.addInfo.headimgurl,
-          amount: this.addInfo.amount,
-          courses: `${this.addInfo.courses}`
+        this.$api.jsdEvaluate.updateWithCourse({
+          courseId: this.addInfo.courseId,
+          evaluates: this.scoreStorageList
         })
           .then(
             response => {
@@ -310,6 +297,12 @@
     .-c-tips {
       color: #39f
     }
+
+    &-btn {
+      display: flex;
+      justify-content: flex-end;
+    }
+
     &-formItem {
       .-input {
         margin: 0 10px;
