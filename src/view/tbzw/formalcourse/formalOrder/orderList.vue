@@ -127,7 +127,8 @@
         selectInfo: '0',
         orderStatus: {
           '0': '未支付',
-          '10': '已支付'
+          '10': '已支付',
+          '20': '已取消',
         },
         orderStatusList: [
           {
