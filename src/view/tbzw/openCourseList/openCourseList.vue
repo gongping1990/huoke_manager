@@ -12,7 +12,7 @@
         </Col>
       </Row>
 
-      <div class="g-add-btn g-add-top" @click="openModal()">
+      <div class="g-add-btn g-add-top" @click="openModal(false, '')">
         <Icon class="-btn-icon" color="#fff" type="ios-add" size="24"/>
       </div>
 
@@ -37,13 +37,14 @@
             {{addInfo.courseName}}
           </FormItem>
           <Form-item label="开营日期" class="ivu-form-item-required">
-            <Date-picker style="width: 100%" :options="dateOption" type="date" placeholder="选择日期"
+            <Date-picker style="width: 100%" :options="dateOption" :disabled="isEdit" type="date" placeholder="选择日期"
                          v-model="addInfo.opentime"></Date-picker>
+            <span class="-c-tips">请选择明天及明天以后的时间</span>
           </Form-item>
           <FormItem label="排课天数" class="ivu-form-item-required">
             <div class="p-openCourse-btnWrap">
               <CheckboxGroup v-model="addInfo.rules">
-                <Checkbox :label="item.id" v-for="(item, index) of weekList" :key="index">{{item.name}}</Checkbox>
+                <Checkbox :disabled="isEdit" :label="item.id" v-for="(item, index) of weekList" :key="index">{{item.name}}</Checkbox>
               </CheckboxGroup>
               <span class="-c-tips">请选择每周需要排课的天数，新建立即生效，更改5分钟后生效，更改不会影响已经排出的课时</span>
             </div>
@@ -56,7 +57,7 @@
                   <span>{{item1.lessonName}}</span>
                 </div>
                 <div class="-tabList-item-right">
-                  <TimePicker format="HH:mm" placeholder="选择时间" v-model="item1.opentime"
+                  <TimePicker format="HH:mm" placeholder="选择时间" v-model="item1.opentime" :disabled="isEdit"
                               style="width: 112px"></TimePicker>
                 </div>
               </div>
@@ -91,6 +92,7 @@
         isFetching: false,
         isOpenModal: false,
         isSending: false,
+        isEdit: false,
         addInfo: {
           rules: [],
           classList: []
@@ -153,10 +155,25 @@
           },
           {
             title: '操作',
-            width: 100,
+            width: 130,
             align: 'center',
             render: (h, params) => {
               return h('div', [
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: '#5444E4',
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.openModal(true, params.row)
+                    }
+                  }
+                }, '详情'),
                 h('Button', {
                   props: {
                     type: 'text',
@@ -182,10 +199,16 @@
       this.getCourseList()
     },
     methods: {
-      openModal() {
+      openModal(bool, data) {
         this.isOpenModal = true
+        this.isEdit = bool
         this.addInfo = {}
-        this.getActiveDetails()
+        if(!bool) {
+          this.getActiveDetails()
+        } else {
+          this.getActiveDetailsByActiveId(data)
+        }
+
       },
       closeModal() {
         this.isOpenModal = false
@@ -219,7 +242,20 @@
               this.addInfo = response.data.resultData;
               this.addInfo.classList = []
               this.addInfo.rules = this.addInfo.rules ? this.addInfo.rules : []
-              console.log(this.addInfo, 111)
+            })
+          .finally(() => {
+            this.isFetching = false
+          })
+      },
+      getActiveDetailsByActiveId(data) {
+        this.$api.tbzwActiveconfig.getActiveDetailsByActiveId({
+          activeId: data.id
+        })
+          .then(
+            response => {
+              this.addInfo = response.data.resultData;
+              this.addInfo.classList = []
+              this.addInfo.rules = this.addInfo.rules.split(',')
             })
           .finally(() => {
             this.isFetching = false

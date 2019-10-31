@@ -50,6 +50,9 @@
           <FormItem label="注意" class="-c-tips">
             添加团购后，只能更改分享大标题、分享小标题、链接配图、弹窗图片，如其他参数填写错误，请结束后重新添加
           </FormItem>
+          <FormItem label="成团人数">
+            2人团
+          </FormItem>
           <FormItem label="适用课程">
             <div class="p-groupList-formItemWrap">
               <div class="-item-name" v-for="(item,index) of applicableCourseList" :key="index">{{item}}</div>
@@ -93,7 +96,7 @@
             <Input type="text" v-model="addInfo.shareBigTitle" placeholder="请输入分享大标题"></Input>
           </FormItem>
           <FormItem label="分享小标题">
-            <Input type="text" v-model="addInfo.shareSmallTile" placeholder="请输入分享小标题"></Input>
+            <Input type="text" v-model="addInfo.shareSmallTitle" placeholder="请输入分享小标题"></Input>
           </FormItem>
           <Form-item label="链接图片">
             <upload-img v-model="addInfo.linkImg" :option="uploadOption"></upload-img>
@@ -331,6 +334,8 @@
         if (data) {
           this.addInfo = JSON.parse(JSON.stringify(data))
           this.addInfo.groupPrice = +this.addInfo.groupPrice / 100
+          this.addInfo.groupEndTime = this.addInfo.groupEndTime.toString()
+          this.addInfo.autoGroupTime = this.addInfo.autoGroupTime.toString()
         } else {
           this.addInfo = {
             id: '',
@@ -402,7 +407,7 @@
               autoGroupTime: this.addInfo.autoGroupTime,
               groupPrice: this.addInfo.groupPrice * 100,
               shareBigTitle: this.addInfo.shareBigTitle,
-              shareSmallTile: this.addInfo.shareSmallTile,
+              shareSmallTitle: this.addInfo.shareSmallTitle,
               linkImg: this.addInfo.linkImg,
               popImg: this.addInfo.popImg,
             })

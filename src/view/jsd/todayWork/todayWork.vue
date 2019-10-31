@@ -129,6 +129,8 @@
         <audio ref="playAudio" :src="playAudioUrl" controls></audio>
       </Modal>
 
+      <examine-modal v-model="isOpenModalAuit" :dataInfo="detailInfo" @successAudit="successAudit"></examine-modal>
+
       <job-record-template v-model="isOpenJobRecord" :dataInfo="detailInfo"></job-record-template>
 
       <look-user-info v-model="isOpenUserInfo" :dataInfo="detailInfo"></look-user-info>
@@ -146,10 +148,13 @@
   import SearchTemplate from "../../../components/searchTemplate";
   import JobRecordTemplate from "../../../components/jobRecordTemplate";
   import LookUserInfo from "./lookUserInfo";
+  import ExamineModal from "./examineModal";
 
   export default {
     name: 'jobList',
-    components: {LookUserInfo, JobRecordTemplate, SearchTemplate, UploadImgMultiple, DatePickerTemplate, UploadAudio},
+    components: {
+      ExamineModal,
+      LookUserInfo, JobRecordTemplate, SearchTemplate, UploadImgMultiple, DatePickerTemplate, UploadAudio},
     data() {
       return {
         tab: {
@@ -196,6 +201,7 @@
         isOpenModalPlay: false,
         isOpenJobRecord: false,
         isOpenUserInfo: false,
+        isOpenModalAuit: false,
         isEdit: false,
         addInfo: {},
         detailInfo: {},
@@ -1137,8 +1143,20 @@
         this.getEndTime = data.endTime
         this.getList(1)
       },
+      successAudit (data) {
+        this.getList(1)
+        this.openModal(data)
+      },
       openModal(data) {
-        this.isOpenModal = true
+
+        if (data.reviewStatus === 1) {
+          this.detailInfo = JSON.parse(JSON.stringify(data))
+          this.detailInfo.appId = this.searchInfo.appId
+          this.isOpenModalAuit = true
+        } else {
+          this.isOpenModal = true
+        }
+
         this.addInfo = {
           replyImg: [],
           replyText: '',
@@ -1149,7 +1167,6 @@
           this.addInfo.isPassed = this.radioType != 1 ? 1 : 0
           this.viewWork()
         }
-        console.log(this.addInfo, 'ce')
       },
       closeModal(name) {
         this.isOpenModal = false
