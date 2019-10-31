@@ -205,11 +205,9 @@ export default {
       margin: 10px 0;
 
       &-left {
-        width: 30%;
-        text-align: center;
+        width: 20%;
         display: flex;
         align-items: center;
-        justify-content: center;
 
         .-left-item {
           margin-bottom: 15px;
@@ -220,10 +218,9 @@ export default {
       }
 
       &-right {
-        width: 70%;
+        width: 80%;
 
         .-echart {
-          margin: 0 auto;
           width: 300px;
           height: 230px;
         }
