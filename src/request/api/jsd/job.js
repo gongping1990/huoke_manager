@@ -18,7 +18,7 @@ const jsdJob = {
     return axios.post(`/homework/job/removeHomework`, qs.stringify(params))
   },
   replyHomework(params) {
-    return axios.post(`/homework/job/replyHomework`, qs.stringify(params))
+    return axios.post(`/homework/job/replyHomework`, params)
   },
   listHomeWorkLog(params) {
     return axios.get(`/homework/job/listHomeWorkLog`, { params })

@@ -107,7 +107,7 @@
             <div class="p-todayWork-score">
               <div class="p-todayWork-scoreItem" v-for="(item, index) of addInfo.scores" :key="index">
                 <span>{{item.name}}</span>
-                <Input class="-input" type="text" v-model="item.score" placeholder="满分一百分"></Input>
+                <InputNumber class="-input" :max="100" type="text" v-model="item.score" placeholder="满分一百分"></InputNumber>
               </div>
             </div>
 

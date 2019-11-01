@@ -18,16 +18,16 @@
         <div class="g-flex-a-j-center">
           <img class="-img" preview="0" v-for="url of item.img" :src="url"/>
         </div>
-        <div class="p-jobRecord-wrap">
-          <div class="p-jobRecord-wrap-left">
-            <div>
-              <div class="-left-item" v-for="(item1,index1) of 6" :key="index1">维度1</div>
-            </div>
-          </div>
-          <div class="p-jobRecord-wrap-right">
-            <div :id="'item'+index" class="-echart" ></div>
-          </div>
-        </div>
+        <!--<div class="p-jobRecord-wrap">-->
+          <!--<div class="p-jobRecord-wrap-left">-->
+            <!--<div>-->
+              <!--<div class="-left-item" v-for="(item1,index1) of 6" :key="index1">维度1</div>-->
+            <!--</div>-->
+          <!--</div>-->
+          <!--<div class="p-jobRecord-wrap-right">-->
+            <!--<div :id="'item'+index" class="-echart" ></div>-->
+          <!--</div>-->
+        <!--</div>-->
       </TimelineItem>
     </Timeline>
 

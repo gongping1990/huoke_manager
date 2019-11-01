@@ -142,7 +142,6 @@
                   },
                   style: {
                     color: '#5444E4',
-                    display: params.row.evaluate ? 'inline-block' : 'none',
                     marginRight: '5px'
                   },
                   on: {

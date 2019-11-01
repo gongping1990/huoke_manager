@@ -6,7 +6,7 @@
     footer-hide
     width="1000"
     title="用户详情">
-      <tbzw-user-info ref="modelUserInfo" :userId="dataInfo.uid"></tbzw-user-info>
+      <tbzw-user-info ref="modelUserInfo" :userId="dataInfo.uid" :sortNum="dataInfo.sortnum"></tbzw-user-info>
   </Modal>
 </template>
 

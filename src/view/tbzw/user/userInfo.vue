@@ -61,6 +61,7 @@
       </div>
 
       <Page class="-p-text-right" :total="total" size="small" show-elevator :page-size="tab.pageSize"
+            :current.sync="tab.currentPage"
             @on-change="currentChange"></Page>
     </Card>
     <loading v-if="isFetching"></loading>
@@ -114,11 +115,12 @@
   export default {
     name: 'tbzwUserInfo',
     components: {JobRecordTemplate, Loading},
-    props: ['userId'],
+    props: ['userId', 'sortNum'],
     data() {
       return {
         tab: {
           page: 1,
+          currentPage: 1,
           pageSize: 10
         },
         userInfo: {},
@@ -266,7 +268,8 @@
       },
       changeRadio() {
         this.getLearnDTO()
-        this.listLessonProgress()
+        this.tab.currentPage = 1
+        this.listLessonProgress(1)
       },
       openModalChild() {
         if (!this.addInfo.id) {
@@ -292,11 +295,11 @@
         this.detailInfo.uid = this.$route.query.id || this.userId
       },
       currentChange(val) {
-        this.tab.page = val;
-        this.listLessonProgress();
+        this.listLessonProgress(val);
       },
       listBase() {
         this.appList = []
+        this.tab.currentPage = this.sortNum ? Math.ceil(this.sortNum / 10) : 1
         this.$api.jsdJob.listBase()
           .then(response => {
             this.appList = response.data.resultData
@@ -326,7 +329,12 @@
             this.isFetching = false
           })
       },
-      listLessonProgress() {
+      listLessonProgress(page) {
+        if (this.sortNum) {
+          this.tab.page = page ||  Math.ceil(this.sortNum / 10)
+        }
+
+        console.log(this.tab.currentPage,'当前')
         this.$api.jsdJob.listLessonProgress({
           uid: this.$route.query.id || this.userId,
           courseId: this.searchInfo.appId,
@@ -338,6 +346,7 @@
               this.dataList = response.data.resultData.records;
               this.total = response.data.resultData.total;
             })
+        this.$forceUpdate()
       },
       getStudent() {
         this.$api.tbzwStudent.getStudent({
