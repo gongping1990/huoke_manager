@@ -437,6 +437,9 @@
 
         this.$refs[name].validate((valid) => {
           if (valid) {
+            if (new Date(this.addInfo.expiryEndDate).getTime() > new Date(this.addInfo.receiveEndDate).getTime()) {
+              return this.$Message.error('有效期时间不能大于领取时间')
+            }
             this.isSending = true
             this.$api.tbzwCoupon.editCouponConfig({
               id: this.addInfo.id,
