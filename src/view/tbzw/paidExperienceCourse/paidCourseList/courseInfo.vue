@@ -29,9 +29,6 @@
                          placeholder="请输入单独购价格（元）"></InputNumber>
             <span class="-c-tips">* 精确到小数点后2位，如99.99</span>
           </FormItem>
-          <FormItem label="开课日期" prop="openTime">
-            <TimePicker  style="width: 100%" format="HH:mm" placeholder="选择开课日期" v-model="addInfo.openTime"></TimePicker>
-          </FormItem>
           <Form-item label="封面图片" class="-c-form-item ivu-form-item-required">
             <Upload
               v-if="isEdit"
@@ -168,7 +165,6 @@
           alonePrice: null,
           lessonDescribe: '',
           linkId: '-1',
-          openTime: '',
           type: 2,
           coverphoto: "",
           verticalCover: "",
@@ -306,8 +302,6 @@
               return this.$Message.error('请输入回复链接')
             } else if (this.radioType === '3' && !this.addInfo.cardtitle) {
               return this.$Message.error('请输入卡片标题')
-            } else if (this.radioType === '3' && !this.addInfo.openTime) {
-              return this.$Message.error('请选择开课时间')
             } else if (this.radioType === '3' && !this.addInfo.shareTemplates) {
               return this.$Message.error('请上传分享海报')
             } else if (this.radioType === '3' && !this.addInfo.cardimgurl) {

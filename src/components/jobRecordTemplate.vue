@@ -8,7 +8,7 @@
     title="作业记录">
     <Timeline>
       <TimelineItem v-for="(item,index) of recordList" :key="index">
-        <div>{{item.time}} &emsp; {{'赵老师'}}批改</div>
+        <div>{{item.time}} &emsp; {{item.uname}}</div>
         <div class="-text" v-if="item.replyText">{{item.replyText}}</div>
         <div class="-audio" v-if="item.audio">
           <audio ref="media"
@@ -18,16 +18,19 @@
         <div class="g-flex-a-j-center">
           <img class="-img" preview="0" v-for="url of item.img" :src="url"/>
         </div>
-        <!--<div class="p-jobRecord-wrap">-->
-          <!--<div class="p-jobRecord-wrap-left">-->
-            <!--<div>-->
-              <!--<div class="-left-item" v-for="(item1,index1) of 6" :key="index1">维度1</div>-->
-            <!--</div>-->
-          <!--</div>-->
-          <!--<div class="p-jobRecord-wrap-right">-->
-            <!--<div :id="'item'+index" class="-echart" ></div>-->
-          <!--</div>-->
-        <!--</div>-->
+        <div class="p-jobRecord-wrap" v-if="item.evaluate.length">
+          <div class="p-jobRecord-wrap-left">
+            <div>
+              <div class="-left-item" v-for="(item1,index1) of item.evaluateObj" :key="index1">
+                <span class="-left-item-span">{{item1.name}}: </span>
+                <span>{{item1.value}}</span>
+              </div>
+            </div>
+          </div>
+          <div class="p-jobRecord-wrap-right">
+            <div :id="'item'+index" class="-echart" ></div>
+          </div>
+        </div>
       </TimelineItem>
     </Timeline>
 
@@ -60,9 +63,6 @@ export default {
       this.isOpenDetail = _n
       _n && this.getJobLogList()
       this.$previewRefresh()
-    },
-    recordList (_n) {
-      console.log(_n,121212)
     }
   },
   methods: {
@@ -87,12 +87,29 @@ export default {
         for (let item of this.recordList) {
           item.time = dayjs(+item.createTime).format('YYYY-MM-DD HH:mm')
           item.img = item.img ? item.img.split(',') : []
-        }
+          item.evaluateObj = []
+          item.evaluateRadar = []
 
+          if(item.evaluate.length) {
+            console.log(1)
+            item.evaluate.forEach(item1=>{
+              let array = item1.split('=')
+              item.evaluateObj.push({
+                name: array[0],
+                value: array[1],
+                max: 100
+              })
+              item.evaluateRadar.push(array[1])
+            })
+          }
+        }
+        console.log(this.recordList,111111)
         this.$nextTick(()=>{
           if(this.type != '2') {
             this.recordList.forEach((item,index)=>{
-              this.drawLine(`item${index}`)
+              if(item.evaluate.length) {
+                this.drawLine(`item${index}`, item)
+              }
             })
           }
         })
@@ -102,7 +119,7 @@ export default {
       this.isOpenDetail = false
       this.$emit('input', false)
     },
-    drawLine(name) {
+    drawLine(name, item) {
       let self = this;
       let myChart = echarts.init(document.getElementById(name));
       myChart.clear();
@@ -132,21 +149,13 @@ export default {
             }
           },
           radius: 70,
-          indicator: [
-            { name: '销售1', max: 100},
-            { name: '管理2', max: 100},
-            { name: '信息技术3', max: 100},
-            { name: '客服4', max: 100},
-            { name: '研发5', max: 100},
-            { name: '市场6', max: 100}
-          ]
+          indicator: item.evaluateObj
         },
         series: {
           type: 'radar',
           data: [
             {
-              value : [55, 66, 89, 25, 99, 100],
-              name : '预算分配',
+              value : item.evaluateRadar,
               areaStyle: {
                 normal: {
                   color: 'rgba(255, 255, 255, 0.5)'
@@ -184,6 +193,14 @@ export default {
 
         .-left-item {
           margin-bottom: 15px;
+
+          &-span {
+            display: inline-block;
+            text-align: right;
+            width: 80px ;
+            margin-right: 10px;
+          }
+
           &:last-child {
             margin-bottom: 0;
           }
