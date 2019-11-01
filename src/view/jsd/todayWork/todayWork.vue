@@ -1263,7 +1263,7 @@
       },
       submitInfo(name) {
         let passContent = this.addInfo.scores.every((item) => {
-          return (item.score != null)
+          return (item.score != null && item.score < 100)
         })
 
         if (!this.addInfo.replyTeacher) {
@@ -1275,7 +1275,7 @@
         }
 
         if (!passContent) {
-          return this.$Message.error('每一项评分不能为空')
+          return this.$Message.error('每一项评分不能超过100分并且不能为空')
         }
 
         this.$api.jsdJob.replyHomework({
