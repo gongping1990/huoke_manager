@@ -42,6 +42,16 @@
           <FormItem label="批改文案" v-if="addInfo.isPassed === 1">
             <Input type="textarea" :rows="5" v-model="addInfo.replyText" placeholder="请输入批改文案"></Input>
           </FormItem>
+          <FormItem label="综合评分" v-if="addInfo.isPassed === 1" :class="{'ivu-form-item-required': addInfo.isPassed === 1}">
+            <p class="-c-tips">此评分主要用于其他老师在查看作业记录时，能快速的对用户的作业情况有一个大致的了解，用户不可见</p>
+            <div class="p-job-score">
+              <div class="p-job-scoreItem" v-for="(item, index) of addInfo.scores" :key="index">
+                <span>{{item.name}}</span>
+                <InputNumber class="-input" :max="100" type="text" v-model="item.score" placeholder="满分一百分"></InputNumber>
+              </div>
+            </div>
+
+          </FormItem>
         </Form>
         <div slot="footer" class="-p-b-flex">
           <Button @click="closeModal('addInfo')" ghost type="primary" style="width: 100px;">取消</Button>
@@ -398,6 +408,7 @@
         if (data) {
           this.addInfo = JSON.parse(JSON.stringify(data))
           this.addInfo.isPassed = 1
+          this.viewWork()
         }
       },
       closeModal(name) {
@@ -407,6 +418,16 @@
       currentChange(val) {
         this.tab.page = val;
         this.getList();
+      },
+      viewWork() {
+        this.$api.jsdJob.viewWork({
+          system: this.searchInfo.system,
+          workId: this.addInfo.workId
+        })
+          .then(response => {
+            this.addInfo.scores = response.data.resultData.scores;
+            this.$forceUpdate()
+          })
       },
       //分页查询
       getList(num) {
@@ -491,6 +512,30 @@
 
 <style lang="less" scoped>
   .p-job {
+
+
+    &-score {
+      display:flex;
+      flex-direction:row;
+      flex-wrap:wrap;
+    }
+
+    &-scoreItem {
+      margin-top: 10px;
+      width: 50%;
+
+      span{
+        text-align: center;
+        display: inline-block;
+        width: 20%;
+      }
+
+      .-input {
+        width: 75%;
+        margin-left: 10px;
+      }
+    }
+
     .-search-select-text {
       min-width: 70px;
     }
