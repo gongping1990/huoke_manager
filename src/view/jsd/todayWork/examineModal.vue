@@ -5,42 +5,44 @@
     @on-cancel="closeModal"
     width="500"
     title="审核">
-    <Timeline>
-      <TimelineItem v-for="(item,index) of recordList" :key="index">
-        <div>{{item.time}} &emsp; {{'赵老师'}}批改</div>
-        <div>{{item.replyText}}</div>
-        <!--<div class="-list-item">-->
-          <!--<div class="-list-item-left">评分情况</div>-->
-          <!--<div class="-list-item-right">-->
+    <Form ref="addInfo" :label-width="70">
+      <FormItem label="操作记录">
+        <Timeline>
+          <TimelineItem v-for="(item,index) of recordList" :key="index">
+            <div>{{item.time}} &emsp; {{'赵老师'}}批改</div>
+            <div>{{item.replyText}}</div>
+            <!--<div class="-list-item">-->
+            <!--<div class="-list-item-left">评分情况</div>-->
+            <!--<div class="-list-item-right">-->
             <!--<div v-for="(item1,index1) of item.scoreList" :key="index1">-->
-              <!--{{item1}}-->
+            <!--{{item1}}-->
             <!--</div>-->
-          <!--</div>-->
-        <!--</div>-->
-        <!--<div class="-list-item">-->
-          <!--<div class="-list-item-left">匹配规则</div>-->
-          <!--<div class="-list-item-right">-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--<div class="-list-item">-->
+            <!--<div class="-list-item-left">匹配规则</div>-->
+            <!--<div class="-list-item-right">-->
             <!--<div v-for="(item1,index1) of item.ruleList" :key="index1">-->
-              <!--{{item1}}-->
+            <!--{{item1}}-->
             <!--</div>-->
-          <!--</div>-->
-        <!--</div>-->
-        <!--<div class="-list-item">-->
-          <!--<div class="-list-item-left">批改内容</div>-->
-          <!--<div class="-list-item-right">-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--<div class="-list-item">-->
+            <!--<div class="-list-item-left">批改内容</div>-->
+            <!--<div class="-list-item-right">-->
             <!--{{item.content}}-->
-          <!--</div>-->
-        <!--</div>-->
-      </TimelineItem>
-    </Timeline>
-
-    <div class="p-jobRecord-radio">
-      <RadioGroup v-model="radioType" class="g-t-center">
-        <Radio label="2">通过</Radio>
-        <Radio label="3">不通过</Radio>
-      </RadioGroup>
-    </div>
-
+            <!--</div>-->
+            <!--</div>-->
+          </TimelineItem>
+        </Timeline>
+      </FormItem>
+      <FormItem label="是否通过">
+        <RadioGroup v-model="radioType" class="g-t-center">
+          <Radio label="2">通过</Radio>
+          <Radio label="3">不通过</Radio>
+        </RadioGroup>
+      </FormItem>
+    </Form>
     <div slot="footer" class="-p-b-flex">
       <Button @click="closeModal()" ghost type="primary" style="width: 100px;">取消</Button>
       <div @click="submitInfo()" class="g-primary-btn ">确认</div>
@@ -98,8 +100,8 @@ export default {
       })
         .then(response => {
           this.$emit('successAudit', {
-            reviewStatus: 3,
-            ...this.dataInfo
+            ...this.dataInfo,
+            reviewStatus: 3
           })
           this.closeModal()
         })
