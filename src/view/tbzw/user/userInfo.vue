@@ -333,8 +333,6 @@
         if (this.sortNum) {
           this.tab.page = page ||  Math.ceil(this.sortNum / 10)
         }
-
-        console.log(this.tab.currentPage,'当前')
         this.$api.jsdJob.listLessonProgress({
           uid: this.$route.query.id || this.userId,
           courseId: this.searchInfo.appId,
