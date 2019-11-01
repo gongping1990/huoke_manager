@@ -115,7 +115,7 @@
   export default {
     name: 'tbzwUserInfo',
     components: {JobRecordTemplate, Loading},
-    props: ['userId', 'sortNum'],
+    props: ['userId', 'sortNum', 'courseId'],
     data() {
       return {
         tab: {
@@ -267,9 +267,12 @@
         console.log(selectedData[2].__label)
       },
       changeRadio() {
-        this.getLearnDTO()
-        this.tab.currentPage = 1
-        this.listLessonProgress(1)
+        this.searchInfo.appId = this.searchInfo.appId || this.courseId
+        if(localStorage.isJump !== '1') {
+          this.tab.currentPage = 1
+          this.getLearnDTO()
+          this.listLessonProgress(1)
+        }
       },
       openModalChild() {
         if (!this.addInfo.id) {
@@ -300,15 +303,18 @@
       listBase() {
         this.appList = []
         this.tab.currentPage = this.sortNum ? Math.ceil(this.sortNum / 10) : 1
-        this.$api.jsdJob.listBase()
+        this.$api.jsdJob.listBase({
+          onlyme: true
+        })
           .then(response => {
             this.appList = response.data.resultData
-            this.searchInfo.appId = this.appList[0].id
+            this.searchInfo.appId = this.courseId || this.appList[0].id
             if (this.$route.query.id || this.userId) {
               this.getLearnDTO()
               this.getStudent()
             }
             this.listLessonProgress()
+            localStorage.setItem('isJump', '2')
           })
       },
       //分页查询
@@ -331,7 +337,7 @@
       },
       listLessonProgress(page) {
         if (this.sortNum) {
-          this.tab.page = page ||  Math.ceil(this.sortNum / 10)
+          this.tab.page = page || Math.ceil(this.sortNum / 10)
         }
         this.$api.jsdJob.listLessonProgress({
           uid: this.$route.query.id || this.userId,
@@ -354,7 +360,7 @@
             response => {
               if (response.data.resultData) {
                 this.addInfo = response.data.resultData
-                if(!Array.isArray(this.addInfo.areasId)) {
+                if (!Array.isArray(this.addInfo.areasId)) {
                   this.addInfo.areasId = this.addInfo.areasId.split(',')
                 }
               } else {

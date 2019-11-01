@@ -6,7 +6,7 @@
     footer-hide
     width="1000"
     title="用户详情">
-      <tbzw-user-info ref="modelUserInfo" :userId="dataInfo.uid" :sortNum="dataInfo.sortnum"></tbzw-user-info>
+      <tbzw-user-info ref="modelUserInfo" :userId="dataInfo.uid" :sortNum="dataInfo.sortnum" :courseId="dataInfo.courseId"></tbzw-user-info>
   </Modal>
 </template>
 
@@ -25,6 +25,7 @@
     },
     watch: {
       value (_n) {
+        localStorage.setItem('isJump', '1')
         this.isOpenDetail = _n
       },
       dataInfo (_n) {

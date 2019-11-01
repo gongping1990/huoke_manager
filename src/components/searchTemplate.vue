@@ -205,7 +205,9 @@
       },
       listBase() {
         this.appList = []
-        this.$api.jsdJob.listBase()
+        this.$api.jsdJob.listBase({
+          onlyme: true
+        })
           .then(response => {
             this.appList = response.data.resultData
             this.searchInfo.appId = this.appList[0].id
