@@ -26,9 +26,9 @@
             </Select>
           </div>
         </Col>
-        <div class="g-text-right">
-          <Button type="primary" ghost class="-p-modal-btn -date-search" @click="toExcel">导出表格</Button>
-        </div>
+        <!--<div class="g-text-right">-->
+          <!--<Button type="primary" ghost class="-p-modal-btn -date-search" @click="toExcel">导出表格</Button>-->
+        <!--</div>-->
       </Row>
 
       <Row class="g-search -c-tab">

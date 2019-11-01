@@ -32,9 +32,9 @@
         <Col :span="8" style="margin-left: 10px" class="g-flex-a-j-center">
           <date-picker-template :dataInfo="dateOption" @changeDate="changeDate"></date-picker-template>
         </Col>
-        <div class="g-text-right">
-          <Button type="primary" ghost class="-p-modal-btn -date-search" @click="toExcel">导出表格</Button>
-        </div>
+        <!--<div class="g-text-right">-->
+          <!--<Button type="primary" ghost class="-p-modal-btn -date-search" @click="toExcel">导出表格</Button>-->
+        <!--</div>-->
       </Row>
 
       <Table class="-c-tab" :loading="isFetching" :columns="columns" :data="dataList"></Table>
