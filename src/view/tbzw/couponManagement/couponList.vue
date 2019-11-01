@@ -349,8 +349,17 @@
     },
     methods: {
       changeStartClick () {
-        this.addInfo.expiryEndDate = ''
-        this.addInfo.receiveEndDate = ''
+        let data1 = new Date(this.addInfo.receiveStartDate).getTime()
+        let data2 = new Date(this.addInfo.receiveEndDate).getTime()
+        let data3 = new Date(this.addInfo.expiryEndDate).getTime()
+
+        if (data1 > data2) {
+          this.addInfo.receiveEndDate = ''
+        }
+
+        if (data1 > data3) {
+          this.addInfo.expiryEndDate = ''
+        }
       },
       copyUrl(param) {
         this.copy_url = param.couponUrl
