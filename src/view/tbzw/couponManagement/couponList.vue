@@ -89,7 +89,7 @@
             <Row>
               <Col span="11">
                 <Form-item prop="receiveStartDate">
-                  <Date-picker style="width: 100%" type="datetime" placeholder="选择开始日期" :disabled="addInfo.id!=''"
+                  <Date-picker style="width: 100%" type="datetime" placeholder="选择开始日期" :disabled="addInfo.id!=''"  @on-change="changeStartClick"
                                v-model="addInfo.receiveStartDate" :options="dateStartOption"></Date-picker>
                 </Form-item>
               </Col>
@@ -324,6 +324,15 @@
         ]
       };
     },
+    watch: {
+      'addInfo.receiveStartDate'(_new, _old) {
+        this.dateEndOption = {
+          disabledDate(date) {
+            return date && date.valueOf() < new Date(_new).getTime();
+          }
+        }
+      }
+    },
     computed: {
       applicableCourseList() {
         let list = []
@@ -339,6 +348,10 @@
       this.getList()
     },
     methods: {
+      changeStartClick () {
+        this.addInfo.expiryEndDate = ''
+        this.addInfo.receiveEndDate = ''
+      },
       copyUrl(param) {
         this.copy_url = param.couponUrl
         setTimeout(() => {
