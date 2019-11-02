@@ -82,7 +82,7 @@
         @on-cancel="closeModal('addInfo')"
         width="750"
         title="批改作业">
-        <Form ref="addInfo" :model="addInfo" :label-width="70">
+        <Form ref="addInfo" :model="addInfo" :label-width="90">
           <FormItem label="是否合格">
             <Radio-group v-model="addInfo.isPassed" @on-change="changePassed">
               <Radio :label=1>合格</Radio>
@@ -1383,17 +1383,22 @@
     }
 
     &-scoreItem {
+      display: flex;
+      align-items: center;
       margin-top: 10px;
       width: 50%;
 
       span{
-        text-align: center;
+        text-align: right;
         display: inline-block;
-        width: 20%;
+        width:40%;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
       }
 
       .-input {
-        width: 75%;
+        width:50%;
         margin-left: 10px;
       }
     }
