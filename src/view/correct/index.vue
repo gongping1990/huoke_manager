@@ -37,9 +37,11 @@
       <div class="content-footer">
         <div class="content-footer-left">
           <div class="content-footer-btn"
-               @click="handleClickResetCanvas">重新编辑图片</div>
+               @click="handleSaveCanvasImage(0)">保存图片</div>
           <div class="content-footer-btn"
-               @click="handleBrowseImage">预览图片</div>
+               @click="handleClickResetCanvas">放弃本次编辑</div>
+
+
         </div>
         <div class="content-footer-center">
           <div class="content-footer-center-btn"
@@ -55,11 +57,9 @@
 
         </div>
         <div class="content-footer-right">
+          <div class="content-footer-btn"
+               @click="handleBrowseImage">预览图片</div>
 
-          <div class="content-footer-btn"
-               @click="handleClickResetCanvas">放弃本次编辑</div>
-          <div class="content-footer-btn"
-               @click="handleSaveCanvasImage">完成批改</div>
         </div>
       </div>
     </div>
@@ -231,7 +231,7 @@ export default {
         fn && fn()
       })
     },
-    uploadReplyImg (replyImg) {
+    uploadReplyImg (replyImg, fn) {
       let { canvas } = this.$refs
       this.$api.jsdJob.uploadReplyImg({
         courseId: this.$route.query.courseId,
@@ -241,10 +241,16 @@ export default {
       }).then(({ data }) => {
         this.$Spin.hide();
         this.$Message.success('图片上传成功');
-        this.getViewWork(() => {
-          this.imgActive += this.workData.workImgSrc.length
-          this.imgActiveObj = this.workData.imgArr[this.imgActive]
-        })
+        if(fn) {
+          console.log(fn)
+          fn()
+        } else {
+          this.getViewWork(() => {
+            this.imgActive += this.workData.workImgSrc.length
+            this.imgActiveObj = this.workData.imgArr[this.imgActive]
+          })
+        }
+
 
       })
     },
@@ -268,14 +274,37 @@ export default {
       }
     },
     handleClickWorkImg (img, i) {
-      this.imgActive = i
-      this.imgActiveObj = img
-    },
-    handleSaveCanvasImage () {
-      let { canvas } = this.$refs
-      this.canvasImg = canvas.toDataUrl()
+      this.$Modal.confirm({
+        title: '提示',
+        content: '你正在切换作业图片， 是否保存当前修改？',
+        okText: '保存',
+        cancelText: '不保存',
+        onOk: () => {
+          this.handleSaveCanvasImage(() => {
+            this.imgActive = i
+            this.imgActiveObj = img
+          })
 
-      this.uploadImg()
+        },
+        onCancel: () => {
+          this.imgActive = i
+          this.imgActiveObj = img
+        }
+      })
+
+    },
+    handleSaveCanvasImage (fn) {
+      this.$Modal.confirm({
+        title: '提示',
+        content: `<p>确定要保存图片吗？<br/>保存图片后， 已经编辑的内容将不能再修改</p>`,
+        onOk: () => {
+          let { canvas } = this.$refs
+          this.canvasImg = canvas.toDataUrl()
+
+          this.uploadImg(fn)
+        }
+      });
+
     },
     handleBrowseImage () {
       let { canvas } = this.$refs
@@ -370,7 +399,7 @@ export default {
       let canvas = this.$refs.canvas
       canvas.getActiveObject()
     },
-    uploadImg () {
+    uploadImg (fn) {
       this.$Spin.show({
         render: (h) => {
           return h('div', [
@@ -395,7 +424,7 @@ export default {
         timeout: 10000
       });
       instance.post('/sch/common/uploadPublicFile', formData).then(({ data }) => {
-        this.uploadReplyImg(data.resultData.url)
+        this.uploadReplyImg(data.resultData.url, fn)
       })
 
     },
@@ -413,6 +442,19 @@ export default {
       }
       return new Blob([uInt8Array], { type: contentType });
     }
+  },
+  beforeRouteLeave(to, from, next) {
+   this.$Modal.confirm({
+     title: '提示',
+     content: `<p>确定要离开批改图片页面吗？<br/>离开此页面后你编辑的内容将不会被保存</p>`,
+     onOk: () => {
+       next()
+     },
+     onCancel: () => {
+       next(false)
+     }
+   })
+
   },
   components: {
     List,

@@ -37,7 +37,7 @@
         width="500"
         title="版本记录">
         <Timeline>
-          <TimelineItem v-for="(item, index) of versionList">
+          <TimelineItem v-for="(item, index) of versionList" :key="index">
             <p class="time">{{item.time | timeFormatter}}</p>
             <p class="content">{{item.names}}</p>
           </TimelineItem>
