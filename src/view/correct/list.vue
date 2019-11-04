@@ -128,93 +128,78 @@
         <div class="common-item">
           <Button type="primary"
                   class="text-btn"
-                  @click="clickAddBadge">选择插入的勋章</Button>
+                  @click="clickAddBtn('badge')">选择插入的勋章</Button>
+          <Button type="primary"
+                  class="text-btn"
+                  @click="clickAddBtn('work')">选择插入的学生作业</Button>
+          <Button type="primary"
+                  class="text-btn"
+                  @click="clickAddBtn('pz')">选择插入的批注框</Button>
         </div>
-      </div>
-    </Item>
-    <Item icon="mb"
-          class="item"
-          type="mb"
-          text="切换模版"
-          v-model="active"
-          @click="clickItem">
-      <div class="item-content">
-        <RadioGroup class="canvas-mode"
-                    vertical
-                    v-model="mode">
-          <div class="canvas-mode-item">
-            <i class="canvas-mode-icon sb"></i>
-            <Radio :label="1">横版</Radio>
-          </div>
-          <div class="canvas-mode-item">
-            <i class="canvas-mode-icon hb"></i>
-            <Radio :label="2">竖版</Radio>
-          </div>
-        </RadioGroup>
       </div>
     </Item>
   </div>
 </template>
 
 <script>
-import Item from './item'
+import Item from "./item";
 export default {
-  data () {
+  data() {
     return {
       mode: 1,
-      active: '',
+      active: "",
       canvasObj: {
-        type: '',
+        type: "",
         show: false,
         drawWidth: 1,
-        inputValue: '',
-        drawColor: '#FF0000',
-        fontColor: '#FF0000',
+        inputValue: "",
+        drawColor: "#FF0000",
+        fontColor: "#FF0000",
         fontSize: 18,
-        graphColor: '#FF0000',
+        graphColor: "#FF0000",
         graphWidth: 1,
-        graphType: 'line'
+        graphType: "line"
       },
 
-      fontSizeList: [12, 14, 16, 18, 20, 22, 24, 26, 28],
-    }
+      fontSizeList: [12, 14, 16, 18, 20, 22, 24, 26, 28]
+    };
   },
   watch: {
     canvasObj: {
-      handler: function (val) {
-        this.$emit('clickItem', val)
+      handler: function(val) {
+        this.$emit("clickItem", val);
       },
       deep: true
     },
-    mode (val) {
-      this.$emit('changeMode', val)
+    mode(val) {
+      this.$emit("changeMode", val);
     }
   },
   methods: {
-    clickItem (type, show) {
+    clickItem(type, show) {
       if (show) {
-        this.canvasObj.show = show
-        this.canvasObj.type = type
+        this.canvasObj.show = show;
+        this.canvasObj.type = type;
       }
     },
-    clickInput () {
+    clickInput() {
       if (!this.canvasObj.inputValue) {
-        this.$Message.error('请填写要插入的文字！');
-        return
+        this.$Message.error("请填写要插入的文字！");
+        return;
       }
-      this.$emit('input')
+      this.$emit("input");
     },
-    clickAddBadge () {
-      this.$emit('addBadge')
+    clickAddBtn(type) {
+      this.$emit("clickAdd", type);
     },
-    clearInput () {
-      this.canvasObj.inputValue = ''
+    clearInput() {
+      this.canvasObj.inputValue = "";
     }
   },
   components: {
     Item
   }
-}
+};
 </script>
 
 <style lang="less" scoped>
@@ -285,10 +270,10 @@ export default {
       background-size: 100%;
       background-repeat: no-repeat;
       &.sb {
-        background-image: url('../../assets/images/correct/sb.png');
+        background-image: url("../../assets/images/correct/sb.png");
       }
       &.hb {
-        background-image: url('../../assets/images/correct/hb.png');
+        background-image: url("../../assets/images/correct/hb.png");
       }
     }
   }
@@ -327,6 +312,7 @@ export default {
       border: none;
     }
     &-btn {
+      margin-bottom: 20px;
       width: 220px;
       height: 45px;
       font-size: 18px;

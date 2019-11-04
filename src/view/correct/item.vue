@@ -22,46 +22,47 @@ export default {
   props: {
     text: {
       type: String,
-      default: ''
+      default: ""
     },
     icon: {
       type: String,
-      default: ''
+      default: ""
     },
     type: {
       type: String,
-      default: 'line'
+      default: "line"
     },
     value: {
       type: String,
-      default: ''
+      default: ""
     }
   },
-  data () {
+  data() {
     return {
-      height: 'auto',
+      height: "auto",
       heightActive: 0
-    }
+    };
   },
   watch: {
-    value (val) {
-      val == this.type ? (this.heightActive = this.height) : (this.heightActive = 0)
-      this.$emit('click', this.type, (val == this.type))
+    value(val) {
+      val == this.type
+        ? (this.heightActive = this.height)
+        : (this.heightActive = 0);
+      this.$emit("click", this.type, val == this.type);
     }
   },
-  mounted () {
+  mounted() {
     setTimeout(() => {
-      console.log(this.$refs.content)
-      this.height = this.$refs.content.offsetHeight + 'px'
+      this.height = this.$refs.content.offsetHeight + "px";
     }, 1000);
-    this.show && this.clickItem()
+    this.show && this.clickItem();
   },
   methods: {
-    clickItem () {
-      this.$emit('input', this.type)
+    clickItem() {
+      this.$emit("input", this.type);
     }
   }
-}
+};
 </script>
 
 <style lang="less" scoped>
@@ -93,19 +94,19 @@ export default {
     background-size: 100%;
     background-repeat: no-repeat;
     &.hx {
-      background-image: url('../../assets/images/correct/hx.png');
+      background-image: url("../../assets/images/correct/hx.png");
     }
     &.text {
-      background-image: url('../../assets/images/correct/text.png');
+      background-image: url("../../assets/images/correct/text.png");
     }
     &.tp {
-      background-image: url('../../assets/images/correct/tp.png');
+      background-image: url("../../assets/images/correct/tp.png");
     }
     &.mb {
-      background-image: url('../../assets/images/correct/mb.png');
+      background-image: url("../../assets/images/correct/mb.png");
     }
     &.tx {
-      background-image: url('../../assets/images/correct/tx.png');
+      background-image: url("../../assets/images/correct/tx.png");
     }
   }
   &-arror {
@@ -113,7 +114,7 @@ export default {
     margin-left: 12px;
     width: 13px;
     height: 7px;
-    background: url('../../assets/images/correct/arror.png') no-repeat;
+    background: url("../../assets/images/correct/arror.png") no-repeat;
     background-size: 100%;
     transform: rotate(0);
     transition: all 0.3s;
