@@ -20,8 +20,8 @@
       :title="nowStatus == '1' ? '版本记录' : '排课设置'">
       <Timeline v-if="nowStatus == '1'">
         <TimelineItem v-for="(item, index) of versionList" :key="index">
-          <p class="time">{{item.time | timeFormatter}}</p>
-          <p class="content">{{item.names}}</p>
+          <p class="time">{{item.editTime }}&emsp;{{item.type ? `更改为${item.type}` : ''}}&emsp;{{item.cover}}</p>
+          <p class="content">{{item.rules}}</p>
         </TimelineItem>
       </Timeline>
       <Form ref="addInfo" :model="addInfo" :label-width="80" v-else>
@@ -29,7 +29,7 @@
           <span class="-c-tips">请选择每周需要排课的天数，新建立即生效，更改5分钟后生效，更改不会影响已经排出的课时</span>
         </FormItem>
         <FormItem label="排课模式">
-          <Radio-group v-model="addInfo.classType" @on-change="changeRadio">
+          <Radio-group v-model="addInfo.type" @on-change="changeRadio">
             <Radio :label=1>每周三节</Radio>
             <Radio :label=2>每周五节</Radio>
             <Radio :label=3>每周七节</Radio>
@@ -39,7 +39,7 @@
           </CheckboxGroup>
         </FormItem>
         <FormItem label="是否覆盖">
-          <Radio-group v-model="addInfo.isPassed">
+          <Radio-group v-model="addInfo.cover">
             <Radio :label=1>是</Radio>
             <Radio :label=0>否</Radio>
           </Radio-group>
@@ -72,7 +72,7 @@
         isFetching: false,
         isOpenModal: false,
         addInfo: {
-          classType: 1
+          type: 1
         },
         checkWeeks: ['2','4','6'],
         weekList: [
@@ -153,7 +153,7 @@
                     this.openEdit(params.row,1)
                   }
                 }
-              }, params.row.name)
+              }, params.row.rules)
             },
             align: 'center'
           },
@@ -219,7 +219,7 @@
     },
     methods: {
       changeRadio () {
-        switch (+this.addInfo.classType) {
+        switch (+this.addInfo.type) {
           case 1:
             this.checkWeeks = ['2','4','6']
             break
@@ -250,6 +250,8 @@
       openEdit (data, num) {
         this.nowStatus = num
         this.isOpenModal = true
+        this.addInfo = JSON.parse(JSON.stringify(data))
+        num === 1 && this.getLogList(data)
       },
 
       closeModal() {
@@ -279,12 +281,27 @@
             this.isFetching = false
           })
       },
-      submitInfo(name) {
+      getLogList(data) {
+        this.$api.tbzwRules.getHistoryLessonRules({
+          courseId: data.id
+        })
+          .then(
+            response => {
+              this.versionList = response.data.resultData;
+            })
 
-        this.$api.tbzwOperational.saveBanner({
-          id: this.addInfo.id,
-          cardimgurl : this.addInfo.cardimgurl,
-          imgurl : this.addInfo.imgurl
+      },
+      submitInfo() {
+
+        if(this.nowStatus == '1') {
+          return this.closeModal()
+        }
+
+        this.$api.tbzwRules.editLessonRules({
+          courseId: this.addInfo.id,
+          cover : this.addInfo.cover === 1,
+          rules : this.checkWeeks.toString(),
+          type : this.addInfo.type
         })
           .then(
             response => {
@@ -305,6 +322,10 @@
 
 <style lang="less" scoped>
   .p-forma-courseList {
+
+    .content {
+      margin: 10px 0;
+    }
     .-c-tips {
       color: #39f
     }

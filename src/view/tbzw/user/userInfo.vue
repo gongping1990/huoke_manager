@@ -115,7 +115,7 @@
           {{addInfo.learnStartDate}}
         </FormItem>
         <FormItem label="更改日期" class="ivu-form-item-required">
-          <Date-picker style="width: 100%" type="datetime" placeholder="选择更改日期" v-model="addInfo.showTime"></Date-picker>
+          <Date-picker style="width: 100%" type="date" placeholder="选择更改日期" v-model="addInfo.activeTime"></Date-picker>
         </FormItem>
       </Form>
       <div slot="footer" class="g-flex-j-sa">
@@ -441,26 +441,23 @@
         })
       },
       submitTime() {
-        let params = {
-          puid: this.$route.query.id || this.userId,
-          areasId: `${this.addInfo.areasId}`,
-          relation: this.addInfo.relation,
-          grade: this.addInfo.grade,
-          sex: this.addInfo.sex,
-          areasText: this.addInfo.areasText,
-          nickname: this.addInfo.nickname
+        if (!this.addInfo.activeTime) {
+          return this.$Message.error('请选择开课时间')
         }
-        this.$api.tbzwStudent.addStudent(params)
+
+        this.$api.tbzwRules.supply({
+          activeTime: dayjs(this.addInfo.activeTime).format('YYYY-MM-DD'),
+          courseId: this.searchInfo.appId,
+          userId: this.userInfo.uid,
+        })
           .then(
             response => {
               if (response.data.code == '200') {
                 this.$Message.success('提交成功');
                 this.getLearnDTO()
+                this.isOpenModalTime = false
               }
             })
-          .finally(() => {
-            this.isSending = false
-          })
       }
     }
   };

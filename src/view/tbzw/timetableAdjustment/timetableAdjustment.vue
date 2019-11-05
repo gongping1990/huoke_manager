@@ -44,12 +44,12 @@
             <img class="-img" :src="userInfo.headimgurl"/>
           </FormItem>
           <FormItem label="选择课程" prop="recordTime">
-            <Select v-model="addInfo.course" class="-input">
+            <Select v-model="addInfo.courseId" class="-input" @on-change="changeCourse">
               <Option v-for="(item,index) in courseList" :label="item.name" :value="item.id" :key="index"></Option>
             </Select>
           </FormItem>
           <FormItem label="当前排课天数">
-            测试
+            {{detailInfo.showrules || '暂无'}}
           </FormItem>
           <FormItem label="更改排课天数">
             <CheckboxGroup v-model="addInfo.rules">
@@ -86,6 +86,7 @@
         courseList: [],
         selectInfo: '1',
         searchInfo: {},
+        detailInfo: {},
         userInfo: '',
         radioType: 0,
         total: 0,
@@ -128,8 +129,8 @@
           phone: [
             {required: true, message: '请输入手机号码', trigger: 'blur'}
           ],
-          date: [
-            {required: true, type: 'date', message: '请选择补卡日期', trigger: 'change'},
+          rules: [
+            {required: true, type: 'array', message: '请选择排课规则', trigger: 'change', mix: 1}
           ]
         },
         columns: [
@@ -164,12 +165,12 @@
           },
           {
             title: '调整排课天数',
-            key: 'date',
+            key: 'showrules',
             align: 'center'
           },
           {
             title: '原排课天数',
-            key: 'date',
+            key: 'showoldrules',
             align: 'center'
           },
           {
@@ -184,6 +185,9 @@
       this.getCourseList()
     },
     methods: {
+      changeCourse () {
+        this.getLessonRulesByUser()
+      },
       currentChange(val) {
         this.tab.page = val;
         this.getList();
@@ -199,6 +203,7 @@
             response => {
               if (response.data.resultData) {
                 this.userInfo = response.data.resultData;
+                this.getLessonRulesByUser()
               } else {
                 this.userInfo = ''
                 this.$Message.error('未查询到该手机号码信息')
@@ -212,7 +217,7 @@
       },
       openModal() {
         this.isOpenModal = true
-        this.addInfo.date = ''
+        this.addInfo.courseId = this.radioType
         this.userInfo = ''
       },
       closeModal(name) {
@@ -232,6 +237,16 @@
               this.getList()
             })
       },
+      getLessonRulesByUser() {
+        this.$api.tbzwRules.getLessonRulesByUser({
+          courseId: this.addInfo.courseId,
+          userId: this.userInfo.userId
+        })
+          .then(
+            response => {
+              this.detailInfo = response.data.resultData;
+            })
+      },
       //分页查询
       getList(num) {
         this.isFetching = true
@@ -240,7 +255,8 @@
         }
         let params = {
           current: num ? num : this.tab.page,
-          size: this.tab.pageSize
+          size: this.tab.pageSize,
+          courseId: this.radioType
         }
 
         if (this.selectInfo == '1' && this.searchInfo) {
@@ -249,7 +265,7 @@
           params.phone = this.searchInfo.manner
         }
 
-        this.$api.tbzwStudy.listRepairCard(params)
+        this.$api.tbzwRules.pageUserLessonRules(params)
           .then(
             response => {
               this.dataList = response.data.resultData.records || [];
@@ -263,9 +279,10 @@
         if (this.isSending) return
         this.$refs[name].validate((valid) => {
           if (valid) {
-            this.$api.tbzwStudy.repairCard({
-              date: dayjs(this.addInfo.date).format('YYYY-MM-DD'),
-              phone: this.addInfo.phone
+            this.$api.tbzwRules.changedRulesByUser({
+              rules: this.addInfo.rules.toString(),
+              courseId: this.addInfo.courseId,
+              userId: this.userInfo.userId
             })
               .then(
                 response => {

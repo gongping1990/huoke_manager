@@ -12,6 +12,7 @@ import tbzwOfficenews from "./officenews";
 import tbzwStudent from "./student";
 import tbzwActiveconfig from "./activeconfig";
 import tbzwGroupConfig from "./groupConfig";
+import tbzwRules from "./rules";
 
 export const tbzwIndex = {
   composition,
@@ -27,5 +28,6 @@ export const tbzwIndex = {
   tbzwOfficenews,
   tbzwStudent,
   tbzwActiveconfig,
-  tbzwGroupConfig
+  tbzwGroupConfig,
+  tbzwRules
 }
