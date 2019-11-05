@@ -42,7 +42,7 @@
         <div class="-p-center-item">
           <div class="-c-text">学习数据</div>
           <div>
-            <span>开课日期: {{userInfo.learnStartDate}}</span>
+            <span class="g-blue g-cursor" @click="openModalTime(userInfo)">开课日期: {{userInfo.learnStartDate}}<Icon type="ios-create" /></span>
             <span>课程进度: {{userInfo.learnProgress}}</span>
             <span>交作业课时数: {{userInfo.homeworkLesson}}</span>
             <span>老师批改作业数: {{userInfo.teacherReply}}</span>
@@ -101,6 +101,26 @@
       <div slot="footer" class="g-flex-j-sa">
         <Button @click="closeModal('addInfo')" ghost type="primary" style="width: 100px;">取消</Button>
         <div @click="submitInfo('addInfo')" class="g-primary-btn "> {{isSending ? '提交中...' : '确 认'}}</div>
+      </div>
+    </Modal>
+
+    <Modal
+      class="p-userInfo"
+      v-model="isOpenModalTime"
+      @on-cancel="isOpenModalTime = false"
+      width="500"
+      title="更改日期">
+      <Form ref="addInfo" :model="addInfo" :label-width="100">
+        <FormItem label="当前日期">
+          {{addInfo.learnStartDate}}
+        </FormItem>
+        <FormItem label="更改日期" class="ivu-form-item-required">
+          <Date-picker style="width: 100%" type="datetime" placeholder="选择更改日期" v-model="addInfo.showTime"></Date-picker>
+        </FormItem>
+      </Form>
+      <div slot="footer" class="g-flex-j-sa">
+        <Button @click="isOpenModalTime = false" ghost type="primary" style="width: 100px;">取消</Button>
+        <div @click="submitTime()" class="g-primary-btn "> {{isSending ? '提交中...' : '确 认'}}</div>
       </div>
     </Modal>
   </div>
@@ -212,28 +232,33 @@
         isOpenModal: false,
         isOpenModalChild: false,
         isSending: false,
+        isOpenModalTime: false,
         columns: [
           {
             title: '课时名称',
-            key: 'lessonName'
+            key: 'lessonName',
+            align: 'center'
           },
           {
             title: '首次完成上课时间',
             render: (h, params) => {
               return h('div', params.row.firstLearnTime ? dayjs(+params.row.firstLearnTime).format("YYYY-MM-DD HH:mm") : '暂无')
-            }
+            },
+            align: 'center'
           },
           {
             title: '最后交作业时间',
             render: (h, params) => {
               return h('div', params.row.lastSubmitTime ? dayjs(+params.row.lastSubmitTime).format("YYYY-MM-DD HH:mm") : '暂无')
-            }
+            },
+            align: 'center'
           },
           {
             title: '老师最后批改时间',
             render: (h, params) => {
               return h('div', params.row.lastReplyTime ? dayjs(+params.row.lastReplyTime).format("YYYY-MM-DD HH:mm") : '暂无')
-            }
+            },
+            align: 'center'
           },
           {
             title: '操作',
@@ -253,7 +278,8 @@
                   }
                 }
               }, '作业记录')
-            }
+            },
+            align: 'center'
           }
         ],
       };
@@ -296,6 +322,10 @@
         this.detailInfo = JSON.parse(JSON.stringify(data))
         this.detailInfo.appId = this.searchInfo.appId
         this.detailInfo.uid = this.$route.query.id || this.userId
+      },
+      openModalTime(data) {
+        this.isOpenModalTime = true
+        this.addInfo = JSON.parse(JSON.stringify(data))
       },
       currentChange(val) {
         this.listLessonProgress(val);
@@ -410,6 +440,28 @@
           }
         })
       },
+      submitTime() {
+        let params = {
+          puid: this.$route.query.id || this.userId,
+          areasId: `${this.addInfo.areasId}`,
+          relation: this.addInfo.relation,
+          grade: this.addInfo.grade,
+          sex: this.addInfo.sex,
+          areasText: this.addInfo.areasText,
+          nickname: this.addInfo.nickname
+        }
+        this.$api.tbzwStudent.addStudent(params)
+          .then(
+            response => {
+              if (response.data.code == '200') {
+                this.$Message.success('提交成功');
+                this.getLearnDTO()
+              }
+            })
+          .finally(() => {
+            this.isSending = false
+          })
+      }
     }
   };
 </script>

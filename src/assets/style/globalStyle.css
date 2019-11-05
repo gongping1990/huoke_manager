@@ -128,6 +128,9 @@
 .g-gary{
   color: rgba(0,0,0,0.25)
 }
+.g-blue{
+  color: rgb(84, 68, 228) !important;
+}
 .g-gary-bg{
   background:rgba(0,0,0,0.25);
 }

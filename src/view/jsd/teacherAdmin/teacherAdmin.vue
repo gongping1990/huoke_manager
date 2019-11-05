@@ -22,7 +22,7 @@
             <Input type="text" v-model="addInfo.nickname" placeholder="请输入教师名称"></Input>
           </FormItem>
           <Form-item label="教师头像" class="ivu-form-item-required">
-            <upload-img  v-model="addInfo.headimgurl" :option="uploadOption"></upload-img>
+            <upload-img v-model="addInfo.headimgurl" :option="uploadOption"></upload-img>
           </Form-item>
           <FormItem label="教师账号" prop="username">
             <Input type="text" v-model="addInfo.username" :disabled="addInfo.id!=''" placeholder="请输入账号"></Input>
@@ -37,10 +37,10 @@
                          placeholder="请输入预估工作量"></InputNumber>
           </FormItem>
           <!--<FormItem label="角色权限" prop="roleId">-->
-            <!--<Radio-group v-model="addInfo.roleId">-->
-              <!--<Radio label='3'>作业批改老师</Radio>-->
-              <!--<Radio label='4'>作业管理员</Radio>-->
-            <!--</Radio-group>-->
+          <!--<Radio-group v-model="addInfo.roleId">-->
+          <!--<Radio label='3'>作业批改老师</Radio>-->
+          <!--<Radio label='4'>作业管理员</Radio>-->
+          <!--</Radio-group>-->
           <!--</FormItem>-->
           <FormItem label="所属课程" prop="courses">
             <CheckboxGroup v-model="addInfo.courses">
@@ -119,7 +119,7 @@
             {type: 'string', max: 20, message: '教师名称长度为20字', trigger: 'blur'}
           ],
           amount: [
-            {required: true, type:'number', message: '请输入预估工作量', trigger: 'blur'}
+            {required: true, type: 'number', message: '请输入预估工作量', trigger: 'blur'}
           ],
           password: [
             {required: true, message: '请输入初始密码', trigger: 'blur'}
@@ -176,7 +176,25 @@
           },
           {
             title: '预计工作量',
-            key: 'amount'
+            key: 'amount',
+            align: 'center'
+          },
+          {
+            title: '已绑定学生',
+            render: (h, params) => {
+              return h('span', {
+                style: {
+                  color: '#5444E4',
+                  cursor: 'pointer'
+                },
+                on: {
+                  click: () => {
+                    this.toStudent(params.row)
+                  }
+                }
+              }, params.row.amount)
+            },
+            align: 'center'
           },
           {
             title: '启用/禁用',
@@ -279,35 +297,35 @@
           },
           {
             title: '总量/已处理',
-            render: (h,p)=>{
+            render: (h, p) => {
               return h('div', `${p.row.total}/${p.row.totalHandled}`)
             },
             align: 'center',
           },
           {
             title: '自动分配/已处理',
-            render: (h,p)=>{
+            render: (h, p) => {
               return h('div', `${p.row.autonum}/${p.row.autoHandled}`)
             },
             align: 'center',
           },
           {
             title: '补批/已处理',
-            render: (h,p)=>{
+            render: (h, p) => {
               return h('div', `${p.row.oldnum}/${p.row.oldHandled}`)
             },
             align: 'center',
           },
           {
             title: '调度/已处理',
-            render: (h,p)=>{
+            render: (h, p) => {
               return h('div', `${p.row.allotnum}/${p.row.allotHandled}`)
             },
             align: 'center',
           },
           {
             title: '重交/已处理',
-            render: (h,p)=>{
+            render: (h, p) => {
               return h('div', `${p.row.resubmitnum}/${p.row.handleResubmit}`)
             },
             align: 'center',
@@ -319,7 +337,7 @@
           },
           {
             title: '好评率/差评率',
-            render: (h,p)=>{
+            render: (h, p) => {
               return h('div', `${p.row.good}/${p.row.bad}`)
             },
             align: 'center',
@@ -332,6 +350,14 @@
       this.listBase()
     },
     methods: {
+      toStudent (data) {
+        this.$router.push({
+          name: 'tbzw_studentListTwo',
+          query: {
+            name: data.nickname
+          }
+        })
+      },
       openModal(data) {
         this.isOpenModal = true
         if (data) {
@@ -347,7 +373,7 @@
           }
         }
       },
-      openModalData (data) {
+      openModalData(data) {
         this.isOpenModalData = true
         this.operationalId = data.id
         this.getDetailList()
@@ -374,7 +400,7 @@
         }).then(response => {
           this.detailList = response.data.resultData.records;
           this.totalDetail = response.data.resultData.total;
-        }).finally(()=>{
+        }).finally(() => {
           this.isFetching = false
         })
       },
@@ -423,21 +449,30 @@
         })
       },
       delItem(param) {
-        this.$Modal.confirm({
-          title: '提示',
-          content: '确认要删除吗？',
-          onOk: () => {
-            this.$api.jsdTeacher.removeTeacher({
-              userId: param.id
-            }).then(
-              response => {
-                if (response.data.code == "200") {
-                  this.$Message.success("操作成功");
-                  this.getList();
-                }
-              })
-          }
-        })
+        if (true) {
+          this.$Message.warning({
+            content: '老师当前所属课程“名称1”，“课程名称2”还有学生未移交，无法取消所属关系。请移交学生后再试。',
+            duration: 10,
+            closable: true
+          });
+        } else {
+          this.$Modal.confirm({
+            title: '提示',
+            content: '确认要删除吗？',
+            onOk: () => {
+              this.$api.jsdTeacher.removeTeacher({
+                userId: param.id
+              }).then(
+                response => {
+                  if (response.data.code == "200") {
+                    this.$Message.success("操作成功");
+                    this.getList();
+                  }
+                })
+            }
+          })
+        }
+
       },
       resultItem(param) {
         this.$Modal.confirm({
@@ -469,7 +504,7 @@
           this.teacherEdit(name)
         }
       },
-      teacherEdit (name) {
+      teacherEdit(name) {
         if (this.isSending) return
         this.$refs[name].validate((valid) => {
           if (valid) {
@@ -481,12 +516,12 @@
             param = this.addInfo.id ? this.$api.jsdTeacher.updateTeacher : this.$api.jsdTeacher.addTeacher
             param({
               id: this.addInfo.id,
-              nickname : this.addInfo.nickname,
-              username : this.addInfo.username,
-              password : this.addInfo.password,
-              headimgurl : this.addInfo.headimgurl,
-              amount : this.addInfo.amount,
-              courses : `${this.addInfo.courses}`
+              nickname: this.addInfo.nickname,
+              username: this.addInfo.username,
+              password: this.addInfo.password,
+              headimgurl: this.addInfo.headimgurl,
+              amount: this.addInfo.amount,
+              courses: `${this.addInfo.courses}`
             })
               .then(
                 response => {

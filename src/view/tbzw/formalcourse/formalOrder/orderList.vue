@@ -37,6 +37,7 @@
             <Select v-model="selectInfo" class="-search-select">
               <Option value="0">订单号</Option>
               <Option value="1">用户昵称</Option>
+              <Option value="2">手机号</Option>
             </Select>
             <span class="-search-center">|</span>
             <Input v-model="searchInfo.antistop" class="-search-input" placeholder="请输入关键字" icon="ios-search"
@@ -100,6 +101,8 @@
         <div @click="isOpenModal = false" class="g-primary-btn ">确 认</div>
       </div>
     </Modal>
+
+    <look-user-info v-model="isOpenUserInfo" :dataInfo="detailInfo"></look-user-info>
   </div>
 </template>
 
@@ -107,10 +110,11 @@
   import dayjs from 'dayjs'
   import {getBaseUrl} from "@/libs/index";
   import DatePickerTemplate from "@/components/datePickerTemplate";
+  import LookUserInfo from "../../../jsd/todayWork/lookUserInfo";
 
   export default {
     name: 'orderList',
-    components: {DatePickerTemplate},
+    components: {LookUserInfo, DatePickerTemplate},
     data() {
       return {
         tab: {
@@ -164,9 +168,13 @@
           {
             name: '跟团购买',
             id: '3'
+          },
+          {
+            name: '手动开通',
+            id: '4'
           }
         ],
-        orderType: ['单独购买', '开团购买', '跟团购买'],
+        orderType: ['单独购买', '开团购买', '跟团购买', '手动开通'],
         orderPageType: ['玖桔成都', '社群', '公众号投放'],
         dataList: [],
         experienceLessonList: [],
@@ -178,12 +186,14 @@
         total: 0,
         isFetching: false,
         isOpenModal: false,
+        isOpenUserInfo: false,
         getStartTime: '',
         getEndTime: '',
         orderInfo: {
           groupOrders: []
         },
         courseInfo: {},
+        detailInfo: {},
         columns: [
           {
             title: '订单号',
@@ -220,8 +230,23 @@
           },
           {
             title: '用户昵称',
-            key: 'nickName',
-            tooltip: true,
+            render: (h, params) => {
+              return h('Button', {
+                props: {
+                  type: 'text',
+                  size: 'small'
+                },
+                style: {
+                  color: '#5444E4',
+                  marginRight: '5px'
+                },
+                on: {
+                  click: () => {
+                    this.toDetail(params.row)
+                  }
+                }
+              }, params.row.nickName)
+            },
             align: 'center'
           },
           {
@@ -296,6 +321,11 @@
       this.getCourseList()
     },
     methods: {
+      toDetail(data) {
+        this.isOpenUserInfo = true
+        this.detailInfo = JSON.parse(JSON.stringify(data))
+        this.detailInfo.uid = this.detailInfo.userId
+      },
       changeDate (data) {
         this.getStartTime = data.startTime
         this.getEndTime = data.endTime
