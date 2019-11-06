@@ -195,7 +195,7 @@
         }
       },
       openModal () {
-        if (this.selectUserList.length) {
+        if (!this.selectUserList.length) {
           this.isOpenModal = true
           this.selectTeacher()
         } else {
@@ -227,7 +227,7 @@
       selectTeacher() {
         this.$api.jsdTeacher.selectTeacher({
           courseId: this.searchInfo.courseId,
-          teacherId: this.$route.query.id
+          teacherId: this.$route.query.teacherId
         })
           .then(response => {
             this.teacherList = response.data.resultData
@@ -267,7 +267,7 @@
         }
         this.$api.jsdTeacher.moveUserToTeacher({
           courseId: this.searchInfo.courseId,
-          userIds: this.$route.query.id,
+          userIds: this.$route.query.teacherId,
           targetTeacher: this.addInfo.teacherId,
         })
           .then(response => {

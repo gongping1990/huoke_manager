@@ -358,7 +358,7 @@
           name: 'tbzw_studentListTwo',
           query: {
             name: data.nickname,
-            id: data.id
+            teacherId: data.id
           }
         })
       },
