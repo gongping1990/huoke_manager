@@ -618,7 +618,7 @@
           response => {
             if (response.data.code == "200") {
               this.$Message.success("操作成功");
-
+              this.addInfo.students = 0
             }
           })
       },
