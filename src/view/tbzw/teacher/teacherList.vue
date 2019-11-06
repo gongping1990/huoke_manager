@@ -397,7 +397,7 @@
     },
     methods: {
       changeCourseList(bool) {
-        if (this.addInfo.id && bool) {
+        if (this.addInfo.id && bool && this.addInfo.students != 0) {
           this.openConfirm('', 3)
         }
       },
@@ -411,6 +411,7 @@
       },
       openModal(data) {
         this.isOpenModal = true
+        this.formatTeacherList = []
         if (data) {
           this.textType = '1'
           this.addInfo = JSON.parse(JSON.stringify(data))
@@ -619,6 +620,7 @@
             if (response.data.code == "200") {
               this.$Message.success("操作成功");
               this.addInfo.students = 0
+              this.isOpenModalConfirm = false
             }
           })
       },
