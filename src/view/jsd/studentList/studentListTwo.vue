@@ -51,8 +51,8 @@
       <div class="p-student-title -c-tips">确认将选中的{{selectUserList.length}}个学生移交给</div>
       <Form :model="addInfo" :label-width="90" class="ivu-form-item-required">
         <FormItem label="教师名称" prop="teacherName">
-          <Select v-model="addInfo.courseType">
-            <Option v-for="(item,index) in courseList" :label="item.name" :value="item.id" :key="index"></Option>
+          <Select v-model="addInfo.teacherId">
+            <Option v-for="(item,index) in teacherList" :label="item.nickname" :value="item.id" :key="index"></Option>
           </Select>
         </FormItem>
       </Form>
@@ -85,6 +85,7 @@
         },
         selectInfo: '1',
         dataList: [],
+        teacherList: [],
         courseList: [],
         detailInfo: {},
         addInfo: {
@@ -113,7 +114,7 @@
               }, [
                 h('img', {
                   attrs: {
-                    src: params.row.headImgUrl
+                    src: params.row.headimgurl
                   },
                   style: {
                     width: '36px',
@@ -133,22 +134,25 @@
           },
           {
             title: '孩子昵称',
-            key: 'creatTime',
+            key: 'nickname',
             align: 'center'
           },
           {
             title: '孩子性别',
-            key: 'creatTime',
+            key: 'sex',
+            render: (h, params)=> {
+              return h('span', params.row.sex ? '男' : '女')
+            },
             align: 'center'
           },
           {
             title: '与孩子关系',
-            key: 'creatTime',
+            key: 'relationText',
             align: 'center'
           },
           {
             title: '在读年级',
-            key: 'creatTime',
+            key: 'gradeText',
             align: 'center'
           },
           {
@@ -193,6 +197,7 @@
       openModal () {
         if (this.selectUserList.length) {
           this.isOpenModal = true
+          this.selectTeacher()
         } else {
           this.$Message.error('请选中需要移交的学生')
         }
@@ -201,7 +206,8 @@
       toDetail(param) {
         this.isOpenUserInfo = true
         this.detailInfo = param
-        this.detailInfo.uid = this.detailInfo.userId
+        this.detailInfo.uid = this.detailInfo.puid
+        console.log(this.detailInfo)
       },
       currentChange(val) {
         this.tab.page = val;
@@ -218,6 +224,15 @@
             this.getList()
           })
       },
+      selectTeacher() {
+        this.$api.jsdTeacher.selectTeacher({
+          courseId: this.searchInfo.courseId,
+          teacherId: this.$route.query.id
+        })
+          .then(response => {
+            this.teacherList = response.data.resultData
+          })
+      },
       //分页查询
       getList(num) {
         if (num) {
@@ -226,7 +241,7 @@
         let params = {
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
-          hasPhone: this.searchInfo.hasPhone != '-1' ? (this.searchInfo.hasPhone == '1') : ''
+          courseId: this.searchInfo.courseId
         }
 
         if (this.selectInfo == '1' && this.searchInfo) {
@@ -236,7 +251,7 @@
         }
 
         this.isFetching = true
-        this.$api.tbzwUser.getTbzwUserList(params)
+        this.$api.jsdKfteacher.listStudentByPage(params)
           .then(
             response => {
               this.dataList = response.data.resultData.records;
@@ -247,20 +262,18 @@
           })
       },
       submitInfo() {
-        if (!this.addInfo.headImage) {
-          return this.$Message.error('请上传头像')
-        } else if (!this.addInfo.teacherName ) {
-          return this.$Message.error('请输入教师名称')
-        } else if (!this.addInfo.voiceUrl ) {
-          return this.$Message.error('请输入随堂检测音频')
+        if (!this.addInfo.teacherId) {
+          return this.$Message.error('请选择需要移交的老师')
         }
-        let paramUrl = this.addInfo.id ? this.$api.composition.updateTeacher : this.$api.composition.saveTeacher
-        paramUrl(this.addInfo)
+        this.$api.jsdTeacher.moveUserToTeacher({
+          courseId: this.searchInfo.courseId,
+          userIds: this.$route.query.id,
+          targetTeacher: this.addInfo.teacherId,
+        })
           .then(response => {
             if (response.data.code == '200') {
               this.$Message.success('操作成功');
               this.getList()
-              this.closeModal()
               this.isOpenModal = false
             }
           })

@@ -134,16 +134,19 @@
         columns: [
           {
             title: '教师名称',
-            key: 'nickname'
+            key: 'nickname',
+            align: 'center'
           },
           {
             title: '教师账号',
-            key: 'username'
+            key: 'username',
+            align: 'center'
           },
           {
             title: '所属课程',
             key: 'systemTexts',
-            width: 200
+            width: 200,
+            align: 'center'
           },
           // {
           //   title: '角色权限',
@@ -192,7 +195,7 @@
                     this.toStudent(params.row)
                   }
                 }
-              }, params.row.amount)
+              }, params.row.students)
             },
             align: 'center'
           },
@@ -354,7 +357,8 @@
         this.$router.push({
           name: 'tbzw_studentListTwo',
           query: {
-            name: data.nickname
+            name: data.nickname,
+            id: data.id
           }
         })
       },
@@ -434,7 +438,7 @@
       toChangeStatus(param) {
         this.$Modal.confirm({
           title: '提示',
-          content: '禁用该老师后，其“待批改”和“不合格”作业将平均分配给其他启用的老师',
+          content: param.desabled ? '确认要启用该老师吗？' : '当前老师还有绑定学生，需将老师全部所属课程的绑定学生移交才能禁用',
           onOk: () => {
             this.$api.jsdTeacher.changeStatusTeacher({
               userId: param.id
@@ -449,29 +453,21 @@
         })
       },
       delItem(param) {
-        if (true) {
-          this.$Message.warning({
-            content: '老师当前所属课程“名称1”，“课程名称2”还有学生未移交，无法取消所属关系。请移交学生后再试。',
-            duration: 10,
-            closable: true
-          });
-        } else {
-          this.$Modal.confirm({
-            title: '提示',
-            content: '确认要删除吗？',
-            onOk: () => {
-              this.$api.jsdTeacher.removeTeacher({
-                userId: param.id
-              }).then(
-                response => {
-                  if (response.data.code == "200") {
-                    this.$Message.success("操作成功");
-                    this.getList();
-                  }
-                })
-            }
-          })
-        }
+        this.$Modal.confirm({
+          title: '提示',
+          content: param.students!='0' ? '当前老师还有绑定学生，需将老师全部所属课程的绑定学生移交后删除！' : '确认要删除吗？',
+          onOk: () => {
+            this.$api.jsdTeacher.removeTeacher({
+              userId: param.id
+            }).then(
+              response => {
+                if (response.data.code == "200") {
+                  this.$Message.success("操作成功");
+                  this.getList();
+                }
+              })
+          }
+        })
 
       },
       resultItem(param) {

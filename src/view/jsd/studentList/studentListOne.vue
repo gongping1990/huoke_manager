@@ -13,7 +13,7 @@
         <Col :span="6">
           <div class="-search">
             <Select v-model="selectInfo" class="-search-select">
-              <Option value="1">用户昵称</Option>
+              <!--<Option value="1">用户昵称</Option>-->
               <Option value="2">手机号码</Option>
             </Select>
             <span class="-search-center">|</span>
@@ -71,7 +71,7 @@
               }, [
                 h('img', {
                   attrs: {
-                    src: params.row.headImgUrl
+                    src: params.row.headimgurl
                   },
                   style: {
                     width: '36px',
@@ -91,22 +91,25 @@
           },
           {
             title: '孩子昵称',
-            key: 'creatTime',
+            key: 'nickname',
             align: 'center'
           },
           {
             title: '孩子性别',
-            key: 'creatTime',
+            key: 'sex',
+            render: (h, params)=> {
+              return h('span', params.row.sex ? '男' : '女')
+            },
             align: 'center'
           },
           {
             title: '与孩子关系',
-            key: 'creatTime',
+            key: 'relationText',
             align: 'center'
           },
           {
             title: '在读年级',
-            key: 'creatTime',
+            key: 'gradeText',
             align: 'center'
           },
           {
@@ -142,7 +145,7 @@
       toDetail(param) {
         this.isOpenUserInfo = true
         this.detailInfo = param
-        this.detailInfo.uid = this.detailInfo.userId
+        this.detailInfo.uid = this.detailInfo.puid
       },
       currentChange(val) {
         this.tab.page = val;
@@ -167,7 +170,7 @@
         let params = {
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
-          hasPhone: this.searchInfo.hasPhone != '-1' ? (this.searchInfo.hasPhone == '1') : ''
+          courseId: this.searchInfo.courseId
         }
 
         if (this.selectInfo == '1' && this.searchInfo) {
@@ -177,7 +180,7 @@
         }
 
         this.isFetching = true
-        this.$api.tbzwUser.getTbzwUserList(params)
+        this.$api.jsdKfteacher.listStudentByPage(params)
           .then(
             response => {
               this.dataList = response.data.resultData.records;
