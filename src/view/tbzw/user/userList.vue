@@ -46,6 +46,39 @@
             @on-change="currentChange"></Page>
 
     </Card>
+
+    <Modal
+      class="p-user"
+      v-model="isOpenModal"
+      @on-cancel="closeModal('addInfo')"
+      width="600"
+      title="开通课程">
+      <Form ref="addInfo" :model="addInfo" :rules="ruleValidate" :label-width="90">
+        <FormItem label="开通课程" prop="courseId">
+          <Select v-model="addInfo.courseId">
+            <Option v-for="item of courseList" :label=item.name :value=item.id :key="item.id" ></Option>
+          </Select>
+        </FormItem>
+        <FormItem label="电话号码">
+          {{addInfo.phone}}
+        </FormItem>
+        <FormItem label="支付金额" prop="couponAmount">
+          <Input-number class="g-width" :min="0" :step="1" v-model="addInfo.couponAmount"
+                        placeholder="请输入支付金额（元）"></Input-number>
+        </FormItem>
+        <FormItem label="开课日期" prop="openTime">
+          <Date-picker style="width: 100%" type="date" placeholder="选择开课日期"
+                       v-model="addInfo.openTime"></Date-picker>
+        </FormItem>
+        <FormItem label="备注" prop="des">
+          <Input type="textarea" :rows="4" v-model="addInfo.des" placeholder="请输入备注"></Input>
+        </FormItem>
+      </Form>
+      <div slot="footer" class="-p-b-flex">
+        <Button @click="closeModal('addInfo')" ghost type="primary" style="width: 100px;">取消</Button>
+        <div @click="submitInfo('addInfo')" class="g-primary-btn ">确 认</div>
+      </div>
+    </Modal>
   </div>
 </template>
 
@@ -107,9 +140,12 @@
           }
         ],
         selectInfo: '1',
+        courseList: [],
         dataList: [],
         total: 0,
+        addInfo: {},
         isFetching: false,
+        isOpenModal: false,
         columns: [
           {
             title: '用户头像/昵称',
@@ -133,27 +169,32 @@
                 }),
                 h('span', params.row.nickname)
               ])
-            }
+            },
+            align: 'center'
           },
           {
             title: '电话',
-            key: 'phone'
+            key: 'phone',
+            align: 'center'
           },
           {
             title: '关注公众号',
             render: (h,params)=>{
               return h('div',params.row.subscripbe ? '是' : '否')
-            }
+            },
+            align: 'center'
           },
           {
             title: '是否付费',
             render: (h,params)=>{
               return h('div',params.row.payed ? '是' : '否')
-            }
+            },
+            align: 'center'
           },
           {
             title: '创建时间',
-            key: 'creatTime'
+            key: 'creatTime',
+            align: 'center'
           },
           {
             title: '启用/禁用',
@@ -169,6 +210,7 @@
           {
             title: '操作',
             align: 'center',
+            width: 200,
             render: (h, params) => {
               return h('div', [
                 h('Button', {
@@ -200,17 +242,64 @@
                       this.toDetail(params.row)
                     }
                   }
-                }, '详情')
+                }, '详情'),
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: '#5444E4',
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.openModal(params.row)
+                    }
+                  }
+                }, '开通课程')
               ])
             }
           }
         ],
+        ruleValidate: {
+          courseId: [
+            {required: true, message: '请选择开通课程', trigger: 'change'},
+          ],
+          couponAmount: [
+            {required: true, type: 'number', message: '请输入支付金额', trigger: 'blur'},
+          ],
+          openTime: [
+            {required: true, type: 'date', message: '请输入开课时间', trigger: 'blur'},
+          ],
+          des: [
+            {required: true, message: '请输入备注', trigger: 'blur'},
+          ]
+        }
       };
     },
     mounted() {
       this.getList()
     },
     methods: {
+      openModal(data) {
+        this.getCourseList()
+        this.isOpenModal = true
+        if (data) {
+          this.addInfo = JSON.parse(JSON.stringify(data))
+          this.addInfo.couponAmount = null
+        } else {
+          this.addInfo = {
+            id: '',
+            couponAmount: null,
+            playbill: ''
+          }
+        }
+      },
+      closeModal(name) {
+        this.isOpenModal = false
+        this.$refs[name].resetFields()
+      },
       toDetail(param) {
         this.$router.push({
           name: 'tbzw_userInfo',
@@ -235,7 +324,17 @@
         this.tab.page = val;
         this.getList();
       },
-      //分页查询
+      getCourseList() {
+        this.$api.tbzwCourse.courseQueryPage({
+          current: 1,
+          size: 1000,
+          type: 1
+        })
+          .then(
+            response => {
+              this.courseList = response.data.resultData.records;
+            })
+      },
       getList(num) {
         if (num) {
           this.tab.currentPage = 1
@@ -264,6 +363,30 @@
           .finally(() => {
             this.isFetching = false
           })
+      },
+      submitInfo(name) {
+
+        this.$refs[name].validate((valid) => {
+          if (valid) {
+            this.$api.tbzwCoupon.editCouponConfig({
+              id: this.addInfo.id,
+              couponName: this.addInfo.couponName,
+              couponNum: this.addInfo.couponNum,
+              couponAmount: this.addInfo.couponAmount * 100,
+              bigTitle: this.addInfo.bigTitle,
+              playbill: this.addInfo.playbill,
+              title: this.addInfo.title
+            })
+              .then(
+                response => {
+                  if (response.data.code == '200') {
+                    this.$Message.success('提交成功');
+                    this.getList()
+                    this.closeModal(name)
+                  }
+                })
+          }
+        })
       }
     }
   };
@@ -292,6 +415,12 @@
 
     .-c-tab {
       margin: 20px 0;
+    }
+
+    .-p-b-flex {
+      display: flex;
+      padding: 0 20px;
+      justify-content: space-between;
     }
   }
 </style>

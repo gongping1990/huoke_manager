@@ -75,7 +75,7 @@
       width="500"
       title="完善信息">
       <Form ref="addInfo" :model="addInfo" :label-width="100">
-        <FormItem label="孩子昵称" prop="nickname">
+        <FormItem label="孩子昵称">
           <Input type="text" v-model="addInfo.nickname" placeholder="请输入孩子昵称"></Input>
         </FormItem>
         <FormItem label="孩子性别" prop="sex">
@@ -84,12 +84,12 @@
             <Radio :label=2>女</Radio>
           </Radio-group>
         </FormItem>
-        <FormItem label="与孩子关系" prop="relation">
+        <FormItem label="与孩子关系">
           <Select v-model="addInfo.relation">
             <Option v-for="(item,index) in relationList" :label="item.name" :value="item.key" :key="index"></Option>
           </Select>
         </FormItem>
-        <FormItem label="在读年级" prop="grade">
+        <FormItem label="在读年级">
           <Select v-model="addInfo.grade">
             <Option v-for="(item,index) in gradeList" :label="item.name" :value="item.key" :key="index"></Option>
           </Select>
@@ -409,36 +409,32 @@
             })
       },
       submitInfo(name) {
-        this.$refs[name].validate((valid) => {
-          if (valid) {
-            this.isSending = true
-            let params = {
-              puid: this.$route.query.id || this.userId,
-              areasId: `${this.addInfo.areasId}`,
-              relation: this.addInfo.relation,
-              grade: this.addInfo.grade,
-              sex: this.addInfo.sex,
-              areasText: this.addInfo.areasText,
-              nickname: this.addInfo.nickname
-            }
-            let promiseDate = this.addInfo.id ? this.$api.tbzwStudent.updateStudent({
-              id: this.addInfo.id,
-              ...params
-            }) : this.$api.tbzwStudent.addStudent(params)
-            promiseDate
-              .then(
-                response => {
-                  if (response.data.code == '200') {
-                    this.$Message.success('提交成功');
-                    this.getStudent()
-                    this.closeModal(name)
-                  }
-                })
-              .finally(() => {
-                this.isSending = false
-              })
-          }
-        })
+        this.isSending = true
+        let params = {
+          puid: this.$route.query.id || this.userId,
+          areasId: `${this.addInfo.areasId}`,
+          relation: this.addInfo.relation,
+          grade: this.addInfo.grade,
+          sex: this.addInfo.sex,
+          areasText: this.addInfo.areasText,
+          nickname: this.addInfo.nickname
+        }
+        let promiseDate = this.addInfo.id ? this.$api.tbzwStudent.updateStudent({
+          id: this.addInfo.id,
+          ...params
+        }) : this.$api.tbzwStudent.addStudent(params)
+        promiseDate
+          .then(
+            response => {
+              if (response.data.code == '200') {
+                this.$Message.success('提交成功');
+                this.getStudent()
+                this.closeModal(name)
+              }
+            })
+          .finally(() => {
+            this.isSending = false
+          })
       },
       submitTime() {
         if (!this.addInfo.activeTime) {
