@@ -488,17 +488,7 @@
         })
       },
       submitInfo(name) {
-        if (this.addInfo.id && this.addInfo.courses.length < this.oldSystemsLength.length) {
-          this.$Modal.confirm({
-            title: '提示',
-            content: '取消课程权限后，其“待批改”和“不合格”作业，将平均分配给其他有权限的老师',
-            onOk: () => {
-              this.teacherEdit(name)
-            }
-          })
-        } else {
-          this.teacherEdit(name)
-        }
+        this.teacherEdit(name)
       },
       teacherEdit(name) {
         if (this.isSending) return

@@ -88,7 +88,8 @@
           <upload-img v-model="addInfo.cardImg" :option="uploadOption"></upload-img>
         </FormItem>
         <FormItem label="回复链接" prop="replyHref" v-show="teacherType !== 0">
-          <Input type="text" v-model="addInfo.replyHref" placeholder="请输入回复链接"></Input>
+          {{addInfo.replyHref || '暂无'}}
+          <div class="-c-tips">此链接为用户在小程序内添加老师时，客服消息发送给用户的链接，无需填写，老师添加成功后自动生成</div>
         </FormItem>
         <FormItem label="链接大标题" prop="hrefMainTitle" v-show="teacherType !== 0">
           <Input type="text" v-model="addInfo.hrefMainTitle" placeholder="请输入链接大标题"></Input>
@@ -476,8 +477,6 @@
           return this.$Message.error('请输入卡片标题')
         } else if (!this.addInfo.cardImg && this.teacherType !== 0) {
           return this.$Message.error('请上传卡片图片')
-        } else if (!this.addInfo.replyHref && this.teacherType !== 0) {
-          return this.$Message.error('请输入回复链接')
         } else if (!this.addInfo.hrefMainTitle && this.teacherType !== 0) {
           return this.$Message.error('请输入链接大标题')
         } else if (!this.addInfo.hrefSubTitle && this.teacherType !== 0) {
@@ -748,5 +747,9 @@
       margin-right: 20px;
       text-align: left;
     }
+    .-c-tips {
+      color: #39f
+    }
+
   }
 </style>
