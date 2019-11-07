@@ -403,7 +403,18 @@
       },
       openConfirm(data, num) {
         this.nowStatus = num
-        if(data.students != '0') {
+        this.relationshipType = 1
+        this.formatTeacherList = []
+        this.dataList.forEach(item=> {
+          if ((item.id !== (data.id || this.addInfo.id)) && !item.disabled) {
+            this.formatTeacherList.push(item)
+          }
+        })
+        if (this.nowStatus !== 3) {
+          this.addInfo = JSON.parse(JSON.stringify(data))
+        }
+
+        if(data.students != '0' && !data.disabled) {
           this.isOpenModalConfirm = true
         } else {
           this.delItemTwo(data)
@@ -418,9 +429,8 @@
           if (this.teacherType !== 0) {
             this.addInfo.headImage = this.addInfo.avatar
             this.addInfo.teacherName = this.addInfo.name
-
             this.dataList.forEach(item=> {
-              if (item.id !== this.addInfo.id) {
+              if ((item.id !== this.addInfo.id) && !item.disabled) {
                 this.formatTeacherList.push(item)
               }
             })
@@ -581,48 +591,56 @@
           title: '提示',
           content:  this.nowStatus === 1 ? `确认要${param.disabled ? '启用' : '禁用'}该老师吗？` : '确认要删除该老师吗？',
           onOk: () => {
-
-            let paramsUrl = ''
-
-            if(this.nowStatus === 1) {
-              paramsUrl = param.disabled ? this.$api.jsdKfteacher.enable({
-                id: param.id
-              }) : this.$api.jsdKfteacher.disabled({
-                id: param.id,
-                teacherId: this.addInfo.teacherId
-              })
-            } else if (this.nowStatus === 2) {
-              paramsUrl = this.$api.jsdKfteacher.remove({
-                id: param.id,
-                teacherId: this.addInfo.teacherId
-              })
-            }
-            paramsUrl.then(
-              response => {
-                if (response.data.code == "200") {
-                  this.$Message.success("操作成功");
-                  this.getList();
-                }
-              })
+            this.changeUrlFn(param)
           }
         })
       },
-      submitOtherTeacher () {
-        if (!this.addInfo.teacherId) {
-          return this.$Message.error('请选择需要转交的老师')
+      changeUrlFn (param) {
+        let paramsUrl = ''
+
+        if(this.nowStatus === 1) {
+          paramsUrl = param.disabled ? this.$api.jsdKfteacher.enable({
+            id: param.id
+          }) : this.$api.jsdKfteacher.disabled({
+            id: param.id,
+            teacherId: this.addInfo.teacherId
+          })
+        } else if (this.nowStatus === 2) {
+          paramsUrl = this.$api.jsdKfteacher.remove({
+            id: param.id,
+            teacherId: this.addInfo.teacherId
+          })
         }
-        this.$api.jsdKfteacher.moveToTeacher({
-          courseId: this.addInfo.courseId,
-          srcTeacher: this.addInfo.id,
-          targetTeacher: this.addInfo.teacherId
-        }).then(
+        paramsUrl.then(
           response => {
             if (response.data.code == "200") {
               this.$Message.success("操作成功");
-              this.addInfo.students = 0
-              this.isOpenModalConfirm = false
+              this.getList();
             }
           })
+      },
+      submitOtherTeacher () {
+        if (!this.addInfo.teacherId && this.relationshipType === 1) {
+          return this.$Message.error('请选择需要转交的老师')
+        }
+        if (this.nowStatus === 3) {
+          this.$api.jsdKfteacher.moveToTeacher({
+            courseId: this.addInfo.courseId,
+            srcTeacher: this.addInfo.id,
+            targetTeacher: this.addInfo.teacherId
+          }).then(
+            response => {
+              if (response.data.code == "200") {
+                this.$Message.success("操作成功");
+                this.getList()
+                this.addInfo.students = 0
+                this.addInfo.teacherId = ''
+              }
+            })
+        } else {
+          this.changeUrlFn(this.addInfo)
+        }
+        this.isOpenModalConfirm = false
       },
       beforeUpload(file) {
         let imgType = ['jpeg', 'png']

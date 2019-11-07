@@ -196,6 +196,7 @@
       },
       openModal () {
         if (this.selectUserList.length) {
+          this.addInfo.teacherId = ''
           this.isOpenModal = true
           this.selectTeacher()
         } else {

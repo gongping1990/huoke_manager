@@ -9,7 +9,7 @@ const jsdKfteacher = {
     return axios.post(`/homework/kfteacher/edit`, qs.stringify(params))
   },
   disabled(params) {
-    return axios.post(`/homework/kfteacher/disabled`, qs.stringify(params))
+    return axios.post(`/homework/kfteacher/disable`, qs.stringify(params))
   },
   enable(params) {
     return axios.post(`/homework/kfteacher/enable`, qs.stringify(params))
