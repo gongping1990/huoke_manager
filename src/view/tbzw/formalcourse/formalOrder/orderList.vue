@@ -79,22 +79,27 @@
           <FormItem label="三方交易号" class="-p-o-width">{{orderInfo.transactionNo}}</FormItem>
           <FormItem label="" class="-p-o-width"></FormItem>
         </div>
-        <div class="-p-o-title" v-if="orderInfo.orderMode !== 1">团购信息</div>
-        <div class="-p-o-flex" v-if="orderInfo.orderMode !== 1">
+        <div class="-p-o-title" v-if="orderInfo.orderMode === 2">团购信息</div>
+        <div class="-p-o-flex" v-if="orderInfo.orderMode === 2">
           <FormItem label="团购人数" class="-p-o-width">{{orderInfo.groupOrders.length}}</FormItem>
           <FormItem label="团购时限" class="-p-o-width">{{orderInfo.groupTime}}</FormItem>
         </div>
-        <div class="-p-o-flex" v-if="orderInfo.orderMode !== 1">
+        <div class="-p-o-flex" v-if="orderInfo.orderMode === 2">
           <FormItem label="成团时限" class="-p-o-width">{{orderInfo.amount}}</FormItem>
           <FormItem label="成团时间" class="-p-o-width">{{orderInfo.groupEndTime | timeFormatter}}</FormItem>
         </div>
-        <div class="-p-o-flex" v-if="orderInfo.orderMode !== 1">
+        <div class="-p-o-flex" v-if="orderInfo.orderMode === 2">
           <FormItem label="团长" class="-p-o-width">
             {{orderInfo.groupOrders.length ? orderInfo.groupOrders[0].nickName : ''}}
           </FormItem>
           <FormItem label="团员" class="-p-o-width">
             {{orderInfo.groupOrders.length ? orderInfo.groupOrders[1] ? orderInfo.groupOrders[1].nickName : '正在拼团中...' : ''}}
           </FormItem>
+        </div>
+        <div class="-p-o-title" v-if="orderInfo.orderMode === 4">开通课程备注</div>
+        <div class="-p-o-flex" v-if="orderInfo.orderMode === 4">
+          <FormItem label="备注内容" class="-p-o-width">{{orderInfo.remarks}}</FormItem>
+          <FormItem label="" class="-p-o-width"></FormItem>
         </div>
       </Form>
       <div slot="footer" class="-p-o-footer">
@@ -372,6 +377,8 @@
           params.id = this.searchInfo.antistop
         } else if (this.selectInfo == '1' && this.searchInfo.antistop) {
           params.nickName = this.searchInfo.antistop
+        } else if (this.selectInfo == '2' && this.searchInfo.antistop) {
+          params.phone = this.searchInfo.antistop
         }
 
         return params
