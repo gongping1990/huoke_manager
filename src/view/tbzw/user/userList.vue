@@ -270,7 +270,7 @@
             {required: true, type: 'number', message: '请输入支付金额', trigger: 'blur'},
           ],
           openTime: [
-            {required: true, type: 'date', message: '请输入开课时间', trigger: 'blur'},
+            {required: true, type: 'date', message: '请输入开课日期', trigger: 'blur'},
           ],
           des: [
             {required: true, message: '请输入备注', trigger: 'blur'},
