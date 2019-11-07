@@ -27,6 +27,9 @@ const jsdTeacher = {
   },
   moveUserToTeacher(params) {
     return axios.post(`/homework/teacher/moveUserToTeacher`, qs.stringify(params))
+  },
+  listStudentByPage(params) {
+    return axios.get("/homework/teacher/listStudentByPage", {params: params});
   }
 }
 

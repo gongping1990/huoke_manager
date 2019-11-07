@@ -241,7 +241,8 @@
         let params = {
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
-          courseId: this.searchInfo.courseId
+          courseId: this.searchInfo.courseId,
+          teacherId: this.$route.query.teacherId
         }
 
         if (this.selectInfo == '1' && this.searchInfo) {
@@ -251,7 +252,7 @@
         }
 
         this.isFetching = true
-        this.$api.jsdKfteacher.listStudentByPage(params)
+        this.$api.jsdTeacher.listStudentByPage(params)
           .then(
             response => {
               this.dataList = response.data.resultData.records;

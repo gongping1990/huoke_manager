@@ -180,7 +180,7 @@
         }
 
         this.isFetching = true
-        this.$api.jsdKfteacher.listStudentByPage(params)
+        this.$api.jsdTeacher.listStudentByPage(params)
           .then(
             response => {
               this.dataList = response.data.resultData.records;
