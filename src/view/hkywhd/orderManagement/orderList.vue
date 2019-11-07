@@ -48,8 +48,10 @@
       v-model="isOpenModal"
       @on-cancel="isOpenModal = false"
       width="600"
-      title="订单详情">
-      <Form ref="orderInfo" :model="orderInfo" :label-width="90">
+      :title="nowStatus === 1 ? '助力记录' : '订单详情'">
+      <Table class="-c-tab" :loading="isFetching" :columns="columnsDetail" :data="dataListDetail" v-if="nowStatus === 1"></Table>
+
+      <Form ref="orderInfo" :model="orderInfo" :label-width="90" v-else>
         <div class="-p-o-flex">
           <FormItem label="订单号" class="-p-o-width">{{orderInfo.id}}</FormItem>
           <FormItem label="订单金额" class="-p-o-width">{{orderInfo.amount | moneyFormatter}} 元</FormItem>
@@ -134,6 +136,7 @@
         ],
         orderType: ['单独购买', '团体拼课', '好友助力','秒杀订单'],
         dataList: [],
+        dataListDetail: [],
         dateOption: {
           name: '创建时间',
           type: 'datetime',
@@ -142,6 +145,7 @@
         total: 0,
         isFetching: false,
         isOpenModal: false,
+        nowStatus: '',
         getStartTime: '',
         getEndTime: '',
         orderInfo: {},
@@ -170,7 +174,6 @@
             key: 'nickName',
             align: 'center'
           },
-
           {
             title: '订单状态',
             render: (h, params) => {
@@ -182,6 +185,23 @@
             title: '订单类型',
             render: (h, params) => {
               return h('div', this.orderTypeList[params.row.orderType+1].name)
+            },
+            align: 'center'
+          },
+          {
+            title: '助力人数',
+            render: (h, params) => {
+              return h('span', {
+                style: {
+                  color: '#5444E4',
+                  cursor: 'pointer'
+                },
+                on: {
+                  click: () => {
+                    this.openModal(params.row, 1)
+                  }
+                }
+              }, params.row.invitedUserCount || 0)
             },
             align: 'center'
           },
@@ -207,12 +227,31 @@
                   },
                   on: {
                     click: () => {
-                      this.openModal(params.row)
+                      this.openModal(params.row,2)
                     }
                   }
                 }, '订单详情')
               ])
             }
+          }
+        ],
+        columnsDetail: [
+          {
+            title: '助力人',
+            key: 'nickname',
+            align: 'center'
+          },
+          {
+            title: '手机号',
+            key: 'phone',
+            align: 'center'
+          },
+          {
+            title: '助力时间',
+            render: (h, params) => {
+              return h('div', dayjs(+params.row.gmtCreate).format("YYYY-MM-DD HH:mm"))
+            },
+            align: 'center'
           }
         ],
       };
@@ -255,9 +294,11 @@
         this.tab.currentPage = 1
         this.getList();
       },
-      openModal(data) {
+      openModal(data, num) {
+        this.nowStatus = num
         this.isOpenModal = true
         this.orderInfo = data
+        num === 1 && this.getOrderHelpUser(data)
       },
       paramsInit() {
         let params = {
@@ -289,6 +330,16 @@
           .finally(() => {
             this.isFetching = false
           })
+      },
+      getOrderHelpUser(data) {
+        this.$api.hkywhdOrder.getOrderHelpUser({
+          orderId: data.id
+        })
+          .then(
+            response => {
+              this.dataListDetail = response.data.resultData;
+            })
+
       }
     }
   };

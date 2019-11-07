@@ -59,19 +59,19 @@
             <Option v-for="item of courseList" :label=item.name :value=item.id :key="item.id" ></Option>
           </Select>
         </FormItem>
-        <FormItem label="电话号码">
-          {{addInfo.phone}}
+        <FormItem label="电话号码" prop="phone">
+          <Input type="text" v-model="addInfo.phone" placeholder="请输入电话号码" :disabled="addInfo.isPhone"></Input>
         </FormItem>
-        <FormItem label="支付金额" prop="couponAmount">
-          <Input-number class="g-width" :min="0" :step="1" v-model="addInfo.couponAmount"
+        <FormItem label="支付金额" prop="amount">
+          <Input-number class="g-width" :min="0" :step="1" v-model="addInfo.amount"
                         placeholder="请输入支付金额（元）"></Input-number>
         </FormItem>
-        <FormItem label="开课日期" prop="openTime">
+        <FormItem label="开课日期" prop="time">
           <Date-picker style="width: 100%" type="date" placeholder="选择开课日期"
-                       v-model="addInfo.openTime"></Date-picker>
+                       v-model="addInfo.time"></Date-picker>
         </FormItem>
-        <FormItem label="备注" prop="des">
-          <Input type="textarea" :rows="4" v-model="addInfo.des" placeholder="请输入备注"></Input>
+        <FormItem label="备注" prop="remarks">
+          <Input type="textarea" :rows="4" v-model="addInfo.remarks" placeholder="请输入备注"></Input>
         </FormItem>
       </Form>
       <div slot="footer" class="-p-b-flex">
@@ -266,13 +266,16 @@
           courseId: [
             {required: true, message: '请选择开通课程', trigger: 'change'},
           ],
-          couponAmount: [
+          phone: [
+            {required: true, message: '请输入电话号码', trigger: 'blur'},
+          ],
+          amount: [
             {required: true, type: 'number', message: '请输入支付金额', trigger: 'blur'},
           ],
-          openTime: [
+          time: [
             {required: true, type: 'date', message: '请输入开课日期', trigger: 'blur'},
           ],
-          des: [
+          remarks: [
             {required: true, message: '请输入备注', trigger: 'blur'},
           ]
         }
@@ -287,11 +290,13 @@
         this.isOpenModal = true
         if (data) {
           this.addInfo = JSON.parse(JSON.stringify(data))
-          this.addInfo.couponAmount = null
+          this.addInfo.amount = null
+          this.addInfo.isPhone = this.addInfo.phone !== null
+          console.log(this.addInfo)
         } else {
           this.addInfo = {
             id: '',
-            couponAmount: null,
+            amount: null,
             playbill: ''
           }
         }
@@ -368,14 +373,13 @@
 
         this.$refs[name].validate((valid) => {
           if (valid) {
-            this.$api.tbzwCoupon.editCouponConfig({
-              id: this.addInfo.id,
-              couponName: this.addInfo.couponName,
-              couponNum: this.addInfo.couponNum,
-              couponAmount: this.addInfo.couponAmount * 100,
-              bigTitle: this.addInfo.bigTitle,
-              playbill: this.addInfo.playbill,
-              title: this.addInfo.title
+            this.$api.tbzwOrder.newManualOpenOrder({
+              userId: this.addInfo.userId,
+              courseId: this.addInfo.courseId,
+              amount: this.addInfo.amount * 100,
+              remarks: this.addInfo.remarks,
+              time: dayjs(this.addInfo.time).format('YYYY-MM-DD'),
+              phone: this.addInfo.phone
             })
               .then(
                 response => {

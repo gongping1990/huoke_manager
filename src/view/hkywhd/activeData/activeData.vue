@@ -114,16 +114,6 @@
             data: dataList.firstStartActivityCount
           },
           {
-            name: '首次活动过期数量',
-            type: 'line',
-            data: dataList.firstEndActivityCount
-          },
-          {
-            name: '二次活动发起数量',
-            type: 'line',
-            data: dataList.secondStartActivityCount
-          },
-          {
             name: '参加活动助力人数',
             type: 'line',
             data: dataList.joinActivityCount
@@ -195,14 +185,6 @@
                 icon: 'circle'
               },
               {
-                name: '首次活动过期数量',
-                icon: 'circle'
-              },
-              {
-                name: '二次活动发起数量',
-                icon: 'circle'
-              },
-              {
                 name: '参加活动助力人数',
                 icon: 'circle'
               },
@@ -261,14 +243,6 @@
           {
             name: '首次活动发起数量',
             num: this.todayInfo.firstStartActivityCount
-          },
-          {
-            name: '首次活动过期数量',
-            num: this.todayInfo.firstEndActivityCount
-          },
-          {
-            name: '二次活动发起数量',
-            num: this.todayInfo.secondStartActivityCount
           },
           {
             name: '分享次数',

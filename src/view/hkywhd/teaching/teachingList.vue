@@ -40,9 +40,9 @@
           <FormItem label="邀请人数" prop="invites">
             <Input type="text" v-model="activeInfo.invites" placeholder="请输入邀请人数" :disabled="!isShowEdit"></Input>
           </FormItem>
-          <FormItem label="活动时限" prop="activityTimelimit">
-            <Input type="text" v-model="activeInfo.activityTimelimit" placeholder="请输入活动时限（小时）" :disabled="!isShowEdit"></Input>
-          </FormItem>
+          <!--<FormItem label="活动时限" prop="activityTimelimit">-->
+            <!--<Input type="text" v-model="activeInfo.activityTimelimit" placeholder="请输入活动时限（小时）" :disabled="!isShowEdit"></Input>-->
+          <!--</FormItem>-->
           <FormItem label="解锁课时数" >
             <Input type="text" v-model="activeInfo.unlockNums" placeholder="请输入解锁课时数" :disabled="!isShowEdit"></Input>
           </FormItem>
@@ -462,8 +462,6 @@
           return this.$Message.error('请输入单独购价格')
         } else if (!this.activeInfo.invites) {
           return this.$Message.error('请输入邀请人数')
-        } else if (!this.activeInfo.activityTimelimit) {
-          return this.$Message.error('请输入活动时限')
         } else if (!this.activeInfo.unlockNums) {
           return this.$Message.error('请输入活动价解锁课时数')
         }
