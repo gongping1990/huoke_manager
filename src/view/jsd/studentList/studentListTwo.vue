@@ -123,7 +123,7 @@
                     'border-radius': '50%'
                   }
                 }),
-                h('span', params.row.nickname)
+                h('span', params.row.pname)
               ])
             }
           },
