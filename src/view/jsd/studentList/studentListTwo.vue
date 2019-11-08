@@ -114,7 +114,7 @@
               }, [
                 h('img', {
                   attrs: {
-                    src: params.row.headimgurl
+                    src: params.row.pavatar
                   },
                   style: {
                     width: '36px',
