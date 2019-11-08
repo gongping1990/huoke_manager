@@ -294,13 +294,11 @@
     methods: {
       changeCascarder(value, selectedData) {
         this.addInfo.areasText = selectedData[2].__label
-        console.log(selectedData[2].__label)
       },
       changeRadio() {
         this.searchInfo.appId = this.searchInfo.appId || this.courseId
         if((localStorage.isJump !== '1') && this.searchInfo.appId) {
           this.tab.currentPage = 1
-          console.log('进没进')
           this.getLearnDTO()
           this.listLessonProgress(1)
         }
@@ -403,8 +401,10 @@
             response => {
               if (response.data.resultData) {
                 this.addInfo = response.data.resultData
-                if (!Array.isArray(this.addInfo.areasId)) {
+                if (this.addInfo.areasId) {
                   this.addInfo.areasId = this.addInfo.areasId.split(',')
+                } else {
+                  this.addInfo.areasId = []
                 }
               } else {
                 this.addInfo = {
