@@ -327,8 +327,12 @@
         this.detailInfo.uid = this.$route.query.id || this.userId
       },
       openModalTime(data) {
-        this.isOpenModalTime = true
-        this.addInfo = JSON.parse(JSON.stringify(data))
+        if (this.appList.length) {
+          this.isOpenModalTime = true
+          this.addInfo = JSON.parse(JSON.stringify(data))
+        } else {
+          this.$Message.info('该用户未购买课程')
+        }
       },
       currentChange(val) {
         this.listLessonProgress(val);
