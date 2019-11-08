@@ -189,6 +189,11 @@
             align: 'center'
           },
           {
+            title: '分享次数',
+            key: 'shareNum',
+            align: 'center'
+          },
+          {
             title: '助力人数',
             render: (h, params) => {
               return h('span', {

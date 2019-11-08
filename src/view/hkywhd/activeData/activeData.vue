@@ -124,7 +124,7 @@
             data: dataList.activitySuccessCount
           },
           {
-            name: '分享次数',
+            name: '海报分享次数',
             type: 'line',
             data: dataList.shareCount
           }
@@ -193,7 +193,7 @@
                 icon: 'circle'
               },
               {
-                name: '分享次数',
+                name: '海报分享次数',
                 icon: 'circle'
               }
             ],
@@ -245,7 +245,7 @@
             num: this.todayInfo.firstStartActivityCount
           },
           {
-            name: '分享次数',
+            name: '海报分享次数',
             num: this.todayInfo.shareCount
           },
           {

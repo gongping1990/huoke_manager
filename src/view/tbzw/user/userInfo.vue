@@ -147,7 +147,7 @@
         detailInfo: {},
         studentInfo: {},
         searchInfo: {
-          appId: '7'
+          appId: ''
         },
         addInfo: {
           nickname: '',
@@ -285,7 +285,10 @@
       };
     },
     mounted() {
-      this.listBase()
+      if (this.$route.query.id || this.userId) {
+        this.listBase()
+        this.getStudent()
+      }
     },
     methods: {
       changeCascarder(value, selectedData) {
@@ -333,16 +336,13 @@
       listBase() {
         this.appList = []
         this.tab.currentPage = this.sortNum ? Math.ceil(this.sortNum / 10) : 1
-        this.$api.jsdJob.listBase({
-          onlyme: true
+        this.$api.jsdJob.listBuyed({
+          uid: this.$route.query.id || this.userId
         })
           .then(response => {
             this.appList = response.data.resultData
-            this.searchInfo.appId = this.courseId || this.appList[0].id
-            if (this.$route.query.id || this.userId) {
-              this.getLearnDTO()
-              this.getStudent()
-            }
+            this.searchInfo.appId = this.courseId || (this.appList.length && this.appList[0].id)
+            this.getLearnDTO()
             this.listLessonProgress()
             localStorage.setItem('isJump', '2')
           })
