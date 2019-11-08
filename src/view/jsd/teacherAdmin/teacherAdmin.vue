@@ -438,7 +438,7 @@
       toChangeStatus(param) {
         this.$Modal.confirm({
           title: '提示',
-          content: param.desabled ? '确认要启用该老师吗？' : '当前老师还有绑定学生，需将老师全部所属课程的绑定学生移交才能禁用',
+          content: param.desabled ? '确认要启用该老师吗？' : param.students ? '当前老师还有绑定学生，需将老师全部所属课程的绑定学生移交才能禁用' : '确认要禁用吗',
           onOk: () => {
             this.$api.jsdTeacher.changeStatusTeacher({
               userId: param.id

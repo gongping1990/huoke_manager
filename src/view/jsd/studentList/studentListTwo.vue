@@ -217,7 +217,8 @@
       listBase() {
         this.courseList = []
         this.$api.jsdJob.listBase({
-          onlyme: true
+          onlyme: true,
+          teacherId: this.$route.query.teacherId
         })
           .then(response => {
             this.courseList = response.data.resultData
