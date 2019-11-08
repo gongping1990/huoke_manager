@@ -154,7 +154,7 @@
                     'border-radius': '50%'
                   }
                 }),
-                h('span', params.row.nickname)
+                h('span', params.row.nickName)
               ])
             }
           },
@@ -175,7 +175,7 @@
           },
           {
             title: '调整时间',
-            key: 'createTime',
+            key: 'changedTime',
             align: 'center'
           }
         ],

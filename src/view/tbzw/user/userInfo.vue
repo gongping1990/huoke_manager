@@ -10,7 +10,7 @@
             <div class="-p-h-right">
               <div class="-r-name">{{userInfo.nickname}}</div>
               <div class="-r-dev">
-                <span>id: {{userInfo.uid}}</span>
+                <span>id: {{userInfo.userId}}</span>
                 <span><Icon type="ios-call"/>: {{userInfo.phone || '暂无'}}</span>
                 <span><Icon type="ios-time-outline"/>: {{userInfo.createTime}}</span>
               </div>
@@ -36,19 +36,21 @@
           <div>
             <span>是否关注: {{userInfo.subscripbe ? '是' : '否'}}</span>
             <span>是否购买: {{userInfo.buyed ? '是' : '否'}}</span>
-            <span>支付时间: {{userInfo.buyedTime}}</span>
+            <span>支付时间: {{userInfo.buyedTime || '暂无'}}</span>
           </div>
         </div>
         <div class="-p-center-item">
           <div class="-c-text">学习数据</div>
           <div>
-            <span class="g-blue g-cursor" @click="openModalTime(userInfo)">开课日期: {{userInfo.learnStartDate}}<Icon type="ios-create" /></span>
-            <span>课程进度: {{userInfo.learnProgress}}</span>
-            <span>交作业课时数: {{userInfo.homeworkLesson}}</span>
-            <span>老师批改作业数: {{userInfo.teacherReply}}</span>
-            <span>累计打卡: {{userInfo.totalCards}}</span>
-            <span>最近连续打卡: {{userInfo.continuousCards}}</span>
-            <span>最长连续打卡: {{userInfo.maxContinuousCards}}</span>
+            <span class="g-blue g-cursor" @click="openModalTime(userInfo)">开课日期: {{userInfo.learnStartDate || '暂无'}}
+              <Icon type="ios-create" />
+            </span>
+            <span>课程进度: {{userInfo.learnProgress || 0}}</span>
+            <span>交作业课时数: {{userInfo.homeworkLesson || 0}}</span>
+            <span>老师批改作业数: {{userInfo.teacherReply || 0}}</span>
+            <span>累计打卡: {{userInfo.totalCards || 0}}</span>
+            <span>最近连续打卡: {{userInfo.continuousCards || 0}}</span>
+            <span>最长连续打卡: {{userInfo.maxContinuousCards || 0}}</span>
           </div>
         </div>
       </Row>
@@ -287,7 +289,6 @@
     mounted() {
       if (this.$route.query.id || this.userId) {
         this.listBase()
-        this.getStudent()
       }
     },
     methods: {
@@ -297,8 +298,9 @@
       },
       changeRadio() {
         this.searchInfo.appId = this.searchInfo.appId || this.courseId
-        if(localStorage.isJump !== '1') {
+        if((localStorage.isJump !== '1') && this.searchInfo.appId) {
           this.tab.currentPage = 1
+          console.log('进没进')
           this.getLearnDTO()
           this.listLessonProgress(1)
         }
@@ -342,8 +344,10 @@
           .then(response => {
             this.appList = response.data.resultData
             this.searchInfo.appId = this.courseId || (this.appList.length && this.appList[0].id)
-            this.getLearnDTO()
-            this.listLessonProgress()
+            this.getUserInfo()
+            this.getStudent()
+            this.appList.length && this.getLearnDTO()
+            this.appList.length && this.listLessonProgress()
             localStorage.setItem('isJump', '2')
           })
       },
@@ -356,10 +360,10 @@
         })
           .then(
             response => {
-              this.userInfo = response.data.resultData;
-              this.userInfo.learnStartDate = this.userInfo.learnStartDate ? dayjs(+this.userInfo.learnStartDate).format('YYYY-MM-DD') : '暂无'
-              this.userInfo.buyedTime = this.userInfo.buyedTime ? dayjs(+this.userInfo.buyedTime).format('YYYY-MM-DD HH:mm') : '暂无'
-              this.userInfo.createTime = dayjs(+this.userInfo.createTime).format('YYYY-MM-DD HH:mm')
+              let dataInfo = response.data.resultData;
+              this.userInfo.learnStartDate = dataInfo.learnStartDate ? dayjs(+dataInfo.learnStartDate).format('YYYY-MM-DD') : '暂无'
+              this.userInfo.buyedTime = dataInfo.buyedTime ? dayjs(+dataInfo.buyedTime).format('YYYY-MM-DD HH:mm') : '暂无'
+              this.userInfo.createTime = dayjs(+dataInfo.createTime).format('YYYY-MM-DD HH:mm')
             })
           .finally(() => {
             this.isFetching = false
@@ -381,6 +385,15 @@
               this.total = response.data.resultData.total;
             })
         this.$forceUpdate()
+      },
+      getUserInfo() {
+        this.$api.admin.getUserInfo({
+          userId: this.$route.query.id || this.userId
+        })
+          .then(
+            response => {
+              this.userInfo = response.data.resultData;
+            })
       },
       getStudent() {
         this.$api.tbzwStudent.getStudent({
