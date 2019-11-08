@@ -191,7 +191,7 @@
       changeSelectData(data) {
         this.selectUserList = []
         for (let item of data) {
-          this.selectUserList.push(item.workId)
+          this.selectUserList.push(item.puid)
         }
       },
       openModal () {
@@ -270,7 +270,7 @@
         }
         this.$api.jsdTeacher.moveUserToTeacher({
           courseId: this.searchInfo.courseId,
-          userIds: this.$route.query.teacherId,
+          userIds: `${this.selectUserList}`,
           targetTeacher: this.addInfo.teacherId,
         })
           .then(response => {
