@@ -67,8 +67,8 @@
                         placeholder="请输入支付金额（元）"></Input-number>
         </FormItem>
         <FormItem label="开课日期" prop="time">
-          <Date-picker style="width: 100%" type="date" placeholder="选择开课日期"
-                       v-model="addInfo.time"></Date-picker>
+          <Date-picker style="width: 100%" type="date" placeholder="选择开课日期" :options="dateOption"
+                       v-model="addInfo.time" ></Date-picker>
         </FormItem>
         <FormItem label="备注" prop="remarks">
           <Input type="textarea" :rows="4" v-model="addInfo.remarks" placeholder="请输入备注"></Input>
@@ -100,6 +100,11 @@
           hasPhone: '-1',
           subscripbe: '-1',
           payed: '-1',
+        },
+        dateOption: {
+          disabledDate(date) {
+            return date && (new Date(date).getTime() <= new Date().getTime() - 24 * 3600 * 1000);
+          }
         },
         phoneList: [
           {
