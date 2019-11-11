@@ -270,7 +270,7 @@
         }
         this.$api.jsdTeacher.moveUserToTeacher({
           courseId: this.searchInfo.courseId,
-          userIds: `${this.selectUserList}`,
+          userIds: this.selectAllData ? '-1' : `${this.selectUserList}`,
           targetTeacher: this.addInfo.teacherId,
         })
           .then(response => {
