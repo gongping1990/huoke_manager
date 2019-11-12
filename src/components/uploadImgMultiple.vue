@@ -95,9 +95,9 @@
         display: inline-block;
         position: relative;
         background-color: #EBEBEB;
-        width: 200px;
-        height: 90px;
-        margin: 10px 10px 10px 0;
+        width: 180px;
+        height: 100px;
+        margin: 20px 20px 20px 0;
         border: 1px solid #EBEBEB;
         border-radius: 4px;
         padding: 4px;

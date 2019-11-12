@@ -414,7 +414,8 @@
           },
           {
             title: '操作',
-            align: 'left',
+            align: 'center',
+            width: 200,
             render: (h, params) => {
               return h('div', [
                 h('Button', {
@@ -431,7 +432,22 @@
                       this.openJobRecord(params.row)
                     }
                   }
-                }, '作业记录')
+                }, '作业记录'),
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: '#5444E4',
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.changeTemplate(params.row)
+                    }
+                  }
+                }, '加入优秀模板')
               ])
             }
           }
@@ -599,6 +615,25 @@
     mounted() {
     },
     methods: {
+      changeTemplate () {
+        this.$Modal.confirm({
+          title: '提示',
+          content: this.radioType === 4 ? '确认要加入优秀批改模板？' : '确认移出优秀批改模板？',
+          onOk: () => {
+            this.$api.jsdJob.moveNOReplyHomework({
+              courseId: this.searchInfo.appId,
+              workIds: [data.workId],
+              range: this.selectAllData ? 1 : 0,
+            }).then(
+              response => {
+                if (response.data.code == "200") {
+                  this.$Message.success("操作成功");
+                  this.getList();
+                }
+              })
+          }
+        })
+      },
       noRequired(data) {
         this.$Modal.confirm({
           title: '提示',

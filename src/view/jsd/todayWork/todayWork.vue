@@ -93,6 +93,16 @@
             <Input type="text" v-model="addInfo.replyTeacher" placeholder="请输入教师名称"></Input>
           </FormItem>
           <FormItem label="批改图片" v-if="addInfo.isPassed === 1">
+            <div class="p-todayWork-formItem" v-if="addInfo.homeworkType === 2">
+              <div class="g-course-add-style" @click="openPictures">
+                <span>+</span>
+                <span>进入在线批改</span>
+              </div>
+              <div class="g-course-add-style" @click="openPictures">
+                <span>+</span>
+                <span>获取批改图片</span>
+              </div>
+            </div>
             <upload-img-multiple v-model="addInfo.replyImg" :option="uploadOption"></upload-img-multiple>
           </FormItem>
           <FormItem label="批改音频" v-if="addInfo.isPassed === 1">
@@ -135,12 +145,14 @@
 
       <look-user-info v-model="isOpenUserInfo" :dataInfo="detailInfo"></look-user-info>
 
+      <job-require-template v-model="isOpenJobRequire" :dataInfo="detailInfo"></job-require-template>
+
     </Card>
   </div>
 </template>
 
 <script>
-  import {getBaseUrl} from '@/libs/index'
+  import {getVisitUrl} from '@/libs/index'
   import UploadAudio from "../../../components/uploadAudio";
   import DatePickerTemplate from "../../../components/datePickerTemplate";
   import dayjs from 'dayjs'
@@ -149,10 +161,12 @@
   import JobRecordTemplate from "../../../components/jobRecordTemplate";
   import LookUserInfo from "./lookUserInfo";
   import ExamineModal from "./examineModal";
+  import JobRequireTemplate from "./jobRequireTemplate";
 
   export default {
     name: 'jobList',
     components: {
+      JobRequireTemplate,
       ExamineModal,
       LookUserInfo, JobRecordTemplate, SearchTemplate, UploadImgMultiple, DatePickerTemplate, UploadAudio},
     data() {
@@ -202,6 +216,7 @@
         isOpenJobRecord: false,
         isOpenUserInfo: false,
         isOpenModalAuit: false,
+        isOpenJobRequire: false,
         isEdit: false,
         addInfo: {},
         detailInfo: {},
@@ -245,7 +260,24 @@
           {
             title: '作业要求',
             key: 'homeworkRequire',
-            tooltip: true,
+            render: (h, params)=>{
+              return h('Button', {
+                props: {
+                  type: 'text',
+                  size: 'small'
+                },
+                style: {
+                  color: '#5444E4',
+                  marginRight: '5px',
+                  cursor: 'pointer'
+                },
+                on: {
+                  click: () => {
+                    this.openRequire(params.row)
+                  }
+                }
+              }, `${params.row.homeworkRequire.substr(0,8)}...`)
+            },
             align: 'center'
           },
           {
@@ -353,22 +385,22 @@
                     }
                   }
                 }, params.row.reviewStatus == '1' ? '审核' : '批改'),
-                h('Button', {
-                  props: {
-                    type: 'text',
-                    size: 'small'
-                  },
-                  style: {
-                    color: '#5444E4',
-                    display: params.row.homeworkType === 1 ? 'none' : 'inline-block',
-                    marginRight: '5px'
-                  },
-                  on: {
-                    click: () => {
-                      this.toPictures(params.row)
-                    }
-                  }
-                },'批改图片'),
+                // h('Button', {
+                //   props: {
+                //     type: 'text',
+                //     size: 'small'
+                //   },
+                //   style: {
+                //     color: '#5444E4',
+                //     display: params.row.homeworkType === 1 ? 'none' : 'inline-block',
+                //     marginRight: '5px'
+                //   },
+                //   on: {
+                //     click: () => {
+                //       this.toPictures(params.row)
+                //     }
+                //   }
+                // },'批改图片'),
                 h('Button', {
                   props: {
                     type: 'text',
@@ -933,6 +965,9 @@
       this.getTeacherRemind()
     },
     methods: {
+      openPictures () {
+        window.open(`${getVisitUrl()}/#/correct?system=${this.searchInfo.system}&courseId=${this.addInfo.courseId}&workId=${this.addInfo.workId}`,'_blank');
+      },
       editPictures (data) {
         this.$Modal.confirm({
           title: '确认要修改图片吗？',
@@ -1110,6 +1145,11 @@
       openModalPlay(data) {
         this.playAudioUrl = data
         this.isOpenModalPlay = true
+      },
+      openRequire (data) {
+        this.isOpenJobRequire = true
+        this.detailInfo = JSON.parse(JSON.stringify(data))
+        this.detailInfo.appId = this.searchInfo.appId
       },
       openJobRecord(data) {
         this.isOpenJobRecord = true
@@ -1305,6 +1345,17 @@
 
 <style lang="less" scoped>
   .p-todayWork {
+
+    &-formItem {
+      position: absolute;
+      left: 160px;
+      display: flex;
+
+      .g-course-add-style {
+        margin-right: 20px;
+        margin-bottom: 20px;
+      }
+    }
 
     &-flex {
       display: flex;

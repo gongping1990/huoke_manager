@@ -63,6 +63,15 @@ export const getBaseUrl = () => {
   return 'http://huoke.prod.k12.vip'
 }
 
+// 线上地址
+export const getVisitUrl = () => {
+  // 环境的切换
+  if (process.env.NODE_ENV == 'development' || process.env.NODE_ENV == 'test') {
+      return 'http://testadmin.k12.vip'
+  }
+  return 'http://huoke.admin.k12.vip'
+}
+
 export const getGroupPrice = (groupPrice, price) => {
   if (groupPrice) {
     return groupPrice == 0 ?  '免费' : groupPrice / 100
