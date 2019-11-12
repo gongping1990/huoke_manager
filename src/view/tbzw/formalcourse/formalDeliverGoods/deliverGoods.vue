@@ -25,10 +25,11 @@
                    @on-click="getList(1)"></Input>
           </div>
         </Col>
-        <Col :span="15" class="g-flex-a-j-center -date-search">
+        <Col :span="12" class="g-flex-a-j-center">
           <date-picker-template :dataInfo="dateOption" @changeDate="changeDate"></date-picker-template>
         </Col>
-        <Col :span="3" class="g-text-right">
+        <Col :span="7" class="g-text-right">
+          <Button type="primary" ghost class="-p-modal-btn" @click="openModalTwo()">新增发货单</Button>
           <Button type="primary" ghost class="-p-modal-btn" @click="toExcel">导出表格</Button>
         </Col>
 
@@ -64,10 +65,49 @@
         <div @click="submitInfo('addInfo')" class="g-primary-btn "> {{isSending ? '提交中...' : '确 认'}}</div>
       </div>
     </Modal>
+
+    <Modal
+      class="p-deliverGoods"
+      v-model="isOpenModalTwo"
+      @on-cancel="closeModal('addInfoTwo')"
+      width="500"
+      title="新增发货单">
+      <Form ref="addInfoTwo" :model="addInfo" :rules="ruleValidateTwo" :label-width="100" class="ivu-form-item-required">
+        <FormItem label="用户手机号" prop="phone">
+          <Input class="-input" type="text" v-model="addInfo.phone" placeholder="请输入用户手机号"></Input>
+          <Button class="-c-tips" type="text" @click="checkPhone">校验</Button>
+        </FormItem>
+        <FormItem label="用户头像" v-if="userInfo">
+          <img class="-img" :src="userInfo.headimgurl"/>
+        </FormItem>
+        <FormItem label="选择课程" prop="courseId">
+          <Select v-model="addInfo.courseId" class="-input">
+            <Option v-for="(item,index) in userCourseList" :label="item.name" :value="item.id" :key="index"></Option>
+          </Select>
+        </FormItem>
+        <FormItem label="姓名" prop="name">
+          <Input type="text" class="-input" v-model="addInfo.name" placeholder="请输入姓名"></Input>
+        </FormItem>
+        <FormItem label="电话" prop="telephone">
+          <Input type="text" class="-input" v-model="addInfo.telephone" placeholder="请输入电话"></Input>
+        </FormItem>
+        <FormItem label="地址" prop="areasId">
+          <Cascader :data="addressList" class="-input" v-model="addInfo.areasId" @on-change="changeCascarder"></Cascader>
+        </FormItem>
+        <FormItem label="详细地址" prop="address">
+          <Input type="textarea" class="-input" :rows="4" v-model="addInfo.address" placeholder="请输入详细地址" :maxlength='80'></Input>
+        </FormItem>
+      </Form>
+      <div slot="footer" class="g-flex-j-sa">
+        <Button @click="closeModal('addInfoTwo')" ghost type="primary" style="width: 100px;">取消</Button>
+        <div @click="submitInfoTwo('addInfoTwo')" class="g-primary-btn "> {{isSending ? '提交中...' : '确 认'}}</div>
+      </div>
+    </Modal>
   </div>
 </template>
 
 <script>
+  import areaList from '@/libs/area'
   import dayjs from 'dayjs'
   import {getBaseUrl} from "@/libs/index";
   import DatePickerTemplate from "@/components/datePickerTemplate";
@@ -94,13 +134,19 @@
         selectInfo: '1',
         dataList: [],
         courseList: [],
+        userCourseList: [],
+        addressList: areaList.list,
         total: 0,
         radioType: 0,
         courseType: 0,
         isFetching: false,
         isOpenModal: false,
+        isOpenModalTwo: false,
         isSending: false,
-        addInfo: {},
+        addInfo: {
+          areasId: []
+        },
+        userInfo: '',
         ruleValidate: {
           sender: [
             {required: true, message: '请输入发货人', trigger: 'blur'},
@@ -110,6 +156,26 @@
           ],
           logisticsCompany: [
             {required: true, message: '请输入物流公司', trigger: 'blur'},
+          ],
+        },
+        ruleValidateTwo: {
+          phone: [
+            {required: true, message: '请输入手机号码', trigger: 'blur'},
+          ],
+          name: [
+            {required: true, message: '请输入姓名', trigger: 'blur'},
+          ],
+          courseId: [
+            {required: true, message: '请选择课程', trigger: 'change'},
+          ],
+          telephone: [
+            {required: true, message: '请输入手机号码', trigger: 'blur'},
+          ],
+          areasId: [
+            {required: true, type: 'array', min:1, message: '请输入地址', trigger: 'change'},
+          ],
+          address: [
+            {required: true, message: '请输入详细地址', trigger: 'blur'},
           ],
         },
         columns: [
@@ -140,6 +206,13 @@
             align: 'center'
           },
           {
+            title: '发货类型',
+            render: (h, params)=>{
+              return h('div', params.row.type ? '手动添加' : '用户提交')
+            },
+            align: 'center'
+          },
+          {
             title: '操作',
             align: 'center',
             render: (h, params) => {
@@ -154,7 +227,7 @@
                   },
                   on: {
                     click: () => {
-                      this.openModal(params.row)
+                      this.openModal(params.row, 2)
                     }
                   }
                 }, '发货')
@@ -190,6 +263,13 @@
             align: 'center'
           },
           {
+            title: '发货类型',
+            render: (h, params)=>{
+              return h('div', params.row.type ? '手动添加' : '用户提交')
+            },
+            align: 'center'
+          },
+          {
             title: '发货信息',
             render: (h,params)=>{
               return h('div',{
@@ -218,6 +298,32 @@
       this.getCourseList()
     },
     methods: {
+      changeCascarder(value, selectedData) {
+        this.addInfo.areas = selectedData[2].__label
+      },
+      checkPhone() {
+        if (!this.addInfo.phone) {
+          return this.$Message.error('请输入手机号码')
+        }
+        this.$api.tbzwStudy.getUserByPhone({
+          phone: this.addInfo.phone
+        })
+          .then(
+            response => {
+              if (response.data.resultData) {
+                this.userInfo = response.data.resultData;
+                this.listByMyCourseHasgift()
+              } else {
+                this.userInfo = ''
+                this.$Message.error('未查询到该手机号码信息')
+              }
+
+              this.$forceUpdate()
+            })
+          .finally(() => {
+            this.isFetching = false
+          })
+      },
       toExcel() {
         let params = {
           send: this.radioType,
@@ -246,8 +352,13 @@
           id: data.id
         }))
       },
+      openModalTwo() {
+        this.userInfo =''
+        this.isOpenModalTwo = true
+      },
       closeModal(name) {
         this.isOpenModal = false
+        this.isOpenModalTwo = false
         this.$refs[name].resetFields()
       },
       getCourseList() {
@@ -261,6 +372,15 @@
               this.courseList = response.data.resultData.records;
               this.courseType = this.courseList[0].id
               this.getList()
+            })
+      },
+      listByMyCourseHasgift() {
+        this.$api.tbzwCourse.listByMyCourseHasgift({
+          userId: this.userInfo.userId
+        })
+          .then(
+            response => {
+              this.userCourseList = response.data.resultData;
             })
       },
       //分页查询
@@ -317,6 +437,32 @@
               })
           }
         })
+      },
+      submitInfoTwo(name) {
+        this.$refs[name].validate((valid) => {
+          if (valid) {
+            this.isSending = true
+            this.$api.tbzwOrder.createNewInvoice({
+              userId: this.userInfo.userId,
+              courseId: this.addInfo.courseId,
+              name: this.addInfo.name,
+              telephone: this.addInfo.telephone,
+              areas: this.addInfo.areas,
+              address: this.addInfo.address,
+            })
+              .then(
+                response => {
+                  if (response.data.code == '200') {
+                    this.$Message.success('提交成功');
+                    this.getList()
+                    this.closeModal(name)
+                  }
+                })
+              .finally(() => {
+                this.isSending = false
+              })
+          }
+        })
       }
     }
   };
@@ -325,6 +471,24 @@
 
 <style lang="less" scoped>
   .p-deliverGoods {
+    .-p-modal-btn {
+      display: inline-block;
+    }
+
+    .-c-tips {
+      color: #39f
+    }
+
+    .-img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+    }
+
+    .-input {
+      width: 80%;
+    }
+
     .date-time {
       width: 100%;
       border: 1px solid #dcdee2;
