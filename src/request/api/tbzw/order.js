@@ -14,6 +14,9 @@ const tbzwOrder = {
   newManualOpenOrder(params) {
     return axios.post("/compositionv2/order/newManualOpenOrder", qs.stringify(params));
   },
+  createNewInvoice(params) {
+    return axios.post("/compositionv2/order/createNewInvoice", qs.stringify(params));
+  },
 };
 
 export default tbzwOrder;
