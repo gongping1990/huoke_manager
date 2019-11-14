@@ -13,7 +13,10 @@
       <FormItem label="作业要求">
         {{detailInfo.homeworkClaim}}
       </FormItem>
-      <FormItem label="优秀批改模板">
+      <FormItem label="优秀批改模板" v-if="!templateList.length">
+        暂无模板
+      </FormItem>
+      <FormItem label="优秀批改模板" v-show="templateList.length">
         <Radio-group v-model="nowType" type="button" @on-change="changeRadio">
           <Radio :label=item.workId v-for="(item,index) of templateList" :key="index">模板{{index+1}}</Radio>
         </Radio-group>
@@ -118,23 +121,20 @@
         })
       },
       getJobLogList() {
-        let myChart = echarts.init(this.$refs.echarts);
-        myChart.showLoading({
-          text: '图表加载中...',
-          color: '#20a0ff',
-          textColor: '#000',
-          zlevel: 0
-        })
-        this.$api.jsdJob.getHomeWorkLogWapper({
-          workId: this.dataInfo.workId,
-          courseId: this.dataInfo.appId
+        let _self = this
+
+        _self.$api.jsdJob.getHomeWorkLogWapper({
+          workId: _self.dataInfo.workId,
+          courseId: _self.dataInfo.appId
         }).then(response => {
-          this.detailInfo = response.data.resultData
-          this.templateList = this.detailInfo.replyExample
-          this.nowType = this.templateList.length ? this.templateList[0].workId : ''
-          this.dataItem = this.templateList.length ? this.templateList[0] : ''
-          if (this.templateList.length) {
-            for (let item of this.templateList) {
+          _self.detailInfo = response.data.resultData
+          _self.templateList = _self.detailInfo.replyExample || []
+
+          if (_self.templateList.length) {
+            _self.nowType = _self.templateList[0].workId
+            _self.dataItem = _self.templateList[0]
+
+            for (let item of _self.templateList) {
               item.time = dayjs(+item.createTime).format('YYYY-MM-DD HH:mm')
               item.replyImg = item.replyImg ? item.replyImg.split(',') : []
               item.workImgSrc = item.workImgSrc ? item.workImgSrc.split(',') : []
@@ -153,12 +153,19 @@
                 })
               }
             }
-            this.$nextTick(()=>{
-              this.drawLine()
+            let myChart = echarts.init(this.$refs.echarts);
+            myChart.showLoading({
+              text: '图表加载中...',
+              color: '#20a0ff',
+              textColor: '#000',
+              zlevel: 0
             })
           }
-          console.log(this.templateList, 111111)
 
+
+          this.$nextTick(()=>{
+            _self.templateList.length && _self.drawLine()
+          })
         })
       },
       closeModal() {
@@ -283,10 +290,9 @@
 
     .-img {
       cursor: zoom-in;
-      margin-top: 10px;
+      margin: 10px 10px 10px 0;
       width: 120px;
       height: 100px;
-      margin-right: 10px;
     }
 
     .-audio {
