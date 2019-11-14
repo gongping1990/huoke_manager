@@ -145,7 +145,7 @@
 
       <look-user-info v-model="isOpenUserInfo" :dataInfo="detailInfo"></look-user-info>
 
-      <job-require-template v-model="isOpenJobRequire" :dataInfo="detailInfo"></job-require-template>
+      <job-require-template v-model="isOpenJobRequire" :dataInfo="requireInfo"></job-require-template>
 
     </Card>
   </div>
@@ -220,6 +220,7 @@
         isEdit: false,
         addInfo: {},
         detailInfo: {},
+        requireInfo: {},
         countInfo: {},
         playAudioUrl: '',
         columns: [
@@ -276,7 +277,7 @@
                     this.openRequire(params.row)
                   }
                 }
-              }, `${params.row.homeworkRequire.substr(0,8)}...`)
+              }, `${params.row.homeworkRequire.substr(0,5)}...`)
             },
             align: 'center'
           },
@@ -457,7 +458,24 @@
           {
             title: '作业要求',
             key: 'homeworkRequire',
-            tooltip: true,
+            render: (h, params)=>{
+              return h('Button', {
+                props: {
+                  type: 'text',
+                  size: 'small'
+                },
+                style: {
+                  color: '#5444E4',
+                  marginRight: '5px',
+                  cursor: 'pointer'
+                },
+                on: {
+                  click: () => {
+                    this.openRequire(params.row)
+                  }
+                }
+              }, `${params.row.homeworkRequire.substr(0,8)}...`)
+            },
             align: 'center'
           },
           {
@@ -671,7 +689,24 @@
           {
             title: '作业要求',
             key: 'homeworkRequire',
-            tooltip: true,
+            render: (h, params)=>{
+              return h('Button', {
+                props: {
+                  type: 'text',
+                  size: 'small'
+                },
+                style: {
+                  color: '#5444E4',
+                  marginRight: '5px',
+                  cursor: 'pointer'
+                },
+                on: {
+                  click: () => {
+                    this.openRequire(params.row)
+                  }
+                }
+              }, `${params.row.homeworkRequire.substr(0,8)}...`)
+            },
             align: 'center'
           },
           {
@@ -848,7 +883,24 @@
           {
             title: '作业要求',
             key: 'homeworkRequire',
-            tooltip: true,
+            render: (h, params)=>{
+              return h('Button', {
+                props: {
+                  type: 'text',
+                  size: 'small'
+                },
+                style: {
+                  color: '#5444E4',
+                  marginRight: '5px',
+                  cursor: 'pointer'
+                },
+                on: {
+                  click: () => {
+                    this.openRequire(params.row)
+                  }
+                }
+              }, `${params.row.homeworkRequire.substr(0,8)}...`)
+            },
             align: 'center'
           },
           {
@@ -1148,8 +1200,8 @@
       },
       openRequire (data) {
         this.isOpenJobRequire = true
-        this.detailInfo = JSON.parse(JSON.stringify(data))
-        this.detailInfo.appId = this.searchInfo.appId
+        this.requireInfo = JSON.parse(JSON.stringify(data))
+        this.requireInfo.appId = this.searchInfo.appId
       },
       openJobRecord(data) {
         this.isOpenJobRecord = true
