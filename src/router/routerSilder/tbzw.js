@@ -266,6 +266,16 @@ export const tbzwRouter =[
           {name: '开营管理'}
         ],
         component: () => import('@/view/tbzw/openCourseList/openCourseList')
+      },
+      {
+        path: '/tbzw_paid_processData',
+        name: 'tbzw_paid_processData',
+        meta: [
+          {name: '付费体验课'},
+          {name: '开营管理', url: 'tbzw_paid_openCourse'},
+          {name: '过程数据'}
+        ],
+        component: () => import('@/view/tbzw/paidExperienceCourse/processData/processData')
       }
     ]
   },

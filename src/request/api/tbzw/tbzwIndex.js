@@ -13,6 +13,7 @@ import tbzwStudent from "./student";
 import tbzwActiveconfig from "./activeconfig";
 import tbzwGroupConfig from "./groupConfig";
 import tbzwRules from "./rules";
+import tbzwStudyRecordData from "./studyRecordData";
 
 export const tbzwIndex = {
   composition,
@@ -29,5 +30,6 @@ export const tbzwIndex = {
   tbzwStudent,
   tbzwActiveconfig,
   tbzwGroupConfig,
-  tbzwRules
+  tbzwRules,
+  tbzwStudyRecordData
 }

@@ -155,10 +155,25 @@
           },
           {
             title: '操作',
-            width: 130,
+            width: 200,
             align: 'center',
             render: (h, params) => {
               return h('div', [
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: '#5444E4',
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.toJump(params.row)
+                    }
+                  }
+                }, '数据统计'),
                 h('Button', {
                   props: {
                     type: 'text',
@@ -199,6 +214,15 @@
       this.getCourseList()
     },
     methods: {
+      toJump (data) {
+        this.$router.push({
+          name: 'tbzw_paid_processData',
+          query: {
+            courseId: this.radioType,
+            periodsId: data.id
+          }
+        })
+      },
       openModal(bool, data) {
         this.isOpenModal = true
         this.isEdit = bool

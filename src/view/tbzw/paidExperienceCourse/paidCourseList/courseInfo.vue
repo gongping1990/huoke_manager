@@ -67,6 +67,25 @@
             </div>
             <div class="-c-tips">图片尺寸不低于960px*360px 图片大小：500K以内</div>
           </Form-item>
+          <!--<Form-item label="咨询图片" class="-c-form-item ivu-form-item-required">-->
+            <!--<Upload-->
+              <!--v-if="isEdit"-->
+              <!--style="display: inline-block"-->
+              <!--:action="baseUrl"-->
+              <!--:show-upload-list="false"-->
+              <!--:max-size="500"-->
+              <!--:on-success="handleSuccessConsultationImg"-->
+              <!--:on-exceeded-size="handleSize"-->
+              <!--:on-error="handleErr">-->
+              <!--<Button ghost type="primary">上传图片</Button>-->
+            <!--</Upload>-->
+            <!--<div class="-c-course-wrap" v-if="addInfo.consultationImg">-->
+              <!--<div class="-c-course-item">-->
+                <!--<img :src="addInfo.consultationImg">-->
+              <!--</div>-->
+            <!--</div>-->
+            <!--<div class="-c-tips">图片尺寸不低于960px*360px 图片大小：500K以内</div>-->
+          <!--</Form-item>-->
         </Form>
         <Form v-show="radioType==='3'" ref="addInfo" :model="addInfo" :label-width="90">
           <FormItem label="卡片标题" prop="cardtitle">
@@ -175,6 +194,7 @@
           bigtitle: "",
           cardtitle: "",
           href: "",
+          consultationImg: "",
         },
         experienceLessonList: [],
         radioType: '1',
@@ -247,6 +267,12 @@
           this.addInfo.cardimgurl = res.resultData.url
         }
       },
+      // handleSuccessConsultationImg(res) {
+      //   if (res.code === 200) {
+      //     this.$Message.success('上传成功')
+      //     this.addInfo.consultationImg = res.resultData.url
+      //   }
+      // },
       handleSuccessImgurl(res) {
         if (res.code === 200) {
           this.$Message.success('上传成功')
@@ -294,7 +320,11 @@
               return this.$Message.error('请上传封面图片')
             } else if (!this.addInfo.verticalCover && this.radioType === '1') {
               return this.$Message.error('请上传竖版封面')
-            } else if (this.radioType === '3' && !this.addInfo.smalltitle) {
+            }
+            // else if (!this.addInfo.consultationImg && this.radioType === '1') {
+            //   return this.$Message.error('请上传咨询图片')
+            // }
+            else if (this.radioType === '3' && !this.addInfo.smalltitle) {
               return this.$Message.error('请输入链接小标题')
             } else if (this.radioType === '3' && !this.addInfo.bigtitle) {
               return this.$Message.error('请输入链接大标题')

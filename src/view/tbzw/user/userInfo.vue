@@ -70,6 +70,8 @@
 
     <job-record-template v-model="isOpenModal" :dataInfo="detailInfo" :type="2"></job-record-template>
 
+    <class-log v-model="isOpenModalClass" :dataInfo="detailInfo"></class-log>
+
     <Modal
       class="p-userInfo"
       v-model="isOpenModalChild"
@@ -133,10 +135,11 @@
   import Loading from "@/components/loading";
   import dayjs from 'dayjs'
   import JobRecordTemplate from "../../../components/jobRecordTemplate";
+  import ClassLog from "../../tbzw/user/classLog";
 
   export default {
     name: 'tbzwUserInfo',
-    components: {JobRecordTemplate, Loading},
+    components: {ClassLog, JobRecordTemplate, Loading},
     props: ['userId', 'sortNum', 'courseId'],
     data() {
       return {
@@ -235,6 +238,7 @@
         isOpenModalChild: false,
         isSending: false,
         isOpenModalTime: false,
+        isOpenModalClass: false,
         columns: [
           {
             title: '课时名称',
@@ -265,21 +269,39 @@
           {
             title: '操作',
             render: (h, params) => {
-              return h('Button', {
-                props: {
-                  type: 'text',
-                  size: 'small'
-                },
-                style: {
-                  color: '#5444E4',
-                  marginRight: '5px'
-                },
-                on: {
-                  click: () => {
-                    this.openModal(params.row)
+              return h('div',[
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: '#5444E4',
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.openModalClass(params.row)
+                    }
                   }
-                }
-              }, '作业记录')
+                }, '上课记录'),
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: '#5444E4',
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.openModal(params.row)
+                    }
+                  }
+                }, '作业记录')
+              ])
+
             },
             align: 'center'
           }
@@ -333,6 +355,10 @@
         } else {
           this.$Message.info('该用户未购买课程')
         }
+      },
+      openModalClass(data) {
+        this.isOpenModalClass = true
+        this.detailInfo = JSON.parse(JSON.stringify(data))
       },
       currentChange(val) {
         this.listLessonProgress(val);
