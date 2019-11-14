@@ -46,6 +46,39 @@
             @on-change="currentChange"></Page>
 
     </Card>
+
+    <Modal
+      class="p-user"
+      v-model="isOpenModal"
+      @on-cancel="closeModal('addInfo')"
+      width="600"
+      title="开通课程">
+      <Form ref="addInfo" :model="addInfo" :rules="ruleValidate" :label-width="90">
+        <FormItem label="开通课程" prop="courseId">
+          <Select v-model="addInfo.courseId">
+            <Option v-for="item of courseList" :label=item.name :value=item.id :key="item.id" ></Option>
+          </Select>
+        </FormItem>
+        <FormItem label="电话号码" prop="phone">
+          <Input type="text" v-model="addInfo.phone" placeholder="请输入电话号码" :disabled="addInfo.isPhone"></Input>
+        </FormItem>
+        <FormItem label="支付金额" prop="amount">
+          <Input-number class="g-width" :min="0" :step="1" v-model="addInfo.amount"
+                        placeholder="请输入支付金额（元）"></Input-number>
+        </FormItem>
+        <FormItem label="开课日期" prop="time">
+          <Date-picker style="width: 100%" type="date" placeholder="选择开课日期" :options="dateOption"
+                       v-model="addInfo.time" ></Date-picker>
+        </FormItem>
+        <FormItem label="备注" prop="remarks">
+          <Input type="textarea" :rows="4" v-model="addInfo.remarks" placeholder="请输入备注"></Input>
+        </FormItem>
+      </Form>
+      <div slot="footer" class="-p-b-flex">
+        <Button @click="closeModal('addInfo')" ghost type="primary" style="width: 100px;">取消</Button>
+        <div @click="submitInfo('addInfo')" class="g-primary-btn ">确 认</div>
+      </div>
+    </Modal>
   </div>
 </template>
 
@@ -67,6 +100,11 @@
           hasPhone: '-1',
           subscripbe: '-1',
           payed: '-1',
+        },
+        dateOption: {
+          disabledDate(date) {
+            return date && (new Date(date).getTime() <= new Date().getTime() - 24 * 3600 * 1000);
+          }
         },
         phoneList: [
           {
@@ -107,9 +145,12 @@
           }
         ],
         selectInfo: '1',
+        courseList: [],
         dataList: [],
         total: 0,
+        addInfo: {},
         isFetching: false,
+        isOpenModal: false,
         columns: [
           {
             title: '用户头像/昵称',
@@ -133,27 +174,32 @@
                 }),
                 h('span', params.row.nickname)
               ])
-            }
+            },
+            align: 'center'
           },
           {
             title: '电话',
-            key: 'phone'
+            key: 'phone',
+            align: 'center'
           },
           {
             title: '关注公众号',
             render: (h,params)=>{
               return h('div',params.row.subscripbe ? '是' : '否')
-            }
+            },
+            align: 'center'
           },
           {
             title: '是否付费',
             render: (h,params)=>{
               return h('div',params.row.payed ? '是' : '否')
-            }
+            },
+            align: 'center'
           },
           {
             title: '创建时间',
-            key: 'creatTime'
+            key: 'creatTime',
+            align: 'center'
           },
           {
             title: '启用/禁用',
@@ -169,6 +215,7 @@
           {
             title: '操作',
             align: 'center',
+            width: 200,
             render: (h, params) => {
               return h('div', [
                 h('Button', {
@@ -200,17 +247,69 @@
                       this.toDetail(params.row)
                     }
                   }
-                }, '详情')
+                }, '详情'),
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: '#5444E4',
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.openModal(params.row)
+                    }
+                  }
+                }, '开通课程')
               ])
             }
           }
         ],
+        ruleValidate: {
+          courseId: [
+            {required: true, message: '请选择开通课程', trigger: 'change'},
+          ],
+          phone: [
+            {required: true, message: '请输入电话号码', trigger: 'blur'},
+          ],
+          amount: [
+            {required: true, type: 'number', message: '请输入支付金额', trigger: 'blur'},
+          ],
+          time: [
+            {required: true, type: 'date', message: '请输入开课日期', trigger: 'blur'},
+          ],
+          remarks: [
+            {required: true, message: '请输入备注', trigger: 'blur'},
+          ]
+        }
       };
     },
     mounted() {
       this.getList()
     },
     methods: {
+      openModal(data) {
+        this.getCourseList()
+        this.isOpenModal = true
+        if (data) {
+          this.addInfo = JSON.parse(JSON.stringify(data))
+          this.addInfo.amount = null
+          this.addInfo.isPhone = this.addInfo.phone !== null
+          console.log(this.addInfo)
+        } else {
+          this.addInfo = {
+            id: '',
+            amount: null,
+            playbill: ''
+          }
+        }
+      },
+      closeModal(name) {
+        this.isOpenModal = false
+        this.$refs[name].resetFields()
+      },
       toDetail(param) {
         this.$router.push({
           name: 'tbzw_userInfo',
@@ -235,7 +334,17 @@
         this.tab.page = val;
         this.getList();
       },
-      //分页查询
+      getCourseList() {
+        this.$api.tbzwCourse.courseQueryPage({
+          current: 1,
+          size: 1000,
+          type: 1
+        })
+          .then(
+            response => {
+              this.courseList = response.data.resultData.records;
+            })
+      },
       getList(num) {
         if (num) {
           this.tab.currentPage = 1
@@ -264,6 +373,29 @@
           .finally(() => {
             this.isFetching = false
           })
+      },
+      submitInfo(name) {
+
+        this.$refs[name].validate((valid) => {
+          if (valid) {
+            this.$api.tbzwOrder.newManualOpenOrder({
+              userId: this.addInfo.userId,
+              courseId: this.addInfo.courseId,
+              amount: this.addInfo.amount * 100,
+              remarks: this.addInfo.remarks,
+              time: dayjs(this.addInfo.time).format('YYYY-MM-DD'),
+              phone: this.addInfo.phone
+            })
+              .then(
+                response => {
+                  if (response.data.code == '200') {
+                    this.$Message.success('提交成功');
+                    this.getList()
+                    this.closeModal(name)
+                  }
+                })
+          }
+        })
       }
     }
   };
@@ -292,6 +424,12 @@
 
     .-c-tab {
       margin: 20px 0;
+    }
+
+    .-p-b-flex {
+      display: flex;
+      padding: 0 20px;
+      justify-content: space-between;
     }
   }
 </style>

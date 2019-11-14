@@ -37,6 +37,7 @@
             <Select v-model="selectInfo" class="-search-select">
               <Option value="0">订单号</Option>
               <Option value="1">用户昵称</Option>
+              <Option value="2">手机号</Option>
             </Select>
             <span class="-search-center">|</span>
             <Input v-model="searchInfo.antistop" class="-search-input" placeholder="请输入关键字" icon="ios-search"
@@ -78,16 +79,16 @@
           <FormItem label="三方交易号" class="-p-o-width">{{orderInfo.transactionNo}}</FormItem>
           <FormItem label="" class="-p-o-width"></FormItem>
         </div>
-        <div class="-p-o-title" v-if="orderInfo.orderMode !== 1">团购信息</div>
-        <div class="-p-o-flex" v-if="orderInfo.orderMode !== 1">
+        <div class="-p-o-title" v-if="orderInfo.orderMode === 2">团购信息</div>
+        <div class="-p-o-flex" v-if="orderInfo.orderMode === 2">
           <FormItem label="团购人数" class="-p-o-width">{{orderInfo.groupOrders.length}}</FormItem>
           <FormItem label="团购时限" class="-p-o-width">{{orderInfo.groupTime}}</FormItem>
         </div>
-        <div class="-p-o-flex" v-if="orderInfo.orderMode !== 1">
+        <div class="-p-o-flex" v-if="orderInfo.orderMode === 2">
           <FormItem label="成团时限" class="-p-o-width">{{orderInfo.amount}}</FormItem>
           <FormItem label="成团时间" class="-p-o-width">{{orderInfo.groupEndTime | timeFormatter}}</FormItem>
         </div>
-        <div class="-p-o-flex" v-if="orderInfo.orderMode !== 1">
+        <div class="-p-o-flex" v-if="orderInfo.orderMode === 2">
           <FormItem label="团长" class="-p-o-width">
             {{orderInfo.groupOrders.length ? orderInfo.groupOrders[0].nickName : ''}}
           </FormItem>
@@ -95,11 +96,18 @@
             {{orderInfo.groupOrders.length ? orderInfo.groupOrders[1] ? orderInfo.groupOrders[1].nickName : '正在拼团中...' : ''}}
           </FormItem>
         </div>
+        <div class="-p-o-title" v-if="orderInfo.orderMode === 4">开通课程备注</div>
+        <div class="-p-o-flex" v-if="orderInfo.orderMode === 4">
+          <FormItem label="备注内容" class="-p-o-width">{{orderInfo.remarks}}</FormItem>
+          <FormItem label="" class="-p-o-width"></FormItem>
+        </div>
       </Form>
       <div slot="footer" class="-p-o-footer">
         <div @click="isOpenModal = false" class="g-primary-btn ">确 认</div>
       </div>
     </Modal>
+
+    <look-user-info v-model="isOpenUserInfo" :dataInfo="detailInfo"></look-user-info>
   </div>
 </template>
 
@@ -107,10 +115,11 @@
   import dayjs from 'dayjs'
   import {getBaseUrl} from "@/libs/index";
   import DatePickerTemplate from "@/components/datePickerTemplate";
+  import LookUserInfo from "../../../jsd/todayWork/lookUserInfo";
 
   export default {
     name: 'orderList',
-    components: {DatePickerTemplate},
+    components: {LookUserInfo, DatePickerTemplate},
     data() {
       return {
         tab: {
@@ -164,9 +173,13 @@
           {
             name: '跟团购买',
             id: '3'
+          },
+          {
+            name: '手动开通',
+            id: '4'
           }
         ],
-        orderType: ['单独购买', '开团购买', '跟团购买'],
+        orderType: ['单独购买', '开团购买', '跟团购买', '手动开通'],
         orderPageType: ['玖桔成都', '社群', '公众号投放'],
         dataList: [],
         experienceLessonList: [],
@@ -178,12 +191,14 @@
         total: 0,
         isFetching: false,
         isOpenModal: false,
+        isOpenUserInfo: false,
         getStartTime: '',
         getEndTime: '',
         orderInfo: {
           groupOrders: []
         },
         courseInfo: {},
+        detailInfo: {},
         columns: [
           {
             title: '订单号',
@@ -220,8 +235,23 @@
           },
           {
             title: '用户昵称',
-            key: 'nickName',
-            tooltip: true,
+            render: (h, params) => {
+              return h('Button', {
+                props: {
+                  type: 'text',
+                  size: 'small'
+                },
+                style: {
+                  color: '#5444E4',
+                  marginRight: '5px'
+                },
+                on: {
+                  click: () => {
+                    this.toDetail(params.row)
+                  }
+                }
+              }, params.row.nickName)
+            },
             align: 'center'
           },
           {
@@ -296,6 +326,11 @@
       this.getCourseList()
     },
     methods: {
+      toDetail(data) {
+        this.isOpenUserInfo = true
+        this.detailInfo = JSON.parse(JSON.stringify(data))
+        this.detailInfo.uid = this.detailInfo.userId
+      },
       changeDate (data) {
         this.getStartTime = data.startTime
         this.getEndTime = data.endTime
@@ -342,6 +377,8 @@
           params.id = this.searchInfo.antistop
         } else if (this.selectInfo == '1' && this.searchInfo.antistop) {
           params.nickName = this.searchInfo.antistop
+        } else if (this.selectInfo == '2' && this.searchInfo.antistop) {
+          params.phone = this.searchInfo.antistop
         }
 
         return params

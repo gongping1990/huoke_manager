@@ -16,6 +16,9 @@ const hkywhdOrder = {
   sumOrderDayCount(params) {
     return axios.get(`/fissionprep/order/sumOrderDayCount`, {params})
   },
+  getOrderHelpUser(params) {
+    return axios.get(`/fissionprep/order/getOrderHelpUser`, {params})
+  },
 }
 
 export default hkywhdOrder

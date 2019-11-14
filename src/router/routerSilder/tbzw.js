@@ -184,6 +184,15 @@ export const tbzwRouter =[
         ],
         component: () => import('@/view/tbzw/formalcourse/formalDeliverGoods/deliverGoods')
       },
+      {
+        path: '/tbzw_timetableAdjustment',
+        name: 'tbzw_timetableAdjustment',
+        meta: [
+          {name: '正式课管理'},
+          {name: '排课调整'}
+        ],
+        component: () => import('@/view/tbzw/timetableAdjustment/timetableAdjustment')
+      },
 
     ]
   },

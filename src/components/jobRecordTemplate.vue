@@ -6,7 +6,7 @@
     footer-hide
     width="700"
     title="作业记录">
-    <Timeline>
+    <Timeline v-if="recordList.length">
       <TimelineItem v-for="(item,index) of recordList" :key="index">
         <div>{{item.time}} &emsp; {{item.uname}}</div>
         <div class="-text" v-if="item.replyText">{{item.replyText}}</div>
@@ -33,7 +33,7 @@
         </div>
       </TimelineItem>
     </Timeline>
-
+    <div class="p-jobRecord-noText" v-else>暂无作业记录~</div>
   </Modal>
 </template>
 
@@ -181,6 +181,11 @@ export default {
 
   .p-jobRecord{
 
+
+    &-noText {
+      text-align: center;
+      margin: 10px 0;
+    }
 
     &-wrap {
       display: flex;
