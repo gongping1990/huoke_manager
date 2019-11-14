@@ -29,6 +29,7 @@
         this.isOpenDetail = _n
       },
       dataInfo (_n) {
+        console.log(11)
         setTimeout(()=>{
           this.$refs.modelUserInfo.listBase()
         })

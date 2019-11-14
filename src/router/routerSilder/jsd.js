@@ -33,7 +33,20 @@ export const jsdRouter = [
           {name: '历史数据'}
         ],
         component: () => import('@/view/jsd/historicalData/historicalData')
-      }
+      },
+      {
+        path: '/tbzw_studentListOne',
+        name: 'tbzw_studentListOne',
+        meta: [
+          {
+            name: '管理人员'
+          },
+          {
+            name: '学生列表'
+          }
+        ],
+        component: () => import('@/view/jsd/studentList/studentListOne')
+      },
     ]
   },
   {
@@ -140,6 +153,22 @@ export const jsdRouter = [
           }
         ],
         component: () => import('@/view/jsd/score/scoreList')
+      },
+      {
+        path: '/tbzw_studentListTwo',
+        name: 'tbzw_studentListTwo',
+        meta: [
+          {
+            name: '管理人员'
+          },
+          {
+            name: '教师管理', url: 'jsd_adminTeacher'
+          },
+          {
+            name: '学生列表'
+          }
+        ],
+        component: () => import('@/view/jsd/studentList/studentListTwo')
       },
 
     ]

@@ -50,6 +50,9 @@ const admin = {
   addRole(params) {
     return axios.post("/umg/admin/user/addRole",qs.stringify(params));
   },
+  getUserInfo(params) {
+    return axios.get("/umg/user/getUserInfo", {params});
+  },
   // 修改其他管理员信息
   removeRole(params) {
     return axios.post("/umg/admin/user/removeRole",qs.stringify(params));

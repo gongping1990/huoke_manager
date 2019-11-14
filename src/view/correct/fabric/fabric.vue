@@ -176,7 +176,7 @@ export default {
             icon: bl
           },
           mb: {
-            icon: tr
+            icon: tImg
           },
           br: {
             icon: br

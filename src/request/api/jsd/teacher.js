@@ -1,11 +1,11 @@
 import axios from '../../http'
-import qs from 'querystring'
+import qs from 'qs'
 
 
 const jsdTeacher = {
 
   listTeachByPage(params) {
-    return axios.post(`/homework/teacher/listTeachByPage`, qs.stringify(params))
+    return axios.get(`/homework/teacher/listTeachByPage`, {params: params})
   },
   addTeacher(params) {
     return axios.post(`/homework/teacher/add`, qs.stringify(params))
@@ -23,7 +23,13 @@ const jsdTeacher = {
     return axios.post(`/homework/teacher/updatePassword`, qs.stringify(params))
   },
   selectTeacher(params) {
-    return axios.post(`/homework/teacher/selectTeacher`, qs.stringify(params))
+    return axios.get(`/homework/teacher/selectTeacher`, {params: params})
+  },
+  moveUserToTeacher(params) {
+    return axios.post(`/homework/teacher/moveUserToTeacher`, qs.stringify(params))
+  },
+  listStudentByPage(params) {
+    return axios.get("/homework/teacher/listStudentByPage", {params: params});
   }
 }
 

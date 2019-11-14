@@ -106,6 +106,9 @@ const jsdJob = {
   },
   reviewReplyHomework(params) {
     return axios.get(`/homework/job/reviewReplyHomework`, { params })
+  },
+  listBuyed(params) {
+    return axios.get(`/homework/job/course/listBuyed`, { params })
   }
 }
 

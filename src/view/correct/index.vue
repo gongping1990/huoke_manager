@@ -42,11 +42,11 @@
         <div class="content-footer-center">
           <div class="content-footer-center-btn" @click="handleClickBack">
             <i class="content-footer-center-icon ch"></i>
-            撤离
+            上一步
           </div>
           <div class="content-footer-center-btn" @click="handleClickForward">
             <i class="content-footer-center-icon cz"></i>
-            重做
+            下一步
           </div>
         </div>
         <div class="content-footer-right">
@@ -316,7 +316,7 @@ export default {
           let workImgSrc = workData.workImgSrc
             ? workData.workImgSrc.split(",")
             : [];
-          let replyImg = workData.replyImg ? workData.replyImg.split(",") : [];
+          let replyImg = workData.replyImgTmp ? workData.replyImgTmp.split(",") : [];
           workData.workImgSrc = workImgSrc.map((e, i) => {
             return {
               type: 1,
@@ -324,14 +324,14 @@ export default {
               index: i
             };
           });
-          workData.replyImg = replyImg.map((e, i) => {
+          workData.replyImgTmp = replyImg.map((e, i) => {
             return {
               type: 2,
               url: e,
               index: i
             };
           });
-          workData.imgArr = [...workData.workImgSrc, ...workData.replyImg];
+          workData.imgArr = [...workData.workImgSrc, ...workData.replyImgTmp];
           this.workData = workData;
           this.imgActiveObj = workData.imgArr[0];
           fn && fn();

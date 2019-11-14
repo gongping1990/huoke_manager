@@ -10,7 +10,7 @@
             <div class="-p-h-right">
               <div class="-r-name">{{userInfo.nickname}}</div>
               <div class="-r-dev">
-                <span>id: {{userInfo.uid}}</span>
+                <span>id: {{userInfo.userId}}</span>
                 <span><Icon type="ios-call"/>: {{userInfo.phone || '暂无'}}</span>
                 <span><Icon type="ios-time-outline"/>: {{userInfo.createTime}}</span>
               </div>
@@ -36,19 +36,21 @@
           <div>
             <span>是否关注: {{userInfo.subscripbe ? '是' : '否'}}</span>
             <span>是否购买: {{userInfo.buyed ? '是' : '否'}}</span>
-            <span>支付时间: {{userInfo.buyedTime}}</span>
+            <span>支付时间: {{userInfo.buyedTime || '暂无'}}</span>
           </div>
         </div>
         <div class="-p-center-item">
           <div class="-c-text">学习数据</div>
           <div>
-            <span>开课日期: {{userInfo.learnStartDate}}</span>
-            <span>课程进度: {{userInfo.learnProgress}}</span>
-            <span>交作业课时数: {{userInfo.homeworkLesson}}</span>
-            <span>老师批改作业数: {{userInfo.teacherReply}}</span>
-            <span>累计打卡: {{userInfo.totalCards}}</span>
-            <span>最近连续打卡: {{userInfo.continuousCards}}</span>
-            <span>最长连续打卡: {{userInfo.maxContinuousCards}}</span>
+            <span class="g-blue g-cursor" @click="openModalTime(userInfo)">开课日期: {{userInfo.learnStartDate || '暂无'}}
+              <Icon type="ios-create" />
+            </span>
+            <span>课程进度: {{userInfo.learnProgress || 0}}</span>
+            <span>交作业课时数: {{userInfo.homeworkLesson || 0}}</span>
+            <span>老师批改作业数: {{userInfo.teacherReply || 0}}</span>
+            <span>累计打卡: {{userInfo.totalCards || 0}}</span>
+            <span>最近连续打卡: {{userInfo.continuousCards || 0}}</span>
+            <span>最长连续打卡: {{userInfo.maxContinuousCards || 0}}</span>
           </div>
         </div>
       </Row>
@@ -75,7 +77,7 @@
       width="500"
       title="完善信息">
       <Form ref="addInfo" :model="addInfo" :label-width="100">
-        <FormItem label="孩子昵称" prop="nickname">
+        <FormItem label="孩子昵称">
           <Input type="text" v-model="addInfo.nickname" placeholder="请输入孩子昵称"></Input>
         </FormItem>
         <FormItem label="孩子性别" prop="sex">
@@ -84,12 +86,12 @@
             <Radio :label=2>女</Radio>
           </Radio-group>
         </FormItem>
-        <FormItem label="与孩子关系" prop="relation">
+        <FormItem label="与孩子关系">
           <Select v-model="addInfo.relation">
             <Option v-for="(item,index) in relationList" :label="item.name" :value="item.key" :key="index"></Option>
           </Select>
         </FormItem>
-        <FormItem label="在读年级" prop="grade">
+        <FormItem label="在读年级">
           <Select v-model="addInfo.grade">
             <Option v-for="(item,index) in gradeList" :label="item.name" :value="item.key" :key="index"></Option>
           </Select>
@@ -101,6 +103,26 @@
       <div slot="footer" class="g-flex-j-sa">
         <Button @click="closeModal('addInfo')" ghost type="primary" style="width: 100px;">取消</Button>
         <div @click="submitInfo('addInfo')" class="g-primary-btn "> {{isSending ? '提交中...' : '确 认'}}</div>
+      </div>
+    </Modal>
+
+    <Modal
+      class="p-userInfo"
+      v-model="isOpenModalTime"
+      @on-cancel="isOpenModalTime = false"
+      width="500"
+      title="更改日期">
+      <Form ref="addInfo" :model="addInfo" :label-width="100">
+        <FormItem label="当前日期">
+          {{addInfo.learnStartDate}}
+        </FormItem>
+        <FormItem label="更改日期" class="ivu-form-item-required">
+          <Date-picker style="width: 100%" type="date" placeholder="选择更改日期" v-model="addInfo.activeTime"></Date-picker>
+        </FormItem>
+      </Form>
+      <div slot="footer" class="g-flex-j-sa">
+        <Button @click="isOpenModalTime = false" ghost type="primary" style="width: 100px;">取消</Button>
+        <div @click="submitTime()" class="g-primary-btn "> {{isSending ? '提交中...' : '确 认'}}</div>
       </div>
     </Modal>
   </div>
@@ -127,7 +149,7 @@
         detailInfo: {},
         studentInfo: {},
         searchInfo: {
-          appId: '7'
+          appId: ''
         },
         addInfo: {
           nickname: '',
@@ -212,28 +234,33 @@
         isOpenModal: false,
         isOpenModalChild: false,
         isSending: false,
+        isOpenModalTime: false,
         columns: [
           {
             title: '课时名称',
-            key: 'lessonName'
+            key: 'lessonName',
+            align: 'center'
           },
           {
             title: '首次完成上课时间',
             render: (h, params) => {
               return h('div', params.row.firstLearnTime ? dayjs(+params.row.firstLearnTime).format("YYYY-MM-DD HH:mm") : '暂无')
-            }
+            },
+            align: 'center'
           },
           {
             title: '最后交作业时间',
             render: (h, params) => {
               return h('div', params.row.lastSubmitTime ? dayjs(+params.row.lastSubmitTime).format("YYYY-MM-DD HH:mm") : '暂无')
-            }
+            },
+            align: 'center'
           },
           {
             title: '老师最后批改时间',
             render: (h, params) => {
               return h('div', params.row.lastReplyTime ? dayjs(+params.row.lastReplyTime).format("YYYY-MM-DD HH:mm") : '暂无')
-            }
+            },
+            align: 'center'
           },
           {
             title: '操作',
@@ -253,22 +280,24 @@
                   }
                 }
               }, '作业记录')
-            }
+            },
+            align: 'center'
           }
         ],
       };
     },
     mounted() {
-      this.listBase()
+      if (this.$route.query.id || this.userId) {
+        this.listBase()
+      }
     },
     methods: {
       changeCascarder(value, selectedData) {
         this.addInfo.areasText = selectedData[2].__label
-        console.log(selectedData[2].__label)
       },
       changeRadio() {
         this.searchInfo.appId = this.searchInfo.appId || this.courseId
-        if(localStorage.isJump !== '1') {
+        if((localStorage.isJump !== '1') && this.searchInfo.appId) {
           this.tab.currentPage = 1
           this.getLearnDTO()
           this.listLessonProgress(1)
@@ -297,23 +326,30 @@
         this.detailInfo.appId = this.searchInfo.appId
         this.detailInfo.uid = this.$route.query.id || this.userId
       },
+      openModalTime(data) {
+        if (this.appList.length) {
+          this.isOpenModalTime = true
+          this.addInfo = JSON.parse(JSON.stringify(data))
+        } else {
+          this.$Message.info('该用户未购买课程')
+        }
+      },
       currentChange(val) {
         this.listLessonProgress(val);
       },
       listBase() {
         this.appList = []
         this.tab.currentPage = this.sortNum ? Math.ceil(this.sortNum / 10) : 1
-        this.$api.jsdJob.listBase({
-          onlyme: true
+        this.$api.jsdJob.listBuyed({
+          uid: this.$route.query.id || this.userId
         })
           .then(response => {
             this.appList = response.data.resultData
-            this.searchInfo.appId = this.courseId || this.appList[0].id
-            if (this.$route.query.id || this.userId) {
-              this.getLearnDTO()
-              this.getStudent()
-            }
-            this.listLessonProgress()
+            this.searchInfo.appId = this.courseId || (this.appList.length && this.appList[0].id)
+            this.getUserInfo()
+            this.getStudent()
+            this.appList.length && this.getLearnDTO()
+            this.appList.length && this.listLessonProgress()
             localStorage.setItem('isJump', '2')
           })
       },
@@ -326,10 +362,10 @@
         })
           .then(
             response => {
-              this.userInfo = response.data.resultData;
-              this.userInfo.learnStartDate = this.userInfo.learnStartDate ? dayjs(+this.userInfo.learnStartDate).format('YYYY-MM-DD') : '暂无'
-              this.userInfo.buyedTime = this.userInfo.buyedTime ? dayjs(+this.userInfo.buyedTime).format('YYYY-MM-DD HH:mm') : '暂无'
-              this.userInfo.createTime = dayjs(+this.userInfo.createTime).format('YYYY-MM-DD HH:mm')
+              let dataInfo = response.data.resultData;
+              this.userInfo.learnStartDate = dataInfo.learnStartDate ? dayjs(+dataInfo.learnStartDate).format('YYYY-MM-DD') : '暂无'
+              this.userInfo.buyedTime = dataInfo.buyedTime ? dayjs(+dataInfo.buyedTime).format('YYYY-MM-DD HH:mm') : '暂无'
+              this.userInfo.createTime = dayjs(+dataInfo.createTime).format('YYYY-MM-DD HH:mm')
             })
           .finally(() => {
             this.isFetching = false
@@ -352,6 +388,15 @@
             })
         this.$forceUpdate()
       },
+      getUserInfo() {
+        this.$api.admin.getUserInfo({
+          userId: this.$route.query.id || this.userId
+        })
+          .then(
+            response => {
+              this.userInfo = response.data.resultData;
+            })
+      },
       getStudent() {
         this.$api.tbzwStudent.getStudent({
           puid: this.$route.query.id || this.userId,
@@ -360,8 +405,10 @@
             response => {
               if (response.data.resultData) {
                 this.addInfo = response.data.resultData
-                if (!Array.isArray(this.addInfo.areasId)) {
+                if (this.addInfo.areasId) {
                   this.addInfo.areasId = this.addInfo.areasId.split(',')
+                } else {
+                  this.addInfo.areasId = []
                 }
               } else {
                 this.addInfo = {
@@ -379,37 +426,52 @@
             })
       },
       submitInfo(name) {
-        this.$refs[name].validate((valid) => {
-          if (valid) {
-            this.isSending = true
-            let params = {
-              puid: this.$route.query.id || this.userId,
-              areasId: `${this.addInfo.areasId}`,
-              relation: this.addInfo.relation,
-              grade: this.addInfo.grade,
-              sex: this.addInfo.sex,
-              areasText: this.addInfo.areasText,
-              nickname: this.addInfo.nickname
-            }
-            let promiseDate = this.addInfo.id ? this.$api.tbzwStudent.updateStudent({
-              id: this.addInfo.id,
-              ...params
-            }) : this.$api.tbzwStudent.addStudent(params)
-            promiseDate
-              .then(
-                response => {
-                  if (response.data.code == '200') {
-                    this.$Message.success('提交成功');
-                    this.getStudent()
-                    this.closeModal(name)
-                  }
-                })
-              .finally(() => {
-                this.isSending = false
-              })
-          }
-        })
+        this.isSending = true
+        let params = {
+          puid: this.$route.query.id || this.userId,
+          areasId: `${this.addInfo.areasId}`,
+          relation: this.addInfo.relation,
+          grade: this.addInfo.grade,
+          sex: this.addInfo.sex,
+          areasText: this.addInfo.areasText,
+          nickname: this.addInfo.nickname
+        }
+        let promiseDate = this.addInfo.id ? this.$api.tbzwStudent.updateStudent({
+          id: this.addInfo.id,
+          ...params
+        }) : this.$api.tbzwStudent.addStudent(params)
+        promiseDate
+          .then(
+            response => {
+              if (response.data.code == '200') {
+                this.$Message.success('提交成功');
+                this.getStudent()
+                this.closeModal(name)
+              }
+            })
+          .finally(() => {
+            this.isSending = false
+          })
       },
+      submitTime() {
+        if (!this.addInfo.activeTime) {
+          return this.$Message.error('请选择开课时间')
+        }
+
+        this.$api.tbzwRules.supply({
+          activeTime: dayjs(this.addInfo.activeTime).format('YYYY-MM-DD'),
+          courseId: this.searchInfo.appId,
+          userId: this.userInfo.userId,
+        })
+          .then(
+            response => {
+              if (response.data.code == '200') {
+                this.$Message.success('提交成功');
+                this.getLearnDTO()
+                this.isOpenModalTime = false
+              }
+            })
+      }
     }
   };
 </script>
