@@ -33,7 +33,7 @@
       </div>
     </div>
 
-    <xxsj_detail v-model="isOpenModal" :lessonList="dataListTwo" :dataInfo="dataItem"></xxsj_detail>
+    <xxsj_detail v-model="isOpenModal" :lessonList="dataListTwo" :dataInfo="dataItem" :propPeriodId="propPeriodId"></xxsj_detail>
   </div>
 </template>
 
@@ -76,7 +76,7 @@
           },
           {
             title: '课时排课时间',
-            key: 'phone',
+            key: 'time',
             align: 'center'
           },
           {

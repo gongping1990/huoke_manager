@@ -32,7 +32,7 @@
   import dayjs from 'dayjs'
   export default {
     name: 'xxsj_detail',
-    props: ['value', 'dataInfo', 'lessonList'],
+    props: ['value', 'dataInfo', 'lessonList', 'propPeriodId'],
     data () {
       return {
         tab: {
@@ -48,42 +48,42 @@
         columns: [
           {
             title: '日期',
-            key: 'phone',
+            key: 'date',
             align: 'center'
           },
           {
             title: '上课人数',
-            key: 'nickname',
+            key: 'learnTime',
             align: 'center'
           },
           {
             title: '初次上课人数',
-            key: 'sex',
+            key: 'firstLearnCount',
             align: 'center'
           },
           {
             title: '到课率',
-            key: 'relationText',
+            key: 'firstLearnPercent',
             align: 'center'
           },
           {
             title: '初次完课人数',
-            key: 'gradeText',
+            key: 'finishLearnCount',
             align: 'center'
           },
           {
             title: '完课率',
-            key: 'gradeText',
+            key: 'finishLearnPercent',
             align: 'center'
           },
           {
             title: '初次交作业人数',
-            key: 'gradeText',
+            key: 'submitHomeworkCount',
             align: 'center'
           },
           {
             title: '交作业率',
-            key: 'gradeText',
+            key: 'firstSubmitHomeworkPercent',
             align: 'center'
           }
         ],
@@ -96,7 +96,7 @@
       value (_n) {
         this.isOpenDetail = _n
         this.searchInfo.lessonId = this.dataInfo.lessonId
-        // _n && this.getList()
+        _n && this.getList()
       },
     },
     methods: {
@@ -105,18 +105,11 @@
         this.getList();
       },
       getList() {
-        this.$api.jsdJob.listHomeWorkLog({
-          workId: this.dataInfo.workId,
-          courseId: this.dataInfo.appId,
+        this.$api.tbzwStudyRecordData.getStudyDataDetails({
+          activeConfigId: this.propPeriodId,
+          lessonId: this.dataInfo.lessonId,
         }).then(response => {
-          this.recordList = response.data.resultData
-          for (let item of this.recordList) {
-            item.time = dayjs(+item.createTime).format('YYYY-MM-DD HH:mm')
-            // item.replyText = item.replyText.split('#')
-            // item.scoreList = item.replyText[0].split(',')
-            // item.ruleList = item.replyText[1].split(',')
-            // item.content = item.replyText[3]
-          }
+          this.dataList = response.data.resultData
         })
       },
       closeModal () {

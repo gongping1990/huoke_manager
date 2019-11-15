@@ -10,6 +10,9 @@ const tbzwStudyRecordData = {
   },
   getUserStudyRecordByLessonId(params) {
     return axios.get(`/compositionv2/studyRecordData/getUserStudyRecordByLessonId`, {params: params})
+  },
+  getStudyDataDetails(params) {
+    return axios.get(`/compositionv2/studyRecordData/getStudyDataDetails`, {params: params})
   }
 };
 
