@@ -16,7 +16,7 @@
               </div>
               <div class="-r-dev" style="margin-top: 10px">
                 <span>孩子昵称: {{studentInfo.nickname || '暂无'}}</span>
-                <span>孩子性别: {{studentInfo.sex ? searchInfo.sex === 1 ? '男' : '女' : '暂无'}}</span>
+                <span>孩子性别: {{studentInfo.sex ? studentInfo.sex === 1 ? '男' : '女' : '暂无'}}</span>
                 <span>与孩子关系: {{studentInfo.relationText || '暂无'}}</span>
                 <span>在读年级: {{studentInfo.gradeText || '暂无'}}</span>
                 <span>所在城市: {{studentInfo.areasText || '暂无'}}</span>
@@ -85,7 +85,7 @@
         <FormItem label="孩子性别" prop="sex">
           <Radio-group v-model="addInfo.sex">
             <Radio :label=1>男</Radio>
-            <Radio :label=2>女</Radio>
+            <Radio :label=0>女</Radio>
           </Radio-group>
         </FormItem>
         <FormItem label="与孩子关系">
