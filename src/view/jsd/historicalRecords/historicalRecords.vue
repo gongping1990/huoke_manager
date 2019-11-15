@@ -448,7 +448,7 @@
       openModal(data) {
         this.isOpenModal = true
         if (data) {
-          this.viewWork()
+          this.viewWork(data)
         }
       },
       closeModal(name) {
