@@ -350,8 +350,7 @@ export default {
           this.$Spin.hide();
           this.$Message.success("图片上传成功");
           if (fn) {
-            console.log(fn);
-            fn();
+            this.getViewWork(fn)
           } else {
             this.getViewWork(() => {
               this.imgActive += this.workData.workImgSrc.length;
@@ -402,6 +401,13 @@ export default {
       });
     },
     handleSaveCanvasImage(fn) {
+      if(fn) {
+        let { canvas } = this.$refs;
+        this.canvasImg = canvas.toDataUrl();
+
+        this.uploadImg(fn);
+        return
+      }
       this.$Modal.confirm({
         title: "提示",
         content: `<p>确定要保存图片吗？<br/>保存图片后， 已经编辑的内容将不能再修改</p>`,
@@ -409,7 +415,7 @@ export default {
           let { canvas } = this.$refs;
           this.canvasImg = canvas.toDataUrl();
 
-          this.uploadImg(fn);
+          this.uploadImg();
         }
       });
     },
