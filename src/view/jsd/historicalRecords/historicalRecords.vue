@@ -448,8 +448,6 @@
       openModal(data) {
         this.isOpenModal = true
         if (data) {
-          this.addInfo = JSON.parse(JSON.stringify(data))
-          this.addInfo.isPassed = 1
           this.viewWork()
         }
       },
@@ -461,14 +459,20 @@
         this.tab.page = val;
         this.getList();
       },
-      viewWork() {
+      viewWork(data) {
         this.$api.jsdJob.viewWork({
           system: this.searchInfo.system,
-          workId: this.addInfo.workId
+          workId: data.workId
         })
           .then(response => {
-            this.addInfo.scores = response.data.resultData.scores;
-            this.$forceUpdate()
+            let _self = this
+            _self.addInfo = response.data.resultData
+            _self.addInfo.isPassed = 1
+            _self.addInfo.workImgSrc = _self.addInfo.workImgSrc ? _self.addInfo.workImgSrc.split(',') : []
+            _self.addInfo.replyImgTmp = _self.addInfo.replyImgTmp ? _self.addInfo.replyImgTmp.split(',') : []
+            _self.addInfo.replyImg = _self.addInfo.replyImgTmp
+            // _self.addInfo.replyImg = _self.addInfo.replyImg.length ? _self.addInfo.replyImg.concat(_self.addInfo.replyImgTmp) : _self.addInfo.replyImgTmp
+            _self.$forceUpdate()
           })
       },
       //分页查询
