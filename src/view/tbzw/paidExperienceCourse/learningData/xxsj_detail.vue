@@ -4,7 +4,7 @@
     v-model="isOpenDetail"
     @on-cancel="closeModal"
     footer-hide
-    width="850"
+    width="950"
     title="上课数据详情">
     <Row class="g-search">
       <Col :span="9">
@@ -61,9 +61,17 @@
             key: 'firstLearnCount',
             align: 'center'
           },
+
           {
             title: '到课率',
             key: 'firstLearnPercent',
+            render: (h, params) => {
+              return h('div', {
+                style: {
+                  color: '#FFB200'
+                }
+              }, `${params.row.firstLearnPercent * 100}%`)
+            },
             align: 'center'
           },
           {
@@ -74,16 +82,31 @@
           {
             title: '完课率',
             key: 'finishLearnPercent',
+            render: (h, params) => {
+              return h('div', {
+                style: {
+                  color: '#FFB200'
+                }
+              }, `${params.row.finishLearnPercent * 100}%`)
+            },
             align: 'center'
           },
           {
             title: '初次交作业人数',
+            width: 140,
             key: 'submitHomeworkCount',
             align: 'center'
           },
           {
             title: '交作业率',
             key: 'firstSubmitHomeworkPercent',
+            render: (h, params) => {
+              return h('div', {
+                style: {
+                  color: '#FFB200'
+                }
+              }, `${params.row.firstSubmitHomeworkPercent * 100}%`)
+            },
             align: 'center'
           }
         ],
@@ -107,7 +130,7 @@
       getList() {
         this.$api.tbzwStudyRecordData.getStudyDataDetails({
           activeConfigId: this.propPeriodId,
-          lessonId: this.dataInfo.lessonId,
+          lessonId: this.searchInfo.lessonId,
         }).then(response => {
           this.dataList = response.data.resultData
         })
