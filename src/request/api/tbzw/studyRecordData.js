@@ -7,6 +7,9 @@ const tbzwStudyRecordData = {
   },
   getStudyData(params) {
     return axios.get(`/compositionv2/studyRecordData/getStudyData`, {params: params})
+  },
+  getUserStudyRecordByLessonId(params) {
+    return axios.get(`/compositionv2/studyRecordData/getUserStudyRecordByLessonId`, {params: params})
   }
 };
 

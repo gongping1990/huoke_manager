@@ -98,7 +98,7 @@
                 <span>+</span>
                 <span>进入在线批改</span>
               </div>
-              <div class="g-course-add-style" @click="openPictures">
+              <div class="g-course-add-style" @click="viewWork(addInfo)">
                 <span>+</span>
                 <span>获取批改图片</span>
               </div>
@@ -141,7 +141,7 @@
 
       <examine-modal v-model="isOpenModalAuit" :dataInfo="detailInfo" @successAudit="successAudit"></examine-modal>
 
-      <job-record-template v-model="isOpenJobRecord" :dataInfo="detailInfo"></job-record-template>
+      <job-record-template v-model="isOpenJobRecord" :dataInfo="recordInfo"></job-record-template>
 
       <look-user-info v-model="isOpenUserInfo" :dataInfo="detailInfo"></look-user-info>
 
@@ -222,6 +222,7 @@
         detailInfo: {},
         requireInfo: {},
         countInfo: {},
+        recordInfo: {},
         playAudioUrl: '',
         columns: [
           {
@@ -1205,8 +1206,8 @@
       },
       openJobRecord(data) {
         this.isOpenJobRecord = true
-        this.detailInfo = JSON.parse(JSON.stringify(data))
-        this.detailInfo.appId = this.searchInfo.appId
+        this.recordInfo = JSON.parse(JSON.stringify(data))
+        this.recordInfo.appId = this.searchInfo.appId
       },
       closeModalPlay() {
         this.$refs.playAudio.load()
@@ -1257,9 +1258,7 @@
           replyAudio: ''
         }
         if (data) {
-          this.addInfo = JSON.parse(JSON.stringify(data))
-          this.addInfo.isPassed = this.radioType != 1 ? 1 : 0
-          this.viewWork()
+          this.viewWork(data)
         }
       },
       closeModal(name) {
@@ -1293,13 +1292,20 @@
             ]
           })
       },
-      viewWork() {
+      viewWork(data) {
         this.$api.jsdJob.viewWork({
           system: this.searchInfo.system,
-          workId: this.addInfo.workId
+          workId: data.workId
         })
           .then(response => {
-            this.addInfo.scores = response.data.resultData.scores;
+
+            this.addInfo = {
+              ...response.data.resultData
+            };
+            this.addInfo.isPassed = this.radioType != 1 ? 1 : 0
+            this.addInfo.workImgSrc = this.addInfo.workImgSrc ? this.addInfo.workImgSrc.split(',') : []
+            this.addInfo.replyImgTmp = this.addInfo.replyImgTmp ? this.addInfo.replyImgTmp.split(',') : []
+            this.addInfo.replyImg = this.addInfo.replyImg ? this.addInfo.replyImg.concat(this.addInfo.replyImgTmp) : this.addInfo.replyImgTmp
             this.$forceUpdate()
           })
       },

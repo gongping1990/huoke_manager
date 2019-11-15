@@ -359,6 +359,7 @@
       openModalClass(data) {
         this.isOpenModalClass = true
         this.detailInfo = JSON.parse(JSON.stringify(data))
+        this.detailInfo.uid = this.$route.query.id || this.userId
       },
       currentChange(val) {
         this.listLessonProgress(val);
