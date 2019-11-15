@@ -22,7 +22,7 @@
         @on-cancel="closeModal('addInfo')"
         width="750"
         title="批改作业">
-        <Form ref="addInfo" :model="addInfo" :label-width="70">
+        <Form ref="addInfo" :model="addInfo" :label-width="90">
           <FormItem label="是否合格">
             <Radio-group v-model="addInfo.isPassed" @on-change="changePassed">
               <Radio :label=1 disabled>合格</Radio>
@@ -33,6 +33,16 @@
             <Input type="text" v-model="addInfo.replyTeacher" placeholder="请输入教师名称"></Input>
           </FormItem>
           <FormItem label="批改图片" v-if="addInfo.isPassed === 1">
+            <div class="p-job-formItem" v-if="addInfo.homeworkType === 2">
+              <div class="g-course-add-style" @click="openPictures">
+                <span>+</span>
+                <span>进入在线批改</span>
+              </div>
+              <div class="g-course-add-style" @click="viewWork(addInfo)">
+                <span>+</span>
+                <span>获取批改图片</span>
+              </div>
+            </div>
             <upload-img-multiple v-model="addInfo.replyImg" :option="uploadOption"></upload-img-multiple>
           </FormItem>
           <FormItem label="批改音频" v-if="addInfo.isPassed === 1">
@@ -69,28 +79,32 @@
         <audio ref="playAudio" :src="playAudioUrl" controls></audio>
       </Modal>
 
-      <job-record-template v-model="isOpenDetail" :dataInfo="detailInfo"></job-record-template>
+      <job-record-template v-model="isOpenDetail" :dataInfo="recordInfo"></job-record-template>
 
       <look-user-info v-model="isOpenUserInfo" :dataInfo="detailInfo"></look-user-info>
+
+      <job-require-template  v-model="isOpenJobRequire" :dataInfo="requireInfo"></job-require-template>
 
     </Card>
   </div>
 </template>
 
 <script>
-  import {getBaseUrl} from '@/libs/index'
+  import {getVisitUrl} from '@/libs/index'
   import UploadAudio from "../../../components/uploadAudio";
   import DatePickerTemplate from "../../../components/datePickerTemplate";
   import dayjs from 'dayjs'
   import UploadImgMultiple from "../../../components/uploadImgMultiple";
-  import JobDetailModel from "../../../components/jobDetailModel";
   import SearchTemplate from "../../../components/searchTemplate";
   import JobRecordTemplate from "../../../components/jobRecordTemplate";
   import LookUserInfo from "../todayWork/lookUserInfo";
+  import JobRequireTemplate from "../todayWork/jobRequireTemplate";
 
   export default {
     name: 'jsd_historicalRecords',
-    components: {LookUserInfo, JobRecordTemplate, SearchTemplate, UploadImgMultiple, DatePickerTemplate, UploadAudio},
+    components: {
+      JobRequireTemplate,
+      LookUserInfo, JobRecordTemplate, SearchTemplate, UploadImgMultiple, DatePickerTemplate, UploadAudio},
     data() {
       return {
         tab: {
@@ -133,8 +147,11 @@
         isOpenDetail: false,
         isOpenUserInfo: false,
         isEdit: false,
+        isOpenJobRequire: false,
         addInfo: {},
         detailInfo: {},
+        requireInfo: {},
+        recordInfo: {},
         playAudioUrl: '',
         columns: [
           {
@@ -173,7 +190,24 @@
           {
             title: '作业要求',
             key: 'homeworkRequire',
-            tooltip: true,
+            render: (h, params)=>{
+              return h('Button', {
+                props: {
+                  type: 'text',
+                  size: 'small'
+                },
+                style: {
+                  color: '#5444E4',
+                  marginRight: '5px',
+                  cursor: 'pointer'
+                },
+                on: {
+                  click: () => {
+                    this.openRequire(params.row)
+                  }
+                }
+              }, `${params.row.homeworkRequire.substr(0,8)}...`)
+            },
             align: 'center'
           },
           {
@@ -333,6 +367,14 @@
     mounted() {
     },
     methods: {
+      openRequire (data) {
+        this.isOpenJobRequire = true
+        this.requireInfo = JSON.parse(JSON.stringify(data))
+        this.requireInfo.appId = this.searchInfo.appId
+      },
+      openPictures () {
+        window.open(`${getVisitUrl()}/#/correct?system=${this.searchInfo.system}&courseId=${this.addInfo.courseId}&workId=${this.addInfo.workId}`,'_blank');
+      },
       toDetail(data) {
         this.isOpenUserInfo = true
         this.detailInfo = JSON.parse(JSON.stringify(data))
@@ -359,8 +401,8 @@
       },
       openDetail(data) {
         this.isOpenDetail = true
-        this.detailInfo = JSON.parse(JSON.stringify(data))
-        this.detailInfo.appId = this.searchInfo.appId || '7'
+        this.recordInfo = JSON.parse(JSON.stringify(data))
+        this.recordInfo.appId = this.searchInfo.appId || '7'
       },
       closeModalPlay() {
         this.$refs.playAudio.load()
@@ -514,6 +556,16 @@
 <style lang="less" scoped>
   .p-job {
 
+    &-formItem {
+      position: absolute;
+      left: 160px;
+      display: flex;
+
+      .g-course-add-style {
+        margin-right: 20px;
+        margin-bottom: 20px;
+      }
+    }
 
     &-score {
       display:flex;
@@ -522,17 +574,22 @@
     }
 
     &-scoreItem {
+      display: flex;
+      align-items: center;
       margin-top: 10px;
       width: 50%;
 
       span{
-        text-align: center;
+        text-align: right;
         display: inline-block;
-        width: 20%;
+        width:40%;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
       }
 
       .-input {
-        width: 75%;
+        width:50%;
         margin-left: 10px;
       }
     }
