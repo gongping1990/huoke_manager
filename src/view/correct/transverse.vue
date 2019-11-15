@@ -27,6 +27,9 @@ export default {
       type: String,
       required: true
     },
+    courseName: {
+      type: String
+    },
     type: {
       type: Number,
       default: 1
@@ -384,8 +387,10 @@ export default {
       );
     },
     setBackgroud() {
-      let { width, mode } = this;
-      let imgUrl = mode == 1 ? titleImg : titleSbImg;
+      let { width } = this;
+      let mode = this.courseName.indexOf("小语");
+      console.log(this.courseName);
+      let imgUrl = mode > -1 ? titleImg : titleSbImg;
       let img = fabric.Image.fromURL(
         imgUrl,
         img => {
@@ -404,7 +409,7 @@ export default {
       // img.src = titleImg
     },
     addTextToCanvas() {
-      let canvasObj = this.mode == 1 ? this.$refs.canvas : this.$refs.canvasSb;
+      let canvasObj = this.$refs.canvas;
       let { canvas } = canvasObj;
       let { inputValue, fontColor, fontSize } = this.data;
       this.canvas.createTextbox(

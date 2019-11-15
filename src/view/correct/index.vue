@@ -25,6 +25,7 @@
             :image="workData.imgArr[imgActive].url"
             :type="workData.imgArr[imgActive].type"
             :data="canvasObj"
+            :courseName="workData.courseName"
             @mousedown="mouseDown"
             :mode="mode"
           ></Transverse>
