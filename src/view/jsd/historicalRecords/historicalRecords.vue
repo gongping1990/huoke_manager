@@ -536,7 +536,7 @@
           replyText: this.addInfo.replyText,
           replyAudio: this.addInfo.replyAudio,
           replyDuration: this.addInfo.replyDuration,
-          score: this.addInfo.scores,
+          evaluate: this.addInfo.scores,
           status: this.addInfo.isPassed == 1 ? '3' : '1'
         })
           .then(
