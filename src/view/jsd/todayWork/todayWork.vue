@@ -563,8 +563,8 @@
           },
           {
             title: '操作',
-            width: 360,
-            align: 'left',
+            width: 320,
+            align: 'center',
             render: (h, params) => {
               return h('div', [
                 h('Button', {
@@ -582,22 +582,22 @@
                     }
                   }
                 }, '修改评价'),
-                h('Button', {
-                  props: {
-                    type: 'text',
-                    size: 'small'
-                  },
-                  style: {
-                    color: '#5444E4',
-                    display: params.row.homeworkType === 1 ? 'none' : 'inline-block',
-                    marginRight: '5px'
-                  },
-                  on: {
-                    click: () => {
-                      this.editPictures(params.row)
-                    }
-                  }
-                }, '修改图片'),
+                // h('Button', {
+                //   props: {
+                //     type: 'text',
+                //     size: 'small'
+                //   },
+                //   style: {
+                //     color: '#5444E4',
+                //     display: params.row.homeworkType === 1 ? 'none' : 'inline-block',
+                //     marginRight: '5px'
+                //   },
+                //   on: {
+                //     click: () => {
+                //       this.editPictures(params.row)
+                //     }
+                //   }
+                // }, '修改图片'),
                 h('Button', {
                   props: {
                     type: 'text',
@@ -1303,8 +1303,8 @@
             _self.addInfo.isPassed = _self.radioType != 1 ? 1 : 0
             _self.addInfo.workImgSrc = _self.addInfo.workImgSrc ? _self.addInfo.workImgSrc.split(',') : []
             _self.addInfo.replyImgTmp = _self.addInfo.replyImgTmp ? _self.addInfo.replyImgTmp.split(',') : []
-            _self.addInfo.replyImg = _self.addInfo.replyImg ? _self.addInfo.replyImg.split(',') : []
-            _self.addInfo.replyImg = _self.addInfo.replyImg.length ? _self.addInfo.replyImg.concat(_self.addInfo.replyImgTmp) : _self.addInfo.replyImgTmp
+            _self.addInfo.replyImg = _self.addInfo.replyImgTmp
+            // _self.addInfo.replyImg = _self.addInfo.replyImg.length ? _self.addInfo.replyImg.concat(_self.addInfo.replyImgTmp) : _self.addInfo.replyImgTmp
             _self.$forceUpdate()
           })
       },
