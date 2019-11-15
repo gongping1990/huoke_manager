@@ -186,10 +186,6 @@
         this.isOpenModal = true
         this.dataItem = data
       },
-      currentChange(val) {
-        this.tab.page = val;
-        this.getList();
-      },
       drawLine() {
         let self = this;
         let myChart = echarts.init(this.$refs.echartOne);
