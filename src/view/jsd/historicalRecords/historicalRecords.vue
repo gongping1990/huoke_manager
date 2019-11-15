@@ -295,7 +295,7 @@
           {
             title: '操作',
             width: 300,
-            align: 'left',
+            align: 'center',
             render: (h, params) => {
               return h('div', [
                 h('Button', {
