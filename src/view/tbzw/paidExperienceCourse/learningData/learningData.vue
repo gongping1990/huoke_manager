@@ -252,7 +252,7 @@
             label: {
               show: true,
               position: 'center',
-              formatter: '{b}: {c}人'
+              formatter: '{b}: {d}%'
             },
             data: this.percentDataTwo
           },
@@ -309,34 +309,47 @@
             this.isFetching = false
           })
       },
-      formatData () {
+      formatData() {
         this.percentDataName = []
         this.percentData = []
-        let attrName = ['learnPercent','finishPercent','subHomeworkPercent']
-        this.dataListTwo.forEach(item=>{
+        let attrName = ['learnPercent', 'finishPercent', 'subHomeworkPercent']
+        this.dataListTwo.forEach(item => {
           this.percentDataName.push({
             name: item.lessonName
           })
           this.percentData.push({
             name: item.lessonName,
-            value: item[attrName[this.tabType-1]]
+            value: item[attrName[this.tabType - 1]]
           })
         })
         this.drawLine()
         // this.drawLineTwo()
       },
-      formatDataTwo () {
+      formatDataTwo() {
         this.percentDataNameTwo = []
         this.percentDataTwo = []
-        let attrName = ['continuousLearnCount','continuousFinishCount','continuousSubmitHomeworkCount']
-        this.dataListTwo.forEach(item=>{
-          this.percentDataNameTwo.push({
-            name: item.lessonName
-          })
-          this.percentDataTwo.push({
-            name: item.lessonName,
-            value: item[attrName[this.tabTypeTwo-1]]
-          })
+        let attrName = ['continuousLearnCount', 'continuousFinishCount', 'continuousSubmitHomeworkCount']
+        this.dataListTwo.forEach((item, index) => {
+
+          if (index === 0) {
+            this.percentDataNameTwo.push({
+              name: this.tabTypeTwo === 1 ? `上第1节课` : (this.tabTypeTwo === 2 ? '完成1节课' : '交第1节课作业')
+            })
+            this.percentDataTwo.push({
+              name: this.tabTypeTwo === 1 ? `上第1节课` : (this.tabTypeTwo === 2 ? '完成1节课' : '交第1节课作业'),
+              value: item[attrName[this.tabTypeTwo - 1]] / (item[attrName[this.tabTypeTwo - 1]] ? item[attrName[this.tabTypeTwo - 1]] : 1)
+            })
+          }
+
+          if (index >= 1) {
+            this.percentDataNameTwo.push({
+              name: this.tabTypeTwo === 1 ? `上前${index+1}节课` : (this.tabTypeTwo === 2 ? `完成前${index+1}节课` : `交前${index+1}节课作业`)
+            })
+            this.percentDataTwo.push({
+              name: this.tabTypeTwo === 1 ? `上前${index+1}节课` : (this.tabTypeTwo === 2 ? `完成前${index+1}节课` : `交前${index+1}节课作业`),
+              value: item[attrName[this.tabTypeTwo - 1]] / (this.percentDataTwo[index-1].value ? this.percentDataTwo[index-1].value : 1)
+            })
+          }
         })
         this.drawLineTwo()
       }
