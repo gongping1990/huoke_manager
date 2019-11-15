@@ -1,24 +1,29 @@
 <template>
   <div class="-list">
-    <Item icon="hx"
-          type="draw"
-          class="item"
-          text="画笔工具"
-          v-model="active"
-          @click="clickItem">
+    <Item
+      icon="hx"
+      type="draw"
+      class="item"
+      text="画笔工具"
+      v-model="active"
+      @click="clickItem"
+    >
       <div class="item-content hx">
         <div class="common-item">
-          <p class="common-title">画笔大小 <span>{{canvasObj.drawWidth}}</span></p>
+          <p class="common-title">
+            画笔大小 <span>{{ canvasObj.drawWidth }}</span>
+          </p>
           <div class="common-content">
-            <Slider v-model="canvasObj.drawWidth"
-                    :min="1"></Slider>
+            <Slider v-model="canvasObj.drawWidth" :min="2"></Slider>
           </div>
         </div>
         <div class="common-item">
           <p class="common-title">画笔颜色</p>
           <div class="common-content color">
-            <div class="color-selected"
-                 :style="{background: canvasObj.drawColor}"></div>
+            <div
+              class="color-selected"
+              :style="{ background: canvasObj.drawColor }"
+            ></div>
             <div class="color-list">
               <ColorPicker v-model="canvasObj.drawColor" />
             </div>
@@ -26,52 +31,68 @@
         </div>
       </div>
     </Item>
-    <Item icon="tx"
-          type="graph"
-          class="item"
-          text="图形工具"
-          v-model="active"
-          @click="clickItem">
+    <Item
+      icon="tx"
+      type="graph"
+      class="item"
+      text="图形工具"
+      v-model="active"
+      @click="clickItem"
+    >
       <div class="item-content">
         <div class="common-item">
           <p class="common-title">图形样式</p>
           <div class="common-content graph">
-            <div class="graph-wrap"
-                 title="直线"
-                 @click="canvasObj.graphType = 'line'">
-              <a class="graph-line"
-                 :class="{active: canvasObj.graphType == 'line'}"
-                 href="javascript:"></a>
+            <div
+              class="graph-wrap"
+              title="直线"
+              @click="canvasObj.graphType = 'line'"
+            >
+              <a
+                class="graph-line"
+                :class="{ active: canvasObj.graphType == 'line' }"
+                href="javascript:"
+              ></a>
             </div>
-            <div class="graph-wrap"
-                 title="矩形"
-                 @click="canvasObj.graphType = 'rect'">
-              <a class="graph-rect"
-                 :class="{active: canvasObj.graphType == 'rect'}"
-                 href="javascript:"></a>
+            <div
+              class="graph-wrap"
+              title="矩形"
+              @click="canvasObj.graphType = 'rect'"
+            >
+              <a
+                class="graph-rect"
+                :class="{ active: canvasObj.graphType == 'rect' }"
+                href="javascript:"
+              ></a>
             </div>
-            <div class="graph-wrap"
-                 title="圆形"
-                 @click="canvasObj.graphType = 'arc'">
-              <a class="graph-arc"
-                 :class="{active: canvasObj.graphType == 'arc'}"
-                 href="javascript:"></a>
+            <div
+              class="graph-wrap"
+              title="圆形"
+              @click="canvasObj.graphType = 'arc'"
+            >
+              <a
+                class="graph-arc"
+                :class="{ active: canvasObj.graphType == 'arc' }"
+                href="javascript:"
+              ></a>
             </div>
-
           </div>
         </div>
         <div class="common-item">
-          <p class="common-title">画笔大小 <span>{{canvasObj.graphWidth}}</span></p>
+          <p class="common-title">
+            画笔大小 <span>{{ canvasObj.graphWidth }}</span>
+          </p>
           <div class="common-content">
-            <Slider v-model="canvasObj.graphWidth"
-                    :min="1"></Slider>
+            <Slider v-model="canvasObj.graphWidth" :min="1"></Slider>
           </div>
         </div>
         <div class="common-item">
           <p class="common-title">画笔颜色</p>
           <div class="common-content color">
-            <div class="color-selected"
-                 :style="{background: canvasObj.graphColor}"></div>
+            <div
+              class="color-selected"
+              :style="{ background: canvasObj.graphColor }"
+            ></div>
             <div class="color-list">
               <ColorPicker v-model="canvasObj.graphColor" />
             </div>
@@ -79,62 +100,68 @@
         </div>
       </div>
     </Item>
-    <Item icon="text"
-          class="item"
-          type="text"
-          text="插入文字"
-          v-model="active"
-          @click="clickItem">
+    <Item
+      icon="text"
+      class="item"
+      type="text"
+      text="插入文字"
+      v-model="active"
+      @click="clickItem"
+    >
       <div class="item-content text">
         <div class="common-item">
-          <textarea class="text-input"
-                    v-model="canvasObj.inputValue"
-                    placeholder="请输入文字"></textarea>
-          <Button type="primary"
-                  class="text-btn"
-                  @click="clickInput">输入文字</Button>
+          <textarea
+            class="text-input"
+            v-model="canvasObj.inputValue"
+            placeholder="请输入文字"
+          ></textarea>
+          <Button type="primary" class="text-btn" @click="clickInput"
+            >输入文字</Button
+          >
         </div>
         <div class="common-item">
           <div class="common-title">
             字体大小
-            <Select v-model="canvasObj.fontSize"
-                    style="width:65px">
-              <Option v-for="size in fontSizeList"
-                      :value="size"
-                      :key="size">{{ size }}</Option>
+            <Select v-model="canvasObj.fontSize" style="width:65px">
+              <Option v-for="size in fontSizeList" :value="size" :key="size">{{
+                size
+              }}</Option>
             </Select>
           </div>
         </div>
         <div class="common-item">
           <p class="common-title">字体颜色</p>
           <div class="common-content color">
-            <div class="color-selected"
-                 :style="{background: canvasObj.fontColor}"></div>
+            <div
+              class="color-selected"
+              :style="{ background: canvasObj.fontColor }"
+            ></div>
             <div class="color-list">
               <ColorPicker v-model="canvasObj.fontColor" />
             </div>
           </div>
         </div>
-
       </div>
     </Item>
-    <Item icon="tp"
-          class="item"
-          type="image"
-          text="插入图片"
-          v-model="active"
-          @click="clickItem">
+    <Item
+      icon="tp"
+      class="item"
+      type="image"
+      text="插入图片"
+      v-model="active"
+      @click="clickItem"
+    >
       <div class="item-content">
         <div class="common-item">
-          <Button type="primary"
-                  class="text-btn"
-                  @click="clickAddBtn('badge')">选择插入的勋章</Button>
-          <Button type="primary"
-                  class="text-btn"
-                  @click="clickAddBtn('work')">选择插入的学生作业</Button>
-          <Button type="primary"
-                  class="text-btn"
-                  @click="clickAddBtn('pz')">选择插入的批注框</Button>
+          <Button type="primary" class="text-btn" @click="clickAddBtn('badge')"
+            >选择插入的勋章</Button
+          >
+          <Button type="primary" class="text-btn" @click="clickAddBtn('work')"
+            >选择插入的学生作业</Button
+          >
+          <Button type="primary" class="text-btn" @click="clickAddBtn('pz')"
+            >选择插入的批注框</Button
+          >
         </div>
       </div>
     </Item>
@@ -151,17 +178,56 @@ export default {
       canvasObj: {
         type: "",
         show: false,
-        drawWidth: 1,
+        drawWidth: 2,
         inputValue: "",
         drawColor: "#FF0000",
         fontColor: "#FF0000",
-        fontSize: 18,
+        fontSize: 26,
         graphColor: "#FF0000",
-        graphWidth: 1,
+        graphWidth: 2,
         graphType: "line"
       },
 
-      fontSizeList: [12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34,36,38,40,42,44,46,48,50,52,54,56,58,60,62,64,66,68,70,72,74,76,78,80,82,84,86,88,90,92,94,96,98,100]
+      fontSizeList: [
+        26,
+        28,
+        30,
+        32,
+        34,
+        36,
+        38,
+        40,
+        42,
+        44,
+        46,
+        48,
+        50,
+        52,
+        54,
+        56,
+        58,
+        60,
+        62,
+        64,
+        66,
+        68,
+        70,
+        72,
+        74,
+        76,
+        78,
+        80,
+        82,
+        84,
+        86,
+        88,
+        90,
+        92,
+        94,
+        96,
+        98,
+        100
+      ]
     };
   },
   watch: {
