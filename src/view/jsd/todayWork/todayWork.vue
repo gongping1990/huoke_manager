@@ -1298,15 +1298,14 @@
           workId: data.workId
         })
           .then(response => {
-
-            this.addInfo = {
-              ...response.data.resultData
-            };
-            this.addInfo.isPassed = this.radioType != 1 ? 1 : 0
-            this.addInfo.workImgSrc = this.addInfo.workImgSrc ? this.addInfo.workImgSrc.split(',') : []
-            this.addInfo.replyImgTmp = this.addInfo.replyImgTmp ? this.addInfo.replyImgTmp.split(',') : []
-            this.addInfo.replyImg = this.addInfo.replyImg ? this.addInfo.replyImg.concat(this.addInfo.replyImgTmp) : this.addInfo.replyImgTmp
-            this.$forceUpdate()
+            let _self = this
+            _self.addInfo = response.data.resultData
+            _self.addInfo.isPassed = _self.radioType != 1 ? 1 : 0
+            _self.addInfo.workImgSrc = _self.addInfo.workImgSrc ? _self.addInfo.workImgSrc.split(',') : []
+            _self.addInfo.replyImgTmp = _self.addInfo.replyImgTmp ? _self.addInfo.replyImgTmp.split(',') : []
+            _self.addInfo.replyImg = _self.addInfo.replyImg ? _self.addInfo.replyImg.split(',') : []
+            _self.addInfo.replyImg = _self.addInfo.replyImg.length ? _self.addInfo.replyImg.concat(_self.addInfo.replyImgTmp) : _self.addInfo.replyImgTmp
+            _self.$forceUpdate()
           })
       },
       //分页查询

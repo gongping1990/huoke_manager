@@ -11,7 +11,7 @@
       :on-error="handleErr">
       <div class="g-course-add-style">
         <span>+</span>
-        <span>上传图片</span>
+        <span>上传本地图片</span>
       </div>
     </Upload>
     <div class="-c-course-wrap" v-if="imgArray.length">
