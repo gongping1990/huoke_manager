@@ -45,8 +45,8 @@
         <!--<FormItem label="作业名称" v-if="modalType===5">-->
           <!--<Input type="text" v-model="detailInfo.homework" placeholder="请输入作业名称（字数不超过20字）" :maxlength="20"></Input>-->
         <!--</FormItem>-->
-        <FormItem label="课时要求" v-if="modalType===5">
-          <Input type="textarea" :rows="4" v-model="detailInfo.homeworkClaim" placeholder="请输入课时要求（字数不超过80字）"
+        <FormItem label="课程重点" v-if="modalType===5">
+          <Input type="textarea" :rows="4" v-model="detailInfo.keyPoint" placeholder="请输入课程重点（字数不超过80字）"
                  :maxlength='80'></Input>
         </FormItem>
         <FormItem label="作业要求" v-if="modalType===5">
@@ -698,6 +698,7 @@
         this.$api.composition.saveHomeWork({
           lessonId: this.dataItem.id,
           homework: this.detailInfo.homework,
+          keyPoint: this.detailInfo.keyPoint,
           homeworkClaim: this.detailInfo.homeworkClaim,
           homeWorkType: this.detailInfo.homeworkType,
           readContent: this.detailInfo.readContent
