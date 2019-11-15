@@ -49,7 +49,7 @@
           <div class="g-flex-a-j-center" v-if="dataItem.replyImg.length">
             <img class="-img" preview="0" v-for="(url,index) of dataItem.replyImg" :key="index" :src="url"/>
           </div>
-          <div class="p-jobRequire-wrap">
+          <div class="p-jobRequire-wrap" v-show="dataItem.evaluate.length">
             <div class="p-jobRequire-wrap-left">
               <div>
                 <div class="-left-item" v-for="(item1,index1) of dataItem.evaluateObj" :key="index1">
