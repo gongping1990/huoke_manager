@@ -13,7 +13,7 @@
       <FormItem label="作业要求">
         {{detailInfo.homeworkClaim}}
       </FormItem>
-      <FormItem label="优秀批改模板" v-if="!templateList.length">
+      <FormItem label="优秀批改模板" v-show="!templateList.length">
         暂无模板
       </FormItem>
       <FormItem label="优秀批改模板" v-show="templateList.length">
@@ -89,6 +89,7 @@
         nowType: '',
         dataItem: {
           workImgSrc: [],
+          evaluate: [],
           replyImg: []
         },
         templateList: []
