@@ -32,10 +32,10 @@
             <Input type="text" v-model="addInfo.password" placeholder="请输入初始密码"></Input>
             <span class="-c-tips">* 添加后，密码可重置为初始密码ju123456</span>
           </FormItem>
-          <FormItem label="预估工作量" prop="amount">
-            <InputNumber type="text" v-model="addInfo.amount" :min="0"
-                         placeholder="请输入预估工作量"></InputNumber>
-          </FormItem>
+          <!--<FormItem label="预估工作量" prop="amount">-->
+            <!--<InputNumber type="text" v-model="addInfo.amount" :min="0"-->
+                         <!--placeholder="请输入预估工作量"></InputNumber>-->
+          <!--</FormItem>-->
           <!--<FormItem label="角色权限" prop="roleId">-->
           <!--<Radio-group v-model="addInfo.roleId">-->
           <!--<Radio label='3'>作业批改老师</Radio>-->
@@ -118,9 +118,9 @@
             {required: true, message: '请输入教师名称', trigger: 'blur'},
             {type: 'string', max: 20, message: '教师名称长度为20字', trigger: 'blur'}
           ],
-          amount: [
-            {required: true, type: 'number', message: '请输入预估工作量', trigger: 'blur'}
-          ],
+          // amount: [
+          //   {required: true, type: 'number', message: '请输入预估工作量', trigger: 'blur'}
+          // ],
           password: [
             {required: true, message: '请输入初始密码', trigger: 'blur'}
           ],
@@ -177,11 +177,11 @@
             },
             align: 'center'
           },
-          {
-            title: '预计工作量',
-            key: 'amount',
-            align: 'center'
-          },
+          // {
+          //   title: '预计工作量',
+          //   key: 'amount',
+          //   align: 'center'
+          // },
           {
             title: '已绑定学生',
             render: (h, params) => {
@@ -371,7 +371,7 @@
         } else {
           this.addInfo = {
             id: '',
-            amount: null,
+            // amount: null,
             courses: [],
             img: ''
           }
@@ -506,7 +506,7 @@
               username: this.addInfo.username,
               password: this.addInfo.password,
               headimgurl: this.addInfo.headimgurl,
-              amount: this.addInfo.amount,
+              // amount: this.addInfo.amount,
               courses: `${this.addInfo.courses}`
             })
               .then(
