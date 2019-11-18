@@ -37,19 +37,37 @@
         class="p-bookingList"
         v-model="isOpenModal"
         @on-cancel="closeModal('addInfo')"
-        width="600"
-        :title="addInfo.id ? '编辑优惠券' : '创建优惠券'">
-        <Form ref="addInfo" :model="addInfo" :rules="ruleValidate" :label-width="90">
+        width="800"
+        :title="addInfo.id ? '编辑预约信息' : '创建预约信息'">
+        <Form ref="addInfo" :model="addInfo" :rules="ruleValidate" :label-width="130">
           <FormItem label="注意" class="-c-tips">
             添加活动后，预约人数为0时，可以更改所有活动信息。预约人数大于0时，活动关联的付费体验课班级不可更改，活动开始时间不可更改。每个付费体验课班级只能被一个预约活动关联，请谨慎操作。
           </FormItem>
-          <FormItem label="关联付费体验课班级">
-            <div class="p-bookingList-formItemWrap">
-              <div class="-item-name" v-for="(item,index) of applicableCourseList" :key="index">{{item}}</div>
+          <FormItem label="关联付费体验课班级" class="ivu-form-item-required">
+            <div class="p-bookingList-formItemWrap" v-for="item of 3">
+              <div class="-item-name">乐小狮作文低段体验课</div>
+              <Select class="-item-select" v-model="addInfo.payed">
+                <Option v-for="item of 5" :label=item.name :value=item.id :key="item.id"></Option>
+              </Select>
             </div>
           </FormItem>
-          <FormItem label="优惠信息" prop="name">
-            <Input type="text" v-model="addInfo.name" :disabled="addInfo.id!=''" placeholder="请输入优惠券名称"></Input>
+          <FormItem label="优惠信息" class="ivu-form-item-required">
+            <div class="p-bookingList-formDataItem" v-for="(item,index) of discountInfoList" :key="index">
+              <div class="item-wrap">
+                <span>满足人数</span>
+                <Input class="-item-input" type="text" v-model="item.num" placeholder="人数"></Input>
+              </div>
+              <div class="item-wrap">
+                <span>优惠金额</span>
+                <Input class="-item-input" type="text" v-model="item.price" placeholder="金额"></Input>
+              </div>
+              <div class="item-wrap">
+                <span>购课地址</span>
+                <Input class="-item-input" type="text" v-model="item.address" placeholder="购课地址"></Input>
+              </div>
+              <div class="g-error g-cursor" @click="delActiveInfo(index)">删除</div>
+            </div>
+            <Button v-if="discountInfoList.length<3" @click="addActiveInfo" ghost type="primary" style="width: 100px;">新增优惠等级</Button>
           </FormItem>
 
           <FormItem label="虚拟预约用户" prop="groupEndTime">
@@ -60,21 +78,21 @@
             <Row>
               <Col span="11">
                 <Form-item prop="startTime">
-                  <Date-picker style="width: 100%" type="datetime" placeholder="选择开始日期" :disabled="addInfo.id!=''"
+                  <Date-picker style="width: 100%" type="datetime" placeholder="选择开始日期"
                                v-model="addInfo.startTime" :options="dateStartOption"></Date-picker>
                 </Form-item>
               </Col>
               <Col span="2" style="text-align: center">-</Col>
               <Col span="11">
                 <Form-item prop="endTime">
-                  <Date-picker style="width: 100%" type="datetime" placeholder="选择结束日期" :disabled="addInfo.id!=''"
+                  <Date-picker style="width: 100%" type="datetime" placeholder="选择结束日期"
                                v-model="addInfo.endTime" :options="dateEndOption"></Date-picker>
                 </Form-item>
               </Col>
             </Row>
           </FormItem>
           <FormItem label="抢课结束时间" class="ivu-form-item-required">
-            <Date-picker style="width: 100%" type="datetime" placeholder="选择抢课结束时间" :disabled="addInfo.id!=''"
+            <Date-picker style="width: 100%" type="datetime" placeholder="选择抢课结束时间"
                          v-model="addInfo.startTime" :options="dateStartOption"></Date-picker>
           </FormItem>
           <FormItem label="活动规则">
@@ -113,7 +131,7 @@
             @on-change="detailCurrentChange"></Page>
     </Modal>
 
-
+    <virtual-user-template v-model="isOpenModalUser"></virtual-user-template>
   </div>
 </template>
 
@@ -122,10 +140,11 @@
   import {getBaseUrl} from '@/libs/index'
   import DatePickerTemplate from "../../../components/datePickerTemplate";
   import UploadImg from "../../../components/uploadImg";
+  import VirtualUserTemplate from "./virtualUserTemplate";
 
   export default {
     name: 'flashScreen',
-    components: {UploadImg, DatePickerTemplate},
+    components: {VirtualUserTemplate, UploadImg, DatePickerTemplate},
     data() {
       return {
         tab: {
@@ -166,6 +185,13 @@
         ],
         dataList: [],
         detailList: [],
+        discountInfoList: [
+          {
+            num: '',
+            price: '',
+            address: ''
+          }
+        ],
         selectInfo: '1',
         searchInfo: {
           payed: '-1'
@@ -173,7 +199,7 @@
         total: 0,
         totalDetail: 0,
         isFetching: false,
-        isOpenModal: false,
+        isOpenModal: true,
         isOpenModalDetail: false,
         isOpenModalUser: false,
         isSending: false,
@@ -351,6 +377,16 @@
       this.getList()
     },
     methods: {
+      delActiveInfo (index) {
+        this.discountInfoList.splice(index,1)
+      },
+      addActiveInfo() {
+        this.discountInfoList.push({
+          num: '',
+          price: '',
+          address: ''
+        })
+      },
       copyUrl(param) {
         this.copy_url = param.url
         setTimeout(() => {
@@ -359,7 +395,7 @@
           this.$Message.success('复制成功');
         }, 500);
       },
-      openUserModal () {
+      openUserModal() {
         this.isOpenModalUser = true
       },
       openModal(data) {
@@ -370,6 +406,13 @@
           this.addInfo.groupEndTime = this.addInfo.groupEndTime.toString()
           this.addInfo.autoGroupTime = this.addInfo.autoGroupTime.toString()
         } else {
+          this.discountInfoList = [
+            {
+              num: '',
+              price: '',
+              address: ''
+            }
+          ],
           this.addInfo = {
             id: '',
             groupPrice: null,
@@ -495,15 +538,34 @@
 
     &-formItemWrap {
       display: flex;
+      align-items: center;
+      margin-bottom: 10px;
 
       .-item-name {
         display: inline-block;
-        padding: 4px 8px;
-        line-height: 18px;
-        color: #ffffff;
-        border-radius: 20px;
-        background: #00c9ff;
+        margin-right: 20px;
+      }
+
+      .-item-select {
+        width: 70%;
+      }
+
+    }
+
+    &-formDataItem {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+
+      .item-wrap {
+        width: 30%;
+      }
+
+      .-item-input {
+        display: inline-block;
         margin-left: 10px;
+        width: 120px;
       }
     }
 
