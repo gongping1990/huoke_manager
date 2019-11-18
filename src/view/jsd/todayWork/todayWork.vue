@@ -82,7 +82,7 @@
         @on-cancel="closeModal('addInfo')"
         width="750"
         title="批改作业">
-        <Form ref="addInfo" :model="addInfo" :label-width="90">
+        <Form ref="addInfo" :model="addInfo" :label-width="100">
           <FormItem label="是否合格">
             <Radio-group v-model="addInfo.isPassed" @on-change="changePassed">
               <Radio :label=1>合格</Radio>
@@ -92,18 +92,33 @@
           <FormItem label="教师名称" prop="replyTeacher" class="ivu-form-item-required">
             <Input type="text" v-model="addInfo.replyTeacher" placeholder="请输入教师名称"></Input>
           </FormItem>
-          <FormItem label="批改图片" v-if="addInfo.isPassed === 1">
-            <div class="p-todayWork-formItem" v-if="addInfo.homeworkType === 2">
+          <FormItem label="批改模式" v-if="addInfo.isPassed === 1 && (addInfo.homeworkType === 2)">
+            <Radio-group v-model="corType">
+              <Radio :label=1>线上批改</Radio>
+              <Radio :label=2>本地上传</Radio>
+            </Radio-group>
+          </FormItem>
+          <FormItem label="线上批改图片" v-if="addInfo.isPassed === 1 && (addInfo.homeworkType === 2) &&corType===1">
+            <div class="p-todayWork-formItem">
               <div class="g-course-add-style" @click="openPictures">
                 <span>+</span>
                 <span>进入在线批改</span>
               </div>
-              <div class="g-course-add-style" @click="viewWork(addInfo)">
+              <div class="g-course-add-style" @click="viewWork(addInfo, '1')">
                 <span>+</span>
                 <span>获取批改图片</span>
               </div>
             </div>
-            <upload-img-multiple v-model="addInfo.replyImg" :option="uploadOption"></upload-img-multiple>
+
+            <div class="-c-course-wrap" v-if="addInfo.replyImgTmp.length">
+              <div class="-c-course-item" v-for="(item, index) of addInfo.replyImgTmp" :key="index">
+                <img :src="item">
+                <div class="-i-del" @click="delImg(item,index)">删除</div>
+              </div>
+            </div>
+          </FormItem>
+          <FormItem label="本地批改图片" v-if="addInfo.isPassed === 1 && (addInfo.homeworkType === 2) && (corType === 2)">
+            <upload-img-multiple v-model="addInfo.replyImgUpload" :option="uploadOption"></upload-img-multiple>
           </FormItem>
           <FormItem label="批改音频" v-if="addInfo.isPassed === 1">
             <upload-audio ref="childAudio" v-model="addInfo.replyAudio" :option="uploadAudioOption"
@@ -112,7 +127,8 @@
           <FormItem label="批改文案" :class="{'ivu-form-item-required': addInfo.isPassed === 0}">
             <Input type="textarea" :rows="5" v-model="addInfo.replyText" placeholder="请输入批改文案"></Input>
           </FormItem>
-          <FormItem label="综合评分" v-if="addInfo.isPassed === 1" :class="{'ivu-form-item-required': addInfo.isPassed === 1}">
+          <FormItem label="综合评分" v-if="addInfo.isPassed === 1"
+                    :class="{'ivu-form-item-required': addInfo.isPassed === 1}">
             <p class="-c-tips">此评分主要用于其他老师在查看作业记录时，能快速的对用户的作业情况有一个大致的了解，用户不可见</p>
             <div class="p-todayWork-score">
               <div class="p-todayWork-scoreItem" v-for="(item, index) of addInfo.scores" :key="index">
@@ -168,7 +184,8 @@
     components: {
       JobRequireTemplate,
       ExamineModal,
-      LookUserInfo, JobRecordTemplate, SearchTemplate, UploadImgMultiple, DatePickerTemplate, UploadAudio},
+      LookUserInfo, JobRecordTemplate, SearchTemplate, UploadImgMultiple, DatePickerTemplate, UploadAudio
+    },
     data() {
       return {
         tab: {
@@ -205,6 +222,7 @@
         total: 0,
         radioType: +localStorage.todayWork_type || 0,
         unqualifiedType: 1,
+        corType: 1,
         getStartTime: '',
         getEndTime: '',
         noticeMessage: '',
@@ -250,7 +268,7 @@
             title: '课程名称',
             key: 'lessonName',
             align: 'center',
-            tooltip:true
+            tooltip: true
           },
           {
             title: '是否付费',
@@ -262,7 +280,7 @@
           {
             title: '作业要求',
             key: 'homeworkRequire',
-            render: (h, params)=>{
+            render: (h, params) => {
               return h('Button', {
                 props: {
                   type: 'text',
@@ -278,7 +296,7 @@
                     this.openRequire(params.row)
                   }
                 }
-              }, `${params.row.homeworkRequire.substr(0,5)}...`)
+              }, `${params.row.homeworkRequire.substr(0, 5)}...`)
             },
             align: 'center'
           },
@@ -371,7 +389,7 @@
                       this.noRequired(params.row)
                     }
                   }
-                },'无需批改'),
+                }, '无需批改'),
                 h('Button', {
                   props: {
                     type: 'text',
@@ -459,7 +477,7 @@
           {
             title: '作业要求',
             key: 'homeworkRequire',
-            render: (h, params)=>{
+            render: (h, params) => {
               return h('Button', {
                 props: {
                   type: 'text',
@@ -475,7 +493,7 @@
                     this.openRequire(params.row)
                   }
                 }
-              }, `${params.row.homeworkRequire.substr(0,8)}...`)
+              }, `${params.row.homeworkRequire.substr(0, 8)}...`)
             },
             align: 'center'
           },
@@ -690,7 +708,7 @@
           {
             title: '作业要求',
             key: 'homeworkRequire',
-            render: (h, params)=>{
+            render: (h, params) => {
               return h('Button', {
                 props: {
                   type: 'text',
@@ -706,7 +724,7 @@
                     this.openRequire(params.row)
                   }
                 }
-              }, `${params.row.homeworkRequire.substr(0,8)}...`)
+              }, `${params.row.homeworkRequire.substr(0, 8)}...`)
             },
             align: 'center'
           },
@@ -884,7 +902,7 @@
           {
             title: '作业要求',
             key: 'homeworkRequire',
-            render: (h, params)=>{
+            render: (h, params) => {
               return h('Button', {
                 props: {
                   type: 'text',
@@ -900,7 +918,7 @@
                     this.openRequire(params.row)
                   }
                 }
-              }, `${params.row.homeworkRequire.substr(0,8)}...`)
+              }, `${params.row.homeworkRequire.substr(0, 8)}...`)
             },
             align: 'center'
           },
@@ -1018,10 +1036,13 @@
       this.getTeacherRemind()
     },
     methods: {
-      openPictures () {
-        window.open(`${getVisitUrl()}/#/correct?system=${this.searchInfo.system}&courseId=${this.addInfo.courseId}&workId=${this.addInfo.workId}`,'_blank');
+      delImg(item, index) {
+        this.addInfo.replyImgTmp.splice(index, 1)
       },
-      editPictures (data) {
+      openPictures() {
+        window.open(`${getVisitUrl()}/#/correct?system=${this.searchInfo.system}&courseId=${this.addInfo.courseId}&workId=${this.addInfo.workId}`, '_blank');
+      },
+      editPictures(data) {
         this.$Modal.confirm({
           title: '确认要修改图片吗？',
           content: '修改图片后，修改后的图片会替换掉之前的批改图片',
@@ -1030,7 +1051,7 @@
           }
         })
       },
-      toPictures (data) {
+      toPictures(data) {
         this.$router.push({
           name: 'correct',
           query: {
@@ -1043,10 +1064,10 @@
       noRequired(data) {
         this.$Modal.confirm({
           title: '提示',
-          content: this.radioType === 4? '确认将该作业移入待批改' : '确认移出到无需批改？',
+          content: this.radioType === 4 ? '确认将该作业移入待批改' : '确认移出到无需批改？',
           onOk: () => {
             let paramUrl = ''
-            if (this.radioType === 0 ) {
+            if (this.radioType === 0) {
               paramUrl = this.$api.jsdJob.replyHomework({
                 courseId: this.searchInfo.appId,
                 id: data.workId,
@@ -1199,7 +1220,7 @@
         this.playAudioUrl = data
         this.isOpenModalPlay = true
       },
-      openRequire (data) {
+      openRequire(data) {
         this.isOpenJobRequire = true
         this.requireInfo = JSON.parse(JSON.stringify(data))
         this.requireInfo.appId = this.searchInfo.appId
@@ -1236,7 +1257,7 @@
         this.getEndTime = data.endTime
         this.getList(1)
       },
-      successAudit (data) {
+      successAudit(data) {
         this.getList(1)
         if (data.reviewStatus === 3) {
           this.openModal(data)
@@ -1254,11 +1275,12 @@
 
         this.addInfo = {
           replyImg: [],
+          replyImgUpload: [],
           replyText: '',
           replyAudio: ''
         }
         if (data) {
-          this.viewWork(data)
+          this.viewWork(data, '')
         }
       },
       closeModal(name) {
@@ -1292,7 +1314,7 @@
             ]
           })
       },
-      viewWork(data) {
+      viewWork(data, str) {
         this.$api.jsdJob.viewWork({
           system: this.searchInfo.system,
           workId: data.workId
@@ -1303,8 +1325,11 @@
             _self.addInfo.isPassed = _self.radioType != 1 ? 1 : 0
             _self.addInfo.workImgSrc = _self.addInfo.workImgSrc ? _self.addInfo.workImgSrc.split(',') : []
             _self.addInfo.replyImgTmp = _self.addInfo.replyImgTmp ? _self.addInfo.replyImgTmp.split(',') : []
-            _self.addInfo.replyImg = _self.addInfo.replyImgTmp
-            // _self.addInfo.replyImg = _self.addInfo.replyImg.length ? _self.addInfo.replyImg.concat(_self.addInfo.replyImgTmp) : _self.addInfo.replyImgTmp
+            _self.addInfo.replyImgUpload = _self.addInfo.replyImgUpload ? _self.addInfo.replyImgUpload.split(',') : []
+
+            if (!str) {
+              _self.corType = _self.addInfo.replyImgUpload.length ? 2 : 1
+            }
             _self.$forceUpdate()
           })
       },
@@ -1363,6 +1388,8 @@
           return (item.score != null && item.score < 100)
         })
 
+        this.addInfo.replyImg = this.corType === 1 ? this.addInfo.replyImgTmp : this.addInfo.replyImgUpload
+
         if (!this.addInfo.replyTeacher) {
           return this.$Message.error('请输入教师名称')
         } else if (this.addInfo.replyImg.length > 3) {
@@ -1379,6 +1406,7 @@
           id: this.addInfo.workId,
           courseId: this.searchInfo.appId,
           replyImg: `${this.addInfo.replyImg}`,
+          replyImgTmp: this.corType === 1 ? `${this.addInfo.replyImgTmp}` : '',
           replyTeacher: this.addInfo.replyTeacher,
           replyText: this.addInfo.replyText,
           replyAudio: this.addInfo.replyAudio,
@@ -1404,8 +1432,6 @@
   .p-todayWork {
 
     &-formItem {
-      position: absolute;
-      left: 160px;
       display: flex;
 
       .g-course-add-style {
@@ -1485,9 +1511,9 @@
     }
 
     &-score {
-      display:flex;
-      flex-direction:row;
-      flex-wrap:wrap;
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
     }
 
     &-scoreItem {
@@ -1496,17 +1522,17 @@
       margin-top: 10px;
       width: 50%;
 
-      span{
+      span {
         text-align: right;
         display: inline-block;
-        width:40%;
+        width: 40%;
         text-overflow: ellipsis;
         overflow: hidden;
         white-space: nowrap;
       }
 
       .-input {
-        width:50%;
+        width: 50%;
         margin-left: 10px;
       }
     }
@@ -1518,14 +1544,20 @@
     .-c-course-wrap {
       display: inline-block;
       .-c-course-item {
-        position: relative;
         display: inline-block;
-        /*height: 70px;*/
+        position: relative;
+        background-color: #EBEBEB;
+        width: 180px;
+        height: 100px;
+        margin: 20px 20px 20px 0;
+        border: 1px solid #EBEBEB;
+        border-radius: 4px;
+        padding: 4px;
         overflow: hidden;
 
         img {
-          width: 140px;
-          height: 70px;
+          width: 100%;
+          height: 100%;
         }
 
         .-i-text {
