@@ -348,6 +348,15 @@ export const tbzwRouter =[
           {name: '团购列表'}
         ],
         component: () => import('@/view/tbzw/couponManagement/groupList')
+      },
+      {
+        path: '/tbzw_bookingList',
+        name: 'tbzw_bookingList',
+        meta: [
+          {name: '营销管理'},
+          {name: '预约列表'}
+        ],
+        component: () => import('@/view/tbzw/couponManagement/bookingList')
       }
     ]
   },

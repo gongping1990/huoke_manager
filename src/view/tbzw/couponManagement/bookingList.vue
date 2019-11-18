@@ -1,19 +1,12 @@
 <template>
-  <div class="p-couponList">
+  <div class="p-bookingList">
     <input type="text" v-model="copy_url" class="copy-input" ref="copyInput">
     <Card>
-      <Row class="g-search g-t-left">
-        <Radio-group v-model="radioType" type="button" @on-change="getList(1)">
-          <Radio :label=0>小语轻作文</Radio>
-          <Radio :label=1>乐小狮作文</Radio>
-        </Radio-group>
-      </Row>
-
-      <Row class="g-search -c-tab">
+      <Row class="g-search">
         <Col :span="5">
           <div class="-search">
             <Select v-model="selectInfo" class="-search-select">
-              <Option value="1">优惠券名称</Option>
+              <Option value="1">活动名称</Option>
             </Select>
             <span class="-search-center">|</span>
             <Input v-model="searchInfo.nickname" class="-search-input" placeholder="请输入关键字" icon="ios-search"
@@ -22,7 +15,7 @@
         </Col>
         <Col :span="5" class="g-t-left">
           <div class="g-flex-a-j-center">
-            <div class="-search-select-text-two">领取状态：</div>
+            <div class="-search-select-text-two">活动状态：</div>
             <Select v-model="searchInfo.payed" @on-change="getList(1)" class="-search-selectOne">
               <Option v-for="item of receiveStatus" :label=item.name :value=item.id :key="item.id"></Option>
             </Select>
@@ -41,76 +34,62 @@
             @on-change="currentChange"></Page>
 
       <Modal
-        class="p-couponList"
+        class="p-bookingList"
         v-model="isOpenModal"
         @on-cancel="closeModal('addInfo')"
         width="600"
         :title="addInfo.id ? '编辑优惠券' : '创建优惠券'">
         <Form ref="addInfo" :model="addInfo" :rules="ruleValidate" :label-width="90">
           <FormItem label="注意" class="-c-tips">
-            添加优惠券后，只能修改发行量、分享大标题、分享小标题、链接配图，且发行量只能增加，不能减少，如其他参数填写错误，请结束后重新添加
+            添加活动后，预约人数为0时，可以更改所有活动信息。预约人数大于0时，活动关联的付费体验课班级不可更改，活动开始时间不可更改。每个付费体验课班级只能被一个预约活动关联，请谨慎操作。
           </FormItem>
-          <FormItem label="适用课程">
-            <div class="p-couponList-formItemWrap">
+          <FormItem label="关联付费体验课班级">
+            <div class="p-bookingList-formItemWrap">
               <div class="-item-name" v-for="(item,index) of applicableCourseList" :key="index">{{item}}</div>
             </div>
           </FormItem>
-          <FormItem label="优惠券名称" prop="couponName">
-            <Input type="text" v-model="addInfo.couponName" :disabled="addInfo.id!=''" placeholder="请输入优惠券名称"></Input>
+          <FormItem label="优惠信息" prop="name">
+            <Input type="text" v-model="addInfo.name" :disabled="addInfo.id!=''" placeholder="请输入优惠券名称"></Input>
           </FormItem>
-          <FormItem label="优惠券面额" prop="couponAmount">
-            <Input-number class="g-width" :min="0" :step="1" v-model="addInfo.couponAmount" :disabled="addInfo.id!=''"
-                          placeholder="请输入优惠券面额（元）"></Input-number>
-            <span class="-c-tips">* 精确到小数点后2位，如99.99</span>
+
+          <FormItem label="虚拟预约用户" prop="groupEndTime">
+            <Button @click="openUserModal()" ghost type="primary" style="width: 100px;">+添加用户</Button>
+            <div class="-c-tips">为了营造真实的活动氛围，请选择在真实在群内的运营人员来充当虚拟预约用户</div>
           </FormItem>
-          <FormItem label="发行量" prop="couponNum">
-            <Input-number class="g-width" :max="1000000" :min="0" :step="1" v-model="addInfo.couponNum"
-                          placeholder="请输入发行量"></Input-number>
-            <span class="-c-tips">* 添加优惠券后，发行量只能增加，不能减少，总共不超过1,000,000张</span>
-          </FormItem>
-          <FormItem label="有效期" class="ivu-form-item-required">
+          <FormItem label="预约活动时间" class="ivu-form-item-required">
             <Row>
               <Col span="11">
-                <Form-item prop="expiryStartDate">
-                  <Date-picker style="width: 100%" type="datetime" placeholder="选择开始日期" :disabled="true"
-                               v-model="addInfo.receiveStartDate" :options="dateStartOption"></Date-picker>
+                <Form-item prop="startTime">
+                  <Date-picker style="width: 100%" type="datetime" placeholder="选择开始日期" :disabled="addInfo.id!=''"
+                               v-model="addInfo.startTime" :options="dateStartOption"></Date-picker>
                 </Form-item>
               </Col>
               <Col span="2" style="text-align: center">-</Col>
               <Col span="11">
-                <Form-item prop="expiryEndDate">
+                <Form-item prop="endTime">
                   <Date-picker style="width: 100%" type="datetime" placeholder="选择结束日期" :disabled="addInfo.id!=''"
-                               v-model="addInfo.expiryEndDate" :options="dateEndOption"></Date-picker>
+                               v-model="addInfo.endTime" :options="dateEndOption"></Date-picker>
                 </Form-item>
               </Col>
             </Row>
           </FormItem>
-          <FormItem label="领取时间" class="ivu-form-item-required">
-            <Row>
-              <Col span="11">
-                <Form-item prop="receiveStartDate">
-                  <Date-picker style="width: 100%" type="datetime" placeholder="选择开始日期" :disabled="addInfo.id!=''"  @on-change="changeStartClick"
-                               v-model="addInfo.receiveStartDate" :options="dateStartOption"></Date-picker>
-                </Form-item>
-              </Col>
-              <Col span="2" style="text-align: center">-</Col>
-              <Col span="11">
-                <Form-item prop="receiveEndDate">
-                  <Date-picker style="width: 100%" type="datetime" placeholder="选择结束日期" :disabled="addInfo.id!=''"
-                               v-model="addInfo.receiveEndDate" :options="dateEndOption"></Date-picker>
-                </Form-item>
-              </Col>
-            </Row>
+          <FormItem label="抢课结束时间" class="ivu-form-item-required">
+            <Date-picker style="width: 100%" type="datetime" placeholder="选择抢课结束时间" :disabled="addInfo.id!=''"
+                         v-model="addInfo.startTime" :options="dateStartOption"></Date-picker>
+          </FormItem>
+          <FormItem label="活动规则">
+            <Input type="textarea" v-model="addInfo.shareBigTitle" :rows="4" placeholder="请输入活动规则"></Input>
           </FormItem>
           <FormItem label="分享大标题">
-            <Input type="text" v-model="addInfo.bigTitle" placeholder="请输入分享大标题"></Input>
+            <Input type="text" v-model="addInfo.shareBigTitle" placeholder="请输入分享大标题"></Input>
           </FormItem>
           <FormItem label="分享小标题">
-            <Input type="text" v-model="addInfo.title" placeholder="请输入分享小标题"></Input>
+            <Input type="text" v-model="addInfo.shareSmallTitle" placeholder="请输入分享小标题"></Input>
           </FormItem>
           <Form-item label="链接配图">
-            <upload-img v-model="addInfo.playbill" :option="uploadOption"></upload-img>
+            <upload-img v-model="addInfo.linkImg" :option="uploadOption"></upload-img>
           </Form-item>
+
         </Form>
         <div slot="footer" class="-p-b-flex">
           <Button @click="closeModal('addInfo')" ghost type="primary" style="width: 100px;">取消</Button>
@@ -118,8 +97,23 @@
         </div>
       </Modal>
 
-
     </Card>
+
+    <Modal
+      class="p-bookingList"
+      v-model="isOpenModalDetail"
+      @on-cancel="isOpenModalDetail = false"
+      footer-hide
+      width="800"
+      title="数据详情">
+      <Table class="-c-tab" :loading="isFetching" :columns="columnsModal" :data="detailList"></Table>
+
+      <Page class="g-text-right" :total="totalDetail" size="small" show-elevator :page-size="tabDetail.pageSize"
+            :current.sync="tabDetail.currentPage"
+            @on-change="detailCurrentChange"></Page>
+    </Modal>
+
+
   </div>
 </template>
 
@@ -134,8 +128,12 @@
     components: {UploadImg, DatePickerTemplate},
     data() {
       return {
-        baseUrl: `${getBaseUrl()}/sch/common/uploadPublicFile`,
         tab: {
+          page: 1,
+          currentPage: 1,
+          pageSize: 10
+        },
+        tabDetail: {
           page: 1,
           currentPage: 1,
           pageSize: 10
@@ -155,7 +153,7 @@
           },
           {
             id: '1',
-            name: '领取中'
+            name: '进行中'
           },
           {
             id: '2',
@@ -166,8 +164,8 @@
             name: '已过期'
           }
         ],
-        radioType: 0,
         dataList: [],
+        detailList: [],
         selectInfo: '1',
         searchInfo: {
           payed: '-1'
@@ -176,13 +174,14 @@
         totalDetail: 0,
         isFetching: false,
         isOpenModal: false,
-        isOpenModalData: false,
+        isOpenModalDetail: false,
+        isOpenModalUser: false,
         isSending: false,
         addInfo: {},
         copy_url: '',
         statusList: {
           '0': '未开始',
-          '1': '领取中',
+          '1': '进行中',
           '2': '已结束',
           '3': '已过期'
         },
@@ -197,80 +196,68 @@
           }
         },
         ruleValidate: {
-          couponName: [
-            {required: true, message: '请输入优惠券名称', trigger: 'blur'},
-            {type: 'string', max: 20, message: '优惠券名称长度为20字', trigger: 'blur'}
+          name: [
+            {required: true, message: '请输入团购名称', trigger: 'blur'},
+            {type: 'string', max: 20, message: '团购名称长度为20字', trigger: 'blur'}
           ],
-          couponAmount: [
-            {required: true, type: 'number', message: '请输入优惠券金额', trigger: 'blur'},
+          groupPrice: [
+            {required: true, type: 'number', message: '请输入拼课价格', trigger: 'blur'},
           ],
-          couponNum: [
-            {required: true, type: 'number', message: '请输入优惠券发行量', trigger: 'blur'},
+          groupEndTime: [
+            {required: true, message: '请输入拼课时限', trigger: 'blur'},
           ],
-          expiryEndDate: [
-            {required: true, type: 'date', message: '请输入有效期结束时间', trigger: 'blur'},
+          autoGroupTime: [
+            {required: true, message: '请输入自动成团时限', trigger: 'blur'},
           ],
-          receiveStartDate: [
-            {required: true, type: 'date', message: '请输入领取开始时间', trigger: 'blur'},
+          startTime: [
+            {required: true, type: 'date', message: '请输入活动开始时间', trigger: 'blur'},
           ],
-          receiveEndDate: [
-            {required: true, type: 'date', message: '请输入领取结束时间', trigger: 'blur'},
+          endTime: [
+            {required: true, type: 'date', message: '请输入活动结束时间', trigger: 'blur'},
           ]
         },
         columns: [
           {
-            title: '优惠券名称',
-            key: 'couponName',
+            title: '活动名称',
+            key: 'name',
             align: 'center'
           },
           {
-            title: '优惠券金额',
+            title: '关联付费体验课班级',
+            key: 'groupEndTime',
+            align: 'center'
+          },
+          {
+            title: '优惠等级1',
+            key: 'autoGroupTime',
+            align: 'center'
+          },
+          {
+            title: '优惠等级2',
+            key: 'autoGroupTime',
+            align: 'center'
+          },
+          {
+            title: '优惠等级3',
+            key: 'autoGroupTime',
+            align: 'center'
+          },
+          {
+            title: '预约人数',
+            key: 'payUserCount',
+            align: 'center'
+          },
+          {
+            title: '活动时间',
             render: (h, params) => {
-              return h('span', (+params.row.couponAmount / 100).toFixed(2))
+              return h('span', `${params.row.startTime} - ${params.row.endTime}`)
             },
-            key: 'couponAmount',
+            width: 300,
             align: 'center'
-          },
-          {
-            title: '领取时间',
-            render: (h, params) => {
-              return h('span', `${params.row.receiveStartDate} - ${params.row.receiveEndDate}`)
-            },
-            width: 160,
-            align: 'center'
-          },
-          {
-            title: '有效期时间',
-            render: (h, params) => {
-              return h('span', `${params.row.expiryStartDate} - ${params.row.expiryEndDate}`)
-            },
-            width: 160,
-            align: 'center'
-          },
-          {
-            title: '发行量',
-            key: 'couponNum',
-            align: 'center'
-          },
-          {
-            title: '已领取',
-            key: 'receives',
-            align: 'center'
-          },
-          {
-            title: '已使用',
-            key: 'uses',
-            align: 'center'
-          },
-          {
-            title: '领取状态',
-            render: (h, params) => {
-              return h('div', this.statusList[params.row.type])
-            }
           },
           {
             title: '操作',
-            width: 260,
+            width: 220,
             render: (h, params) => {
               return h('div', [
                 h('Button', {
@@ -279,44 +266,14 @@
                     size: 'small'
                   },
                   style: {
-                    color: '#5444E4',
-                  },
-                  on: {
-                    click: () => {
-                      this.openModal(params.row)
-                    }
-                  }
-                }, '数据统计'),
-                h('Button', {
-                  props: {
-                    type: 'text',
-                    size: 'small'
-                  },
-                  style: {
-                    display: params.row.type < 2 ? 'inline-block' : 'none',
                     color: '#5444E4'
                   },
                   on: {
                     click: () => {
-                      this.openModal(params.row)
+                      this.openModalDetail(params.row)
                     }
                   }
-                }, '编辑'),
-                h('Button', {
-                  props: {
-                    type: 'text',
-                    size: 'small'
-                  },
-                  style: {
-                    display: params.row.type > 1 ? 'none' : 'inline-block',
-                    color: 'rgba(218, 55, 75)'
-                  },
-                  on: {
-                    click: () => {
-                      this.endItem(params.row)
-                    }
-                  }
-                }, '结束'),
+                }, '数据统计'),
                 h('Button', {
                   props: {
                     type: 'text',
@@ -330,72 +287,99 @@
                       this.copyUrl(params.row)
                     }
                   }
-                }, '复制链接')
+                }, '复制链接'),
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    display: params.row.state > 1 ? 'none' : 'inline-block',
+                    color: 'rgba(218, 55, 75)'
+                  },
+                  on: {
+                    click: () => {
+                      this.endItem(params.row)
+                    }
+                  }
+                }, '结束'),
               ])
             }
           }
+        ],
+        columnsModal: [
+          {
+            title: '预约页面PV',
+            key: 'name',
+            align: 'center'
+          },
+          {
+            title: '预约页面UV',
+            key: 'groupEndTime',
+            align: 'center'
+          },
+          {
+            title: '预约人数',
+            key: 'payUserCount',
+            align: 'center'
+          },
+          {
+            title: '预约率',
+            key: 'payUserCount',
+            align: 'center'
+          },
+          {
+            title: '下单人数',
+            key: 'payUserCount',
+            align: 'center'
+          },
+          {
+            title: '成功订单数',
+            key: 'payUserCount',
+            align: 'center'
+          },
+          {
+            title: '预约-付费转化率',
+            width: 150,
+            key: 'payUserCount',
+            align: 'center'
+          }
         ]
       };
-    },
-    watch: {
-      'addInfo.receiveStartDate'(_new, _old) {
-        this.dateEndOption = {
-          disabledDate(date) {
-            return date && date.valueOf() < new Date(_new).getTime();
-          }
-        }
-      }
-    },
-    computed: {
-      applicableCourseList() {
-        let list = []
-        if (this.radioType === 0) {
-          list = ['小语轻作文']
-        } else {
-          list = ['乐小狮作文高段', '乐小狮作文中段', '乐小狮作文低段']
-        }
-        return list
-      }
     },
     mounted() {
       this.getList()
     },
     methods: {
-      changeStartClick () {
-        let data1 = new Date(this.addInfo.receiveStartDate).getTime()
-        let data2 = new Date(this.addInfo.receiveEndDate).getTime()
-        let data3 = new Date(this.addInfo.expiryEndDate).getTime()
-
-        if (data1 > data2) {
-          this.addInfo.receiveEndDate = ''
-        }
-
-        if (data1 > data3) {
-          this.addInfo.expiryEndDate = ''
-        }
-      },
       copyUrl(param) {
-        this.copy_url = param.couponUrl
+        this.copy_url = param.url
         setTimeout(() => {
           this.$refs.copyInput.select();
           document.execCommand("copy");
           this.$Message.success('复制成功');
         }, 500);
       },
+      openUserModal () {
+        this.isOpenModalUser = true
+      },
       openModal(data) {
         this.isOpenModal = true
         if (data) {
           this.addInfo = JSON.parse(JSON.stringify(data))
-          this.addInfo.couponAmount = +this.addInfo.couponAmount / 100
-          this.addInfo.couponNum = +this.addInfo.couponNum
+          this.addInfo.groupPrice = +this.addInfo.groupPrice / 100
+          this.addInfo.groupEndTime = this.addInfo.groupEndTime.toString()
+          this.addInfo.autoGroupTime = this.addInfo.autoGroupTime.toString()
         } else {
           this.addInfo = {
             id: '',
-            couponAmount: null,
-            couponNum: null,
-            playbill: ''
+            groupPrice: null,
+            linkImg: '',
+            popImg: ''
           }
         }
+      },
+      openModalDetail(data) {
+        this.isOpenModalDetail = true
       },
       closeModal(name) {
         this.isOpenModal = false
@@ -405,18 +389,41 @@
         this.tab.page = val;
         this.getList();
       },
+      detailCurrentChange(val) {
+        this.tabDetail.page = val;
+        this.getDetailList();
+      },
       //分页查询
+      getDetailList(num) {
+        this.isFetching = true
+        if (num) {
+          this.tabDetail.currentPage = 1
+        }
+        this.$api.tbzwGroupConfig.adminList({
+          current: num ? num : this.tab.page,
+          size: this.tab.pageSize,
+          name: this.searchInfo.nickname,
+          state: this.searchInfo.payed
+        })
+          .then(
+            response => {
+              this.dataList = response.data.resultData.records;
+              this.total = response.data.resultData.total;
+            })
+          .finally(() => {
+            this.isFetching = false
+          })
+      },
       getList(num) {
         this.isFetching = true
         if (num) {
           this.tab.currentPage = 1
         }
-        this.$api.tbzwCoupon.pageCouponConfig({
+        this.$api.tbzwGroupConfig.adminList({
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
-          couponName: this.searchInfo.nickname,
-          type: this.searchInfo.payed,
-          newCourseCoupon: this.radioType === 1
+          name: this.searchInfo.nickname,
+          state: this.searchInfo.payed
         })
           .then(
             response => {
@@ -432,8 +439,8 @@
           title: '提示',
           content: '确认要结束吗？',
           onOk: () => {
-            this.$api.tbzwCoupon.finishCoupon({
-              couponId: param.id
+            this.$api.tbzwGroupConfig.finish({
+              id: param.id
             }).then(
               response => {
                 if (response.data.code == "200") {
@@ -450,23 +457,19 @@
 
         this.$refs[name].validate((valid) => {
           if (valid) {
-            if (new Date(this.addInfo.expiryEndDate).getTime() < new Date(this.addInfo.receiveEndDate).getTime()) {
-              return this.$Message.error('有效期时间不能小于领取时间')
-            }
             this.isSending = true
-            this.$api.tbzwCoupon.editCouponConfig({
+            this.$api.tbzwGroupConfig.save({
               id: this.addInfo.id,
-              type: this.radioType === 0 ? 1 : 3,
-              expiryStartDate: dayjs(this.addInfo.receiveStartDate).format("YYYY/MM/DD HH:mm:ss"),
-              expiryEndDate: dayjs(this.addInfo.expiryEndDate).format("YYYY/MM/DD HH:mm:ss"),
-              receiveStartDate: dayjs(this.addInfo.receiveStartDate).format("YYYY/MM/DD HH:mm:ss"),
-              receiveEndDate: dayjs(this.addInfo.receiveEndDate).format("YYYY/MM/DD HH:mm:ss"),
-              couponName: this.addInfo.couponName,
-              couponNum: this.addInfo.couponNum,
-              couponAmount: this.addInfo.couponAmount * 100,
-              bigTitle: this.addInfo.bigTitle,
-              playbill: this.addInfo.playbill,
-              title: this.addInfo.title
+              startTime: dayjs(this.addInfo.startTime).format("YYYY/MM/DD HH:mm:ss"),
+              endTime: dayjs(this.addInfo.endTime).format("YYYY/MM/DD HH:mm:ss"),
+              name: this.addInfo.name,
+              groupEndTime: this.addInfo.groupEndTime,
+              autoGroupTime: this.addInfo.autoGroupTime,
+              groupPrice: this.addInfo.groupPrice * 100,
+              shareBigTitle: this.addInfo.shareBigTitle,
+              shareSmallTitle: this.addInfo.shareSmallTitle,
+              linkImg: this.addInfo.linkImg,
+              popImg: this.addInfo.popImg,
             })
               .then(
                 response => {
@@ -488,9 +491,9 @@
 
 
 <style lang="less" scoped>
-  .p-couponList {
+  .p-bookingList {
 
-    &-formItemWrap{
+    &-formItemWrap {
       display: flex;
 
       .-item-name {
@@ -503,9 +506,7 @@
         margin-left: 10px;
       }
     }
-    .g-add-top {
-      top: 110px;
-    }
+
     .copy-input {
       position: absolute;
       opacity: 0;
