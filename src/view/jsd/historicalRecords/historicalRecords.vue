@@ -32,18 +32,33 @@
           <FormItem label="教师名称" prop="replyTeacher" class="ivu-form-item-required">
             <Input type="text" v-model="addInfo.replyTeacher" placeholder="请输入教师名称"></Input>
           </FormItem>
-          <FormItem label="批改图片" v-if="addInfo.isPassed === 1">
-            <div class="p-job-formItem" v-if="addInfo.homeworkType === 2">
+          <FormItem label="批改模式" v-if="addInfo.isPassed === 1 && (addInfo.homeworkType === 2)">
+            <Radio-group v-model="corType">
+              <Radio :label=1>线上批改</Radio>
+              <Radio :label=2>本地上传</Radio>
+            </Radio-group>
+          </FormItem>
+          <FormItem label="线上批改图片" v-if="addInfo.isPassed === 1 && (addInfo.homeworkType === 2) &&corType===1">
+            <div class="p-job-formItem">
               <div class="g-course-add-style" @click="openPictures">
                 <span>+</span>
                 <span>进入在线批改</span>
               </div>
-              <div class="g-course-add-style" @click="viewWork(addInfo)">
+              <div class="g-course-add-style" @click="viewWork(addInfo, '1')">
                 <span>+</span>
                 <span>获取批改图片</span>
               </div>
             </div>
-            <upload-img-multiple v-model="addInfo.replyImg" :option="uploadOption"></upload-img-multiple>
+
+            <div class="-c-course-wrap" v-if="addInfo.replyImgTmp.length">
+              <div class="-c-course-item" v-for="(item, index) of addInfo.replyImgTmp" :key="index">
+                <img :src="item">
+                <div class="-i-del" @click="delImg(item,index)">删除</div>
+              </div>
+            </div>
+          </FormItem>
+          <FormItem label="本地批改图片" v-if="addInfo.isPassed === 1 && (addInfo.homeworkType === 2) && (corType === 2)">
+            <upload-img-multiple v-model="addInfo.replyImgUpload" :option="uploadOption"></upload-img-multiple>
           </FormItem>
           <FormItem label="批改音频" v-if="addInfo.isPassed === 1">
             <upload-audio ref="childAudio" v-model="addInfo.replyAudio" :option="uploadAudioOption"
@@ -138,6 +153,7 @@
         dataList: [],
         total: 0,
         radioType: 3,
+        corType: 1,
         getStartTime: '',
         getEndTime: '',
         searchInfo: {},
@@ -367,6 +383,9 @@
     mounted() {
     },
     methods: {
+      delImg(item, index) {
+        this.addInfo.replyImgTmp.splice(index, 1)
+      },
       openRequire (data) {
         this.isOpenJobRequire = true
         this.requireInfo = JSON.parse(JSON.stringify(data))
@@ -447,8 +466,14 @@
       },
       openModal(data) {
         this.isOpenModal = true
+        this.addInfo = {
+          replyImg: [],
+          replyImgUpload: [],
+          replyText: '',
+          replyAudio: ''
+        }
         if (data) {
-          this.viewWork(data)
+          this.viewWork(data, '')
         }
       },
       closeModal(name) {
@@ -459,7 +484,7 @@
         this.tab.page = val;
         this.getList();
       },
-      viewWork(data) {
+      viewWork(data, str) {
         this.$api.jsdJob.viewWork({
           system: this.searchInfo.system,
           workId: data.workId
@@ -470,8 +495,11 @@
             _self.addInfo.isPassed = 1
             _self.addInfo.workImgSrc = _self.addInfo.workImgSrc ? _self.addInfo.workImgSrc.split(',') : []
             _self.addInfo.replyImgTmp = _self.addInfo.replyImgTmp ? _self.addInfo.replyImgTmp.split(',') : []
-            _self.addInfo.replyImg = _self.addInfo.replyImgTmp
-            // _self.addInfo.replyImg = _self.addInfo.replyImg.length ? _self.addInfo.replyImg.concat(_self.addInfo.replyImgTmp) : _self.addInfo.replyImgTmp
+            _self.addInfo.replyImgUpload = _self.addInfo.replyImgUpload ? _self.addInfo.replyImgUpload.split(',') : []
+
+            if (!str) {
+              _self.corType = _self.addInfo.replyImgUpload.length ? 2 : 1
+            }
             _self.$forceUpdate()
           })
       },
@@ -526,16 +554,30 @@
           })
       },
       submitInfo(name) {
+        let passContent = this.addInfo.scores.every((item) => {
+          return (item.score != null && item.score < 100)
+        })
+
+        this.addInfo.replyImg = this.corType === 1 ? this.addInfo.replyImgTmp : this.addInfo.replyImgUpload
+
+
         if (!this.addInfo.replyTeacher) {
           return this.$Message.error('请输入教师名称')
         } else if (this.addInfo.replyImg.length > 3) {
           return this.$Message.error('最多上传三张图片')
+        } else if (!this.addInfo.replyText && this.addInfo.isPassed === 0) {
+          return this.$Message.error('请输入不合格评语')
+        }
+
+        if (!passContent) {
+          return this.$Message.error('每一项评分不能超过100分并且不能为空')
         }
 
         this.$api.jsdJob.replyHomework({
           id: this.addInfo.workId,
           courseId: this.searchInfo.appId,
           replyImg: `${this.addInfo.replyImg}`,
+          replyImgTmp: this.corType === 1 ? `${this.addInfo.replyImgTmp}` : '',
           replyTeacher: this.addInfo.replyTeacher,
           replyText: this.addInfo.replyText,
           replyAudio: this.addInfo.replyAudio,
@@ -561,8 +603,6 @@
   .p-job {
 
     &-formItem {
-      position: absolute;
-      left: 160px;
       display: flex;
 
       .g-course-add-style {
@@ -619,14 +659,20 @@
     .-c-course-wrap {
       display: inline-block;
       .-c-course-item {
-        position: relative;
         display: inline-block;
-        /*height: 70px;*/
+        position: relative;
+        background-color: #EBEBEB;
+        width: 180px;
+        height: 100px;
+        margin: 20px 20px 20px 0;
+        border: 1px solid #EBEBEB;
+        border-radius: 4px;
+        padding: 4px;
         overflow: hidden;
 
         img {
-          width: 140px;
-          height: 70px;
+          width: 100%;
+          height: 100%;
         }
 
         .-i-text {

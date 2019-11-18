@@ -155,7 +155,7 @@
           },
           {
             title: '操作',
-            width: 200,
+            width: 250,
             align: 'center',
             render: (h, params) => {
               return h('div', [
@@ -195,6 +195,21 @@
                     size: 'small'
                   },
                   style: {
+                    color: '#5444E4',
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.openModal(false, params.row)
+                    }
+                  }
+                }, '编辑'),
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
                     color: 'rgba(218, 55, 75)',
                     marginRight: '5px'
                   },
@@ -227,7 +242,7 @@
         this.isOpenModal = true
         this.isEdit = bool
         this.addInfo = {}
-        if(!bool) {
+        if(!bool && !data) {
           this.getActiveDetails()
         } else {
           this.getActiveDetailsByActiveId(data)
@@ -346,6 +361,7 @@
           })
         })
         this.$api.tbzwActiveconfig.editActiveConfig({
+          id: this.addInfo.id,
           opentime: dayjs(this.addInfo.opentime).format("YYYY/MM/DD"),
           courseId: this.addInfo.courseId,
           rules: this.addInfo.rules.toString(),
