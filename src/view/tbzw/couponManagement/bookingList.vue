@@ -73,9 +73,9 @@
           <FormItem label="虚拟预约用户" prop="groupEndTime">
             <Button @click="openUserModal()" ghost type="primary" style="width: 100px;">+添加用户</Button>
             <div class="p-bookingList-formUser">
-              <div class="-formUser-item" v-for="item of 20">
-                <img class="-img" src="https://pub.file.k12.vip/2019/11/18/1196354701996023809.png"/>
-                <div class="-name">虚拟预约用户1</div>
+              <div class="-formUser-item" v-for="(item,index) of userImgList" :key="index">
+                <img class="-img" :src="item.avatar"/>
+                <div class="-name">{{item.nickname}}</div>
               </div>
             </div>
             <div class="-c-tips">为了营造真实的活动氛围，请选择在真实在群内的运营人员来充当虚拟预约用户</div>
@@ -137,7 +137,7 @@
             @on-change="detailCurrentChange"></Page>
     </Modal>
 
-    <virtual-user-template v-model="isOpenModalUser"></virtual-user-template>
+    <virtual-user-template v-model="isOpenModalUser" @changeUsers="chioceUsers" :propList="userImgList"></virtual-user-template>
   </div>
 </template>
 
@@ -191,6 +191,7 @@
         ],
         dataList: [],
         detailList: [],
+        userImgList: [],
         discountInfoList: [
           {
             num: '',
@@ -400,6 +401,9 @@
       this.getList()
     },
     methods: {
+      chioceUsers (data) {
+        this.userImgList = data
+      },
       changeStartClick () {
         let data1 = new Date(this.addInfo.startTime).getTime()
         let data2 = new Date(this.addInfo.endTime).getTime()

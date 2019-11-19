@@ -284,14 +284,14 @@
             width: 120,
             align: 'center'
           },
-          // {
-          //   title: '是否预约',
-          //   render: (h,p)=> {
-          //     return h('div',p.row.buyed ? '是' : '否')
-          //   },
-          //   width: 100,
-          //   align: 'center'
-          // },
+          {
+            title: '是否预约',
+            render: (h,p)=> {
+              return h('div',p.row.buyed ? '是' : '否')
+            },
+            width: 100,
+            align: 'center'
+          },
           {
             title: '正式课是否付费',
             render: (h,p)=> {

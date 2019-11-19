@@ -13,6 +13,12 @@ const tbzwStudyRecordData = {
   },
   getStudyDataDetails(params) {
     return axios.get(`/compositionv2/studyRecordData/getStudyDataDetails`, {params: params})
+  },
+  getCourseQualityData(params) {
+    return axios.get(`/compositionv2/studyRecordData/getCourseQualityData`, {params: params})
+  },
+  getCourseQualityOutData(params) {
+    return axios.get(`/compositionv2/studyRecordData/getCourseQualityOutData`, {params: params})
   }
 };
 

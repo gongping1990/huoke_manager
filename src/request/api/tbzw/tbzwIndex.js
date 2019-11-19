@@ -14,6 +14,8 @@ import tbzwActiveconfig from "./activeconfig";
 import tbzwGroupConfig from "./groupConfig";
 import tbzwRules from "./rules";
 import tbzwStudyRecordData from "./studyRecordData";
+import tbzwVest from "./vest";
+import tbzwStatistics from "./statistics";
 
 export const tbzwIndex = {
   composition,
@@ -31,5 +33,7 @@ export const tbzwIndex = {
   tbzwActiveconfig,
   tbzwGroupConfig,
   tbzwRules,
-  tbzwStudyRecordData
+  tbzwStudyRecordData,
+  tbzwVest,
+  tbzwStatistics
 }

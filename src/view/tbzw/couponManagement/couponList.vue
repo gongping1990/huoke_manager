@@ -117,9 +117,17 @@
           <div @click="submitInfo('addInfo')" class="g-primary-btn "> {{isSending ? '提交中...' : '确 认'}}</div>
         </div>
       </Modal>
-
-
     </Card>
+
+    <Modal
+      class="p-couponList"
+      v-model="isOpenModalDetail"
+      @on-cancel="isOpenModalDetail = false"
+      footer-hide
+      width="800"
+      title="数据详情">
+      <Table class="-c-tab" :loading="isFetching" :columns="columnsModal" :data="detailList"></Table>
+    </Modal>
   </div>
 </template>
 
@@ -168,6 +176,7 @@
         ],
         radioType: 0,
         dataList: [],
+        detailList: [],
         selectInfo: '1',
         searchInfo: {
           payed: '-1'
@@ -176,9 +185,10 @@
         totalDetail: 0,
         isFetching: false,
         isOpenModal: false,
-        isOpenModalData: false,
+        isOpenModalDetail: false,
         isSending: false,
         addInfo: {},
+        dataItem: {},
         copy_url: '',
         statusList: {
           '0': '未开始',
@@ -283,10 +293,24 @@
                   },
                   on: {
                     click: () => {
-                      this.openModal(params.row)
+                      this.openModalDetail(params.row)
                     }
                   }
                 }, '数据统计'),
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: '#5444E4'
+                  },
+                  on: {
+                    click: () => {
+                      this.copyUrl(params.row)
+                    }
+                  }
+                }, '复制链接'),
                 h('Button', {
                   props: {
                     type: 'text',
@@ -316,25 +340,50 @@
                       this.endItem(params.row)
                     }
                   }
-                }, '结束'),
-                h('Button', {
-                  props: {
-                    type: 'text',
-                    size: 'small'
-                  },
-                  style: {
-                    color: '#5444E4'
-                  },
-                  on: {
-                    click: () => {
-                      this.copyUrl(params.row)
-                    }
-                  }
-                }, '复制链接')
+                }, '结束')
               ])
             }
           }
-        ]
+        ],
+        columnsModal: [
+         {
+           title: '领取页面PV',
+           key: 'pv',
+           align: 'center'
+         },
+         {
+           title: '领取页面UV',
+           key: 'uv',
+           align: 'center'
+         },
+         {
+           title: '页面分享次数',
+           key: 'shareNum',
+           align: 'center'
+         },
+         {
+           title: '领取人数',
+           key: 'getNum',
+           align: 'center'
+         },
+         {
+           title: '下单人数',
+           key: 'orderNum',
+           align: 'center'
+         },
+         {
+           title: '成功订单数',
+           key: 'successOrderNum',
+           align: 'center'
+         },
+         {
+           title: '付费转化率',
+           render: (h, params)=> {
+             return h('div', `${params.row.payPercent*100}%`)
+           },
+           align: 'center'
+         }
+       ]
       };
     },
     watch: {
@@ -361,6 +410,11 @@
       this.getList()
     },
     methods: {
+      openModalDetail(data) {
+        this.dataItem = data
+        this.isOpenModalDetail = true
+        this.getCouponData()
+      },
       changeStartClick () {
         let data1 = new Date(this.addInfo.receiveStartDate).getTime()
         let data2 = new Date(this.addInfo.receiveEndDate).getTime()
@@ -422,6 +476,19 @@
             response => {
               this.dataList = response.data.resultData.records;
               this.total = response.data.resultData.total;
+            })
+          .finally(() => {
+            this.isFetching = false
+          })
+      },
+      getCouponData() {
+        this.isFetching = true
+        this.$api.tbzwCoupon.getCouponData({
+          id: this.dataItem.id,
+        })
+          .then(
+            response => {
+              this.detailList = [response.data.resultData];
             })
           .finally(() => {
             this.isFetching = false

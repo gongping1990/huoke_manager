@@ -42,6 +42,24 @@ export const tbzwRouter =[
           {name: '落地页数据'}
         ],
         component: () => import('@/view/tbzw/landingPage/landingPage')
+      },
+      {
+        path: '/tbzw_courseQualityData',
+        name: 'tbzw_courseQualityData',
+        meta: [
+          {name: '数据统计'},
+          {name: '课程质量评估'}
+        ],
+        component: () => import('@/view/tbzw/courseQualityData/courseQualityData')
+      },
+      {
+        path: '/tbzw_payingUsersData',
+        name: 'tbzw_payingUsersData',
+        meta: [
+          {name: '数据统计'},
+          {name: '付费用户数据概览'}
+        ],
+        component: () => import('@/view/tbzw/payingUsersData/payingUsersData')
       }
     ]
   },
@@ -391,6 +409,15 @@ export const tbzwRouter =[
           {name: '用户列表'}
         ],
         component: () => import('@/view/tbzw/user/userList')
+      },
+      {
+        path: '/tbzw_virtualUser',
+        name: 'tbzw_virtualUser',
+        meta: [
+          {name: '用户管理'},
+          {name: '运营马甲  '}
+        ],
+        component: () => import('@/view/tbzw/user/virtualUser')
       }
     ]
   },

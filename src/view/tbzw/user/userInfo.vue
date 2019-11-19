@@ -136,6 +136,7 @@
   import dayjs from 'dayjs'
   import JobRecordTemplate from "../../../components/jobRecordTemplate";
   import ClassLog from "../../tbzw/user/classLog";
+  import { formatTime } from '@/libs/index'
 
   export default {
     name: 'tbzwUserInfo',
@@ -246,9 +247,35 @@
             align: 'center'
           },
           {
+            title: '首次上课时间',
+            render: (h, params) => {
+              return h('div', params.row.firstStartLearnTime ? dayjs(+params.row.firstStartLearnTime).format("YYYY-MM-DD HH:mm") : '暂无')
+            },
+            align: 'center'
+          },
+          {
             title: '首次完成上课时间',
             render: (h, params) => {
               return h('div', params.row.firstLearnTime ? dayjs(+params.row.firstLearnTime).format("YYYY-MM-DD HH:mm") : '暂无')
+            },
+            align: 'center'
+          },
+          {
+            title: '上课次数',
+            key: 'learnFrequency',
+            align: 'center'
+          },
+          {
+            title: '累计播放时长',
+            render: (h, params) => {
+              return h('div', params.row.allLearnTime ? formatTime(params.row.allLearnTime*1000) : 0)
+            },
+            align: 'center'
+          },
+          {
+            title: '次均时长',
+            render: (h, params) => {
+              return h('div', params.row.avgearnTime ? dayjs(params.row.avgearnTime*1000).format('mm:ss') : 0)
             },
             align: 'center'
           },

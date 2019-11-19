@@ -6,14 +6,7 @@
     footer-hide
     width="700"
     title="学习分布时间">
-    <Row class="g-search">
-      <RadioGroup v-model="detailType" type="button" @on-change="getDetailList(1)">
-        <Radio label="1">跳出分布</Radio>
-        <Radio label="2">播放时长分布</Radio>
-      </RadioGroup>
-    </Row>
-
-    <div class="-c-tab p-detailModal-echart">
+    <div class="p-detailModal-echart">
       <div ref="echart" class="-echart-content"></div>
     </div>
   </Modal>
@@ -37,9 +30,7 @@
     props: ['value', 'dataInfo'],
     data () {
       return {
-        searchInfo: {},
-        detailType: '1',
-        chartInfo: '',
+        chartInfo: [],
         isOpenDetail: false,
         isFetching: false,
       }
@@ -47,51 +38,22 @@
     computed: {
       dateTypesLine() {
         let arrayX = []
-        for (let item of this.dataInfo) {
-          arrayX.push(item.day)
+        for (let item of this.chartInfo) {
+          arrayX.push(item.minute)
         }
         return arrayX
       },
       optionSeriesLine() {
         let dataList = {
-          orderUser: [],
-          payedMoney: [],
-          payedUser: [],
-          pv: [],
-          uv: []
+          outUserCount: [],
         }
-        for (let item of this.dataInfo) {
-          dataList.orderUser.push(item.orderUser)
-          dataList.payedMoney.push(item.payedMoney)
-          dataList.payedUser.push(item.payedUser)
-          dataList.pv.push(item.pv)
-          dataList.uv.push(item.uv)
+        for (let item of this.chartInfo) {
+          dataList.outUserCount.push(item.outUserCount)
         }
         let optionSeriesLine = [
           {
-            name: '商品页面访问数量',
             type: 'line',
-            data: dataList.pv
-          },
-          {
-            name: '商品页面访问用户',
-            type: 'line',
-            data: dataList.uv
-          },
-          {
-            name: '下单用户',
-            type: 'line',
-            data: dataList.orderUser
-          },
-          {
-            name: '付费用户',
-            type: 'line',
-            data: dataList.payedUser
-          },
-          {
-            name: '付费金额',
-            type: 'line',
-            data: dataList.payedMoney
+            data: dataList.outUserCount
           }
         ]
         return optionSeriesLine
@@ -108,7 +70,6 @@
     },
     methods: {
       drawLine() {
-        let self = this;
         let myChart = echarts.init(this.$refs.echart);
         myChart.clear();
         myChart.resize();
@@ -124,31 +85,10 @@
             }
           },
           legend: {
-            data: [
-              {
-                name: '商品页面访问数量',
-                icon: 'circle'
-              },
-              {
-                name: '商品页面访问用户',
-                icon: 'circle'
-              },
-              {
-                name: '下单用户',
-                icon: 'circle'
-              },
-              {
-                name: '付费用户',
-                icon: 'circle'
-              },
-              {
-                name: '付费金额',
-                icon: 'circle'
-              }
-            ],
             right: '5%'
           },
           xAxis: {
+            name: '跳出时间(分钟)',
             boundaryGap: false,
             axisTick: {
               alignWithLabel: true
@@ -158,10 +98,10 @@
           grid: {
             left: '6%',
             top: '13%',
-            right: '5%'
+            right: '15%'
           },
           yAxis: {
-            name: '单位（人）'
+            name: '跳出人次'
           },
           series: this.optionSeriesLine,
           dataZoom: [
@@ -185,9 +125,9 @@
           zlevel: 0
         })
 
-        this.$api.jsdJob.listHomeWorkLog({
-          workId: this.dataInfo.workId,
-          courseId: this.dataInfo.appId,
+        this.$api.tbzwStudyRecordData.getCourseQualityOutData({
+          date: this.dataInfo.date,
+          lessonId: this.dataInfo.id,
         }).then(response => {
           this.chartInfo = response.data.resultData
           this.drawLine()

@@ -92,3 +92,27 @@ export const thousandFormatter = function (num) {
   formatterNum = (numOne || num).toString().replace(/(\d)(?=(?:\d{3})+$)/g, '$1,')
   return numTwo ? `${formatterNum}.${numTwo}` : `${formatterNum}.00`
 } // 重置千位符
+
+export const formatTime = function (msTime) {
+
+  let time = msTime /1000;
+
+  let day = Math.floor(time /60 /60 /24);
+
+  let hour = Math.floor(time /60 /60) %24;
+
+  let minute = Math.floor(time /60) %60;
+
+  let second = Math.floor(time) %60;
+
+  function zeroMat(num) {
+    if (num < 10) {
+      return '0' + num;
+    } else {
+      return '' + num;
+    }
+  }
+
+  return `${zeroMat(hour)}:${zeroMat(minute)}:${zeroMat(second)}`
+
+}

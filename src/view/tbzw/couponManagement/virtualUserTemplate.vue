@@ -7,40 +7,33 @@
     title="选择虚拟用户">
     <div class="p-virtualUserTemplate-content">
       <div v-for="(item, index) of dataList" :key="index" class="-content-item" @click="choiceUser(item)">
-        <img class="-img" src="https://pub.file.k12.vip/2019/11/18/1196354701996023809.png"/>
-        <div class="-name">{{item.name}}</div>
+        <img class="-img" :src="item.avatar"/>
+        <div class="-name">{{item.nickname}}</div>
         <div class="-icon" v-if="item.isShow">
           <img src="../../../assets/images/suc-log.png"/>
         </div>
-
       </div>
     </div>
     <div slot="footer" class="-p-b-flex">
       <Button @click="closeModal()" ghost type="primary" style="width: 100px;">取消</Button>
       <div @click="submitInfo()" class="g-primary-btn ">确 认</div>
     </div>
+    <loading v-if="isFetching"></loading>
   </Modal>
 </template>
 
 <script>
+  import Loading from "../../../components/loading";
+
   export default {
     name: 'virtualUserTemplate',
-    props: ['value', 'dataInfo'],
+    components: {Loading},
+    props: ['value', 'propList'],
     data() {
       return {
         isOpenDetail: false,
-        dataList: [
-          {
-            name: '小专家说的就是我',
-            isShow: false,
-            id: 1
-          },
-          {
-            name: 'hover小玲和',
-            isShow: false,
-            id: 2
-          },
-        ],
+        isFetching: false,
+        dataList: [],
         choiceList: []
       }
     },
@@ -50,19 +43,55 @@
       value(_n) {
         this.isOpenDetail = _n
         this.$previewRefresh()
+        _n && this.getList()
       },
     },
     methods: {
       choiceUser(item) {
         item.isShow = !item.isShow
-        // this.choiceList.push(item)
+        this.$forceUpdate()
+      },
+      getList() {
+        this.isFetching = true
+        this.$api.tbzwVest.pageActiceVest({
+          current: 1,
+          size: 1000
+        })
+          .then(
+            response => {
+              this.dataList = response.data.resultData.records;
+
+              if (this.propList.length) {
+                this.propList.forEach(list => {
+                  this.dataList.forEach(item => {
+                    if (list.id === item.id) {
+                      item.isShow = true
+                    }
+                  })
+                })
+              } else {
+                this.dataList.forEach(item => {
+                  item.isShow = false
+                })
+              }
+            })
+          .finally(() => {
+            this.isFetching = false
+          })
       },
       closeModal() {
         this.isOpenDetail = false
         this.$emit('input', false)
       },
       submitInfo() {
-
+        this.choiceList = []
+        this.dataList.forEach(item => {
+          if (item.isShow) {
+            this.choiceList.push(item)
+          }
+        })
+        this.closeModal()
+        this.$emit('changeUsers', this.choiceList)
       }
     }
   }
@@ -107,7 +136,7 @@
         .-icon {
           position: absolute;
           top: 0;
-          right:  0;
+          right: 0;
           width: 15px;
           height: 15px;
           border-radius: 50%;
