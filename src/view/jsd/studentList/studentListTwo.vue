@@ -141,7 +141,7 @@
             title: '孩子性别',
             key: 'sex',
             render: (h, params)=> {
-              return h('span', params.row.sex ? '男' : '女')
+              return h('span', params.row.sex === null ? '' : params.row.sex ? '男' : '女')
             },
             align: 'center'
           },
