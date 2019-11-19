@@ -72,13 +72,19 @@
 
           <FormItem label="虚拟预约用户" prop="groupEndTime">
             <Button @click="openUserModal()" ghost type="primary" style="width: 100px;">+添加用户</Button>
+            <div class="p-bookingList-formUser">
+              <div class="-formUser-item" v-for="item of 20">
+                <img class="-img" src="https://pub.file.k12.vip/2019/11/18/1196354701996023809.png"/>
+                <div class="-name">虚拟预约用户1</div>
+              </div>
+            </div>
             <div class="-c-tips">为了营造真实的活动氛围，请选择在真实在群内的运营人员来充当虚拟预约用户</div>
           </FormItem>
           <FormItem label="预约活动时间" class="ivu-form-item-required">
             <Row>
               <Col span="11">
                 <Form-item prop="startTime">
-                  <Date-picker style="width: 100%" type="datetime" placeholder="选择开始日期"
+                  <Date-picker style="width: 100%" type="datetime" placeholder="选择开始日期" @on-change="changeStartClick"
                                v-model="addInfo.startTime" :options="dateStartOption"></Date-picker>
                 </Form-item>
               </Col>
@@ -91,9 +97,9 @@
               </Col>
             </Row>
           </FormItem>
-          <FormItem label="抢课结束时间" class="ivu-form-item-required">
+          <FormItem label="抢课结束时间" prop="expiryEndDate">
             <Date-picker style="width: 100%" type="datetime" placeholder="选择抢课结束时间"
-                         v-model="addInfo.startTime" :options="dateStartOption"></Date-picker>
+                         v-model="addInfo.expiryEndDate" :options="dateEndOption"></Date-picker>
           </FormItem>
           <FormItem label="活动规则">
             <Input type="textarea" v-model="addInfo.shareBigTitle" :rows="4" placeholder="请输入活动规则"></Input>
@@ -199,7 +205,7 @@
         total: 0,
         totalDetail: 0,
         isFetching: false,
-        isOpenModal: true,
+        isOpenModal: false,
         isOpenModalDetail: false,
         isOpenModalUser: false,
         isSending: false,
@@ -217,6 +223,11 @@
           }
         },
         dateEndOption: {
+          disabledDate(date) {
+            return date && (new Date(date).getTime() <= new Date().getTime() - 24 * 3600 * 1000);
+          }
+        },
+        dateEndOptionTwo: {
           disabledDate(date) {
             return date && (new Date(date).getTime() <= new Date().getTime() - 24 * 3600 * 1000);
           }
@@ -240,6 +251,9 @@
           ],
           endTime: [
             {required: true, type: 'date', message: '请输入活动结束时间', trigger: 'blur'},
+          ],
+          expiryEndDate: [
+            {required: true, type: 'date', message: '请输入抢课结束时间', trigger: 'blur'},
           ]
         },
         columns: [
@@ -373,10 +387,32 @@
         ]
       };
     },
+    watch: {
+      'addInfo.startTime'(_new, _old) {
+        this.dateEndOption = {
+          disabledDate(date) {
+            return date && date.valueOf() < new Date(_new).getTime();
+          }
+        }
+      },
+    },
     mounted() {
       this.getList()
     },
     methods: {
+      changeStartClick () {
+        let data1 = new Date(this.addInfo.startTime).getTime()
+        let data2 = new Date(this.addInfo.endTime).getTime()
+        let data3 = new Date(this.addInfo.expiryEndDate).getTime()
+
+        if (data1 > data2) {
+          this.addInfo.endTime = ''
+        }
+
+        if ((data1 > data3) || (data2 > data3)) {
+          this.addInfo.expiryEndDate = ''
+        }
+      },
       delActiveInfo (index) {
         this.discountInfoList.splice(index,1)
       },
@@ -402,9 +438,7 @@
         this.isOpenModal = true
         if (data) {
           this.addInfo = JSON.parse(JSON.stringify(data))
-          this.addInfo.groupPrice = +this.addInfo.groupPrice / 100
-          this.addInfo.groupEndTime = this.addInfo.groupEndTime.toString()
-          this.addInfo.autoGroupTime = this.addInfo.autoGroupTime.toString()
+
         } else {
           this.discountInfoList = [
             {
@@ -566,6 +600,36 @@
         display: inline-block;
         margin-left: 10px;
         width: 120px;
+      }
+    }
+
+    &-formUser {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-top: 10px;
+
+      .-formUser-item {
+        text-align: center;
+        width: 80px;
+        padding: 10px 10px 0 0;
+        cursor: pointer;
+
+        .-img {
+          cursor: pointer;
+          margin: 0 auto;
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+        }
+
+        .-name {
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          overflow: hidden;
+          height: 20px;
+          line-height: 20px;
+        }
       }
     }
 

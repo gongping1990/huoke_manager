@@ -6,11 +6,11 @@
     width="750"
     title="选择虚拟用户">
     <div class="p-virtualUserTemplate-content">
-      <div v-for="(item) of 20" class="-content-item" :class="{'-active': item.isShow}" @click="choiceUser(item)">
+      <div v-for="(item, index) of dataList" :key="index" class="-content-item" @click="choiceUser(item)">
         <img class="-img" src="https://pub.file.k12.vip/2019/11/18/1196354701996023809.png"/>
-        <div class="-name">小语专家说的就是我</div>
-        <div>
-          <Icon type="md-checkmark" />
+        <div class="-name">{{item.name}}</div>
+        <div class="-icon" v-if="item.isShow">
+          <img src="../../../assets/images/suc-log.png"/>
         </div>
 
       </div>
@@ -23,58 +23,70 @@
 </template>
 
 <script>
-export default {
-  name: 'virtualUserTemplate',
-  props: ['value', 'dataInfo'],
-  data () {
-    return {
-      isOpenDetail: false,
-      dataList: [],
-      choiceList: []
-    }
-  },
-  mounted() {
-  },
-  watch: {
-    value (_n) {
-      this.isOpenDetail = _n
-      this.$previewRefresh()
+  export default {
+    name: 'virtualUserTemplate',
+    props: ['value', 'dataInfo'],
+    data() {
+      return {
+        isOpenDetail: false,
+        dataList: [
+          {
+            name: '小专家说的就是我',
+            isShow: false,
+            id: 1
+          },
+          {
+            name: 'hover小玲和',
+            isShow: false,
+            id: 2
+          },
+        ],
+        choiceList: []
+      }
     },
-  },
-  methods: {
-    choiceUser (item) {
-      item.isShow = !item.isShow
-      // this.choiceList.push(item)
+    mounted() {
     },
-    closeModal () {
-      this.isOpenDetail = false
-      this.$emit('input', false)
+    watch: {
+      value(_n) {
+        this.isOpenDetail = _n
+        this.$previewRefresh()
+      },
     },
-    submitInfo () {
-      
+    methods: {
+      choiceUser(item) {
+        item.isShow = !item.isShow
+        // this.choiceList.push(item)
+      },
+      closeModal() {
+        this.isOpenDetail = false
+        this.$emit('input', false)
+      },
+      submitInfo() {
+
+      }
     }
   }
-}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="less">
 
-  .p-virtualUserTemplate{
+  .p-virtualUserTemplate {
 
     &-content {
       display: flex;
       align-items: center;
       flex-wrap: wrap;
 
-
       .-content-item {
+        position: relative;
         text-align: center;
         width: 80px;
+        padding: 10px;
         margin: 0 10px 10px;
         cursor: pointer;
         &:hover {
-          background-color: rgba(43,174,233, 0.2);
+          background-color: rgba(43, 174, 233, 0.2);
         }
 
         .-img {
@@ -91,10 +103,20 @@ export default {
           white-space: nowrap;
           overflow: hidden;
         }
-      }
 
-      .-active {
+        .-icon {
+          position: absolute;
+          top: 0;
+          right:  0;
+          width: 15px;
+          height: 15px;
+          border-radius: 50%;
+          background-color: #2baee9;
 
+          img {
+            width: 100%;
+          }
+        }
       }
     }
 
