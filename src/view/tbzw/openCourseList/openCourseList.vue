@@ -39,7 +39,7 @@
           <Form-item label="开营日期" class="ivu-form-item-required">
             <Date-picker style="width: 100%" :options="dateOption" :disabled="isEdit" type="date" placeholder="选择日期"
                          v-model="addInfo.opentime"></Date-picker>
-            <span class="-c-tips">请选择明天及明天以后的时间</span>
+            <span class="-c-tips">此为第一课开课日期，请选择明天及明天以后的时间</span>
           </Form-item>
           <FormItem label="排课天数" class="ivu-form-item-required">
             <div class="p-openCourse-btnWrap">
