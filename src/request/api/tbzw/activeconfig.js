@@ -25,6 +25,9 @@ const tbzwActiveconfig = {
   getActiveDetailsOfToday(params) {
     return axios.get('/compositionv2/activeconfig/getActiveDetailsOfToday', {params: params})
   },
+  listActiveByPayExperience(params) {
+    return axios.get('/compositionv2/activeconfig/listActiveByPayExperience', {params: params})
+  },
 };
 
 export default tbzwActiveconfig;

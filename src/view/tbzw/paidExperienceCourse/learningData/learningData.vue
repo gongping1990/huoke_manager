@@ -213,7 +213,7 @@
             label: {
               show: true,
               position: 'center',
-              formatter: '{b}: {d}%'
+              formatter: `{b}: {c}%`
             },
             data: this.percentData
           },
@@ -319,9 +319,10 @@
           })
           this.percentData.push({
             name: item.lessonName,
-            value: item[attrName[this.tabType - 1]]
+            value: item[attrName[this.tabType - 1]]*100
           })
         })
+        console.log(this.percentData,111)
         this.drawLine()
         // this.drawLineTwo()
       },
