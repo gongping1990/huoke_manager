@@ -32,7 +32,7 @@
           <Col :span="5" class="g-t-left">
             <div class="g-flex-a-j-center">
               <div class="-search-select-text">是否预约</div>
-              <Select v-model="searchInfo.courseId" @on-change="getList()" class="-search-selectOne">
+              <Select v-model="searchInfo.reserved" @on-change="getList()" class="-search-selectOne">
                 <Option v-for="(item,index) in visitedStatusList" :label="item.name" :value="item.id" :key="index"></Option>
               </Select>
             </div>
@@ -212,6 +212,7 @@
           buyed: '-1',
           useMa: '-1',
           subcribeMp: '-1',
+          reserved: '-1',
           sortType: '0'
         },
         isFetching: false,
@@ -287,7 +288,7 @@
           {
             title: '是否预约',
             render: (h,p)=> {
-              return h('div',p.row.buyed ? '是' : '否')
+              return h('div',p.row.reserved ? '是' : '否')
             },
             width: 100,
             align: 'center'
@@ -518,6 +519,7 @@
           homeworked: this.searchInfo.homeworked == '-1' ? '' : this.searchInfo.homeworked,
           subcribeMp: this.searchInfo.subcribeMp == '-1' ? '' : this.searchInfo.subcribeMp,
           useMa: this.searchInfo.useMa == '-1' ? '' : this.searchInfo.useMa,
+          reserved: this.searchInfo.reserved == '-1' ? '' : this.searchInfo.reserved,
           sortType: this.searchInfo.sortType,
           timeType: this.searchInfo.timeType,
           startTime: this.searchInfo.getStartTime ? new Date(this.searchInfo.getStartTime).getTime() : "",

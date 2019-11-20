@@ -392,38 +392,41 @@
         columnsModal: [
           {
             title: '预约页面PV',
-            key: 'name',
+            key: 'pv',
             align: 'center'
           },
           {
             title: '预约页面UV',
-            key: 'groupEndTime',
+            key: 'uv',
             align: 'center'
           },
           {
             title: '预约人数',
-            key: 'payUserCount',
+            key: 'reserveBuyUserCount',
             align: 'center'
           },
           {
             title: '预约率',
-            key: 'payUserCount',
+            render: (h, params) => {
+              return h('div', `${params.row.reservePercent*100}%`)
+            },
             align: 'center'
           },
           {
             title: '下单人数',
-            key: 'payUserCount',
+            key: 'orderUserCount',
             align: 'center'
           },
           {
             title: '成功订单数',
-            key: 'payUserCount',
+            key: 'successOrderCount',
             align: 'center'
           },
           {
             title: '预约-付费转化率',
-            width: 150,
-            key: 'payUserCount',
+            render: (h, params) => {
+              return h('div', `${params.row.reserveBuyPercent*100}%`)
+            },
             align: 'center'
           }
         ]
@@ -522,6 +525,7 @@
       },
       openModalDetail(data) {
         this.isOpenModalDetail = true
+        this.getDetailList(data)
       },
       closeModal(name) {
         this.isOpenModal = false
@@ -532,21 +536,13 @@
         this.getList();
       },
       //分页查询
-      getDetailList(num) {
-        this.isFetching = true
-        if (num) {
-          this.tabDetail.currentPage = 1
-        }
-        this.$api.tbzwReserveBuy.listByPage({
-          current: num ? num : this.tab.page,
-          size: this.tab.pageSize,
-          name: this.searchInfo.nickname,
-          state: this.searchInfo.payed
+      getDetailList(data) {
+        this.$api.tbzwReserveBuy.getReserveBuyData({
+          id: data.id
         })
           .then(
             response => {
-              this.dataList = response.data.resultData.records;
-              this.total = response.data.resultData.total;
+              this.detailList = [response.data.resultData];
             })
           .finally(() => {
             this.isFetching = false

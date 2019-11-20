@@ -17,7 +17,7 @@
       <Table class="-c-tab" :loading="isFetching" :columns="columnsFour" :data="dataListFour"></Table>
     </div>
 
-    <zhsj_detail v-model="isOpenModal" :type="nowType"></zhsj_detail>
+    <zhsj_detail v-model="isOpenModal" :type="nowType" :propPeriodId="propPeriodId"></zhsj_detail>
   </div>
 </template>
 
@@ -40,28 +40,12 @@
         columnsOne: [
           {
             title: '报名人数',
-            key: 'nickName',
-            align: 'center'
-          },
-          {
-            title: '访问预约页面人数',
-            key: 'phone',
-            align: 'center'
-          },
-          {
-            title: '访问率',
-            render: (h, params)=> {
-              return h('div',{
-                style: {
-                  color: '#FFB200'
-                }
-              }, `${params.row.useMaPercent*100}%`)
-            },
+            key: 'signCount',
             align: 'center'
           },
           {
             title: '预约人数',
-            key: 'totalCard',
+            key: 'reserveCount',
             align: 'center'
           },
           {
@@ -71,13 +55,16 @@
                 style: {
                   color: '#FFB200'
                 }
-              }, `${params.row.useMaPercent*100}%`)
+              }, `${params.row.reservePercent*100}%`)
             },
             align: 'center'
           },
           {
             title: '是否到达最高优惠',
-            key: 'longerContinueCard',
+            key: 'maxPreferential',
+            render: (h, params)=> {
+              return h('div', params.row.maxPreferential ? '是' : '否')
+            },
             align: 'center'
           },
           {
@@ -104,28 +91,12 @@
         columnsTwo: [
           {
             title: '预约人数',
-            key: 'nickName',
-            align: 'center'
-          },
-          {
-            title: '访问购买页面人数',
-            key: 'phone',
-            align: 'center'
-          },
-          {
-            title: '预约-购买到页率',
-            render: (h, params)=> {
-              return h('div',{
-                style: {
-                  color: '#FFB200'
-                }
-              }, `${params.row.useMaPercent*100}%`)
-            },
+            key: 'reserveCount',
             align: 'center'
           },
           {
             title: '已预约已购买人数',
-            key: 'totalCard',
+            key: 'reserveBuyCount',
             align: 'center'
           },
           {
@@ -135,7 +106,7 @@
                 style: {
                   color: '#FFB200'
                 }
-              }, `${params.row.useMaPercent*100}%`)
+              }, `${params.row.reserveBuyPercent*100}%`)
             },
             align: 'center'
           },
@@ -146,7 +117,7 @@
                 style: {
                   color: '#FFB200'
                 }
-              }, `${params.row.useMaPercent*100}%`)
+              }, `${params.row.reserveBuyAllPercent*100}%`)
             },
             align: 'center'
           },
@@ -278,6 +249,22 @@
           .then(
             response => {
               let info = response.data.resultData
+              this.dataListOne = [
+                {
+                  signCount: info.signCount,
+                  reserveCount: info.reserveCount,
+                  reservePercent: info.reservePercent,
+                  maxPreferential: info.maxPreferential,
+                }
+              ]
+              this.dataListTwo = [
+                {
+                  reserveBuyCount: info.reserveBuyCount,
+                  reserveCount: info.reserveCount,
+                  reserveBuyPercent: info.reserveBuyPercent,
+                  reserveBuyAllPercent: info.reserveBuyAllPercent,
+                }
+              ]
               this.dataListThree = [
                 {
                   signCount: info.signCount,

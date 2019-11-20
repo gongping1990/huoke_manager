@@ -4,23 +4,19 @@
     v-model="isOpenDetail"
     @on-cancel="closeModal"
     footer-hide
-    width="700"
-    :title="type === '1' ? '预约数据详情' : '预约后续报数据详情'">
-    <Table class="-c-tab" :loading="isFetching" :columns="columns" :data="dataList"></Table>
-
-    <Page class="g-text-right" :total="total" size="small" show-elevator
-          :page-size="tab.pageSize"
-          :current.sync="tab.currentPage"
-          @on-change="currentChange"></Page>
+    width="800"
+    :title="type == '1' ? '预约数据详情' : '预约后续报数据详情'">
+    <Table class="-c-tab" :loading="isFetching" :columns="type == '1' ? columns : columnsTwo" :data="dataList"></Table>
   </Modal>
 </template>
 
 <script>
   import dayjs from 'dayjs'
+
   export default {
     name: 'zhsj_detail',
-    props: ['value', 'dataInfo','type'],
-    data () {
+    props: ['value', 'propPeriodId', 'type'],
+    data() {
       return {
         tab: {
           page: 1,
@@ -34,69 +30,67 @@
         columns: [
           {
             title: '日期',
-            key: 'phone',
+            key: 'date',
             align: 'center'
           },
           {
             title: '预约人数',
-            key: 'nickname',
-            align: 'center'
-          },
-          {
-            title: '访问购买页面人数',
-            key: 'sex',
-            align: 'center'
-          },
-          {
-            title: '预约-购买到页率',
-            key: 'relationText',
+            key: 'reserveCount',
             align: 'center'
           },
           {
             title: '已预约已购买人数',
-            key: 'gradeText',
+            key: 'reserveBuyCount',
             align: 'center'
           },
           {
             title: '预约-购买转化率',
-            key: 'gradeText',
+            render: (h, params)=> {
+              return h('div',{
+                style: {
+                  color: '#FFB200'
+                }
+              }, `${params.row.reserveBuyPercent*100}%`)
+            },
             align: 'center'
           }
         ],
         columnsTwo: [
           {
             title: '日期',
-            key: 'phone',
+            key: 'date',
             align: 'center'
           },
           {
             title: '报名人数',
-            key: 'nickname',
-            align: 'center'
-          },
-          {
-            title: '访问预约页面人数',
-            key: 'sex',
-            align: 'center'
-          },
-          {
-            title: '访问率',
-            key: 'relationText',
+            key: 'signCount',
             align: 'center'
           },
           {
             title: '预约人数',
-            key: 'gradeText',
+            key: 'reserveCount',
             align: 'center'
           },
           {
             title: '报名-预约率',
-            key: 'gradeText',
+            render: (h, params)=> {
+              return h('div',{
+                style: {
+                  color: '#FFB200'
+                }
+              }, `${params.row.reservePercent*100}%`)
+            },
             align: 'center'
           },
           {
             title: '预约购买-总购买占比',
-            key: 'gradeText',
+            render: (h, params)=> {
+              return h('div',{
+                style: {
+                  color: '#FFB200'
+                }
+              }, `${params.row.reserveBuyAllPercent*100}%`)
+            },
             align: 'center'
           }
         ],
@@ -106,32 +100,41 @@
 
     },
     watch: {
-      value (_n) {
+      value(_n) {
         this.isOpenDetail = _n
         _n && this.getList()
       },
     },
     methods: {
-      currentChange(val) {
-        this.tab.page = val;
-        this.getList();
-      },
       getList() {
-        this.$api.jsdJob.listHomeWorkLog({
-          workId: this.dataInfo.workId,
-          courseId: this.dataInfo.appId,
+        this.dataList = []
+        this.$api.tbzwStudyRecordData.getReserveBuyDataDetails({
+          activeConfigId: this.propPeriodId,
         }).then(response => {
-          this.recordList = response.data.resultData
-          for (let item of this.recordList) {
-            item.time = dayjs(+item.createTime).format('YYYY-MM-DD HH:mm')
-            // item.replyText = item.replyText.split('#')
-            // item.scoreList = item.replyText[0].split(',')
-            // item.ruleList = item.replyText[1].split(',')
-            // item.content = item.replyText[3]
+          let info = response.data.resultData
+          if (this.type == '1') {
+            info.forEach(item => {
+              this.dataList.push({
+                date: item.date,
+                reserveCount: item.reserveCount,
+                reserveBuyCount: item.reserveBuyCount,
+                reserveBuyPercent: item.reserveBuyPercent,
+              })
+            })
+          } else {
+            info.forEach(item => {
+              this.dataList.push({
+                date: item.date,
+                reserveCount: item.reserveCount,
+                signCount: item.signCount,
+                reservePercent: item.reservePercent,
+                reserveBuyAllPercent: item.reserveBuyAllPercent,
+              })
+            })
           }
         })
       },
-      closeModal () {
+      closeModal() {
         this.isOpenDetail = false
         this.$emit('input', false)
       }
@@ -142,7 +145,7 @@
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="less">
 
-  .p-detailModal{
+  .p-detailModal {
 
     &-radio {
       text-align: center;

@@ -5,6 +5,9 @@ const tbzwReserveBuy = {
   listByPage(params) {
     return axios.get('/compositionv2/reserveBuy/listByPage', {params: params})
   },
+  getReserveBuyData(params) {
+    return axios.get('/compositionv2/reserveBuy/getReserveBuyData', {params: params})
+  },
   reserveBuyUpdate(params) {
     return axios.post("/compositionv2/reserveBuy/update", params);
   },

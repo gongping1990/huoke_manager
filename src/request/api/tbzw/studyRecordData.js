@@ -19,6 +19,9 @@ const tbzwStudyRecordData = {
   },
   getCourseQualityOutData(params) {
     return axios.get(`/compositionv2/studyRecordData/getCourseQualityOutData`, {params: params})
+  },
+  getReserveBuyDataDetails(params) {
+    return axios.get(`/compositionv2/studyRecordData/getReserveBuyDataDetails`, {params: params})
   }
 };
 
