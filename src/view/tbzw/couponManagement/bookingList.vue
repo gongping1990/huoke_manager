@@ -225,10 +225,7 @@
         ruleValidate: {
           name: [
             {required: true, message: '请输入活动名称', trigger: 'blur'},
-            {type: 'string', max: 20, message: '团购名称长度为20字', trigger: 'blur'}
-          ],
-          vusers: [
-            {required: true, type: 'array', message: '请选择虚拟用户', min: 1, trigger: 'change'},
+            {type: 'string', max: 20, message: '活动名称长度为20字', trigger: 'blur'}
           ],
           ruleText: [
             {required: true, message: '请输入活动规则', trigger: 'blur'},
@@ -620,20 +617,6 @@
         this.addInfo.vusers = []
         this.addInfo.courseList = []
 
-        let passCourse = this.coursePeriodsList.every((item) => {
-          return item.periodsId
-        })
-
-        let passDiscountList = this.addInfo.discountList.every((item) => {
-          return item.buyHref && item.money && item.personnum
-        })
-
-        if (!passCourse) {
-          return this.$Message.error('请选择关联付费体验课期数')
-        } else if (!passDiscountList) {
-          return this.$Message.error('优惠信息字段不能为空')
-        }
-
         this.coursePeriodsList.forEach(item => {
           item.periodsList.forEach(list => {
             if (item.periodsId === list.activeId) {
@@ -653,6 +636,22 @@
             name: item.nickname
           })
         })
+
+        let passCourse = this.coursePeriodsList.every((item) => {
+          return item.periodsId
+        })
+
+        let passDiscountList = this.addInfo.discountList.every((item) => {
+          return item.buyHref && item.money && item.personnum
+        })
+
+        if (!passCourse) {
+          return this.$Message.error('请选择关联付费体验课期数')
+        } else if (!passDiscountList) {
+          return this.$Message.error('优惠信息字段不能为空')
+        } else if (!this.addInfo.vusers.length) {
+          return this.$Message.error('请选择虚拟用户')
+        }
 
         if (this.isSending) return
 
