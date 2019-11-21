@@ -267,7 +267,7 @@
                 return h('div', `${item.courseName},${item.stage ? `第${item.stage}期` : '不参加'}`)
               }))
             },
-            width: 250,
+            width: 270,
             align: 'center'
           },
           {
@@ -277,7 +277,7 @@
                 props: {
                   trigger: 'hover',
                   title: '优惠信息',
-                  placement: 'bottom'
+                  placement: 'right'
                 }
               }, [
                 h('div', {
@@ -324,7 +324,7 @@
           },
           {
             title: '操作',
-            width: 260,
+            width: 280,
             render: (h, params) => {
               return h('div', [
                 h('Button', {
