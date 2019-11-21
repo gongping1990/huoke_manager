@@ -735,6 +735,7 @@
             isUserType: true,
             isSituation: true,
             isComment: true,
+            isTeacher: true,
             isFeedback: true
           }
         }
