@@ -281,7 +281,7 @@
                     color: '#3399FF',
                     cursor: 'pointer'
                   }
-                }, '查看详情'),
+                }, '优惠详情'),
                 h('div', {
                   slot: 'content'
                 }, [
