@@ -70,12 +70,7 @@
                 <Input class="-item-input -item-input-two" type="text" v-model="item.buyHref"
                        placeholder="购课地址"></Input>
               </div>
-              <div class="g-error g-cursor" @click="delActiveInfo(index)">删除</div>
             </div>
-            <Button v-if="addInfo.discountList.length<3" @click="addActiveInfo" ghost type="primary"
-                    style="width: 100px;">
-              新增优惠等级
-            </Button>
           </FormItem>
           <FormItem label="虚拟预约用户" prop="vusers">
             <Button @click="openUserModal()" ghost type="primary" style="width: 100px;">+添加用户</Button>
@@ -277,7 +272,8 @@
                 props: {
                   trigger: 'hover',
                   title: '优惠信息',
-                  placement: 'right'
+                  placement: 'right',
+                  transfer: true
                 }
               }, [
                 h('div', {
@@ -468,16 +464,6 @@
           this.addInfo.buyedEndTime = ''
         }
       },
-      delActiveInfo(index) {
-        this.addInfo.discountList.splice(index, 1)
-      },
-      addActiveInfo() {
-        this.addInfo.discountList.push({
-          personnum: '',
-          money: '',
-          buyHref: ''
-        })
-      },
       copyUrl(param) {
         this.copy_url = param.url
         setTimeout(() => {
@@ -516,7 +502,17 @@
                 personnum: '',
                 money: '',
                 buyHref: ''
-              }
+              },
+              {
+                personnum: '',
+                money: '',
+                buyHref: ''
+              },
+              {
+                personnum: '',
+                money: '',
+                buyHref: ''
+              },
             ],
             courseList: []
           }
