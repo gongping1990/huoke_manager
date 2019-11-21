@@ -15,7 +15,7 @@
         </Col>
         <Col :span="5" class="g-t-left">
           <div class="g-flex-a-j-center">
-            <div class="-search-select-text-two">活动状态：</div>
+            <div class="-search-select-text-two">预约状态：</div>
             <Select v-model="searchInfo.payed" @on-change="getList(1)" class="-search-selectOne">
               <Option v-for="item of receiveStatus" :label=item.name :value=item.id :key="item.id"></Option>
             </Select>
@@ -203,6 +203,8 @@
         copy_url: '',
         statusList: {
           '0': '未开始',
+          '1': '进行中',
+          '2': '进行中',
           '5': '进行中',
           '3': '已结束',
           '4': '已过期'
@@ -313,6 +315,21 @@
               return h('span', `${dayjs(+params.row.reserveStartTime).format('YYYY-MM-DD HH:mm')} - ${ dayjs(+params.row.reserveEndTime).format('YYYY-MM-DD HH:mm')}`)
             },
             width: 300,
+            align: 'center'
+          },
+          {
+            title: '结束时间',
+            render: (h, params) => {
+              return h('span', dayjs(+params.row.buyedEndTime).format('YYYY-MM-DD HH:mm'))
+            },
+            width: 140,
+            align: 'center'
+          },
+          {
+            title: '预约状态',
+            render: (h, params) => {
+              return h('span', this.statusList[params.row.activeStatus])
+            },
             align: 'center'
           },
           {
