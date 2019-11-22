@@ -15,6 +15,12 @@
                 <span><Icon type="ios-time-outline"/>: {{userInfo.createTime}}</span>
               </div>
               <div class="-r-dev" style="margin-top: 10px">
+                <span>孩子姓名: {{studentInfo.nickname || '暂无'}}</span>
+                <span>孩子性别: {{studentInfo.sex ? '男' : '女'}}</span>
+                <span>在读年级: {{studentInfo.gradeText || '暂无'}}</span>
+                <Button @click="openModalChild" ghost type="primary" style="width: 100px;">完善孩子信息</Button>
+              </div>
+              <div class="-r-dev" style="margin-top: 10px">
                 <span>是否关注: {{userInfo.subscripbe ? '是' : '否'}}</span>
                 <span>是否购买: {{userInfo.buyed ? '是' : '否'}}</span>
                 <span>支付时间: {{userInfo.buyTime || '未购买'}}</span>
@@ -41,6 +47,35 @@
             @on-change="currentChange"></Page>
     </Card>
     <loading v-if="isFetching"></loading>
+
+    <Modal
+      class="p-userInfo"
+      v-model="isOpenModalChild"
+      @on-cancel="closeModal('addInfo')"
+      width="500"
+      title="完善信息">
+      <Form ref="addInfo" :model="addInfo" :label-width="100">
+        <FormItem label="孩子昵称">
+          <Input type="text" v-model="addInfo.nickname" placeholder="请输入孩子昵称"></Input>
+        </FormItem>
+        <FormItem label="孩子性别" prop="sex">
+          <Radio-group v-model="addInfo.sex">
+            <Radio :label=1>男</Radio>
+            <Radio :label=0>女</Radio>
+          </Radio-group>
+        </FormItem>
+        <FormItem label="在读年级">
+          <Select v-model="addInfo.grade">
+            <Option v-for="(item,index) in gradeList" :label="item.name" :value="item.key" :key="index"></Option>
+          </Select>
+        </FormItem>
+      </Form>
+      <div slot="footer" class="g-flex-j-sa">
+        <Button @click="closeModal('addInfo')" ghost type="primary" style="width: 100px;">取消</Button>
+        <div @click="submitInfo('addInfo')" class="g-primary-btn ">确 认</div>
+      </div>
+    </Modal>
+
   </div>
 </template>
 
@@ -60,15 +95,19 @@
           pageSize: 10
         },
         userInfo: '',
+        studentInfo: '',
+        addInfo: {},
         detailInfo: '',
         searchInfo: {
           appId: '7'
         },
         dataList: [],
+        gradeList: [],
         appList: [],
         total: 0,
         isFetching: false,
         isOpenModal: false,
+        isOpenModalChild: false,
         columns: [
           {
             title: '课时名称',
@@ -107,6 +146,21 @@
       changeRadio () {
         this.listLessonProgress()
       },
+      openModalChild() {
+        if (!this.addInfo.id) {
+          this.addInfo = {
+            nickname: '',
+            sex: '',
+            grade: ''
+          }
+        }
+        this.isOpenModalChild = true
+      },
+      closeModal(name) {
+        this.isOpenModalChild = false
+        // this.getStudent()
+        this.$refs[name].resetFields()
+      },
       openModal() {
         this.isOpenModal = true
       },
@@ -138,6 +192,34 @@
               this.userInfo.learnStartDate = this.userInfo.learnStartDate ? dayjs(+this.userInfo.learnStartDate).format('YYYY-MM-DD') : '暂无'
               this.userInfo.buyedTime =  this.userInfo.buyedTime ? dayjs(+this.userInfo.buyedTime).format('YYYY-MM-DD HH:mm') : '暂无'
             })
+      },
+      submitInfo(name) {
+        this.isSending = true
+        let params = {
+          puid: this.$route.query.id || this.userId,
+          areasId: `${this.addInfo.areasId}`,
+          relation: this.addInfo.relation,
+          grade: this.addInfo.grade,
+          sex: this.addInfo.sex,
+          areasText: this.addInfo.areasText,
+          nickname: this.addInfo.nickname
+        }
+        let promiseDate = this.addInfo.id ? this.$api.tbzwStudent.updateStudent({
+          id: this.addInfo.id,
+          ...params
+        }) : this.$api.tbzwStudent.addStudent(params)
+        promiseDate
+          .then(
+            response => {
+              if (response.data.code == '200') {
+                this.$Message.success('提交成功');
+                // this.getStudent()
+                this.closeModal(name)
+              }
+            })
+          .finally(() => {
+            this.isSending = false
+          })
       }
     }
   };

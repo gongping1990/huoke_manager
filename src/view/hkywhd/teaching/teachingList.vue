@@ -90,7 +90,16 @@
             <Option v-for="(item,index) in courseList" :label="item.name" :value="item.id" :key="index"></Option>
           </Select>
         </FormItem>
-        <FormItem label="课程封面">
+        <FormItem label="课时总数" prop="name">
+          <Input type="text" v-model="addInfo.name" placeholder="请输入课时总数"></Input>
+        </FormItem>
+        <FormItem label="课程描述" prop="name">
+          <Input type="text" v-model="addInfo.name" placeholder="请输入课程描述"></Input>
+        </FormItem>
+        <FormItem label="竖版课程封面">
+          <upload-img v-model="addInfo.coverImgUrl" :option="uploadOption"></upload-img>
+        </FormItem>
+        <FormItem label="首页课程封面">
           <upload-img v-model="addInfo.coverImgUrl" :option="uploadOption"></upload-img>
         </FormItem>
 

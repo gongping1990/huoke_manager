@@ -121,5 +121,78 @@ export const hkywhdRouter =[
         component: () => import('@/view/hkywhd/user/userInfo')
       }
     ]
+  },
+  {
+    path: '/operate',
+    name: 'operate',
+    title: '运营管理',
+    component: Main,
+    children: [
+      {
+        path: '/hkywhd_banner',
+        name: 'hkywhd_banner',
+        meta: [
+          {name: '运营管理'},
+          {name: 'banner管理'}
+        ],
+        component: () => import('@/view/hkywhd/banner/banner')
+      },
+      {
+        path: '/hkywhd_putIn',
+        name: 'hkywhd_putIn',
+        meta: [
+          {name: '运营管理'},
+          {name: '投放管理'}
+        ],
+        component: () => import('@/view/hkywhd/putIn/putIn')
+      }
+    ]
+  },
+  {
+    path: '/course',
+    name: 'course',
+    title: '课程管理',
+    component: Main,
+    children: [
+      {
+        path: '/hkywhd_courseType',
+        name: 'hkywhd_courseType',
+        meta: [
+          {name: '课程管理'},
+          {name: '课程分类'}
+        ],
+        component: () => import('@/view/hkywhd/courseType/courseType')
+      },
+      {
+        path: '/hkywhd_courseList',
+        name: 'hkywhd_courseList',
+        meta: [
+          {name: '课程管理'},
+          {name: '课程列表'}
+        ],
+        component: () => import('@/view/hkywhd/course/courseList')
+      },
+      {
+        path: '/hkywhd_lessonList',
+        name: 'hkywhd_lessonList',
+        meta: [
+          {name: '课程管理'},
+          {name: '课程列表', url: 'hkywhd_courseList'},
+          {name: '小课管理'}
+        ],
+        component: () => import('@/view/hkywhd/course/lessonList')
+      },
+      {
+        path: '/hkywhd_classHourList',
+        name: 'hkywhd_classHourList',
+        meta: [
+          {name: '课程管理'},
+          {name: '课程列表', url: 'hkywhd_courseList'},
+          {name: '小课管理', url: 'hkywhd_lessonList'},
+          {name: '课时管理'}
+        ],
+        component: () => import('@/view/hkywhd/course/classHourList')
+      }
+    ]
   }
 ]

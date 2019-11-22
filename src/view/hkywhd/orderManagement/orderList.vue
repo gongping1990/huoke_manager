@@ -23,6 +23,7 @@
             <Select v-model="selectInfo" class="-search-select">
               <Option value="0">订单号</Option>
               <Option value="1">用户昵称</Option>
+              <Option value="2">课程名称</Option>
             </Select>
             <span class="-search-center">|</span>
             <Input v-model="searchInfo.antistop" class="-search-input" placeholder="请输入关键字" icon="ios-search"
@@ -256,6 +257,11 @@
             render: (h, params) => {
               return h('div', dayjs(+params.row.gmtCreate).format("YYYY-MM-DD HH:mm"))
             },
+            align: 'center'
+          },
+          {
+            title: '助力后是否购买',
+            key: 'phone',
             align: 'center'
           }
         ],

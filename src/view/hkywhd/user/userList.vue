@@ -97,14 +97,16 @@
             align: 'center'
           },
           {
-            title: '创建时间',
-            key: 'creatTime',
-            tooltip: true,
+            title: '是否付费',
+            render: (h, params) => {
+              return h('span', params.row.subscripbe ? '是' : '否')
+            },
             align: 'center'
           },
           {
-            title: '最后登录时间',
-            key: 'lastLoginTime',
+            title: '创建时间',
+            key: 'creatTime',
+            tooltip: true,
             align: 'center'
           },
           {
