@@ -884,7 +884,7 @@
           hmEnd: this.searchInfo.getEndTime ? new Date(this.searchInfo.getEndTime).getTime() : "",
           teacherId: this.searchInfo.teacherId == '-1' ? '' : this.searchInfo.teacherId,
           status: this.radioType == 5 ? '' : this.radioType,
-          praise: this.radioType == 5,
+          praise: this.radioType == 5 ? true : '',
           alloted: true
         }
 
