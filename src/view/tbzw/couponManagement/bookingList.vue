@@ -446,20 +446,20 @@
       };
     },
     watch: {
-      'addInfo.reserveStartTime'(_new, _old) {
-        this.dateEndOption = {
-          disabledDate(date) {
-            return date && date.valueOf() < new Date(_new).getTime();
-          }
-        }
-      },
-      'addInfo.reserveEndTime'(_new, _old) {
-        this.dateEndOptionTwo = {
-          disabledDate(date) {
-            return date && date.valueOf() < new Date(_new).getTime();
-          }
-        }
-      },
+      // 'addInfo.reserveStartTime'(_new, _old) {
+      //   this.dateEndOption = {
+      //     disabledDate(date) {
+      //       return date && date.valueOf() < (new Date(_new).getTime());
+      //     }
+      //   }
+      // },
+      // 'addInfo.reserveEndTime'(_new, _old) {
+      //   this.dateEndOptionTwo = {
+      //     disabledDate(date) {
+      //       return date && date.valueOf() < new Date(_new).getTime();
+      //     }
+      //   }
+      // },
     },
     mounted() {
       this.getList()
