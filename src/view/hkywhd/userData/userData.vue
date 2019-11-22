@@ -1,5 +1,16 @@
 <template>
   <div class="p-userData">
+    <Row class="g-search -c-tab">
+      <Col class="p-processData-flex" :span="24">
+        <div class="-flex-div g-flex-a-j-center">
+          <div class="-search-select-text">用户来源</div>
+          <Select class="-search-selectOne" v-model="selectTypeOne" @on-change="initFun">
+            <Option v-for="(item,index) in courseList" :label="item.name" :value="item.id" :key="index"></Option>
+          </Select>
+        </div>
+      </Col>
+    </Row>
+
     <Card>
       <div class="p-userData-title">
         <div class="-left">
@@ -76,6 +87,7 @@
     data() {
       return {
         radioType: 0,
+        selectTypeOne: 1,
         selectTypeTwo: 1,
         selectTypeThree: 1,
         dateOptionOne: {
@@ -98,7 +110,8 @@
         getEndTimeTwo: '',
         titleList: [],
         titleListTwo: [],
-        channelList: []
+        channelList: [],
+        courseList: []
       }
     },
     computed: {
@@ -169,11 +182,14 @@
       },
     },
     mounted() {
-      this.getList()
-      this.getTodayInfo()
-      this.getTotalInfo()
+      this.initFun()
     },
     methods: {
+      initFun () {
+        this.getList()
+        this.getTodayInfo()
+        this.getTotalInfo()
+      },
       changeTimeTwo () {
         if(this.selectTypeTwo == 1) {
           this.getTotalInfo()

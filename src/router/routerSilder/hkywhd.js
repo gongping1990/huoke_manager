@@ -24,6 +24,15 @@ export const hkywhdRouter =[
           {name: '活动数据'}
         ],
         component: () => import('@/view/hkywhd/activeData/activeData')
+      },
+      {
+        path: '/hkywhd_courseData',
+        name: 'hkywhd_courseData',
+        meta: [
+          {name: '数据统计'},
+          {name: '课程数据'}
+        ],
+        component: () => import('@/view/hkywhd/courseData/courseData')
       }
     ]
   },
