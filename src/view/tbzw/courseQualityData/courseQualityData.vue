@@ -5,7 +5,7 @@
       <Col :span="24">
         <div class="g-flex-a-j-center">
           <div class="-search-select-text">课程名称</div>
-          <Select class="-search-selectOne" v-model="searchInfo.courseId" @on-change="getList">
+          <Select class="-search-selectOne" v-model="searchInfo.courseId" @on-change="getList(1)">
             <Option v-for="(item,index) in courseList" :label="item.name" :value="item.id" :key="index"></Option>
           </Select>
         </div>
@@ -17,9 +17,6 @@
         <div class="p-courseQualityData-wrap">
           <div class="p-courseQualityData-title">累计数据</div>
           <Table class="-c-tab" :loading="isFetching" :columns="columnsOne" :data="dataListOne"></Table>
-          <Page class="g-text-right" :total="totalOne" size="small" show-elevator :page-size="tabOne.pageSize"
-                :current.sync="tabOne.currentPage"
-                @on-change="currentChangeOne"></Page>
         </div>
         <div class="p-courseQualityData-wrap">
           <div class="p-courseQualityData-title -titleTwo">
@@ -27,6 +24,10 @@
             <div><DatePicker type="date" v-model="searchInfo.date" placeholder="请选择"  @on-change="getList"></DatePicker></div>
           </div>
           <Table class="-c-tab" :loading="isFetching" :columns="columnsTwo" :data="dataListTwo"></Table>
+
+          <Page class="g-text-right" :total="totalOne" size="small" show-elevator :page-size="tabOne.pageSize"
+                :current.sync="tabOne.currentPage"
+                @on-change="currentChangeOne"></Page>
         </div>
       </div>
     </Card>
@@ -50,13 +51,7 @@
           currentPage: 1,
           pageSize: 10
         },
-        tabTwo: {
-          page: 1,
-          currentPage: 1,
-          pageSize: 10
-        },
         totalOne: 0,
-        totalTwo: 0,
         isFetching: false,
         isOpenModal: false,
         searchInfo: {
@@ -247,10 +242,6 @@
         this.tabOne.page = val;
         this.getList();
       },
-      currentChangeTwo(val) {
-        this.tabTwo.page = val;
-        this.getList();
-      },
       getCourseList() {
         this.$api.tbzwCourse.listBase()
           .then(
@@ -261,15 +252,21 @@
             })
       },
       //分页查询
-      getList() {
+      getList(num) {
         this.isFetching = true
+        if (num) {
+          this.tabOne.currentPage = 1
+        }
         this.$api.tbzwStudyRecordData.getCourseQualityData({
+          current: num ? num : this.tabOne.page,
+          size: this.tabOne.pageSize,
           courseId: this.searchInfo.courseId,
           date: dayjs(new Date(this.searchInfo.date)).format('YYYY-MM-DD')
         })
           .then(
             response => {
               let info = response.data.resultData
+              this.totalOne = info.total
               this.dataListOne = info.allData;
               this.dataListTwo = info.dateData;
             })
