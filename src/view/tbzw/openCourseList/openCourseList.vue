@@ -417,7 +417,7 @@
       min-width: 80px;
     }
     .-search-selectOne {
-      width: 150px;
+      /*width: 200px;*/
       border: 1px solid #dcdee2;
       border-radius: 4px;
       margin-right: 20px;

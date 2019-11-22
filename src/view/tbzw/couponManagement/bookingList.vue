@@ -314,7 +314,7 @@
             render: (h, params) => {
               return h('span', `${dayjs(+params.row.reserveStartTime).format('YYYY-MM-DD HH:mm')} - ${ dayjs(+params.row.reserveEndTime).format('YYYY-MM-DD HH:mm')}`)
             },
-            width: 300,
+            width: 140,
             align: 'center'
           },
           {
@@ -334,7 +334,7 @@
           },
           {
             title: '操作',
-            width: 280,
+            width: 170,
             render: (h, params) => {
               return h('div', [
                 h('Button', {
@@ -395,8 +395,11 @@
                     }
                   }
                 }, '结束'),
+
               ])
-            }
+            },
+            align: 'center'
+
           }
         ],
         columnsModal: [

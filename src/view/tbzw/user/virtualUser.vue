@@ -95,7 +95,6 @@
                 style: {
                   'display': 'flex',
                   'align-items': 'center',
-                  'justify-content': 'center'
                 }
               }, [
                 h('img', {
@@ -111,8 +110,7 @@
                 }),
                 h('span', params.row.nickname)
               ])
-            },
-            align: 'center'
+            }
           },
           {
             title: '创建时间',
