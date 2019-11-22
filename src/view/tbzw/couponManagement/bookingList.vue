@@ -71,6 +71,7 @@
                        placeholder="购课地址"></Input>
               </div>
             </div>
+            <div class="-c-tips">购课地址规则：请输入链接中http://composition.k12.vip后面的部分，包括“/”</div>
           </FormItem>
           <FormItem label="虚拟预约用户" prop="vusers" class="ivu-form-item-required">
             <Button @click="openUserModal()" ghost type="primary" style="width: 100px;">+添加用户</Button>
