@@ -252,21 +252,75 @@
           {
             title: '人均上课数',
             render: (h, params) => {
-              return h('div', `${params.row.avgLearns}(${params.row.avgLearnsRatio}%)`)
+              return h('Poptip', {
+                props: {
+                  trigger: 'hover',
+                  title: '提示信息',
+                  placement: 'right',
+                  transfer: true
+                }
+              }, [
+                h('div', {
+                  style: {
+                    color: '#3399FF'
+                  }
+                }, `${params.row.avgLearns}(${params.row.avgLearnsRatio}%)`),
+                h('div', {
+                  slot: 'content'
+                }, [
+                  h('div', '百分比分母为“人均排课数”')
+                ])
+              ])
             },
             align: 'center'
           },
           {
             title: '人均完课数',
             render: (h, params) => {
-              return h('div', `${params.row.avgStudyeds}(${params.row.avgStudyedsRatio}%)`)
+              return h('Poptip', {
+                props: {
+                  trigger: 'hover',
+                  title: '提示信息',
+                  placement: 'right',
+                  transfer: true
+                }
+              }, [
+                h('div', {
+                  style: {
+                    color: '#3399FF'
+                  }
+                }, `${params.row.avgStudyeds}(${params.row.avgStudyedsRatio}%)`),
+                h('div', {
+                  slot: 'content'
+                }, [
+                  h('div', '百分比分母为“人均排课数”')
+                ])
+              ])
             },
             align: 'center'
           },
           {
             title: '人均交作业数',
             render: (h, params) => {
-              return h('div', `${params.row.avgWorks}(${params.row.avgWorksRatio}%)`)
+              return h('Poptip', {
+                props: {
+                  trigger: 'hover',
+                  title: '提示信息',
+                  placement: 'right',
+                  transfer: true
+                }
+              }, [
+                h('div', {
+                  style: {
+                    color: '#3399FF'
+                  }
+                }, `${params.row.avgWorks}(${params.row.avgWorksRatio}%)`),
+                h('div', {
+                  slot: 'content'
+                }, [
+                  h('div', '百分比分母为“人均排课数”')
+                ])
+              ])
             },
             align: 'center'
           },
