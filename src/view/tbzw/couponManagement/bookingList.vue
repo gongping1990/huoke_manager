@@ -72,7 +72,7 @@
               </div>
             </div>
           </FormItem>
-          <FormItem label="虚拟预约用户" prop="vusers">
+          <FormItem label="虚拟预约用户" prop="vusers" class="ivu-form-item-required">
             <Button @click="openUserModal()" ghost type="primary" style="width: 100px;">+添加用户</Button>
             <div class="p-bookingList-formUser">
               <div class="-formUser-item" v-for="(item,index) of userImgList" :key="index">

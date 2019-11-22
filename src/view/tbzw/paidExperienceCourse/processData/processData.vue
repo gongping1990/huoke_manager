@@ -9,7 +9,7 @@
           </Select>
         </div>
         <div class="-flex-div g-flex-a-j-center">
-          <div class="-search-select-text">期数</div>
+          <div class="-search-select-text g-t-center">期数</div>
           <Select class="-search-selectOne" v-model="searchInfo.periodsId" @on-change="changePeriods">
             <Option v-for="(item,index) in periodsList" :label="item.periods" :value="item.id" :key="index"></Option>
           </Select>
@@ -215,11 +215,11 @@
     }
 
     .-search-select-text {
-      /*min-width: 80px;*/
+      min-width: 60px;
     }
 
     .-search-selectOne {
-      width: 150px;
+      /*width: 150px;*/
       border: 1px solid #dcdee2;
       border-radius: 4px;
       margin: 0 10px;
