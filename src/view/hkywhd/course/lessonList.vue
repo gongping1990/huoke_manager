@@ -37,17 +37,17 @@
           <FormItem label="课程名称" prop="name">
             <Input type="text" v-model="addInfo.name" placeholder="请输入课程名称"></Input>
           </FormItem>
-          <FormItem label="课程描述" prop="name">
-            <Input type="text" v-model="addInfo.name" placeholder="请输入课程描述"></Input>
+          <FormItem label="课程描述" prop="descripte">
+            <Input type="text" v-model="addInfo.descripte" placeholder="请输入课程描述"></Input>
           </FormItem>
-          <FormItem label="排序值" prop="name">
-            <Input type="text" v-model="addInfo.name" placeholder="请输入排序值"></Input>
+          <FormItem label="排序值" prop="sortNum">
+            <Input type="text" v-model="addInfo.sortNum" placeholder="请输入排序值"></Input>
           </FormItem>
-          <FormItem label="课时总数" prop="href">
-            <Input type="text" v-model="addInfo.href" placeholder="请输入课时总数"></Input>
+          <FormItem label="课时总数" prop="nums">
+            <Input type="text" v-model="addInfo.nums" placeholder="请输入课时总数"></Input>
           </FormItem>
-          <Form-item label="竖版课程封面" prop="url" class="ivu-form-item-required">
-            <upload-img v-model="addInfo.url" :option="uploadOption"></upload-img>
+          <Form-item label="竖版课程封面" prop="coverImgUrl" class="ivu-form-item-required">
+            <upload-img v-model="addInfo.coverImgUrl" :option="uploadOption"></upload-img>
           </Form-item>
         </Form>
         <div slot="footer" class="-p-b-flex">
@@ -102,8 +102,17 @@
         },
         ruleValidate: {
           name: [
-            {required: true, message: '请输入活动名称', trigger: 'blur'},
-            {type: 'string', max: 20, message: '活动名称长度为20字', trigger: 'blur'}
+            {required: true, message: '请输入课程名称', trigger: 'blur'},
+            {type: 'string', max: 20, message: '课程名称长度为20字', trigger: 'blur'}
+          ],
+          descripte: [
+            {required: true, message: '请输入课程描述', trigger: 'blur'}
+          ],
+          sortNum: [
+            {required: true, message: '请输入排序值', trigger: 'blur'}
+          ],
+          nums: [
+            {required: true, message: '请输入课时总数', trigger: 'blur'}
           ]
         },
         columns: [
@@ -125,7 +134,7 @@
               }, [
                 h('img', {
                   attrs: {
-                    src: params.row.url
+                    src: params.row.coverImgUrl
                   },
                   style: {
                     width: '50px',
@@ -139,20 +148,20 @@
           },
           {
             title: '排序值',
-            key: 'href',
+            key: 'sortNum',
             align: 'center'
           },
           {
             title: '创建时间',
             render: (h, params) => {
-              return h('span', `${params.row.showTime}`)
+              return h('span', `${params.row.gmtCreate}`)
             },
             align: 'center'
           },
           {
             title: '更新时间',
             render: (h, params) => {
-              return h('span', `${params.row.hideTime}`)
+              return h('span', `${params.row.gmtModified}`)
             },
             align: 'center'
           },
@@ -172,7 +181,7 @@
                   },
                   on: {
                     click: () => {
-                      this.endItem(params.row)
+                      this.toJump(params.row)
                     }
                   }
                 }, '课时管理'),
@@ -215,6 +224,14 @@
       this.getList()
     },
     methods: {
+      toJump (data) {
+        this.$router.push({
+          name: 'hkywhd_classHourList',
+          query: {
+            tbookId: data.id
+          }
+        })
+      },
       changeDate(data) {
         this.searchInfo.getStartTime = data.startTime
         this.searchInfo.getEndTime = data.endTime
@@ -224,6 +241,8 @@
         this.isOpenModal = true
         if (data) {
           this.addInfo = JSON.parse(JSON.stringify(data))
+          this.addInfo.nums = this.addInfo.nums.toString()
+          this.addInfo.sortNum = this.addInfo.sortNum.toString()
         } else {
           this.searchInfo.getStartTime = ''
           this.searchInfo.getEndTime = ''
@@ -247,13 +266,13 @@
         if (num) {
           this.tab.currentPage = 1
         }
-        this.$api.gswOperational.listOperational({
+        this.$api.hkywhdTextbook.pageStepsTextBookByQuery({
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
           name: this.searchInfo.nickname,
-          type: this.radioType,
-          showTime: this.searchInfo.getStartTime ? dayjs(this.searchInfo.getStartTime).format("YYYY/MM/DD HH:mm:ss") : '',
-          hideTime: this.searchInfo.getEndTime ? dayjs(this.searchInfo.getEndTime).format("YYYY/MM/DD HH:mm:ss") : ''
+          tbookId: this.$route.query.tbookId,
+          start: this.searchInfo.getStartTime ? new Date(this.searchInfo.getStartTime).getTime() : '',
+          end: this.searchInfo.getEndTime ?  new Date(this.searchInfo.getEndTime).getTime() : ''
         })
           .then(
             response => {
@@ -269,8 +288,8 @@
           title: '提示',
           content: '确认要删除？',
           onOk: () => {
-            this.$api.gswOperational.removeOperational({
-              operationalId: param.id
+            this.$api.hkywhdTextbook.removeTextBook({
+              id: param.id
             }).then(
               response => {
                 if (response.data.code == "200") {
@@ -282,20 +301,30 @@
         })
       },
       submitInfo(name) {
-        if (!this.addInfo.url) {
-          return this.$Message.error('请上传图片')
-        }
 
         this.$refs[name].validate((valid) => {
           if (valid) {
+            if (!this.addInfo.coverImgUrl) {
+              return this.$Message.error('请上传竖版课程封面')
+            }
+
             this.isSending = true
-            this.$api.gswOperational.saveOperational({
-              id: this.addInfo.id,
+
+            let paramsData = {
               name : this.addInfo.name,
-              href : this.addInfo.href,
-              url : this.addInfo.url,
-              type: this.radioType
-            })
+              descripte : this.addInfo.descripte,
+              nums : this.addInfo.nums,
+              sortNum : this.addInfo.sortNum,
+              coverImgUrl : this.addInfo.coverImgUrl,
+              tbookId : this.$route.query.tbookId
+            }
+
+            let paramsUrl =  this.addInfo.id ? this.$api.hkywhdTextbook.updateStepsTextBook({
+              id: this.addInfo.id,
+              ...paramsData
+            }) : this.$api.hkywhdTextbook.saveStepsTextBook(paramsData)
+
+            paramsUrl
               .then(
                 response => {
                   if (response.data.code == '200') {

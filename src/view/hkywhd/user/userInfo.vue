@@ -16,7 +16,7 @@
               </div>
               <div class="-r-dev" style="margin-top: 10px">
                 <span>孩子姓名: {{studentInfo.nickname || '暂无'}}</span>
-                <span>孩子性别: {{studentInfo.sex ? '男' : '女'}}</span>
+                <span>孩子性别: {{studentInfo.sex === null ? '暂无' : studentInfo.sex ? '男' : '女'}}</span>
                 <span>在读年级: {{studentInfo.gradeText || '暂无'}}</span>
                 <Button @click="openModalChild" ghost type="primary" style="width: 100px;">完善孩子信息</Button>
               </div>
@@ -31,7 +31,7 @@
       </Row>
 
       <Row class="-c-tab g-t-left">
-        <Select v-model="searchInfo.appId" @on-change="changeRadio" style="width: 300px">
+        <Select v-model="searchInfo.appId" @on-change="changeRadio()" style="width: 300px">
           <Option v-for="(item,index) in appList" :label="item.name" :value="item.id" :key="index"></Option>
         </Select>
       </Row>
@@ -39,7 +39,7 @@
       <div class="-c-tab">
         <Row>
           <div class="-c-text">上课数据</div>
-          <Table :columns="columns" :data="dataList"></Table>
+          <Table :columns="!dataItem.label ? columns : columnsTwo" :data="dataList"></Table>
         </Row>
       </div>
 
@@ -94,15 +94,52 @@
           page: 1,
           pageSize: 10
         },
-        userInfo: '',
+        userInfo: {},
         studentInfo: '',
         addInfo: {},
-        detailInfo: '',
         searchInfo: {
           appId: '7'
         },
         dataList: [],
-        gradeList: [],
+        dataItem: '',
+        gradeList: [
+          {
+            name: '一年级',
+            key: 2
+          },
+          {
+            name: '二年级',
+            key: 3
+          },
+          {
+            name: '三年级',
+            key: 4
+          },
+          {
+            name: '四年级',
+            key: 5
+          },
+          {
+            name: '五年级',
+            key: 6
+          },
+          {
+            name: '六年级',
+            key: 7
+          },
+          {
+            name: '初中',
+            key: 8
+          },
+          {
+            name: '幼儿园',
+            key: 1
+          },
+          {
+            name: '其他',
+            key: 0
+          }
+        ],
         appList: [],
         total: 0,
         isFetching: false,
@@ -137,6 +174,20 @@
             align: 'center'
           }
         ],
+        columnsTwo: [
+          {
+            title: '课时名称',
+            key: 'lessonName',
+            align: 'center'
+          },
+          {
+            title: '是否完成学习',
+            render: (h, params) => {
+              return h('div', params.row.clearanceNewword ? '是' : '否')
+            },
+            align: 'center'
+          }
+        ],
       };
     },
     mounted() {
@@ -144,13 +195,23 @@
     },
     methods: {
       changeRadio () {
-        this.listLessonProgress()
+        this.appList.forEach(item=> {
+          if(item.id === this.searchInfo.appId) {
+            this.dataItem = item
+          }
+        })
+
+        if (this.dataItem.label) {
+          this.listByLessonStudyData()
+        } else {
+          this.listLessonProgress()
+        }
       },
       openModalChild() {
         if (!this.addInfo.id) {
           this.addInfo = {
             nickname: '',
-            sex: '',
+            sex: null,
             grade: ''
           }
         }
@@ -158,7 +219,7 @@
       },
       closeModal(name) {
         this.isOpenModalChild = false
-        // this.getStudent()
+        this.getStudent()
         this.$refs[name].resetFields()
       },
       openModal() {
@@ -176,6 +237,7 @@
             this.searchInfo.appId = this.appList[0].id
             if(this.$route.query.id || this.userId) {
               this.listLessonProgress()
+              this.getStudent()
             }
           })
       },
@@ -193,15 +255,42 @@
               this.userInfo.buyedTime =  this.userInfo.buyedTime ? dayjs(+this.userInfo.buyedTime).format('YYYY-MM-DD HH:mm') : '暂无'
             })
       },
+      listByLessonStudyData() {
+        this.$api.hkywhdHomePage.listByLessonStudyData({
+          userId: this.$route.query.id || this.userId,
+          bookId: this.searchInfo.appId
+        })
+          .then(
+            response => {
+              this.dataList = response.data.resultData.dataList;
+            })
+      },
+      getStudent() {
+        this.$api.tbzwStudent.getStudent({
+          puid: this.$route.query.id || this.userId,
+        })
+          .then(
+            response => {
+              if (response.data.resultData) {
+                this.addInfo = response.data.resultData
+              } else {
+                this.addInfo = {
+                  nickname: '',
+                  sex: null,
+                  grade: '',
+                  gradeText: '',
+                }
+              }
+
+              this.studentInfo = JSON.parse(JSON.stringify(this.addInfo))
+            })
+      },
       submitInfo(name) {
         this.isSending = true
         let params = {
           puid: this.$route.query.id || this.userId,
-          areasId: `${this.addInfo.areasId}`,
-          relation: this.addInfo.relation,
           grade: this.addInfo.grade,
           sex: this.addInfo.sex,
-          areasText: this.addInfo.areasText,
           nickname: this.addInfo.nickname
         }
         let promiseDate = this.addInfo.id ? this.$api.tbzwStudent.updateStudent({
@@ -213,7 +302,7 @@
             response => {
               if (response.data.code == '200') {
                 this.$Message.success('提交成功');
-                // this.getStudent()
+                this.getStudent()
                 this.closeModal(name)
               }
             })

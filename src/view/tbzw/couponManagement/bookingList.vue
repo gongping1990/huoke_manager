@@ -375,7 +375,7 @@
                     size: 'small'
                   },
                   style: {
-                    display: !params.row.closed ? 'inline-block' : 'none',
+                    display: !params.row.activeStatus > 2 ? 'inline-block' : 'none',
                     color: '#5444E4'
                   },
                   on: {
@@ -390,7 +390,7 @@
                     size: 'small'
                   },
                   style: {
-                    display: params.row.closed ? 'none' : 'inline-block',
+                    display: params.row.activeStatus > 2 ? 'none' : 'inline-block',
                     color: 'rgba(218, 55, 75)'
                   },
                   on: {

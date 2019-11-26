@@ -21,32 +21,32 @@
           <FormItem label="课时名称" prop="name">
             <Input type="text" v-model="addInfo.name" placeholder="请输入课时名称"></Input>
           </FormItem>
-          <FormItem label="排序值" prop="name">
-            <Input type="text" v-model="addInfo.name" placeholder="请输入排序值"></Input>
+          <FormItem label="排序值" prop="sortNum">
+            <Input type="text" v-model="addInfo.sortNum" placeholder="请输入排序值"></Input>
           </FormItem>
-          <FormItem label="初始播放量" prop="href">
-            <Input type="text" v-model="addInfo.href" placeholder="请输入初始播放量"></Input>
+          <FormItem label="初始播放量">
+            <Input type="text" v-model="addInfo.initialPlays" placeholder="请输入初始播放量"></Input>
           </FormItem>
-          <FormItem label="是否试听" prop="tryout" class="ivu-form-item-required">
-            <Radio-group v-model="addInfo.tryout">
-              <Radio :label=1>能试听</Radio>
-              <Radio :label=0>不能试听</Radio>
-            </Radio-group>
-          </FormItem>
+          <!--<FormItem label="是否试听" prop="tryout" class="ivu-form-item-required">-->
+          <!--<Radio-group v-model="addInfo.tryout">-->
+          <!--<Radio :label=1>能试听</Radio>-->
+          <!--<Radio :label=0>不能试听</Radio>-->
+          <!--</Radio-group>-->
+          <!--</FormItem>-->
           <Form-item label="课时类型" class="-c-form-item ivu-form-item-required">
-            <Radio-group v-model="addInfo.classHourType">
-              <Radio :label=1>音频</Radio>
-              <Radio :label=2>视频</Radio>
+            <Radio-group v-model="addInfo.type" @on-change="changeLessonType">
+              <Radio :label=0>音频</Radio>
+              <Radio :label=1>视频</Radio>
             </Radio-group>
           </Form-item>
-          <Form-item label="上传音频" class="-c-form-item ivu-form-item-required" v-if="addInfo.classHourType=== 1">
-            <upload-audio ref="childChoiceAudio" v-model="addInfo.audio" :option="uploadAudioOption"></upload-audio>
+          <Form-item label="上传音频" prop="audio" class="-c-form-item ivu-form-item-required" v-show="addInfo.type=== 0">
+            <upload-audio ref="childChoiceAudio" v-model="addInfo.radioUrl" :option="uploadAudioOption"></upload-audio>
           </Form-item>
-          <Form-item label="上传视频" class="-c-form-item ivu-form-item-required" v-if="addInfo.classHourType=== 2">
-            <upload-video ref="childChoiceVideo" v-model="addInfo.video" :option="uploadVideoOption"></upload-video>
+          <Form-item label="上传视频" prop="video" class="-c-form-item ivu-form-item-required" v-show="addInfo.type=== 1">
+            <upload-video ref="childChoiceVideo" v-model="addInfo.radioUrl" :option="uploadVideoOption"></upload-video>
           </Form-item>
           <Form-item label="课时文稿" class="-c-form-item ivu-form-item-required">
-            <editor ref="editor" v-model="addInfo.document" :uploadImgServer="baseUrl" style="width: 580px"></editor>
+            <editor ref="editor" v-model="addInfo.manuscript" :uploadImgServer="baseUrl" style="width: 580px"></editor>
           </Form-item>
         </Form>
         <div slot="footer" class="-p-b-flex">
@@ -97,61 +97,56 @@
           format: ['mp4', 'wmv', 'rmvb', 'avi']
         },
         dataList: [],
-        radioType: 1,
-        selectInfo: '1',
-        searchInfo: {
-          getStartTime: '',
-          getEndTime: '',
-        },
         total: 0,
         isFetching: false,
         isOpenModal: false,
         addInfo: {},
-        statusList: {
-          '0': '未开始',
-          '1': '进行中',
-          '2': '已过期',
-          '3': '已结束'
-        },
         ruleValidate: {
           name: [
-            {required: true, message: '请输入活动名称', trigger: 'blur'},
-            {type: 'string', max: 20, message: '活动名称长度为20字', trigger: 'blur'}
+            {required: true, message: '请输入课时名称', trigger: 'blur'},
+            {type: 'string', max: 20, message: '课时名称长度为20字', trigger: 'blur'}
+          ],
+          sortNum: [
+            {required: true, message: '请输入排序值', trigger: 'blur'}
           ]
         },
         columns: [
           {
             title: '课时名称',
-            key: 'name',
+            key: 'lessonName',
             tooltip: true,
             align: 'center'
           },
           {
             title: '排序值',
-            key: 'href',
+            key: 'sortNum',
             align: 'center'
           },
           {
             title: '课时类型',
-            key: 'href',
+            render: (h, params) => {
+              return h('div', params.row.type ? '视频' : '音频')
+            },
             align: 'center'
           },
           {
             title: '是否试听',
-            key: 'href',
+            render: (h, params) => {
+              return h('div', params.row.listen ? '是' : '否')
+            },
             align: 'center'
           },
           {
             title: '创建时间',
             render: (h, params) => {
-              return h('span', `${params.row.showTime}`)
+              return h('span', `${params.row.gmtCreate}`)
             },
             align: 'center'
           },
           {
             title: '更新时间',
             render: (h, params) => {
-              return h('span', `${params.row.hideTime}`)
+              return h('span', `${params.row.gmtModified}`)
             },
             align: 'center'
           },
@@ -174,7 +169,7 @@
                       this.changeTryOut(params.row)
                     }
                   }
-                }, '关闭试听'),
+                }, params.row.listen ? '关闭试听' : '开启试听'),
                 h('Button', {
                   props: {
                     type: 'text',
@@ -214,10 +209,12 @@
       this.getList()
     },
     methods: {
+      changeLessonType() {
+        this.addInfo.radioUrl = ''
+      },
       changeTryOut(data) {
-        this.$api.composition.updateListeningById({
-          lessonId: data.id,
-          isListen: !data.listen
+        this.$api.hkywhdTextlesson.updatelisten({
+          lessonId: data.lessonId
         })
           .then(
             response => {
@@ -228,23 +225,21 @@
             })
 
       },
-      changeDate(data) {
-        this.searchInfo.getStartTime = data.startTime
-        this.searchInfo.getEndTime = data.endTime
-        this.getList(1)
-      },
       openModal(data) {
         this.isOpenModal = true
         if (data) {
           this.addInfo = JSON.parse(JSON.stringify(data))
+          this.addInfo.sortNum = this.addInfo.sortNum.toString()
+          this.addInfo.name = this.addInfo.lessonName
         } else {
-          this.searchInfo.getStartTime = ''
-          this.searchInfo.getEndTime = ''
           this.addInfo = {
-            id: '',
-            url: ''
+            lessonId: '',
+            type: 0
           }
         }
+
+        this.$refs.editor && this.$refs.editor.setHtml(this.addInfo.manuscript)
+        this.$forceUpdate()
       },
       closeModal(name) {
         this.isOpenModal = false
@@ -260,13 +255,10 @@
         if (num) {
           this.tab.currentPage = 1
         }
-        this.$api.gswOperational.listOperational({
+        this.$api.hkywhdTextlesson.pageTextLessonDetail({
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
-          name: this.searchInfo.nickname,
-          type: this.radioType,
-          showTime: this.searchInfo.getStartTime ? dayjs(this.searchInfo.getStartTime).format("YYYY/MM/DD HH:mm:ss") : '',
-          hideTime: this.searchInfo.getEndTime ? dayjs(this.searchInfo.getEndTime).format("YYYY/MM/DD HH:mm:ss") : ''
+          bookId: this.$route.query.tbookId,
         })
           .then(
             response => {
@@ -282,8 +274,8 @@
           title: '提示',
           content: '确认要删除？',
           onOk: () => {
-            this.$api.gswOperational.removeOperational({
-              operationalId: param.id
+            this.$api.hkywhdTextlesson.removeTextLesson({
+              lessonId: param.lessonId
             }).then(
               response => {
                 if (response.data.code == "200") {
@@ -295,20 +287,32 @@
         })
       },
       submitInfo(name) {
-        if (!this.addInfo.url) {
-          return this.$Message.error('请上传图片')
-        }
-
         this.$refs[name].validate((valid) => {
           if (valid) {
+            if (!this.addInfo.radioUrl) {
+              return this.$Message.error('请上传音视频')
+            } else if (!this.addInfo.manuscript) {
+              return this.$Message.error('请输入课时文稿')
+            }
+
             this.isSending = true
-            this.$api.gswOperational.saveOperational({
-              id: this.addInfo.id,
-              name : this.addInfo.name,
-              href : this.addInfo.href,
-              url : this.addInfo.url,
-              type: this.radioType
-            })
+
+            let paramsData = {
+              name: this.addInfo.name,
+              sortNum: this.addInfo.sortNum,
+              type: this.addInfo.type,
+              radioUrl: this.addInfo.radioUrl,
+              manuscript: this.addInfo.manuscript,
+              initialPlays: this.addInfo.initialPlays,
+              bookId: this.$route.query.tbookId
+            }
+
+            let paramsUrl = this.addInfo.lessonId ? this.$api.hkywhdTextlesson.updateTextLesson({
+              id: this.addInfo.lessonId,
+              ...paramsData
+            }) : this.$api.hkywhdTextlesson.addTextLesson(paramsData)
+
+            paramsUrl
               .then(
                 response => {
                   if (response.data.code == '200') {

@@ -35,13 +35,13 @@
         :title="addInfo.id ? '编辑banner' : '创建banner'">
         <Form ref="addInfo" :model="addInfo" :rules="ruleValidate" :label-width="90">
           <Form-item label="banner图片" prop="url" class="ivu-form-item-required">
-            <upload-img :isDisabled="addInfo.id!=''" v-model="addInfo.url" :option="uploadOption"></upload-img>
+            <upload-img v-model="addInfo.url" :option="uploadOption"></upload-img>
           </Form-item>
           <FormItem label="活动名称" prop="name">
             <Input type="text" v-model="addInfo.name" placeholder="请输入活动名称"></Input>
           </FormItem>
           <FormItem label="排序值" prop="sortnum">
-            <Select v-model="addInfo.sortnum">{{addInfo.sortnum}}
+            <Select v-model="addInfo.sortnum">
               <Option v-for="(item,index) of 9" :key="index" :value="item" :label="item"></Option>
             </Select>
           </FormItem>
@@ -51,14 +51,14 @@
           <FormItem label="有效期" class="ivu-form-item-required">
             <Row>
               <Col span="11">
-                <Form-item prop="getStartTime">
+                <Form-item prop="showTime">
                   <Date-picker style="width: 100%" type="datetime" placeholder="选择开始日期" :disabled="addInfo.id!=''"
                                v-model="addInfo.showTime" :options="dateStartOption"></Date-picker>
                 </Form-item>
               </Col>
               <Col span="2" style="text-align: center">-</Col>
               <Col span="11">
-                <Form-item prop="getEndTime">
+                <Form-item prop="hideTime">
                   <Date-picker style="width: 100%" type="datetime" placeholder="选择结束日期"
                                v-model="addInfo.hideTime" :options="dateEndOption"></Date-picker>
                 </Form-item>
@@ -135,12 +135,6 @@
         addInfo: {},
         getStartTime: '',
         getEndTime: '',
-        statusList: {
-          '0': '未开始',
-          '1': '进行中',
-          '2': '已过期',
-          '3': '已结束'
-        },
         dateStartOption: {
           disabledDate(date) {
             return date && (new Date(date).getTime() <= new Date().getTime() - 24 * 3600 * 1000);
@@ -155,12 +149,16 @@
           name: [
             {required: true, message: '请输入活动名称', trigger: 'blur'},
             {type: 'string', max: 20, message: '活动名称长度为20字', trigger: 'blur'}
+          ],
+          sortnum: [
+            {required: true, type: 'number', message: '请选择排序值', trigger: 'change'}
           ]
         },
         columns: [
           {
             title: '名称',
-            key: 'name'
+            key: 'name',
+            align: 'center'
           },
           {
             title: '图片',
@@ -188,11 +186,13 @@
           },
           {
             title: '排序值',
-            key: 'sortnum'
+            key: 'sortnum',
+            align: 'center'
           },
           {
             title: '链接地址',
-            key: 'href'
+            key: 'href',
+            align: 'center'
           },
           {
             title: '有效期时间',
@@ -204,18 +204,13 @@
           },
           {
             title: '点击量',
-            key: 'pv'
-          },
-          {
-            title: '状态',
-            render: (h,params)=>{
-              return h('div',this.statusList[params.row.status])
-            }
+            key: 'pv',
+            align: 'center'
           },
           {
             title: '操作',
             width: 240,
-            align: 'right',
+            align: 'center',
             render: (h, params) => {
               return h('div', [
                 h('Button', {
@@ -224,9 +219,7 @@
                     size: 'small'
                   },
                   style: {
-                    display: params.row.status < 2 ? 'inline-block' : 'none',
-                    color: '#5444E4',
-                    marginRight: '5px'
+                    color: '#5444E4'
                   },
                   on: {
                     click: () => {
@@ -240,8 +233,7 @@
                     size: 'small'
                   },
                   style: {
-                    color: 'rgba(218, 55, 75)',
-                    marginRight: '5px'
+                    color: 'rgba(218, 55, 75)'
                   },
                   on: {
                     click: () => {
@@ -255,8 +247,7 @@
                     size: 'small'
                   },
                   style: {
-                    color: '#5444E4',
-                    marginRight: '5px'
+                    color: '#5444E4'
                   },
                   on: {
                     click: () => {
@@ -283,7 +274,7 @@
       };
     },
     watch: {
-      'getStartTime'(_new, _old) {
+      'addInfo.showTime'(_new, _old) {
         this.dateEndOption = {
           disabledDate(date) {
             return date && date.valueOf() < new Date(_new).getTime();
@@ -295,10 +286,6 @@
       this.getList()
     },
     methods: {
-      toExcel() {
-        let downUrl = `${getBaseUrl()}/poem/operational/excelOperationalStatistics?operationalId=${this.operationalId}`
-        window.open(downUrl, '_blank');
-      },
       changeDate(data) {
         this.getStartTime = data.startTime
         this.getEndTime = data.endTime
@@ -313,12 +300,14 @@
           this.getEndTime = ''
           this.addInfo = {
             id: '',
+            showTime: '',
+            hideTime: '',
             sortnum: '',
             url: ''
           }
         }
       },
-      openModalData (data) {
+      openModalData(data) {
         this.isOpenModalData = true
         this.operationalId = data.id
         this.getDetailList(data)
@@ -337,12 +326,14 @@
       },
       getDetailList(data) {
         this.isFetching = true
-        this.$api.gswOperational.getOperationalStatistics({
-          operationalId: data.id
+        this.$api.hkywhdBanner.listBannerStatistics({
+          current: this.tabDetail.page,
+          size: this.tabDetail.pageSize,
+          bannerId: data.id
         }).then(response => {
           this.detailList = response.data.resultData.records;
           this.totalDetail = response.data.resultData.total;
-        }).finally(()=>{
+        }).finally(() => {
           this.isFetching = false
         })
       },
@@ -352,11 +343,10 @@
         if (num) {
           this.tab.currentPage = 1
         }
-        this.$api.gswOperational.listOperational({
+        this.$api.hkywhdBanner.pageBanner({
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
           name: this.searchInfo.nickname,
-          type: this.radioType,
           showTime: this.getStartTime ? dayjs(this.getStartTime).format("YYYY/MM/DD HH:mm:ss") : '',
           hideTime: this.getEndTime ? dayjs(this.getEndTime).format("YYYY/MM/DD HH:mm:ss") : ''
         })
@@ -372,10 +362,10 @@
       delItem(param) {
         this.$Modal.confirm({
           title: '提示',
-          content: '确认要删除图片吗？',
+          content: '确认要删除吗？',
           onOk: () => {
-            this.$api.gswOperational.removeOperational({
-              operationalId: param.id
+            this.$api.hkywhdBanner.removeBanner({
+              bannerId: param.id
             }).then(
               response => {
                 if (response.data.code == "200") {
@@ -397,19 +387,17 @@
 
         if (this.isSending) return
 
-        this.addInfo.type  = 0
         this.$refs[name].validate((valid) => {
           if (valid) {
             this.isSending = true
-            this.$api.gswOperational.saveOperational({
+            this.$api.hkywhdBanner.saveBanner({
               id: this.addInfo.id,
               hideTime: dayjs(this.addInfo.hideTime).format("YYYY/MM/DD HH:mm:ss"),
               showTime: dayjs(this.addInfo.showTime).format("YYYY/MM/DD HH:mm:ss"),
-              name : this.addInfo.name,
-              href : this.addInfo.href,
-              url : this.addInfo.url,
-              sortnum : this.addInfo.sortnum,
-              type: this.radioType
+              name: this.addInfo.name,
+              href: this.addInfo.href,
+              url: this.addInfo.url,
+              sortnum: this.addInfo.sortnum
             })
               .then(
                 response => {

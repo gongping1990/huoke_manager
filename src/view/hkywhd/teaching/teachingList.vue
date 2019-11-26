@@ -64,9 +64,9 @@
       class="p-subject"
       v-model="isOpenModal"
       @on-cancel="closeModal('addInfo')"
-      width="350"
+      width="500"
       title="编辑课程">
-      <Form ref="addInfo" :model="addInfo" :rules="ruleValidate" :label-width="70">
+      <Form ref="addInfo" :model="addInfo" :rules="ruleValidate" :label-width="100">
         <FormItem label="课程名称" prop="name">
           <Input type="text" v-model="addInfo.name" placeholder="请输入学科名称"></Input>
         </FormItem>
@@ -90,17 +90,17 @@
             <Option v-for="(item,index) in courseList" :label="item.name" :value="item.id" :key="index"></Option>
           </Select>
         </FormItem>
-        <FormItem label="课时总数" prop="name">
-          <Input type="text" v-model="addInfo.name" placeholder="请输入课时总数"></Input>
+        <FormItem label="课时总数" prop="nums">
+          <Input type="text" v-model="addInfo.nums" placeholder="请输入课时总数"></Input>
         </FormItem>
-        <FormItem label="课程描述" prop="name">
-          <Input type="text" v-model="addInfo.name" placeholder="请输入课程描述"></Input>
+        <FormItem label="课程描述" prop="descripte">
+          <Input type="text" v-model="addInfo.descripte" placeholder="请输入课程描述"></Input>
         </FormItem>
         <FormItem label="竖版课程封面">
           <upload-img v-model="addInfo.coverImgUrl" :option="uploadOption"></upload-img>
         </FormItem>
         <FormItem label="首页课程封面">
-          <upload-img v-model="addInfo.coverImgUrl" :option="uploadOption"></upload-img>
+          <upload-img v-model="addInfo.coverPage" :option="uploadOption"></upload-img>
         </FormItem>
 
       </Form>
@@ -200,6 +200,12 @@
           courseId: [
             {required: true, message: '请选择学科', trigger: 'change'}
           ],
+          nums: [
+            {required: true, message: '请输入课时总数', trigger: 'blur'}
+          ],
+          descripte: [
+            {required: true, message: '请输入课时描述', trigger: 'blur'}
+          ]
 
         },
         columns: [

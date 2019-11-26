@@ -261,7 +261,9 @@
           },
           {
             title: '助力后是否购买',
-            key: 'phone',
+            render: (h, params)=> {
+              return h('div', params.row.buyed ? '是' : '否')
+            },
             align: 'center'
           }
         ],
@@ -325,6 +327,8 @@
           params.orderId = this.searchInfo.antistop
         } else if (this.selectInfo == '1' && this.searchInfo.antistop) {
           params.nickName = this.searchInfo.antistop
+        } else if (this.selectInfo == '2' && this.searchInfo.antistop) {
+          params.courseName = this.searchInfo.antistop
         }
 
         return params

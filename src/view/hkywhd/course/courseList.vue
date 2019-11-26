@@ -5,7 +5,7 @@
         <Col :span="3" class="g-t-left">
           <div class="g-flex-a-j-center">
             <div class="-search-select-text">课程分类</div>
-            <Select v-model="searchInfo.status" @on-change="getList(1)" class="-search-selectOne">
+            <Select v-model="searchInfo.courseType" @on-change="getList(1)" class="-search-selectOne">
               <Option v-for="(item,index) in courseTypeList" :label="item.name" :value="item.id" :key="index"></Option>
             </Select>
           </div>
@@ -40,65 +40,76 @@
         v-model="isOpenModal"
         @on-cancel="closeModal('addInfo')"
         width="600"
-        :title="addInfo.id ? '编辑课程' : '创建课程'">
-        <Form ref="addInfo" :model="addInfo" :rules="ruleValidate" :label-width="110" v-show="modalType === 1">
-          <FormItem label="课程类型" prop="name">
-            <RadioGroup v-model="addInfo.courseType">
-              <Radio :label=1>单个课程</Radio>
-              <Radio :label=2>多个课程</Radio>
+        :title="titleText[modalType]">
+        <Form ref="addInfo" :model="addInfo" :label-width="110" v-show="modalType === 1" class="ivu-form-item-required">
+          <FormItem label="课程类型">
+            <RadioGroup v-model="addInfo.type">
+              <Radio :label=0>单个课程</Radio>
+              <Radio :label=1>多个课程</Radio>
             </RadioGroup>
           </FormItem>
           <FormItem label="课程名称" prop="name">
             <Input type="text" v-model="addInfo.name" placeholder="请输入课程名称"></Input>
           </FormItem>
-          <FormItem label="课程描述" prop="name">
-            <Input type="text" v-model="addInfo.name" placeholder="请输入课程描述"></Input>
+          <FormItem label="课程描述" prop="descripte">
+            <Input type="text" v-model="addInfo.descripte" placeholder="请输入课程描述"></Input>
           </FormItem>
-          <FormItem label="排序值" prop="name">
-            <Input type="text" v-model="addInfo.name" placeholder="请输入排序值"></Input>
+          <FormItem label="排序值" prop="sortNum">
+            <Input type="text" v-model="addInfo.sortNum" placeholder="请输入排序值"></Input>
           </FormItem>
-          <FormItem label="课时总数" prop="href">
-            <Input type="text" v-model="addInfo.href" placeholder="请输入课时总数"></Input>
+          <FormItem label="课时总数" prop="nums">
+            <Input type="text" v-model="addInfo.nums" placeholder="请输入课时总数"></Input>
           </FormItem>
           <FormItem label="课程分类" prop="href">
             <Select v-model="addInfo.courseId">
               <Option v-for="(item,index) in courseTypeList" :label="item.name" :value="item.id" :key="index"></Option>
             </Select>
           </FormItem>
-          <Form-item label="首页课程封面" prop="url" class="ivu-form-item-required">
-            <upload-img v-model="addInfo.url" :option="uploadOption"></upload-img>
+          <Form-item label="首页课程封面" prop="coverPage">
+            <upload-img v-model="addInfo.coverPage" :option="uploadOption"></upload-img>
           </Form-item>
-          <Form-item label="竖版课程封面" prop="url" class="ivu-form-item-required">
-            <upload-img v-model="addInfo.url" :option="uploadOption"></upload-img>
+          <Form-item label="竖版课程封面" prop="coverImgUrl">
+            <upload-img v-model="addInfo.coverImgUrl" :option="uploadOption"></upload-img>
           </Form-item>
         </Form>
-        <Form ref="addInfo" :model="addInfo" :rules="ruleValidate" :label-width="110" v-show="modalType === 2">
-          <FormItem label="单独购价格" prop="name">
-            <Input type="text" v-model="addInfo.name" placeholder="请输入单独购价格"></Input>
+        <Form ref="addInfo" :model="addInfo" :label-width="110" v-show="modalType === 2" class="ivu-form-item-required">
+          <FormItem label="单独购价格" prop="ddgPrice">
+            <Input type="text" v-model="addInfo.ddgPrice" placeholder="请输入单独购价格"></Input>
           </FormItem>
-          <FormItem label="是否开启活动" prop="name">
-            <RadioGroup v-model="addInfo.courseType">
+          <FormItem label="是否开启活动">
+            <RadioGroup v-model="addInfo.open">
               <Radio :label=1>开启</Radio>
               <Radio :label=0>关闭</Radio>
             </RadioGroup>
           </FormItem>
-          <FormItem label="活动价格" prop="name">
-            <Input type="text" v-model="addInfo.name" placeholder="请输入活动价格"></Input>
+          <FormItem label="活动价格">
+            <Input type="text" v-model="addInfo.activityPrice" placeholder="请输入活动价格"></Input>
           </FormItem>
-          <FormItem label="邀请人数" prop="name">
-            <Input type="text" v-model="addInfo.name" placeholder="请输入邀请人数"></Input>
+          <FormItem label="邀请人数">
+            <Input type="text" v-model="addInfo.invites" placeholder="请输入邀请人数"></Input>
           </FormItem>
-          <FormItem label="解锁课时数" prop="href">
-            <Input type="text" v-model="addInfo.href" placeholder="请输入解锁课时数"></Input>
+          <FormItem label="解锁课时数">
+            <Input type="text" v-model="addInfo.unlockNums" placeholder="请输入解锁课时数"></Input>
           </FormItem>
         </Form>
-        <Form ref="addInfo" :model="addInfo" :rules="ruleValidate" :label-width="110" v-show="modalType === 3">
+        <Form ref="addInfo" :model="addInfo" :label-width="110" v-show="modalType === 3" class="ivu-form-item-required">
           <FormItem label="推荐课程" prop="name">
             <div class="g-course-add-style" @click="isOpenModalData=true">
               <span>+</span>
               <span>选择课程</span>
             </div>
-            <hkywhd_course-template v-model="isOpenModalData"></hkywhd_course-template>
+            <hkywhd_course-template v-model="isOpenModalData"
+                                    :checkList="courseListModal"
+                                    @checkCourseList="checkCourseList"
+                                    :dataItem="dataItem"
+                                    :typeList="courseTypeList"></hkywhd_course-template>
+            <div class="-c-course-wrap" v-if="courseListModal.length">
+              <div class="-c-course-item" v-for="(item, index) of courseListModal" :key="index">
+                <img :src="item.coverPage">
+                <div class="-i-text">{{item.name}}</div>
+                <div class="-i-del" @click="delCourse(item,index)">删除课程</div>
+              </div>
+            </div>
           </FormItem>
         </Form>
         <div slot="footer" class="-p-b-flex">
@@ -116,6 +127,7 @@
   import DatePickerTemplate from "../../../components/datePickerTemplate";
   import UploadImg from "../../../components/uploadImg";
   import Hkywhd_courseTemplate from "./courseTemplate";
+  import {forEach} from "../../../libs/tools";
 
   export default {
     name: 'hkywhd_courseList',
@@ -137,6 +149,12 @@
         },
         dataList: [],
         courseTypeList: [],
+        courseListModal: [],
+        titleText: {
+          '1': '编辑课程',
+          '2': '活动配置',
+          '3': '课程推荐'
+        },
         radioType: 1,
         modalType: 1,
         selectInfo: '1',
@@ -147,30 +165,9 @@
         isOpenModalData: false,
         isSending: false,
         addInfo: {},
+        dataItem: {},
         getStartTime: '',
         getEndTime: '',
-        statusList: {
-          '0': '未开始',
-          '1': '进行中',
-          '2': '已过期',
-          '3': '已结束'
-        },
-        dateStartOption: {
-          disabledDate(date) {
-            return date && (new Date(date).getTime() <= new Date().getTime() - 24 * 3600 * 1000);
-          }
-        },
-        dateEndOption: {
-          disabledDate(date) {
-            return date && (new Date(date).getTime() <= new Date().getTime() - 24 * 3600 * 1000);
-          }
-        },
-        ruleValidate: {
-          name: [
-            {required: true, message: '请输入活动名称', trigger: 'blur'},
-            {type: 'string', max: 20, message: '活动名称长度为20字', trigger: 'blur'}
-          ]
-        },
         columns: [
           {
             title: '课程名称',
@@ -190,7 +187,7 @@
               }, [
                 h('img', {
                   attrs: {
-                    src: params.row.url
+                    src: params.row.coverPage
                   },
                   style: {
                     width: '50px',
@@ -204,30 +201,32 @@
           },
           {
             title: '课程分类',
-            key: 'href',
+            key: 'courseName',
             align: 'center'
           },
           {
             title: '排序值',
-            key: 'href',
+            key: 'sortNum',
             align: 'center'
           },
           {
             title: '课程类型',
-            key: 'href',
+            render: (h, params) => {
+              return h('div', params.row.type ? '多个课程' : '单个课程')
+            },
             align: 'center'
           },
           {
             title: '创建时间',
             render: (h, params) => {
-              return h('span', `${params.row.showTime}`)
+              return h('span', `${params.row.gmtCreate}`)
             },
             align: 'center'
           },
           {
             title: '更新时间',
             render: (h, params) => {
-              return h('span', `${params.row.hideTime}`)
+              return h('span', `${params.row.gmtModified}`)
             },
             align: 'center'
           },
@@ -247,10 +246,10 @@
                   },
                   on: {
                     click: () => {
-                      this.endItem(params.row)
+                      this.toJump(params.row)
                     }
                   }
-                }, '课时管理'),
+                }, params.row.type ? '小课管理' : '课时管理'),
                 h('Button', {
                   props: {
                     type: 'text',
@@ -279,15 +278,27 @@
                     }
                   }
                 }, '编辑'),
-
                 h('Button', {
                   props: {
                     type: 'text',
                     size: 'small'
                   },
                   style: {
-                    color: 'rgba(218, 55, 75)',
-                    marginRight: '5px'
+                    color: '#5444E4'
+                  },
+                  on: {
+                    click: () => {
+                      this.openModal(params.row, 3)
+                    }
+                  }
+                }, '课程推荐'),
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: 'rgba(218, 55, 75)'
                   },
                   on: {
                     click: () => {
@@ -295,21 +306,6 @@
                     }
                   }
                 }, '删除'),
-                h('Button', {
-                  props: {
-                    type: 'text',
-                    size: 'small'
-                  },
-                  style: {
-                    color: '#5444E4',
-                    marginRight: '5px'
-                  },
-                  on: {
-                    click: () => {
-                      this.openModal(params.row, 3)
-                    }
-                  }
-                }, '课程推荐')
               ])
             }
           }
@@ -317,25 +313,44 @@
       };
     },
     mounted() {
-      this.getList()
+      this.listCourseType()
     },
     methods: {
+      checkCourseList(data) {
+        this.courseListModal = JSON.parse(JSON.stringify(data))
+      },
+      delCourse (item, index) {
+        this.courseListModal.splice(index, 1)
+      },
+      toJump(data) {
+        this.$router.push({
+          name: data.type ? 'hkywhd_lessonList' : 'hkywhd_classHourList_direct',
+          query: {
+            tbookId: data.id
+          }
+        })
+      },
       changeDate(data) {
         this.getStartTime = data.startTime
         this.getEndTime = data.endTime
         this.getList(1)
       },
       openModal(data, num) {
+        this.dataItem = data
         this.modalType = num
         this.isOpenModal = true
         if (data) {
           this.addInfo = JSON.parse(JSON.stringify(data))
+          this.modalType === 2 && this.getActivityByTbookId(data)
+          this.modalType === 3 && this.listSuggestedBook(data)
         } else {
           this.getStartTime = ''
           this.getEndTime = ''
           this.addInfo = {
             id: '',
-            url: ''
+            type: 0,
+            coverImgUrl: '',
+            coverPage: ''
           }
         }
       },
@@ -347,19 +362,54 @@
         this.tab.page = val;
         this.getList();
       },
+      listCourseType() {
+        this.$api.hkywhdCourse.listAllOn()
+          .then(response => {
+            this.courseTypeList = response.data.resultData
+            this.searchInfo.courseType = this.courseTypeList[0].id
+            this.getList()
+          })
+      },
+      getActivityByTbookId(data) {
+        this.$api.hkywhdActivity.getActivityByTbookId({
+          tbookId: data.id
+        })
+          .then(response => {
+            this.addInfo = response.data.resultData
+            this.addInfo.tbookId = data.id
+            this.addInfo.open = this.addInfo.open ? 1 : 0
+            this.addInfo.ddgPrice = this.addInfo.ddgPrice / 100
+            this.addInfo.activityPrice = this.addInfo.activityPrice / 100
+          })
+      },
+      listSuggestedBook(data) {
+        this.courseListModal = []
+        this.$api.hkywhdTextbook.listSuggestedBook({
+          bindBookId: data.id
+        })
+          .then(response => {
+            let ArrayList = response.data.resultData
+            ArrayList.forEach(item=>{
+              this.courseListModal.push({
+                ...item,
+                id: item.suggestId
+              })
+            })
+          })
+      },
       //分页查询
       getList(num) {
         this.isFetching = true
         if (num) {
           this.tab.currentPage = 1
         }
-        this.$api.gswOperational.listOperational({
+        this.$api.hkywhdTextbook.pageTextBookByQuery({
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
           name: this.searchInfo.nickname,
-          type: this.radioType,
-          showTime: this.getStartTime ? dayjs(this.getStartTime).format("YYYY/MM/DD HH:mm:ss") : '',
-          hideTime: this.getEndTime ? dayjs(this.getEndTime).format("YYYY/MM/DD HH:mm:ss") : ''
+          courseId: this.searchInfo.courseType,
+          start: this.getStartTime ? new Date(this.getStartTime).getTime() : '',
+          end: this.getEndTime ? new Date(this.getEndTime).getTime() : ''
         })
           .then(
             response => {
@@ -375,8 +425,8 @@
           title: '提示',
           content: '确认要删除？',
           onOk: () => {
-            this.$api.gswOperational.removeOperational({
-              operationalId: param.id
+            this.$api.hkywhdTextbook.removeTextBook({
+              id: param.id
             }).then(
               response => {
                 if (response.data.code == "200") {
@@ -388,38 +438,139 @@
         })
       },
       submitInfo(name) {
-        if (!this.addInfo.url) {
-          return this.$Message.error('请上传图片')
+        switch (+this.modalType) {
+          case 1:
+            this.submitInfoTypeOne(name)
+            break
+          case 2:
+            this.submitInfoTypeTwo(name)
+            break
+          case 3:
+            this.submitInfoTypeThree(name)
+            break
+        }
+      },
+      submitInfoTypeOne(name) {
+        if (this.isSending) return
+
+        if (!this.addInfo.name) {
+          return this.$Message.error('请输入课程名称')
+        } else if (!this.addInfo.descripte) {
+          return this.$Message.error('请输入课程描述')
+        } else if (!this.addInfo.sortNum) {
+          return this.$Message.error('请输入排序值')
+        } else if (!this.addInfo.nums) {
+          return this.$Message.error('请输入课时总数')
+        } else if (!this.addInfo.courseId) {
+          return this.$Message.error('请输入课程分类')
+        } else if (!this.addInfo.coverPage) {
+          return this.$Message.error('首页课程封面')
+        } else if (!this.addInfo.coverImgUrl) {
+          return this.$Message.error('请上传竖版封面图')
+        }
+
+        this.isSending = true
+
+        let paramsData = {
+          name: this.addInfo.name,
+          descripte: this.addInfo.descripte,
+          nums: this.addInfo.nums,
+          sortNum: this.addInfo.sortNum,
+          type: this.addInfo.type,
+          coverPage: this.addInfo.coverPage,
+          coverImgUrl: this.addInfo.coverImgUrl,
+          courseId: this.addInfo.courseId
+        }
+
+        let paramsUrl = this.addInfo.id ? this.$api.hkywhdTextbook.updateTextBook({
+          id: this.addInfo.id,
+          ...paramsData
+        }) : this.$api.hkywhdTextbook.addTextBook(paramsData)
+
+        paramsUrl
+          .then(
+            response => {
+              if (response.data.code == '200') {
+                this.$Message.success('提交成功');
+                this.getList()
+                this.closeModal(name)
+              }
+            })
+          .finally(() => {
+            this.isSending = false
+          })
+      },
+      submitInfoTypeTwo(name) {
+        if (this.isSending) return
+
+        if (!this.addInfo.ddgPrice) {
+          return this.$Message.error('请输入单独购价格')
+        } else if (!this.addInfo.activityPrice) {
+          return this.$Message.error('请输入活动价格')
+        } else if (!this.addInfo.invites) {
+          return this.$Message.error('请输入邀请人数')
+        } else if (!this.addInfo.unlockNums) {
+          return this.$Message.error('请输入解锁课时数')
+        }
+
+        this.isSending = true
+
+        let paramsData = {
+          ddgPrice: this.addInfo.ddgPrice * 100,
+          tbookId: this.addInfo.tbookId,
+          activityPrice: this.addInfo.activityPrice * 100,
+          invites: this.addInfo.invites,
+          unlockNums: this.addInfo.unlockNums,
+          open: this.addInfo.open === 1
+        }
+
+        let paramsUrl = this.addInfo.id ? this.$api.hkywhdActivity.uptNewActivity({
+          id: this.addInfo.id,
+          ...paramsData
+        }) : this.$api.hkywhdActivity.saveNewActivit(paramsData)
+
+        paramsUrl
+          .then(
+            response => {
+              if (response.data.code == '200') {
+                this.$Message.success('提交成功');
+                this.getList()
+                this.closeModal(name)
+              }
+            })
+          .finally(() => {
+            this.isSending = false
+          })
+      },
+      submitInfoTypeThree(name) {
+        if (!this.courseListModal.length) {
+          return this.$Message.error('请选择推荐课程')
         }
 
         if (this.isSending) return
 
-        this.addInfo.type  = 0
-        this.$refs[name].validate((valid) => {
-          if (valid) {
-            this.isSending = true
-            this.$api.gswOperational.saveOperational({
-              id: this.addInfo.id,
-              hideTime: dayjs(this.addInfo.hideTime).format("YYYY/MM/DD HH:mm:ss"),
-              showTime: dayjs(this.addInfo.showTime).format("YYYY/MM/DD HH:mm:ss"),
-              name : this.addInfo.name,
-              href : this.addInfo.href,
-              url : this.addInfo.url,
-              type: this.radioType
-            })
-              .then(
-                response => {
-                  if (response.data.code == '200') {
-                    this.$Message.success('提交成功');
-                    this.getList()
-                    this.closeModal(name)
-                  }
-                })
-              .finally(() => {
-                this.isSending = false
-              })
-          }
+        this.isSending = true
+        let arrayStorage = []
+
+        this.courseListModal.forEach(item=>{
+          arrayStorage.push(item.id)
         })
+
+        this.$api.hkywhdTextbook.editSuggestedBook({
+          bindBookId: this.dataItem.id,
+          suggestIds: arrayStorage
+        })
+          .then(
+            response => {
+              if (response.data.code == '200') {
+                this.$Message.success('提交成功');
+                this.getList()
+                this.closeModal(name)
+              }
+            })
+          .finally(() => {
+            this.isSending = false
+          })
       }
     }
   };
@@ -467,5 +618,41 @@
     .-date-search {
       margin-left: 20px;
     }
+
+    .-c-course-wrap {
+      display: inline-block;
+      .-c-course-item {
+        position: relative;
+        display: inline-block;
+        width: 140px;
+        overflow: hidden;
+        margin: 10px 10px 10px 0;
+
+        img {
+          width: 100%;
+          height: 70px;
+        }
+
+        .-i-text {
+          display: -webkit-box;
+          -webkit-box-orient: vertical;
+          -webkit-line-clamp: 1;
+          line-height: normal;
+        }
+
+        .-i-del {
+          position: absolute;
+          top: 0;
+          left: 84px;
+          color: #ffff;
+          background-color: rgba(0, 0, 0, 0.4);
+          line-height: normal;
+          cursor: pointer;
+          padding: 4px;
+          border-radius: 4px;
+        }
+      }
+    }
+
   }
 </style>

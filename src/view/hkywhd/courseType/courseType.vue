@@ -63,7 +63,8 @@
         columns: [
           {
             title: '名称',
-            key: 'name'
+            key: 'name',
+            align: 'center'
           },
           {
             title: '排序值',
@@ -78,7 +79,8 @@
                   color: !params.row.disabled ? 'default' : 'success'
                 }
               }, !params.row.disabled ? '已禁用' : '已启用')
-            }
+            },
+            align: 'center'
           },
           {
             title: '操作',
@@ -92,8 +94,7 @@
                     size: 'small'
                   },
                   style: {
-                    color: '#5444E4',
-                    marginRight: '5px'
+                    color: '#5444E4'
                   },
                   on: {
                     click: () => {
@@ -107,8 +108,7 @@
                     size: 'small'
                   },
                   style: {
-                    color: '#5444E4',
-                    marginRight: '5px'
+                    color: '#5444E4'
                   },
                   on: {
                     click: () => {
@@ -122,8 +122,7 @@
                     size: 'small'
                   },
                   style: {
-                    color: 'rgba(218, 55, 75)',
-                    marginRight: '5px'
+                    color: 'rgba(218, 55, 75)'
                   },
                   on: {
                     click: () => {
@@ -162,7 +161,7 @@
       //分页查询
       getList() {
         this.isFetching = true
-        this.$api.course.courseTypeList({
+        this.$api.hkywhdCourse.queryPage({
           current: this.tab.page,
           size: this.tab.pageSize,
         })
@@ -180,7 +179,7 @@
           title: '提示',
           content: '确认要删除吗？',
           onOk: () => {
-            this.$api.course.delCourseType({
+            this.$api.hkywhdCourse.removeById({
               id: param.id
             }).then(
               response => {
@@ -193,7 +192,7 @@
         })
       },
       changeStatus(data) {
-        this.$api.course.changeCourseTypeStatus({
+        this.$api.hkywhdCourse.setStatus({
           id: data.id,
           disabled: !data.disabled
         }).then(
@@ -205,9 +204,7 @@
           })
       },
       submitInfo(name) {
-        if (!this.addInfo.url) {
-          return this.$Message.error('请上传分类图片')
-        } else if (this.addInfo.sortnum && (this.addInfo.sortnum < 1 || this.addInfo.sortnum > 99999)) {
+        if (this.addInfo.sortnum && (this.addInfo.sortnum < 1 || this.addInfo.sortnum > 99999)) {
           return this.$Message.error('排序值范围1-99999')
         }
 
@@ -216,7 +213,7 @@
         this.$refs[name].validate((valid) => {
           if (valid) {
             this.isSending = true
-            let promiseDate = this.addInfo.id ? this.$api.course.updateCourseType(this.addInfo) : this.$api.course.addCourseType(this.addInfo)
+            let promiseDate = this.addInfo.id ? this.$api.hkywhdCourse.update(this.addInfo) : this.$api.hkywhdCourse.save(this.addInfo)
             promiseDate
               .then(
                 response => {

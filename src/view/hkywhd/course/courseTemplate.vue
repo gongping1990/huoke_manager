@@ -4,11 +4,11 @@
     v-model="isOpenDetail"
     @on-cancel="closeModal"
     footer-hide
-    width="800"
-    title="课程推荐">
+    width="500"
+    title="推荐课程">
     <div>
-      <Row class="g-search -course-search">
-        <Col :span="6" class="g-t-left">
+      <Row class="g-search">
+        <Col :span="10" class="g-t-left">
           <div class="g-flex-a-j-center">
             <div class="-search-select-text-two">课程分类：</div>
             <Select v-model="searchInfo.courseType" @on-change="getList()" class="-search-selectOne">
@@ -16,30 +16,29 @@
             </Select>
           </div>
         </Col>
-
-        <Col :span="10">
+        <Col :span="14">
           <div class="-search">
             <Select v-model="searchInfo.selectType" class="-search-select">
               <Option value="1">课程名称</Option>
             </Select>
             <span class="-search-center">|</span>
             <Input v-model="searchInfo.courseName" class="-search-input" placeholder="请输入关键字"
-                   @on-change="changeIndex"></Input>
+                   @on-change="getList()"></Input>
           </div>
         </Col>
       </Row>
 
-      <div class="p-detailModal-modal">
+      <div class="p-detailModal-modal g-tab">
         <div class="-c-item" :label="item.id" v-for="(item,index) in courseList" :key="index"
              @click="changeCourse(item)">
           <div class="-c-item-border " :class="{'-c-item-active': item.isChecked}">
             <Icon v-if="item.isChecked" type="ios-checkmark" color="#ffffff" size="18"/>
           </div>
           <div class="-c-item-wrap">
-            <img :src="item.courseImgUrl" alt="" class="downImg">
+            <img :src="item.coverPage" alt="" class="downImg">
             <div class="-c-item-text">
-              <span class="-item-text">{{item.courseName}}</span>
-              <span class="-item-text">真实销量：{{item.salesVolume}}</span>
+              <span class="-item-text">{{item.name}}</span>
+              <span class="-item-text">真实销量：{{item.salesVolume || 0}}</span>
             </div>
           </div>
         </div>
@@ -62,7 +61,7 @@
   export default {
     name: 'hkywhd_courseTemplate',
     components: {Loading},
-    props: ['value', 'dataInfo'],
+    props: ['value', 'checkList', 'dataItem', 'typeList'],
     data() {
       return {
         tab: {
@@ -71,9 +70,8 @@
         },
         total: 0,
         courseList: [],
-        storageList: [],
-        courseTypeList: [],
-        storageArray: [],
+        courseTypeList: this.typeList || [],
+        storageArray:  [],
         isOpenDetail: false,
         isFetching: false,
         searchInfo: {
@@ -82,19 +80,18 @@
       }
     },
     mounted() {
-
     },
     watch: {
       value(_n) {
         this.isOpenDetail = _n
-        // _n && this.getList()
+        _n && this.listCourseType()
       },
     },
     methods: {
       changeCourse(data) {
         if (data.isChecked) {
           this.storageArray.forEach((item, index) => {
-            if (item.goodsId === data.goodsId) {
+            if (item.id === data.id) {
               this.storageArray.splice(index, 1)
             }
           })
@@ -105,41 +102,44 @@
         data.isChecked = !data.isChecked
         this.$forceUpdate()
       },
-      changeIndex() {
-        let array = []
-        this.courseList = []
-        if (this.searchInfo) {
-          for (let item of this.storageList) {
-            if (item.courseName.indexOf(this.searchInfo) > -1) {
-              array.push(item)
-            }
-          }
-          this.courseList = array
-        } else {
-          this.courseList = this.storageList
-        }
+      listCourseType() {
+        this.$api.hkywhdCourse.listAllOn()
+          .then(response => {
+            this.courseTypeList = response.data.resultData
+            this.searchInfo.courseType = this.courseTypeList[0].id
+            this.storageArray = JSON.parse(JSON.stringify(this.checkList)) || []
+            console.log(this.storageArray, 111)
+            this.getList()
+          })
       },
       getList() {
-        this.$api.jsdJob.listHomeWorkLog({
-          workId: this.dataInfo.workId,
-          courseId: this.dataInfo.appId,
-        }).then(response => {
-          this.recordList = response.data.resultData
+        this.courseList = []
+        this.$api.hkywhdTextbook.listAll({
+          tBookId: this.dataItem.id,
+          name: this.searchInfo.courseName,
+          courseId: this.searchInfo.courseType,
         })
+          .then(response => {
+            let dataInfo = response.data.resultData
+
+            dataInfo.forEach(item => {
+              if (this.dataItem.id !== item.id) {
+                this.courseList.push(item)
+              }
+            })
+
+            this.courseList.forEach(list=>{
+              this.storageArray.forEach(item=>{
+                if (list.id === item.id) {
+                  list.isChecked = true
+                }
+              })
+            })
+          })
       },
       sureCourseModal() {
-        // this.checkCourseArray = []
-        // if (this.isRadio) {
-        //   for (let data of this.courseList) {
-        //     if (this.radioCourseId == data.id) {
-        //       this.checkCourseArray.push(data)
-        //     }
-        //   }
-        // } else {
-        //   this.checkCourseArray = this.storageArray
-        // }
-        // console.log(this.courseList, this.checkCourseArray)
-        // this.$emit('closeCourseModal', this.checkCourseArray)
+        this.closeModal()
+        this.$emit('checkCourseList', this.storageArray)
       },
       closeModal() {
         this.isOpenDetail = false
@@ -186,6 +186,10 @@
           align-items: center;
           border-color: #2f54eb;
           background-color: #2f54eb;
+        }
+
+        &:last-child {
+          border-bottom: 1px solid #F5F5F5;
         }
       }
 

@@ -192,6 +192,16 @@ export const hkywhdRouter =[
           {name: '课时管理'}
         ],
         component: () => import('@/view/hkywhd/course/classHourList')
+      },
+      {
+        path: '/hkywhd_classHourList_direct',
+        name: 'hkywhd_classHourList_direct',
+        meta: [
+          {name: '课程管理'},
+          {name: '课程列表', url: 'hkywhd_courseList'},
+          {name: '课时管理'}
+        ],
+        component: () => import('@/view/hkywhd/course/classHourList')
       }
     ]
   }
