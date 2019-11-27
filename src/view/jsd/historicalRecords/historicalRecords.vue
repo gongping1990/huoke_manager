@@ -328,7 +328,7 @@
                       this.changePraise(params.row)
                     }
                   }
-                }, this.radioType == 4 ? '移出表扬' : '加入表扬'),
+                }, params.row.praise ? '移出表扬' : '加入表扬'),
                 h('Button', {
                   props: {
                     type: 'text',
@@ -448,11 +448,11 @@
       changePraise(param) {
         this.$Modal.confirm({
           title: '提示',
-          content: `确认要${this.radioType == 4 ? '移出表扬' : '加入表扬'}？`,
+          content: `确认要${param.praise ? '移出表扬' : '加入表扬'}？`,
           onOk: () => {
             this.$api.jsdJob.praise({
               courseId: this.searchInfo.appId,
-              praise: this.radioType === 3,
+              praise: !param.praise,
               id: param.workId
             }).then(
               response => {
