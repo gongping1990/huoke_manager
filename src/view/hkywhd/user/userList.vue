@@ -49,25 +49,21 @@
   import dayjs from 'dayjs'
   import Operation from "iview/src/components/transfer/operation";
   import HkywhdLookUserInfo from "./hkywhdLookUserInfo";
+  import myMinxin from "../../../utils/minxin";
 
   export default {
     name: 'userList2',
     components: {HkywhdLookUserInfo, Operation},
+    mixins:[myMinxin],
     data() {
       return {
         switch1: '',
-        tab: {
-          page: 1,
-          pageSize: 10,
-          currentPage: 1
-        },
         searchInfo: {
           subscribe: '-1',
           payed: '-1'
         },
         selectInfo: '1',
         dataList: [],
-        total: 0,
         detailInfo: '',
         isFetching: false,
         isShow: false,
