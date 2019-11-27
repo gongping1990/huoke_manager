@@ -60,6 +60,9 @@
           <FormItem label="课时总数" prop="nums">
             <Input type="text" v-model="addInfo.nums" placeholder="请输入课时总数"></Input>
           </FormItem>
+          <FormItem label="购买链接" prop="salesUrl">
+            <Input type="text" v-model="addInfo.salesUrl" placeholder="请输入购买链接"></Input>
+          </FormItem>
           <FormItem label="课程分类" prop="href">
             <Select v-model="addInfo.courseId">
               <Option v-for="(item,index) in courseTypeList" :label="item.name" :value="item.id" :key="index"></Option>
@@ -461,6 +464,8 @@
           return this.$Message.error('请输入排序值')
         } else if (!this.addInfo.nums) {
           return this.$Message.error('请输入课时总数')
+        } else if (!this.addInfo.salesUrl) {
+          return this.$Message.error('请输入购买链接')
         } else if (!this.addInfo.courseId) {
           return this.$Message.error('请输入课程分类')
         } else if (!this.addInfo.coverPage) {

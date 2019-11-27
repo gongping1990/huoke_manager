@@ -12,6 +12,16 @@
             </Select>
           </div>
         </Col>
+        <Col :span="5" class="g-t-left">
+          <div class="g-flex-a-j-center">
+            <div class="-search-select-text-two" style="min-width: 80px">是否付费：</div>
+            <Select v-model="searchInfo.payed" @on-change="getList(1)" class="-search-selectOne">
+              <Option value="-1" >全部</Option>
+              <Option value="1" >是</Option>
+              <Option value="2" >否</Option>
+            </Select>
+          </div>
+        </Col>
         <Col :span="6">
           <div class="-search">
             <Select v-model="selectInfo" class="-search-select">
@@ -99,7 +109,7 @@
           {
             title: '是否付费',
             render: (h, params) => {
-              return h('span', params.row.subscripbe ? '是' : '否')
+              return h('span', params.row.payed ? '是' : '否')
             },
             align: 'center'
           },
@@ -154,7 +164,8 @@
         let params = {
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
-          subscribe: this.searchInfo.subscribe != '-1' ? (this.searchInfo.subscribe == '1') : ''
+          subscribe: this.searchInfo.subscribe != '-1' ? (this.searchInfo.subscribe == '1') : '',
+          payed: this.searchInfo.payed != '-1' ? (this.searchInfo.payed == '1') : ''
         }
 
         if (this.selectInfo == '1' && this.searchInfo) {
