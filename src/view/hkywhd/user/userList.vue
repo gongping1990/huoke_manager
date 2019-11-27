@@ -62,7 +62,8 @@
           currentPage: 1
         },
         searchInfo: {
-          subscribe: '-1'
+          subscribe: '-1',
+          payed: '-1'
         },
         selectInfo: '1',
         dataList: [],
