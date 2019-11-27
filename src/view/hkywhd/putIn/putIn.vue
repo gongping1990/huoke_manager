@@ -70,7 +70,7 @@
               :current.sync="tabDetail.currentPage"
               @on-change="detailCurrentChange"></Page>
         <div slot="footer" class="p-putIn-btn">
-          <div @click="isOpenModalData = false" class="g-primary-btn"> 确 认</div>
+          <div @click="isOpenModalData = false" class="g-primary-btn">确 认</div>
         </div>
       </Modal>
     </Card>

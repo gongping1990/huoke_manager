@@ -71,7 +71,7 @@
               }, [
                 h('img', {
                   attrs: {
-                    src: params.row.headimgurl
+                    src: params.row.pavatar
                   },
                   style: {
                     width: '36px',
@@ -80,7 +80,7 @@
                     'border-radius': '50%'
                   }
                 }),
-                h('span', params.row.nickname)
+                h('span', params.row.pname)
               ])
             }
           },
@@ -98,7 +98,7 @@
             title: '孩子性别',
             key: 'sex',
             render: (h, params)=> {
-              return h('span', params.row.sex ? '男' : '女')
+              return h('span', params.row.sex === null ? '' : params.row.sex ? '男' : '女')
             },
             align: 'center'
           },
