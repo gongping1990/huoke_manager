@@ -99,19 +99,19 @@
       optionSeriesLine() {
         let dataList = {
           firstStartActivityCount: [],
-          firstEndActivityCount: [],
-          secondStartActivityCount: [],
           shareCount: [],
           joinActivityCount: [],
-          activitySuccessCount: []
+          activitySuccessCount: [],
+          orderHelpOrderCount: [],
+          orderHelpSuccessOrderCount: []
         }
         for (let item of this.dataInfo) {
           dataList.firstStartActivityCount.push(item.firstStartActivityCount)
-          dataList.firstEndActivityCount.push(item.firstEndActivityCount)
-          dataList.secondStartActivityCount.push(item.secondStartActivityCount)
           dataList.shareCount.push(item.shareCount)
           dataList.joinActivityCount.push(item.joinActivityCount)
           dataList.activitySuccessCount.push(item.activitySuccessCount)
+          dataList.orderHelpOrderCount.push(item.orderHelpOrderCount)
+          dataList.orderHelpSuccessOrderCount.push(item.orderHelpSuccessOrderCount)
         }
         let optionSeriesLine = [
           {
@@ -133,6 +133,16 @@
             name: '海报分享次数',
             type: 'line',
             data: dataList.shareCount
+          },
+          {
+            name: '助力用户下单数',
+            type: 'line',
+            data: dataList.orderHelpOrderCount
+          },
+          {
+            name: '助力用户成功订单数',
+            type: 'line',
+            data: dataList.orderHelpSuccessOrderCount
           }
         ]
         return optionSeriesLine
@@ -201,6 +211,14 @@
               {
                 name: '海报分享次数',
                 icon: 'circle'
+              },
+              {
+                name: '助力用户下单数',
+                icon: 'circle'
+              },
+              {
+                name: '助力用户成功订单数',
+                icon: 'circle'
               }
             ],
             right: '5%'
@@ -250,38 +268,38 @@
             name: '今日活动发起数量',
             num: this.todayInfo.firstStartActivityCount,
             todayName: '累计活动发起数量',
-            todayNum: this.todayInfo.pv
+            todayNum: this.todayInfo.allFirstStartActivityCount
 
           },
           {
             name: '今日海报分享次数',
             num: this.todayInfo.shareCount,
             todayName: '累计海报分享次数',
-            todayNum: this.todayInfo.pv
+            todayNum: this.todayInfo.allShareCount
           },
           {
             name: '今日活动助力人数',
             num: this.todayInfo.joinActivityCount,
             todayName: '累计活动助力人数',
-            todayNum: this.todayInfo.pv
+            todayNum: this.todayInfo.allJoinActivityCount
           },
           {
             name: '今日活动助力成功数',
             num: this.todayInfo.activitySuccessCount,
             todayName: '累计活动助力成功数',
-            todayNum: this.todayInfo.pv
+            todayNum: this.todayInfo.allActivitySuccessCount
           },
           {
             name: '今日助力用户下单数',
-            num: this.todayInfo.joinActivityCount,
+            num: this.todayInfo.orderHelpOrderCount,
             todayName: '累计助力用户下单数',
-            todayNum: this.todayInfo.pv
+            todayNum: this.todayInfo.allOrderHelpOrderCount
           },
           {
             name: '今日助力用户成功订单数',
-            num: this.todayInfo.activitySuccessCount,
+            num: this.todayInfo.orderHelpSuccessOrderCount,
             todayName: '累计助力用户成功订单数',
-            todayNum: this.todayInfo.pv
+            todayNum: this.todayInfo.allOrderHelpSuccessOrderCount
           }
         ]
       }
