@@ -12,7 +12,7 @@
       width="800"
       title="数据详情">
 
-      <div>课程名称：{{dataItem.pageName}}</div>
+      <div>课程名称：{{dataItem.courseName}}</div>
 
       <Table class="-c-tab" :loading="isFetching" :columns="columnsTwo" :data="detailList"></Table>
 
@@ -45,7 +45,7 @@
         columns: [
           {
             title: '课程名称',
-            key: 'pageName',
+            key: 'courseName',
             align: 'center'
           },
           {
@@ -60,42 +60,42 @@
           },
           {
             title: '下单数',
-            key: 'orderCount',
+            key: 'orderNum',
             align: 'center'
           },
           {
             title: '成功订单数',
-            key: 'successOrderCount',
+            key: 'successOrderNum',
             align: 'center'
           },
           {
             title: '活动发起数量',
-            key: 'payPv',
+            key: 'startActivityNum',
             align: 'center'
           },
           {
             title: '海报分享次数',
-            key: 'payUv',
+            key: 'sharePosterNum',
             align: 'center'
           },
           {
             title: '参与助力人数',
-            key: 'successOrderCount',
+            key: 'joinActivityNum',
             align: 'center'
           },
           {
             title: '助力成功数',
-            key: 'payPv',
+            key: 'activitySuccessNum',
             align: 'center'
           },
           {
             title: '助力用户下单数',
-            key: 'payUv',
+            key: 'orderHelpOrderUserNum',
             align: 'center'
           },
           {
             title: '助力用户成功订单数',
-            key: 'payUv',
+            key: 'orderHelpSuccessOrderUserNum',
             align: 'center'
           },
           {
@@ -125,7 +125,7 @@
           {
             title: '日期',
             width: 100,
-            key: 'pageName',
+            key: 'date',
             align: 'center'
           },
           {
@@ -149,43 +149,43 @@
           {
             title: '成功订单数',
             width: 100,
-            key: 'successOrderCount',
+            key: 'successOrderNum',
             align: 'center'
           },
           {
             title: '活动发起数量',
-            key: 'payPv',
+            key: 'startActivityNum',
             width: 100,
             align: 'center'
           },
           {
             title: '海报分享次数',
             width: 100,
-            key: 'payUv',
+            key: 'sharePosterNum',
             align: 'center'
           },
           {
             title: '参与助力人数',
             width: 100,
-            key: 'successOrderCount',
+            key: 'joinActivityNum',
             align: 'center'
           },
           {
             title: '助力成功数',
             width: 100,
-            key: 'payPv',
+            key: 'activitySuccessNum',
             align: 'center'
           },
           {
             title: '助力用户下单数',
             width: 100,
-            key: 'payUv',
+            key: 'orderHelpOrderUserNum',
             align: 'center'
           },
           {
             title: '助力用户成功订单数',
             width: 100,
-            key: 'payUv',
+            key: 'orderHelpSuccessOrderUserNum',
             align: 'center'
           },
           {
@@ -233,8 +233,8 @@
       },
       getDetailList() {
         this.isFetching = true
-        this.$api.tbzwOrder.getDataDetails({
-          page: this.pageId,
+        this.$api.hkywhdBook.getBookDataDetails({
+          courseName: this.dataItem.courseName,
           current: this.tabDetail.page,
           size: this.tabDetail.pageSize
         }).then(response => {
@@ -248,9 +248,7 @@
       getList() {
         this.isFetching = true
 
-        this.$api.tbzwOrder.getTotalData({
-          type: this.radioType
-        })
+        this.$api.hkywhdBook.getAllBookData()
           .then(
             response => {
               this.dataList = response.data.resultData;
