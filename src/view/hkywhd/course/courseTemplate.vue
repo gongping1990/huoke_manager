@@ -75,6 +75,7 @@
         isOpenDetail: false,
         isFetching: false,
         searchInfo: {
+          courseType: '-1',
           selectType: '1'
         }
       }
@@ -112,7 +113,10 @@
                 this.courseTypeList.push(item)
               }
             })
-            this.searchInfo.courseType = this.courseTypeList[0].id
+            this.courseTypeList.unshift({
+              name: '全部',
+              id: '-1'
+            })
             this.storageArray = JSON.parse(JSON.stringify(this.checkList)) || []
             this.getList()
           })
@@ -122,7 +126,7 @@
         this.$api.hkywhdTextbook.listAll({
           tBookId: this.dataItem.id,
           name: this.searchInfo.courseName,
-          courseId: this.searchInfo.courseType,
+          courseId: this.searchInfo.courseType === '-1' ? '' : this.searchInfo.courseType,
         })
           .then(response => {
             let dataInfo = response.data.resultData
