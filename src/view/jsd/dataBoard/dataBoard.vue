@@ -1,31 +1,16 @@
 <template>
   <div class="p-dataBoard">
     <Card class="-p-d-col">
-      <Row class="p-dataBoard-notice -c-tab">
-        <Col :span="12" class="g-t-left">
-          <img class="-img" src="../../../assets/images/index-label-icon-tips.png"/>
-          <span>{{noticeMessage}}</span>
-        </Col>
-        <Col :span="12" class="g-text-right">
-          <span class="-text" @click="openModal(1)">预警历史</span>
-          <span class="-text" @click="openModal(2)">订阅通知短信</span>
-        </Col>
-      </Row>
       <Row class="g-t-left p-dataBoard-radio">
         <Radio-group v-model="radioType" type="button" @on-change="changeRadio">
           <Radio label="0">今日</Radio>
           <Radio label="1">本周</Radio>
           <Radio label="2">本月</Radio>
         </Radio-group>
-
-        <span class="-text-wrap" v-if="radioType === '0'">
-          <span class="-text" @click="openModal(3)">今日老师数据</span>
-          <span class="-text" @click="openModal(4)">每日数据详情</span>
-        </span>
       </Row>
 
       <Row class="p-dataBoard-flex">
-        <Col :span="4" v-for="(item,index) of cardList" :key="index">
+        <Col :span="5" v-for="(item,index) of cardList" :key="index">
           <Card class="-item-wrap">
             <div class="-item-wrap-top">
               <div class="-name-left">{{item.name}}</div>
@@ -36,129 +21,29 @@
         </Col>
       </Row>
 
-      <div class="p-dataBoard-echart">
-        <div class="-item-echart">
-          <div class="-item-echart-top">
-            <div class="-item-echart-name">效率榜</div>
-            <div>
-              <span class="-item-echart-text"
-                    :class="{'-item-active' : dataItemOne.num === 0}"
-                    @click="changeDate(1,0)">今日</span>
-              <span class="-item-echart-text -text-center"
-                    :class="{'-item-active' : dataItemOne.num === 1}"
-                    @click="changeDate(1,1)">本周</span>
-              <span class="-item-echart-text"
-                    :class="{'-item-active' : dataItemOne.num === 2}"
-                    @click="changeDate(1,2)">本月</span>
-            </div>
-          </div>
-          <div ref="echartOne" class="-item-echart-down"></div>
+      <div class="p-dataBoard-wrap g-tab">
+        <div class="p-dataBoard-title -titleTwo">
+          <div>每日教师数据</div>
+          <div><DatePicker type="date" v-model="searchInfo.date" placeholder="请选择" @on-change="viewTeacherDateCount(1)"></DatePicker></div>
         </div>
+        <Table class="-c-tab" :loading="isFetching" :columns="columnsOne" :data="dataListOne"></Table>
 
-        <div class="-item-echart">
-          <div class="-item-echart-top">
-            <div class="-item-echart-name">完成榜</div>
-            <div>
-              <span class="-item-echart-text"
-                    :class="{'-item-active' : dataItemTwo.num === 0}"
-                    @click="changeDate(2,0)">今日</span>
-              <span class="-item-echart-text -text-center"
-                    :class="{'-item-active' : dataItemTwo.num === 1}"
-                    @click="changeDate(2,1)">本周</span>
-              <span class="-item-echart-text"
-                    :class="{'-item-active' : dataItemTwo.num === 2}"
-                    @click="changeDate(2,2)">本月</span>
-            </div>
-          </div>
-          <div ref="echartTwo" class="-item-echart-down"></div>
-        </div>
+        <Page class="g-text-right" :total="totalOne" size="small" show-elevator :page-size="tabOne.pageSize"
+              :current.sync="tabOne.currentPage"
+              @on-change="currentChangeOne"></Page>
+      </div>
 
-        <div class="-item-echart">
-          <div class="-item-echart-top">
-            <div class="-item-echart-name">好评榜</div>
-            <div>
-              <span class="-item-echart-text"
-                    :class="{'-item-active' : dataItemThree.num === 0}"
-                    @click="changeDate(3,0)">今日</span>
-              <span class="-item-echart-text -text-center"
-                    :class="{'-item-active' : dataItemThree.num === 1}"
-                    @click="changeDate(3,1)">本周</span>
-              <span class="-item-echart-text"
-                    :class="{'-item-active' : dataItemThree.num === 2}"
-                    @click="changeDate(3,2)">本月</span>
-            </div>
-          </div>
-          <div ref="echartThree" class="-item-echart-down"></div>
+      <div class="p-dataBoard-wrap">
+        <div class="p-dataBoard-title -titleTwo">
+          <div>每日数据汇总</div>
         </div>
+        <Table class="-c-tab" :loading="isFetching" :columns="columnsTwo" :data="dataListTwo"></Table>
 
-        <div class="-item-echart">
-          <div class="-item-echart-top">
-            <div class="-item-echart-name">数量榜</div>
-            <div>
-              <span class="-item-echart-text"
-                    :class="{'-item-active' : dataItemFour.num === 0}"
-                    @click="changeDate(4,0)">今日</span>
-              <span class="-item-echart-text -text-center"
-                    :class="{'-item-active' : dataItemFour.num === 1}"
-                    @click="changeDate(4,1)">本周</span>
-              <span class="-item-echart-text"
-                    :class="{'-item-active' : dataItemFour.num === 2}"
-                    @click="changeDate(4,2)">本月</span>
-            </div>
-          </div>
-          <div ref="echartFour" class="-item-echart-down"></div>
-        </div>
+        <Page class="g-text-right" :total="totalTwo" size="small" show-elevator :page-size="tabTwo.pageSize"
+              :current.sync="tabTwo.currentPage"
+              @on-change="currentChangeTwo"></Page>
       </div>
     </Card>
-
-    <Modal
-      class="p-dataBoard-modal"
-      v-model="isOpenModal"
-      @on-cancel="isOpenModal = false"
-      :footer-hide="modelType !== 2"
-      width="780"
-      :title="titleType[modelType]">
-      <div v-if="modelType !== 2">
-        <Row class="g-search" v-if="modelType === 3">
-          <Col :span="10" class="g-flex-a-j-center">
-            <div class="-search-select-text">日期查询：</div>
-            <Date-picker class="date-time"
-                         placeholder="选择日期"
-                         @on-change="viewTeacherDateCount(1)"
-                         v-model="checkDate"></Date-picker>
-          </Col>
-        </Row>
-
-        <Table class="-c-tab" :loading="isFetching" :columns="columnsModal" :data="detailList"></Table>
-
-        <Page class="g-text-right" :total="totalDetail" size="small" show-elevator :page-size="tabDetail.pageSize"
-              :current.sync="tabDetail.currentPage"
-              @on-change="detailCurrentChange"></Page>
-      </div>
-
-      <div v-if="modelType === 2">
-        <Form ref="addInfo" :label-width="90" class="ivu-form-item-required -phone-form">
-          <FormItem label="手机号码" prop="href">
-            <div class="-item-wrap" v-for="(item,index) of phoneList" :key="index">
-              <Input class="-input" type="text" v-model="item.phone" placeholder="请输入手机号码"></Input>
-              <span class="-del" @click="delPhone(index)">删除</span>
-            </div>
-          </FormItem>
-        </Form>
-
-        <div class="-btn-wrap">
-          <Button class="-btn" @click="addPhone()" ghost type="primary" style="width: 100px;">添加手机号</Button>
-        </div>
-
-      </div>
-
-
-      <div slot="footer" class="-p-b-flex" v-if="modelType === 2">
-        <Button @click="isOpenModal= false" ghost type="primary" style="width: 100px;">取消</Button>
-        <div @click="submitInfo()" class="g-primary-btn ">确认</div>
-      </div>
-    </Modal>
-
   </div>
 </template>
 
@@ -180,448 +65,114 @@
     name: 'userData',
     data() {
       return {
-        tabDetail: {
+        tabOne: {
           page: 1,
           pageSize: 10
         },
-        totalDetail: 0,
+        tabTwo: {
+          page: 1,
+          pageSize: 10
+        },
+        searchInfo: {
+          date: new Date()
+        },
+        totalOne: 0,
+        totalTwo: 0,
         radioType: '0',
         modelType: 2,
         isFetching: false,
         isOpenModal: false,
-        noticeMessage: '',
-        dataInfoOne: '',
-        dataInfoTwo: '',
-        dataInfoThree: '',
-        dataInfoFour: '',
-        titleList: [],
-        titleType: {
-          '1': '预警历史',
-          '2': '订阅通知短信',
-          '3': '今日老师数据',
-          '4': '每日数据详情'
-        },
-        detailList: [],
         cardList: [],
-        phoneList: [
+        dataListOne: [],
+        dataListTwo: [],
+        columnsOne: [
           {
-            phone: ''
+            title: '老师名称',
+            key: 'teacherName',
+            align: 'center'
+          },
+          {
+            title: '当日作业总量/批改',
+            render: (h, p) => {
+              return h('div', `${p.row.total}/${p.row.totalHandled}`)
+            },
+            align: 'center',
+          },
+          {
+            title: '当日提交/已批改',
+            render: (h, p) => {
+              return h('div', `${p.row.allotnum}/${p.row.allotHandled}`)
+            },
+            align: 'center',
+          },
+          {
+            title: '历史堆积/已批该',
+            render: (h, p) => {
+              return h('div', `${p.row.oldnum}/${p.row.oldHandled}`)
+            },
+            align: 'center',
+          },
+          {
+            title: '不合格重交/已批该',
+            render: (h, p) => {
+              return h('div', `${p.row.resubmitnum}/${p.row.handleResubmit}`)
+            },
+            align: 'center',
           }
         ],
-        echartList: [],
-        addInfo: {},
-        dataItemOne: {
-          num: 0
-        },
-        dataItemTwo: {
-          num: 0
-        },
-        dataItemThree: {
-          num: 0
-        },
-        dataItemFour: {
-          num: 0
-        },
-        myChartOne: '',
-        myChartTwo: '',
-        myChartThree: '',
-        myChartFour: '',
-        checkDate: new Date(),
-      }
-    },
-    computed: {
-      dateTypesLineOne() {
-        let arrayX = []
-        for (let item of this.dataInfoOne) {
-          arrayX.push(item.teacherName)
-        }
-        return arrayX
-      },
-      dateTypesLineTwo() {
-        let arrayX = []
-        for (let item of this.dataInfoTwo) {
-          arrayX.push(item.teacherName)
-        }
-        return arrayX
-      },
-      dateTypesLineThree() {
-        let arrayX = []
-        for (let item of this.dataInfoThree) {
-          arrayX.push(item.teacherName)
-        }
-        return arrayX
-      },
-      dateTypesLineFour() {
-        let arrayX = []
-        for (let item of this.dataInfoFour) {
-          arrayX.push(item.teacherName)
-        }
-        return arrayX
-      },
-      optionSeriesLineOne() {
-        let arrayY = []
-        for (let item of this.dataInfoOne) {
-          arrayY.push(item.replytime)
-        }
-        return arrayY
-      },
-      optionSeriesLineTwo() {
-        let arrayY = []
-        for (let item of this.dataInfoTwo) {
-          arrayY.push(`${(item.totalHandled / 10)}`)
-        }
-        return arrayY
-      },
-      optionSeriesLineThree() {
-        let arrayY = []
-        for (let item of this.dataInfoThree) {
-          arrayY.push(item.good)
-        }
-        return arrayY
-      },
-      optionSeriesLineFour() {
-        let arrayY = []
-        for (let item of this.dataInfoFour) {
-          arrayY.push(item.totalHandled)
-        }
-        return arrayY
-      },
-
-      columnsModal() {
-        let list = []
-
-        switch (this.modelType) {
-          case 1:
-            list = [
-              {
-                title: '时间',
-                render: (h, params) => {
-                  return h('div', dayjs(+params.row.gmtCreate).format('YYYY-DD-MM'))
-                },
-                align: 'center'
-              },
-              {
-                title: '消息内容',
-                key: 'message',
-                align: 'center'
-              },
-              {
-                title: '接收电话',
-                tooltip: true,
-                render: (h, params) => {
-                  return h('div', params.row.phones.map((item) => {
-                    return h('div', item)
-                  }))
-                },
-                align: 'center'
-              }
-            ]
-            break
-          case 3:
-            list = [
-              {
-                title: '老师名称',
-                key: 'teacherName',
-                align: 'center'
-              },
-              {
-                title: '总量/已处理',
-                render: (h, p) => {
-                  return h('div', `${p.row.total}/${p.row.totalHandled}`)
-                },
-                align: 'center',
-              },
-              {
-                title: '自动分配/已处理',
-                render: (h, p) => {
-                  return h('div', `${p.row.autonum}/${p.row.autoHandled}`)
-                },
-                align: 'center',
-              },
-              {
-                title: '补批/已处理',
-                render: (h, p) => {
-                  return h('div', `${p.row.oldnum}/${p.row.oldHandled}`)
-                },
-                align: 'center',
-              },
-              {
-                title: '调度/已处理',
-                render: (h, p) => {
-                  return h('div', `${p.row.allotnum}/${p.row.allotHandled}`)
-                },
-                align: 'center',
-              },
-              {
-                title: '重交/已处理',
-                render: (h, p) => {
-                  return h('div', `${p.row.resubmitnum}/${p.row.handleResubmit}`)
-                },
-                align: 'center',
-              }
-            ]
-            break
-          case 4:
-            list = [
-              {
-                title: '时间',
-                key: 'day',
-                align: 'center'
-              },
-              {
-                title: '总量/已处理',
-                render: (h, p) => {
-                  return h('div', `${p.row.total}/${p.row.totalHandled}`)
-                },
-                align: 'center'
-              },
-              {
-                title: '自动分配/已处理',
-                render: (h, p) => {
-                  return h('div', `${p.row.autonum}/${p.row.autoHandled}`)
-                },
-                align: 'center'
-              },
-              {
-                title: '补批/已处理',
-                render: (h, p) => {
-                  return h('div', `${p.row.oldnum}/${p.row.oldHandled}`)
-                },
-                align: 'center'
-              },
-              {
-                title: '调度/已处理',
-                render: (h, p) => {
-                  return h('div', `${p.row.allotnum}/${p.row.allotHandled}`)
-                },
-                align: 'center'
-              },
-              {
-                title: '重交/已处理',
-                render: (h, p) => {
-                  return h('div', `${p.row.resubmitnum}/${p.row.handleResubmit}`)
-                },
-                align: 'center'
-              }
-            ]
-            break
-        }
-        return list
+        columnsTwo: [
+          {
+            title: '时间',
+            key: 'day',
+            align: 'center'
+          },
+          {
+            title: '当日作业总量/批改',
+            render: (h, p) => {
+              return h('div', `${p.row.total}/${p.row.totalHandled}`)
+            },
+            align: 'center',
+          },
+          {
+            title: '当日提交/已批改',
+            render: (h, p) => {
+              return h('div', `${p.row.allotnum}/${p.row.allotHandled}`)
+            },
+            align: 'center',
+          },
+          {
+            title: '历史堆积/已批该',
+            render: (h, p) => {
+              return h('div', `${p.row.oldnum}/${p.row.oldHandled}`)
+            },
+            align: 'center',
+          },
+          {
+            title: '不合格重交/已批该',
+            render: (h, p) => {
+              return h('div', `${p.row.resubmitnum}/${p.row.handleResubmit}`)
+            },
+            align: 'center',
+          }
+        ]
       }
     },
     mounted() {
-      this.myChartOne = echarts.init(this.$refs.echartOne)
-      this.myChartTwo = echarts.init(this.$refs.echartTwo)
-      this.myChartThree = echarts.init(this.$refs.echartThree)
-      this.myChartFour = echarts.init(this.$refs.echartFour)
-      this.topReplytime()
-      this.topHandleRate()
-      this.topGood()
-      this.topHandled()
+      this.viewTeacherDateCount()
+      this.listDaySumWorkJobCountByPage()
       this.sumWorkJobCount()
-      this.getLastActiveMessage()
     },
     methods: {
-      changeDate(type, num) {
-        switch (+type) {
-          case 1:
-            this.dataItemOne.type = type
-            this.dataItemOne.num = num
-            this.topReplytime()
-            break
-          case 2:
-            this.dataItemTwo.type = type
-            this.dataItemTwo.num = num
-            this.topHandleRate()
-            break
-          case 3:
-            this.dataItemThree.type = type
-            this.dataItemThree.num = num
-            this.topGood()
-            break
-          case 4:
-            this.dataItemFour.type = type
-            this.dataItemFour.num = num
-            this.topHandled()
-            break
-        }
+      currentChangeOne(val) {
+        this.tabOne.page = val;
+        this.viewTeacherDateCount();
       },
-      openModal(num) {
-        this.phoneList = [{
-          phone: ''
-        }]
-        this.modelType = +num
-        this.isOpenModal = true
-        this.modelType === 1 && this.getHistoryList()
-        this.modelType === 3 && this.viewTeacherDateCount()
-        this.modelType === 4 && this.listDaySumWorkJobCountByPage()
-      },
-      addPhone() {
-        this.phoneList.push({
-          phone: ''
-        })
-      },
-      delPhone(index) {
-        this.phoneList.splice(index, 1)
-      },
-      submitInfo() {
-        for (let item of this.phoneList) {
-          if (item.phone === '') {
-            return this.$Message.error('手机号码不能为空')
-          }
-        }
-
-        let phoneArray = []
-
-        this.phoneList.forEach(item => {
-          phoneArray.push(item.phone)
-        })
-
-        this.$api.jsdJob.updatePhones(phoneArray)
-          .then(res => {
-            this.isOpenModal = false
-            this.$Message.success('发送成功')
-          })
-      },
-      detailCurrentChange(val) {
-        this.tabDetail.page = val;
-        this.getDetailList();
+      currentChangeTwo(val) {
+        this.tabTwo.page = val;
+        this.listDaySumWorkJobCountByPage();
       },
       changeRadio() {
         this.sumWorkJobCount()
-      },
-      drawLineOne() {
-        let self = this;
-        this.myChartOne.clear();
-        this.myChartOne.resize();
-        // 绘制图表
-        this.myChartOne.setOption({
-          tooltip: {},
-          xAxis: {
-            data: this.dateTypesLineOne
-          },
-          yAxis: {
-            name: '单位（分钟）'
-          },
-          color: ['#49a9ee'],
-          series: {
-            type: 'bar',
-            data: this.optionSeriesLineOne
-          }
-        })
-        window.addEventListener("resize", () => {
-          this.myChartOne.resize();
-        });
-        this.myChartOne.hideLoading()
-      },
-      drawLineTwo() {
-        let self = this;
-        this.myChartTwo.clear();
-        this.myChartTwo.resize();
-        // 绘制图表
-        this.myChartTwo.setOption({
-          tooltip: {},
-          xAxis: {
-            data: this.dateTypesLineTwo
-          },
-          yAxis: {
-            name: '单位（%）'
-          },
-          color: ['#98d87d'],
-          series: {
-            type: 'bar',
-            data: this.optionSeriesLineTwo
-          }
-        })
-        window.addEventListener("resize", () => {
-          this.myChartTwo.resize();
-        });
-        this.myChartTwo.hideLoading()
-      },
-      drawLineThree() {
-        let self = this;
-        this.myChartThree.clear();
-        this.myChartThree.resize();
-        // 绘制图表
-        this.myChartThree.setOption({
-          tooltip: {},
-          xAxis: {
-            data: this.dateTypesLineThree
-          },
-          yAxis: {
-            name: '单位（次）'
-          },
-          color: ['#ffd86e'],
-          series: {
-            type: 'bar',
-            data: this.optionSeriesLineThree
-          }
-        })
-
-        window.addEventListener("resize", () => {
-          this.myChartThree.resize();
-        });
-        this.myChartThree.hideLoading()
-      },
-      drawLineFour() {
-        let self = this;
-        this.myChartFour.clear();
-        this.myChartFour.resize();
-        // 绘制图表
-        this.myChartFour.setOption({
-          tooltip: {},
-          xAxis: {
-            data: this.dateTypesLineFour
-          },
-          yAxis: {
-            name: '单位（次）'
-          },
-          series: {
-            type: 'bar',
-            data: this.optionSeriesLineFour
-          }
-        })
-
-        window.addEventListener("resize", () => {
-          this.myChartFour.resize();
-        });
-        this.myChartFour.hideLoading()
-      },
-      getHistoryList(num) {
-        this.isFetching = true
-        if (num) {
-          this.tabDetail.currentPage = 1
-        }
-        this.$api.jsdJob.listWarnMessagePage({
-          current: num ? num : this.tabDetail.page,
-          size: this.tabDetail.pageSize
-        })
-          .then(
-            response => {
-              this.detailList = response.data.resultData.records;
-              this.totalDetail = response.data.resultData.total;
-            })
-          .finally(() => {
-            this.isFetching = false
-          })
-      },
-      listDaySumWorkJobCountByPage(num) {
-        this.isFetching = true
-        if (num) {
-          this.tabDetail.currentPage = 1
-        }
-        this.$api.jsdJob.listDaySumWorkJobCountByPage({
-          current: num ? num : this.tabDetail.page,
-          size: this.tabDetail.pageSize
-        })
-          .then(
-            response => {
-              this.detailList = response.data.resultData.records;
-              this.totalDetail = response.data.resultData.total;
-            })
-          .finally(() => {
-            this.isFetching = false
-          })
       },
       sumWorkJobCount(num) {
         this.isFetching = true
@@ -632,137 +183,91 @@
           .then(
             response => {
               let countObj = response.data.resultData;
-              this.cardList = [
-                {
-                  name: '作业总量',
-                  all: countObj.total,
-                  alone: countObj.totalHandled,
-                  parent: ''
-                },
-                {
-                  name: '自动分配',
-                  all: countObj.autonum,
-                  alone: countObj.autoHandled,
-                  parent: ''
-                },
-                {
-                  name: '补批',
-                  all: countObj.oldnum,
-                  alone: countObj.oldHandled,
-                  parent: ''
-                },
-                {
-                  name: '调度',
-                  all: countObj.allotnum,
-                  alone: countObj.allotHandled,
-                  parent: ''
-                },
-                {
-                  name: '重交',
-                  all: countObj.resubmitnum,
-                  alone: countObj.handleResubmit,
-                  parent: ''
-                }
-              ]
 
+              if (this.radioType === '0') {
+                this.cardList = [
+                  {
+                    name: '当日作业总量/批改',
+                    all: countObj.total,
+                    alone: countObj.totalHandled,
+                    parent: ''
+                  },
+                  {
+                    name: '今日提交/已批该',
+                    all: countObj.allotnum,
+                    alone: countObj.allotHandled,
+                    parent: ''
+                  },
+                  {
+                    name: '历史堆积/已批该',
+                    all: countObj.oldnum,
+                    alone: countObj.oldHandled,
+                    parent: ''
+                  },
+                  {
+                    name: '不合格重交/已批改',
+                    all: countObj.resubmitnum,
+                    alone: countObj.handleResubmit,
+                    parent: ''
+                  }
+                ]
+              }  else {
+                this.cardList = [
+                  {
+                    name: this.radioType === '1' ? '本周作业总量/批改' : '本月作业总量/批改',
+                    all: countObj.total,
+                    alone: countObj.totalHandled,
+                    parent: ''
+                  },
+                  {
+                    name: '不合格重交/已批改',
+                    all: countObj.resubmitnum,
+                    alone: countObj.handleResubmit,
+                    parent: ''
+                  }
+                ]
+              }
             })
           .finally(() => {
             this.isFetching = false
           })
-      },
-      getLastActiveMessage(num) {
-        this.$api.jsdJob.getLastActiveMessage()
-          .then(
-            response => {
-              this.noticeMessage = response.data.resultData || '暂无通知消息';
-            })
       },
       viewTeacherDateCount(num) {
         this.isFetching = true
         if (num) {
-          this.tabDetail.currentPage = 1
+          this.tabOne.currentPage = 1
         }
         this.$api.jsdJob.viewTeacherDateCount({
-          current: num ? num : this.tabDetail.page,
-          date: new Date(this.checkDate).getTime(),
-          size: this.tabDetail.pageSize
+          current: num ? num : this.tabOne.page,
+          date: new Date(this.searchInfo.date).getTime(),
+          size: this.tabOne.pageSize
         })
           .then(
             response => {
-              this.detailList = response.data.resultData.records;
-              this.totalDetail = response.data.resultData.total;
+              this.dataListOne = response.data.resultData.records;
+              this.totalOne = response.data.resultData.total;
             })
           .finally(() => {
             this.isFetching = false
           })
       },
-      topReplytime() {
-        this.myChartOne.showLoading({
-          text: '图表加载中...',
-          color: '#20a0ff',
-          textColor: '#000',
-          zlevel: 0
-        })
-        this.$api.jsdJob.topReplytime({
-          range: this.dataItemOne.num
-        })
-          .then(
-            response => {
-              this.dataInfoOne = response.data.resultData;
-              this.drawLineOne()
-            })
-      },
-      topHandleRate() {
-        this.myChartTwo.showLoading({
-          text: '图表加载中...',
-          color: '#20a0ff',
-          textColor: '#000',
-          zlevel: 0
-        })
-
-        this.$api.jsdJob.topHandleRate({
-          range: this.dataItemTwo.num
+      listDaySumWorkJobCountByPage(num) {
+        this.isFetching = true
+        if (num) {
+          this.tabTwo.currentPage = 1
+        }
+        this.$api.jsdJob.listDaySumWorkJobCountByPage({
+          current: num ? num : this.tabTwo.page,
+          size: this.tabTwo.pageSize
         })
           .then(
             response => {
-              this.dataInfoTwo = response.data.resultData;
-              this.drawLineTwo()
+              this.dataListTwo = response.data.resultData.records;
+              this.totalTwo = response.data.resultData.total;
             })
-
-      },
-      topGood() {
-        this.myChartThree.showLoading({
-          text: '图表加载中...',
-          color: '#20a0ff',
-          textColor: '#000',
-          zlevel: 0
-        })
-
-        this.$api.jsdJob.topGood({
-          range: this.dataItemThree.num
-        })
-          .then(
-            response => {
-              this.dataInfoThree = response.data.resultData;
-              this.drawLineThree()
-            })
-      },
-      topHandled() {
-        this.myChartFour.showLoading({
-          text: '图表加载中...',
-          color: '#20a0ff',
-          textColor: '#000',
-          zlevel: 0
-        })
-
-        this.$api.jsdJob.topHandled({
-          range: this.dataItemFour.num
-        })
-          .then(
-            response => {
-              this.dataInfoFour = response.data.resultData;
-              this.drawLineFour()
-            })
+          .finally(() => {
+            this.isFetching = false
+          })
       }
     }
   }
@@ -771,6 +276,20 @@
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="less">
   .p-dataBoard {
+
+    &-wrap {
+      margin-bottom: 33px;
+    }
+
+    &-title {
+      text-align: left;
+      font-size: 16px;
+    }
+
+    .-titleTwo {
+      display: flex;
+      justify-content: space-between;
+    }
 
     &-notice {
       display: flex;
@@ -814,7 +333,7 @@
 
         &-top {
           display: flex;
-          justify-content: space-between;
+          justify-content: center;
 
           .-name-left {
             font-size: 16px;

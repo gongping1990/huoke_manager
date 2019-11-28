@@ -29,9 +29,9 @@
               <Radio :label=0 disabled>不合格</Radio>
             </Radio-group>
           </FormItem>
-          <FormItem label="教师名称" prop="replyTeacher" class="ivu-form-item-required">
-            <Input type="text" v-model="addInfo.replyTeacher" placeholder="请输入教师名称"></Input>
-          </FormItem>
+          <!--<FormItem label="教师名称" prop="replyTeacher" class="ivu-form-item-required">-->
+            <!--<Input type="text" v-model="addInfo.replyTeacher" placeholder="请输入教师名称"></Input>-->
+          <!--</FormItem>-->
           <FormItem label="批改模式" v-if="addInfo.isPassed === 1 && (addInfo.homeworkType === 2)">
             <Radio-group v-model="corType">
               <Radio :label=1>线上批改</Radio>
@@ -561,9 +561,7 @@
         this.addInfo.replyImg = this.corType === 1 ? this.addInfo.replyImgTmp : this.addInfo.replyImgUpload
 
 
-        if (!this.addInfo.replyTeacher) {
-          return this.$Message.error('请输入教师名称')
-        } else if (this.addInfo.replyImg.length > 3) {
+         if (this.addInfo.replyImg.length > 3) {
           return this.$Message.error('最多上传三张图片')
         } else if (!this.addInfo.replyText && this.addInfo.isPassed === 0) {
           return this.$Message.error('请输入不合格评语')
@@ -578,7 +576,7 @@
           courseId: this.searchInfo.appId,
           replyImg: `${this.addInfo.replyImg}`,
           replyImgTmp: this.corType === 1 ? `${this.addInfo.replyImgTmp}` : '',
-          replyTeacher: this.addInfo.replyTeacher,
+          // replyTeacher: this.addInfo.replyTeacher,
           replyText: this.addInfo.replyText,
           replyAudio: this.addInfo.replyAudio,
           replyDuration: this.addInfo.replyDuration,
