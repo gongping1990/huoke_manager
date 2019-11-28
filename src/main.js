@@ -9,9 +9,11 @@ import './assets/styles/iview.css'
 import './assets/style/globalStyle.css'
 import preview from 'vue-photo-preview'
 import 'vue-photo-preview/dist/skin.css'
+import pluginDom from '@/utils/plugin'
 
 Vue.use(preview)
 Vue.use(iView)
+Vue.use(pluginDom)
 Vue.config.productionTip = false
 Vue.prototype.$api = api;
 Vue.prototype.$axios = axios;
