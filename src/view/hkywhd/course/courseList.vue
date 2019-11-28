@@ -489,6 +489,7 @@
           type: this.addInfo.type,
           coverPage: this.addInfo.coverPage,
           coverImgUrl: this.addInfo.coverImgUrl,
+          posterUrl: this.addInfo.posterUrl,
           courseId: this.addInfo.courseId
         }
 
