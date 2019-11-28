@@ -43,9 +43,9 @@
         :title="titleText[modalType]">
         <Form ref="addInfo" :model="addInfo" :label-width="110" v-if="modalType === 1">
           <FormItem label="课程类型">
-            <RadioGroup v-model="addInfo.type">
-              <Radio :label=0>单个课程</Radio>
-              <Radio :label=1>多个课程</Radio>
+            <RadioGroup v-model="addInfo.type" >
+              <Radio :label=0 :disabled="addInfo.id !== ''">单个课程</Radio>
+              <Radio :label=1 :disabled="addInfo.id !== ''">多个课程</Radio>
             </RadioGroup>
           </FormItem>
           <FormItem label="课程名称" class="ivu-form-item-required">
