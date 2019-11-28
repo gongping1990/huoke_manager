@@ -41,44 +41,44 @@
         @on-cancel="closeModal('addInfo')"
         width="600"
         :title="titleText[modalType]">
-        <Form ref="addInfo" :model="addInfo" :label-width="110" v-show="modalType === 1" class="ivu-form-item-required">
+        <Form ref="addInfo" :model="addInfo" :label-width="110" v-if="modalType === 1">
           <FormItem label="课程类型">
             <RadioGroup v-model="addInfo.type">
               <Radio :label=0>单个课程</Radio>
               <Radio :label=1>多个课程</Radio>
             </RadioGroup>
           </FormItem>
-          <FormItem label="课程名称" prop="name">
+          <FormItem label="课程名称" class="ivu-form-item-required">
             <Input type="text" v-model="addInfo.name" placeholder="请输入课程名称"></Input>
           </FormItem>
-          <FormItem label="课程描述" prop="descripte">
+          <FormItem label="课程描述" class="ivu-form-item-required">
             <Input type="text" v-model="addInfo.descripte" placeholder="请输入课程描述"></Input>
           </FormItem>
-          <FormItem label="排序值" prop="sortNum">
+          <FormItem label="排序值" class="ivu-form-item-required">
             <Input type="text" v-model="addInfo.sortNum" placeholder="请输入排序值"></Input>
           </FormItem>
-          <FormItem label="课时总数" prop="nums">
+          <FormItem label="课时总数" class="ivu-form-item-required">
             <Input type="text" v-model="addInfo.nums" placeholder="请输入课时总数"></Input>
           </FormItem>
           <FormItem label="购买链接" prop="salesUrl">
             <Input type="text" v-model="addInfo.salesUrl" placeholder="请输入购买链接"></Input>
           </FormItem>
-          <FormItem label="课程分类" prop="href">
+          <FormItem label="课程分类" class="ivu-form-item-required">
             <Select v-model="addInfo.courseId">
               <Option v-for="(item,index) in courseTypeList" :label="item.name" :value="item.id" :key="index"></Option>
             </Select>
           </FormItem>
-          <Form-item label="首页课程封面" prop="coverPage">
+          <Form-item label="首页课程封面" class="ivu-form-item-required">
             <upload-img v-model="addInfo.coverPage" :option="uploadOption"></upload-img>
           </Form-item>
-          <Form-item label="竖版课程封面" prop="coverImgUrl">
+          <Form-item label="竖版课程封面" class="ivu-form-item-required">
             <upload-img v-model="addInfo.coverImgUrl" :option="uploadOption"></upload-img>
           </Form-item>
-          <Form-item label="海报图片" prop="posterUrl">
+          <Form-item label="海报图片" class="ivu-form-item-required">
             <upload-img v-model="addInfo.posterUrl" :option="uploadOption"></upload-img>
           </Form-item>
         </Form>
-        <Form ref="addInfo" :model="addInfo" :label-width="110" v-show="modalType === 2" class="ivu-form-item-required">
+        <Form ref="addInfo" :model="addInfo" :label-width="110" v-if="modalType === 2" class="ivu-form-item-required">
           <FormItem label="单独购价格" prop="ddgPrice">
             <Input type="text" v-model="addInfo.ddgPrice" placeholder="请输入单独购价格"></Input>
           </FormItem>
@@ -98,7 +98,7 @@
             <Input type="text" v-model="addInfo.unlockNums" placeholder="请输入解锁课时数"></Input>
           </FormItem>
         </Form>
-        <Form ref="addInfo" :model="addInfo" :label-width="110" v-show="modalType === 3" class="ivu-form-item-required">
+        <Form ref="addInfo" :model="addInfo" :label-width="110" v-if="modalType === 3" class="ivu-form-item-required">
           <FormItem label="推荐课程" prop="name">
             <div class="g-course-add-style" @click="isOpenModalData=true">
               <span>+</span>
@@ -363,7 +363,7 @@
       },
       closeModal(name) {
         this.isOpenModal = false
-        this.$refs[name].resetFields()
+        // this.$refs[name].resetFields()
       },
       currentChange(val) {
         this.tab.page = val;
@@ -378,6 +378,7 @@
           })
       },
       getActivityByTbookId(data) {
+        this.addInfo = {}
         this.$api.hkywhdActivity.getActivityByTbookId({
           tbookId: data.id
         })
@@ -468,8 +469,6 @@
           return this.$Message.error('请输入排序值')
         } else if (!this.addInfo.nums) {
           return this.$Message.error('请输入课时总数')
-        } else if (!this.addInfo.salesUrl) {
-          return this.$Message.error('请输入购买链接')
         } else if (!this.addInfo.courseId) {
           return this.$Message.error('请输入课程分类')
         } else if (!this.addInfo.coverPage) {
