@@ -74,6 +74,9 @@
           <Form-item label="竖版课程封面" prop="coverImgUrl">
             <upload-img v-model="addInfo.coverImgUrl" :option="uploadOption"></upload-img>
           </Form-item>
+          <Form-item label="海报图片" prop="posterUrl">
+            <upload-img v-model="addInfo.posterUrl" :option="uploadOption"></upload-img>
+          </Form-item>
         </Form>
         <Form ref="addInfo" :model="addInfo" :label-width="110" v-show="modalType === 2" class="ivu-form-item-required">
           <FormItem label="单独购价格" prop="ddgPrice">
@@ -353,6 +356,7 @@
             id: '',
             type: 0,
             coverImgUrl: '',
+            posterUrl: '',
             coverPage: ''
           }
         }
@@ -472,6 +476,8 @@
           return this.$Message.error('首页课程封面')
         } else if (!this.addInfo.coverImgUrl) {
           return this.$Message.error('请上传竖版封面图')
+        } else if (!this.addInfo.posterUrl) {
+          return this.$Message.error('请上传海报图片')
         }
 
         this.isSending = true
