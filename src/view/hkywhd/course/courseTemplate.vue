@@ -103,12 +103,17 @@
         this.$forceUpdate()
       },
       listCourseType() {
+        this.courseTypeList = []
         this.$api.hkywhdCourse.listAllOn()
           .then(response => {
-            this.courseTypeList = response.data.resultData
+            let dataInfo = response.data.resultData
+            dataInfo.forEach(item=>{
+              if (item.disabled) {
+                this.courseTypeList.push(item)
+              }
+            })
             this.searchInfo.courseType = this.courseTypeList[0].id
             this.storageArray = JSON.parse(JSON.stringify(this.checkList)) || []
-            console.log(this.storageArray, 111)
             this.getList()
           })
       },

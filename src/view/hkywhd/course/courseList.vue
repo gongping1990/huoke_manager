@@ -6,7 +6,7 @@
           <div class="g-flex-a-j-center">
             <div class="-search-select-text">课程分类</div>
             <Select v-model="searchInfo.courseType" @on-change="getList(1)" class="-search-selectOne">
-              <Option v-for="(item,index) in courseTypeList" :label="item.name" :value="item.id" :key="index"></Option>
+              <Option v-for="(item,index) in courseTypeListAll" :label="item.name" :value="item.id" :key="index"></Option>
             </Select>
           </div>
         </Col>
@@ -155,6 +155,7 @@
         },
         dataList: [],
         courseTypeList: [],
+        courseTypeListAll: [],
         courseListModal: [],
         titleText: {
           '1': '编辑课程',
@@ -164,7 +165,9 @@
         radioType: 1,
         modalType: 1,
         selectInfo: '1',
-        searchInfo: {},
+        searchInfo: {
+          courseType: '-1'
+        },
         total: 0,
         isFetching: false,
         isOpenModal: false,
@@ -370,10 +373,21 @@
         this.getList();
       },
       listCourseType() {
+        this.courseTypeList = []
+        this.courseTypeListAll = []
         this.$api.hkywhdCourse.listAllOn()
           .then(response => {
-            this.courseTypeList = response.data.resultData
-            this.searchInfo.courseType = this.courseTypeList[0].id
+            let dataInfo = response.data.resultData
+            dataInfo.forEach(item=>{
+              if (item.disabled) {
+                this.courseTypeList.push(item)
+              }
+            })
+            this.courseTypeListAll = response.data.resultData
+            this.courseTypeListAll.unshift({
+              name: '全部',
+              id: '-1'
+            })
             this.getList()
           })
       },
@@ -415,7 +429,7 @@
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
           name: this.searchInfo.nickname,
-          courseId: this.searchInfo.courseType,
+          courseId: this.searchInfo.courseType === '-1' ? '' : this.searchInfo.courseType,
           start: this.getStartTime ? new Date(this.getStartTime).getTime() : '',
           end: this.getEndTime ? new Date(this.getEndTime).getTime() : ''
         })
@@ -490,6 +504,7 @@
           coverPage: this.addInfo.coverPage,
           coverImgUrl: this.addInfo.coverImgUrl,
           posterUrl: this.addInfo.posterUrl,
+          salesUrl: this.addInfo.salesUrl,
           courseId: this.addInfo.courseId
         }
 
