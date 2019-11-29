@@ -45,7 +45,7 @@
           <Form-item label="上传视频" prop="video" class="-c-form-item ivu-form-item-required" v-show="addInfo.type=== 1">
             <upload-video ref="childChoiceVideo" v-model="addInfo.radioUrl" :option="uploadVideoOption"></upload-video>
           </Form-item>
-          <Form-item label="课时文稿" class="-c-form-item ivu-form-item-required">
+          <Form-item label="课时文稿" class="-c-form-item">
             <editor ref="editor" v-model="addInfo.manuscript" :uploadImgServer="baseUrl" style="width: 580px"></editor>
           </Form-item>
         </Form>
@@ -292,8 +292,6 @@
           if (valid) {
             if (!this.addInfo.radioUrl) {
               return this.$Message.error('请上传音视频')
-            } else if (!this.addInfo.manuscript) {
-              return this.$Message.error('请输入课时文稿')
             }
 
             this.isSending = true
