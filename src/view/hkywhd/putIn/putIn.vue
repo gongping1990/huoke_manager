@@ -36,6 +36,9 @@
           <FormItem label="课程活动价格" prop="prize">
             <Input type="text" v-model="addInfo.prize" placeholder="请输入课程活动价格"></Input>
           </FormItem>
+          <FormItem label="跳转链接" prop="dropLink">
+            <Input type="text" v-model="addInfo.dropLink" placeholder="请输入跳转链接"></Input>
+          </FormItem>
           <Form-item label="胶囊位图片" prop="capsuleUrl" class="ivu-form-item-required">
             <upload-img v-model="addInfo.capsuleUrl" :option="uploadOption"></upload-img>
           </Form-item>
@@ -359,6 +362,7 @@
               orgPrice: this.addInfo.orgPrice,
               prize: this.addInfo.prize,
               gzhPic: this.addInfo.gzhPic,
+              dropLink: this.addInfo.dropLink,
               capsuleUrl: this.addInfo.capsuleUrl,
               popUrl: this.addInfo.popUrl,
               gzhQc: this.addInfo.gzhQc,
