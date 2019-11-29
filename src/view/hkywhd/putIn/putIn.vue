@@ -45,15 +45,6 @@
           <Form-item label="弹窗图片" prop="popUrl" class="ivu-form-item-required">
             <upload-img v-model="addInfo.popUrl" :option="uploadOption"></upload-img>
           </Form-item>
-          <Form-item label="中转页图片" prop="transferPage" class="ivu-form-item-required">
-            <editor ref="editorTwo" :uploadImgServer="baseUrl" v-model="addInfo.transferPage"></editor>
-          </Form-item>
-          <Form-item label="公众号图片" prop="gzhPic" class="ivu-form-item-required">
-            <upload-img v-model="addInfo.gzhPic" :option="uploadOption"></upload-img>
-          </Form-item>
-          <Form-item label="公众二维码" prop="gzhQc" class="ivu-form-item-required">
-            <upload-img v-model="addInfo.gzhQc" :option="uploadOption"></upload-img>
-          </Form-item>
         </Form>
         <div slot="footer" class="-p-b-flex">
           <Button @click="closeModal('addInfo')" ghost type="primary" style="width: 100px;">取消</Button>
@@ -345,12 +336,6 @@
           return this.$Message.error('请上传胶囊位图片')
         } else if (!this.addInfo.popUrl) {
           return this.$Message.error('请上传弹窗图片')
-        } else if (!this.addInfo.transferPage) {
-          return this.$Message.error('请输入中转页')
-        } else if (!this.addInfo.gzhPic) {
-          return this.$Message.error('请上传公众号图片')
-        } else if (!this.addInfo.gzhQc) {
-          return this.$Message.error('请上传公众二维码')
         }
 
         this.$refs[name].validate((valid) => {
@@ -361,12 +346,9 @@
               system: this.selectInfo,
               orgPrice: this.addInfo.orgPrice,
               prize: this.addInfo.prize,
-              gzhPic: this.addInfo.gzhPic,
               dropLink: this.addInfo.dropLink,
               capsuleUrl: this.addInfo.capsuleUrl,
-              popUrl: this.addInfo.popUrl,
-              gzhQc: this.addInfo.gzhQc,
-              transferPage: this.addInfo.transferPage
+              popUrl: this.addInfo.popUrl
             }
             let paramsUrl = this.addInfo.id ? this.$api.hkywhdInvestmanage.updateInvestManage({
               id: this.addInfo.id,
