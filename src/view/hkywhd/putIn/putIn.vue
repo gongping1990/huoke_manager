@@ -128,8 +128,22 @@
             align: 'center'
           },
           {
+            title: '胶囊位点击次数',
+            key: 'bclick',
+            align: 'center'
+          },{
+            title: '弹窗点击次数',
+            key: 'wclick',
+            align: 'center'
+          },
+          {
             title: '中转页访问量',
             key: 'transferPageNums',
+            align: 'center'
+          },
+          {
+            title: '中转页UV',
+            key: 'uv',
             align: 'center'
           },
           {
