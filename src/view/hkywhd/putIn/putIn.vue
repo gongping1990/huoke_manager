@@ -131,7 +131,7 @@
             title: '胶囊位点击次数',
             key: 'bclick',
             align: 'center'
-          },{
+          }, {
             title: '弹窗点击次数',
             key: 'wclick',
             align: 'center'
@@ -295,6 +295,8 @@
           investId: data.id
         }).then(response => {
           this.addInfo = response.data.resultData;
+          this.addInfo.orgPrice = (this.addInfo.orgPrice / 100).toString()
+          this.addInfo.prize = (this.addInfo.prize / 100).toString()
         })
       },
       listBizSystem() {
@@ -358,8 +360,8 @@
             let paramsData = {
               name: this.addInfo.name,
               system: this.selectInfo,
-              orgPrice: this.addInfo.orgPrice,
-              prize: this.addInfo.prize,
+              orgPrice: this.addInfo.orgPrice * 100,
+              prize: this.addInfo.prize * 100,
               dropLink: this.addInfo.dropLink,
               capsuleUrl: this.addInfo.capsuleUrl,
               popUrl: this.addInfo.popUrl
