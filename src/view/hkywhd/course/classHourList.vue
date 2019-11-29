@@ -234,7 +234,8 @@
         } else {
           this.addInfo = {
             lessonId: '',
-            type: 0
+            type: 0,
+            manuscript: ''
           }
         }
 
