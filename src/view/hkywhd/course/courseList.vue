@@ -98,7 +98,7 @@
             <Input type="text" v-model="addInfo.unlockNums" placeholder="请输入解锁课时数"></Input>
           </FormItem>
           <FormItem label="推送文案">
-            <Input type="text" v-model="addInfo.push_msg" placeholder="请输入推送文案"></Input>
+            <Input type="text" v-model="addInfo.pushMsg" placeholder="请输入推送文案"></Input>
           </FormItem>
         </Form>
         <Form ref="addInfo" :model="addInfo" :label-width="110" v-if="modalType === 3" class="ivu-form-item-required">
@@ -540,7 +540,7 @@
           return this.$Message.error('请输入邀请人数')
         } else if (!this.addInfo.unlockNums) {
           return this.$Message.error('请输入解锁课时数')
-        } else if (!this.addInfo.push_msg) {
+        } else if (!this.addInfo.pushMsg) {
           return this.$Message.error('请输入推送文案')
         }
 
@@ -552,7 +552,7 @@
           activityPrice: this.addInfo.activityPrice * 100,
           invites: this.addInfo.invites,
           unlockNums: this.addInfo.unlockNums,
-          push_msg: this.addInfo.push_msg,
+          pushMsg: this.addInfo.pushMsg,
           open: this.addInfo.open === 1
         }
 
