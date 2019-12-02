@@ -136,7 +136,12 @@
                 <InputNumber class="-input" type="text" v-model="item.score" placeholder="满分一百分"></InputNumber>
               </div>
             </div>
-
+          </FormItem>
+          <FormItem label="是否点赞" v-if="addInfo.isPassed === 1">
+            <Radio-group v-model="addInfo.corType">
+              <Radio :label=1>是</Radio>
+              <Radio :label=0>否</Radio>
+            </Radio-group>
           </FormItem>
         </Form>
         <div slot="footer" class="-p-b-flex">

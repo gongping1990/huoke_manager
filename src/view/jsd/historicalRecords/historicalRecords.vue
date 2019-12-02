@@ -77,6 +77,12 @@
             </div>
 
           </FormItem>
+          <FormItem label="是否点赞" v-if="addInfo.isPassed === 1">
+            <Radio-group v-model="addInfo.corType">
+              <Radio :label=1>是</Radio>
+              <Radio :label=0>否</Radio>
+            </Radio-group>
+          </FormItem>
         </Form>
         <div slot="footer" class="-p-b-flex">
           <Button @click="closeModal('addInfo')" ghost type="primary" style="width: 100px;">取消</Button>

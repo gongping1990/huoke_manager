@@ -47,6 +47,19 @@ export const jsdRouter = [
         ],
         component: () => import('@/view/jsd/studentList/studentListOne')
       },
+      {
+        path: '/jsd_dateData',
+        name: 'jsd_dateData',
+        meta: [
+          {
+            name: '管理人员'
+          },
+          {
+            name: '数据统计'
+          }
+        ],
+        component: () => import('@/view/jsd/dateData/dateData')
+      },
     ]
   },
   {

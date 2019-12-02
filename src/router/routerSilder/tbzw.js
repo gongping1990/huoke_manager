@@ -146,6 +146,19 @@ export const tbzwRouter =[
           }
         ],
         component: () => import('@/view/tbzw/news/news')
+      },
+      {
+        path: '/tbzw_dubbing',
+        name: 'tbzw_dubbing',
+        meta: [
+          {
+            name: '运营管理'
+          },
+          {
+            name: '配音管理'
+          }
+        ],
+        component: () => import('@/view/tbzw/dubbing/dubbing')
       }
     ]
   },
