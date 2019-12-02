@@ -45,6 +45,9 @@
           <Form-item label="弹窗图片" prop="popUrl" class="ivu-form-item-required">
             <upload-img v-model="addInfo.popUrl" :option="uploadOption"></upload-img>
           </Form-item>
+          <Form-item label="按钮图片" prop="buttonUrl" class="ivu-form-item-required">
+            <upload-img v-model="addInfo.buttonUrl" :option="uploadOption"></upload-img>
+          </Form-item>
         </Form>
         <div slot="footer" class="-p-b-flex">
           <Button @click="closeModal('addInfo')" ghost type="primary" style="width: 100px;">取消</Button>
@@ -354,6 +357,8 @@
           return this.$Message.error('请上传胶囊位图片')
         } else if (!this.addInfo.popUrl) {
           return this.$Message.error('请上传弹窗图片')
+        } else if (!this.addInfo.buttonUrl) {
+          return this.$Message.error('请上传按钮图片')
         }
 
         this.$refs[name].validate((valid) => {
@@ -366,6 +371,7 @@
               prize: this.addInfo.prize * 100,
               dropLink: this.addInfo.dropLink,
               capsuleUrl: this.addInfo.capsuleUrl,
+              buttonUrl: this.addInfo.buttonUrl,
               popUrl: this.addInfo.popUrl
             }
             let paramsUrl = this.addInfo.id ? this.$api.hkywhdInvestmanage.updateInvestManage({
