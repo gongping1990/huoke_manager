@@ -225,17 +225,17 @@
           },
           {
             title: '中转页访问量',
-            key: 'transferPageNums',
+            key: 'pv',
             align: 'center'
           },
           {
             title: '按钮点击次数',
-            key: 'buttonNums',
+            key: 'clickNum',
             align: 'center'
           },
           {
             title: '二维码识别次数',
-            key: 'qcNums',
+            key: 'scanNum',
             align: 'center'
           }
         ]
@@ -265,7 +265,7 @@
       },
       openModalData(data) {
         this.isOpenModalData = true
-        // this.getDetailList(data)
+        this.getDetailList(data)
       },
       closeModal(name) {
         this.isOpenModal = false
@@ -281,8 +281,10 @@
       },
       getDetailList(data) {
         this.isFetching = true
-        this.$api.hkywhdInvestmanage.getOperationalStatistics({
-          operationalId: data.id
+        this.$api.hkywhdInvestmanage.pageWxSubscribeKfMsgData({
+          current: this.tabDetail.page,
+          size: this.tabDetail.pageSize,
+          investId: data.id
         }).then(response => {
           this.detailList = response.data.resultData.records;
           this.totalDetail = response.data.resultData.total;

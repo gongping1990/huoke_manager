@@ -12,6 +12,9 @@ const hkywhdInvestmanage = {
   getInvestManageById(params) {
     return axios.get('/fissionprep/investmanage/getInvestManageById', {params: params})
   },
+  pageWxSubscribeKfMsgData(params) {
+    return axios.get('/fissionprep/investmanage/pageWxSubscribeKfMsgData', {params: params})
+  },
   // 修改排序值 (朗读)
   addInvestManage(params) {
     return axios.post('/fissionprep/investmanage/addInvestManage', qs.stringify(params))
