@@ -39,13 +39,13 @@
           <FormItem label="跳转链接" prop="dropLink">
             <Input type="text" v-model="addInfo.dropLink" placeholder="请输入跳转链接"></Input>
           </FormItem>
-          <Form-item label="胶囊位图片" prop="capsuleUrl" class="ivu-form-item-required">
+          <Form-item label="胶囊位图片" prop="capsuleUrl">
             <upload-img v-model="addInfo.capsuleUrl" :option="uploadOption"></upload-img>
           </Form-item>
-          <Form-item label="弹窗图片" prop="popUrl" class="ivu-form-item-required">
+          <Form-item label="弹窗图片" prop="popUrl">
             <upload-img v-model="addInfo.popUrl" :option="uploadOption"></upload-img>
           </Form-item>
-          <Form-item label="按钮图片" prop="buttonUrl" class="ivu-form-item-required">
+          <Form-item label="按钮图片" prop="buttonUrl">
             <upload-img v-model="addInfo.buttonUrl" :option="uploadOption"></upload-img>
           </Form-item>
         </Form>
@@ -114,14 +114,11 @@
         addInfo: {},
         ruleValidate: {
           name: [
-            {required: true, message: '请输入活动名称', trigger: 'blur'},
-            {type: 'string', max: 20, message: '活动名称长度为20字', trigger: 'blur'}
+            {required: true, message: '请输入投放名称', trigger: 'blur'},
+            {type: 'string', max: 20, message: '投放名称长度为20字', trigger: 'blur'}
           ],
-          orgPrice: [
-            {required: true, message: '请输入课程原价', trigger: 'blur'},
-          ],
-          prize: [
-            {required: true, message: '请输入课程活动价', trigger: 'blur'},
+          dropLink: [
+            {required: true, message: '请输入跳转链接', trigger: 'blur'},
           ]
         },
         columns: [
@@ -353,22 +350,14 @@
 
         if (this.isSending) return
 
-        if (!this.addInfo.capsuleUrl) {
-          return this.$Message.error('请上传胶囊位图片')
-        } else if (!this.addInfo.popUrl) {
-          return this.$Message.error('请上传弹窗图片')
-        } else if (!this.addInfo.buttonUrl) {
-          return this.$Message.error('请上传按钮图片')
-        }
-
         this.$refs[name].validate((valid) => {
           if (valid) {
             this.isSending = true
             let paramsData = {
               name: this.addInfo.name,
               system: this.selectInfo,
-              orgPrice: this.addInfo.orgPrice * 100,
-              prize: this.addInfo.prize * 100,
+              orgPrice: this.addInfo.orgPrice ? this.addInfo.orgPrice * 100 : '',
+              prize: this.addInfo.prize ? this.addInfo.prize * 100 : '',
               dropLink: this.addInfo.dropLink,
               capsuleUrl: this.addInfo.capsuleUrl,
               buttonUrl: this.addInfo.buttonUrl,
