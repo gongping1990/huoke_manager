@@ -17,6 +17,7 @@ import tbzwStudyRecordData from "./studyRecordData";
 import tbzwVest from "./vest";
 import tbzwStatistics from "./statistics";
 import tbzwReserveBuy from "./reserveBuy";
+import tbzwDubbing from "./dubbing";
 
 export const tbzwIndex = {
   composition,
@@ -37,5 +38,6 @@ export const tbzwIndex = {
   tbzwStudyRecordData,
   tbzwVest,
   tbzwStatistics,
-  tbzwReserveBuy
+  tbzwReserveBuy,
+  tbzwDubbing
 }

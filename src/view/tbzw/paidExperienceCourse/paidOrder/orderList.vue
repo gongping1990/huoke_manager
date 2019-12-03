@@ -66,9 +66,37 @@
           <FormItem label="三方交易号" class="-p-o-width">{{orderInfo.transactionNo}}</FormItem>
           <FormItem label="" class="-p-o-width"></FormItem>
         </div>
+        <div class="-p-o-title" v-if="orderInfo.refundInfo">
+          退款信息
+        </div>
+        <div class="-p-o-flex" v-if="orderInfo.refundInfo">
+          <FormItem label="退款发起时间" class="-p-o-width">{{orderInfo.refundInfo.gmtCreate | timeFormatter}}</FormItem>
+          <FormItem label="退款结果" class="-p-o-width">{{orderStatus[orderInfo.payStatus]}}</FormItem>
+        </div>
+        <div class="-p-o-flex" v-if="orderInfo.refundInfo">
+          <FormItem label="退款结果时间" class="-p-o-width">{{orderInfo.refundInfo.successTime}}</FormItem>
+          <FormItem label="退款备注" class="-p-o-width">{{orderInfo.refundInfo.comment}}</FormItem>
+        </div>
       </Form>
       <div slot="footer" class="-p-o-footer">
         <div @click="isOpenModal = false" class="g-primary-btn ">确 认</div>
+      </div>
+    </Modal>
+
+    <Modal
+      class="p-order"
+      v-model="isOpenModalRefund"
+      @on-cancel="isOpenModalRefund = false"
+      width="500"
+      title="退款">
+      <Form :model="addInfo" :label-width="90" class="ivu-form-item-required">
+        <FormItem label="退款备注">
+          <Input type="textarea" :rows="4" v-model="addInfo.comment" placeholder="请输入退款备注" :maxlength='80'></Input>
+        </FormItem>
+      </Form>
+      <div slot="footer" class="g-flex-j-sa">
+        <Button @click="isOpenModalRefund = false" ghost type="primary" style="width: 100px;">取消</Button>
+        <div @click="submitInfo('addInfoTwo')" class="g-primary-btn ">确 认</div>
       </div>
     </Modal>
   </div>
@@ -94,11 +122,15 @@
           type: '-1',
           antistop: ''
         },
+        addInfo: {},
         selectInfo: '0',
         orderStatus: {
           '0': '未支付',
           '10': '已支付',
-          '20': '已取消'
+          '13': '退款中',
+          '14': '退款失败',
+          '15': '已退款',
+          '20': '已取消',
         },
         orderStatusList: [
           {
@@ -112,6 +144,18 @@
           {
             name: '已支付',
             id: '10'
+          },
+          {
+            name: '退款中',
+            id: '13'
+          },
+          {
+            name: '退款失败',
+            id: '14'
+          },
+          {
+            name: '已退款',
+            id: '15'
           },
           {
             name: '已取消',
@@ -130,6 +174,7 @@
         total: 0,
         isFetching: false,
         isOpenModal: false,
+        isOpenModalRefund: false,
         getStartTime: '',
         getEndTime: '',
         orderInfo: {},
@@ -212,7 +257,22 @@
                       this.openModal(params.row)
                     }
                   }
-                }, '订单详情')
+                }, '订单详情'),
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    display: (params.row.payStatus == '10' || params.row.payStatus == '14') ? 'inline-block' : 'none',
+                    color: '#5444E4'
+                  },
+                  on: {
+                    click: () => {
+                      this.openModalRerund(params.row)
+                    }
+                  }
+                }, '退款')
               ])
             }
           }
@@ -259,8 +319,22 @@
         this.getList();
       },
       openModal(data) {
+        this.getOrderDetails(data)
         this.isOpenModal = true
-        this.orderInfo = data
+        // this.orderInfo = data
+      },
+      openModalRerund(data) {
+        this.isOpenModalRefund = true
+        this.addInfo = JSON.parse(JSON.stringify(data))
+      },
+      getOrderDetails(data) {
+        this.$api.tbzwOrder.getOrderDetails({
+          id: data.id
+        })
+          .then(
+            response => {
+              this.orderInfo = response.data.resultData;
+            })
       },
       paramsInit() {
         let params = {
@@ -308,6 +382,24 @@
           .finally(() => {
             this.isFetching = false
           })
+      },
+      submitInfo() {
+        if (!this.addInfo.comment) {
+          return this.$Message.error('请输入退款备注')
+        }
+        this.$api.tbzwOrder.refund({
+          orderId: this.addInfo.id,
+          comment: this.addInfo.comment,
+        })
+          .then(
+            response => {
+              if (response.data.code == '200') {
+                this.$Message.success('提交成功');
+                this.isOpenModalRefund = false
+                this.getList()
+              }
+            })
+
       }
     }
   };

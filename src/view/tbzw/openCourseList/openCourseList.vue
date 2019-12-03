@@ -250,6 +250,7 @@
         this.dataItem.courseId = this.radioType
       },
       chioceUsers(data) {
+        console.log(data,11)
         this.userImgList = data
       },
       toJump (data) {
@@ -319,6 +320,13 @@
               this.addInfo = response.data.resultData;
               this.addInfo.classList = []
               this.addInfo.rules = this.addInfo.rules.split(',')
+              this.addInfo.teachers.forEach(item=> {
+                this.userImgList.push({
+                  id: item.teacherId,
+                  avatar: item.teacherHeadImage,
+                  name: item.teacherName,
+                })
+              })
             })
           .finally(() => {
             this.isFetching = false
@@ -362,10 +370,14 @@
         })
       },
       submitInfo() {
+        this.addInfo.teacherIds = []
+
         if (!this.addInfo.opentime) {
           return this.$Message.error("请选择开营时间");
         } else if (!this.addInfo.rules.length) {
           return this.$Message.error("请选择排课时间");
+        } else if (!this.userImgList.length) {
+          return this.$Message.error("请选择销售老师");
         }
 
         let passContent = this.addInfo.details.every((item) => {
@@ -384,12 +396,18 @@
             opentime: item.opentime
           })
         })
+
+        this.userImgList.forEach(item=> {
+          this.addInfo.teacherIds.push(item.id)
+        })
+
         this.$api.tbzwActiveconfig.editActiveConfig({
           id: this.addInfo.id,
           opentime: dayjs(this.addInfo.opentime).format("YYYY/MM/DD"),
           courseId: this.addInfo.courseId,
           rules: this.addInfo.rules.toString(),
-          details: this.addInfo.classList
+          details: this.addInfo.classList,
+          teacherIds: this.addInfo.teacherIds
         })
           .then(
             response => {

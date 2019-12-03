@@ -22,7 +22,8 @@
                ref="media"
                :src="audioPlayAddress"
                controls="controls" preload="auto"></audio>
-        <div class="-i-del" @click="audioStorageAddress= ''">删除</div>
+        <div v-if="!backstageDel" class="-i-del" @click="audioStorageAddress= ''">删除</div>
+        <div v-else class="-i-del" @click="propDel">删除</div>
       </div>
     </div>
 
@@ -40,6 +41,7 @@
         audioPlayAddress: '',
         audioStorageAddress: '',
         audioType: this.option.format,
+        backstageDel: this.option.backstageDel || false,
         isFetching: false,
         isDisabled: false
       }
@@ -65,6 +67,9 @@
       }
     },
     methods: {
+      propDel () {
+        this.$emit('parentDel')
+      },
       load() {
         this.$refs.media.load()
       },
@@ -87,6 +92,7 @@
           this.audioStorageAddress = res.resultData.url
           this.getAvUrl(res.resultData.url)
           this.$emit('otherAudioInfo', res.resultData.duration)
+          this.$emit('successAudio', res.resultData.url)
         }
       },
       getAvUrl(data) {
