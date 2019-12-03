@@ -78,7 +78,7 @@
 
           </FormItem>
           <FormItem label="是否点赞" v-if="addInfo.isPassed === 1">
-            <Radio-group v-model="addInfo.corType">
+            <Radio-group v-model="addInfo.likeRemind">
               <Radio :label=1>是</Radio>
               <Radio :label=0>否</Radio>
             </Radio-group>
@@ -502,6 +502,7 @@
             _self.addInfo.workImgSrc = _self.addInfo.workImgSrc ? _self.addInfo.workImgSrc.split(',') : []
             _self.addInfo.replyImgTmp = _self.addInfo.replyImgTmp ? _self.addInfo.replyImgTmp.split(',') : []
             _self.addInfo.replyImgUpload = _self.addInfo.replyImgUpload ? _self.addInfo.replyImgUpload.split(',') : []
+            _self.addInfo.likeRemind = _self.addInfo.likenum ? 1 : 0
 
             if (!str) {
               _self.corType = _self.addInfo.replyImgUpload.length ? 2 : 1
@@ -587,7 +588,8 @@
           replyAudio: this.addInfo.replyAudio,
           replyDuration: this.addInfo.replyDuration,
           evaluate: this.addInfo.scores,
-          status: this.addInfo.isPassed == 1 ? '3' : '1'
+          status: this.addInfo.isPassed == 1 ? '3' : '1',
+          likeRemind: this.addInfo.likeRemind === 1
         })
           .then(
             response => {
