@@ -294,6 +294,10 @@
               return this.$Message.error('请上传音视频')
             }
 
+            if (this.addInfo.manuscript == '<p><br></p>') {
+              this.addInfo.manuscript = ''
+            }
+
             this.isSending = true
 
             let paramsData = {
