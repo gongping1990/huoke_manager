@@ -143,7 +143,7 @@
           {
             title: '下单数',
             width: 100,
-            key: 'orderCount',
+            key: 'orderNum',
             align: 'center'
           },
           {
@@ -187,30 +187,6 @@
             width: 100,
             key: 'orderHelpSuccessOrderUserNum',
             align: 'center'
-          },
-          {
-            title: '操作',
-            width: 100,
-            align: 'center',
-            render: (h, params) => {
-              return h('div', [
-                h('Button', {
-                  props: {
-                    type: 'text',
-                    size: 'small'
-                  },
-                  style: {
-                    color: '#5444E4',
-                    marginRight: '5px'
-                  },
-                  on: {
-                    click: () => {
-                      this.openModal(params.row)
-                    }
-                  }
-                }, '查看详情')
-              ])
-            }
           }
         ]
       };
