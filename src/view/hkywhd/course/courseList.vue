@@ -532,9 +532,9 @@
       submitInfoTypeTwo(name) {
         if (this.isSending) return
 
-        if (!this.addInfo.ddgPrice) {
+        if (this.addInfo.ddgPrice === '') {
           return this.$Message.error('请输入单独购价格')
-        } else if (!this.addInfo.activityPrice) {
+        } else if (this.addInfo.activityPrice === '') {
           return this.$Message.error('请输入活动价格')
         } else if (!this.addInfo.invites) {
           return this.$Message.error('请输入邀请人数')

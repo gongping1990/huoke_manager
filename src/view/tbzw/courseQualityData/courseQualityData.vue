@@ -21,7 +21,7 @@
         <div class="p-courseQualityData-wrap">
           <div class="p-courseQualityData-title -titleTwo">
             <div>今日数据</div>
-            <div><DatePicker type="date" v-model="searchInfo.date" placeholder="请选择"  @on-change="getList"></DatePicker></div>
+            <div><DatePicker type="date" v-model="searchInfo.date" placeholder="请选择"  @on-change="getList()"></DatePicker></div>
           </div>
           <Table class="-c-tab" :loading="isFetching" :columns="columnsTwo" :data="dataListTwo"></Table>
 
