@@ -63,6 +63,17 @@
           <FormItem label="手机号码" class="-p-o-width">{{orderInfo.phone}}</FormItem>
           <FormItem  class="-p-o-width"></FormItem>
         </div>
+        <div class="-p-o-title" v-if="orderInfo.refundInfo">
+          退款信息
+        </div>
+        <div class="-p-o-flex" v-if="orderInfo.refundInfo">
+          <FormItem label="退款发起时间" class="-p-o-width">{{orderInfo.refundInfo.gmtCreate | timeFormatter}}</FormItem>
+          <FormItem label="退款结果" class="-p-o-width">{{orderStatus[orderInfo.payStatus]}}</FormItem>
+        </div>
+        <div class="-p-o-flex" v-if="orderInfo.refundInfo">
+          <FormItem label="退款结果时间" class="-p-o-width">{{orderInfo.refundInfo.successTime}}</FormItem>
+          <FormItem label="退款备注" class="-p-o-width">{{orderInfo.refundInfo.comment}}</FormItem>
+        </div>
       </Form>
       <div slot="footer" class="-p-o-footer">
         <div @click="isOpenModal = false" class="g-primary-btn ">确 认</div>
@@ -356,7 +367,7 @@
         if (!this.addInfo.comment) {
           return this.$Message.error('请输入退款备注')
         }
-        this.$api.tbzwOrder.refund({
+        this.$api.gswOrder.refund({
           orderId: this.addInfo.id,
           comment: this.addInfo.comment,
         })
@@ -376,6 +387,11 @@
 
 <style lang="less" scoped>
   .p-order {
+    .-p-o-title {
+      color: #B3B5B8 ;
+      margin: 5px 0;
+      font-size: 16px;
+    }
     .-title {
       color: #B3B5B8;
       font-size: 16px;

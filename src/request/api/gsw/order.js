@@ -10,8 +10,8 @@ const order = {
   newSourceOrder(params) {
     return axios.post(`/poem/order/newSourceOrder`, qs.stringify(params))
   },
-  newSourceOrder(params) {
-    return axios.post(`/poem/order/newSourceOrder`, qs.stringify(params))
+  refund(params) {
+    return axios.post(`/poem/order/refund`, qs.stringify(params))
   },
   getTotalData(params) {
     return axios.get("/poem/order/getTotalData", {params: params});
