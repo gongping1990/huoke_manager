@@ -534,11 +534,11 @@
 
         if (this.addInfo.ddgPrice === '') {
           return this.$Message.error('请输入单独购价格')
-        } else if (this.addInfo.activityPrice === '') {
+        } else if (this.addInfo.open === 1 && this.addInfo.activityPrice === '') {
           return this.$Message.error('请输入活动价格')
-        } else if (!this.addInfo.invites) {
+        } else if (this.addInfo.open === 1 && !this.addInfo.invites) {
           return this.$Message.error('请输入邀请人数')
-        } else if (!this.addInfo.unlockNums) {
+        } else if (this.addInfo.open === 1 && !this.addInfo.unlockNums) {
           return this.$Message.error('请输入解锁课时数')
         } else if (!this.addInfo.pushMsg) {
           return this.$Message.error('请输入推送文案')
