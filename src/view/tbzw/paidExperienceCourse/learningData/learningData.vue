@@ -252,7 +252,7 @@
             label: {
               show: true,
               position: 'center',
-              formatter: '{b}: {d}%'
+              formatter: '{b}: {c}%'
             },
             data: this.percentDataTwo
           },
@@ -338,7 +338,8 @@
             })
             this.percentDataTwo.push({
               name: this.tabTypeTwo === 1 ? `上第1节课` : (this.tabTypeTwo === 2 ? '完成1节课' : '交第1节课作业'),
-              value: item[attrName[this.tabTypeTwo - 1]] / (item[attrName[this.tabTypeTwo - 1]] ? item[attrName[this.tabTypeTwo - 1]] : 1)
+              value: (item[attrName[this.tabTypeTwo - 1]] / (item[attrName[this.tabTypeTwo - 1]] ? item[attrName[this.tabTypeTwo - 1]] : 1))*100,
+              old: item[attrName[this.tabTypeTwo - 1]]
             })
           }
 
@@ -348,10 +349,12 @@
             })
             this.percentDataTwo.push({
               name: this.tabTypeTwo === 1 ? `上前${index+1}节课` : (this.tabTypeTwo === 2 ? `完成前${index+1}节课` : `交前${index+1}节课作业`),
-              value: item[attrName[this.tabTypeTwo - 1]] / (this.percentDataTwo[index-1].value ? this.percentDataTwo[index-1].value : 1)
+              value: (item[attrName[this.tabTypeTwo - 1]] / (this.percentDataTwo[index-1].old ? this.percentDataTwo[index-1].old : 1))*100,
+              old: item[attrName[this.tabTypeTwo - 1]]
             })
           }
         })
+        console.log(this.percentDataTwo,'ces')
         this.drawLineTwo()
       }
     }
