@@ -387,9 +387,13 @@
     },
     methods: {
       toDetail(data) {
-        this.isOpenUserInfo = true
-        this.detailInfo = JSON.parse(JSON.stringify(data))
-        this.detailInfo.uid = this.detailInfo.userId
+        if (data.payStatus <= 10) {
+          this.isOpenUserInfo = true
+          this.detailInfo = JSON.parse(JSON.stringify(data))
+          this.detailInfo.uid = this.detailInfo.userId
+        } else {
+          this.$Message.error('该用户未购买课程,无法查看')
+        }
       },
       changeDate (data) {
         this.getStartTime = data.startTime
