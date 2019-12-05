@@ -25,9 +25,9 @@
         <Col :span="10" style="margin-left: 10px" class="g-flex-a-j-center">
           <date-picker-template :dataInfo="dateOption" @changeDate="changeDate"></date-picker-template>
         </Col>
-        <!--<div class="g-text-right">-->
-          <!--<Button type="primary" ghost class="-p-modal-btn -date-search" @click="toExcel">导出表格</Button>-->
-        <!--</div>-->
+        <div class="g-text-right">
+          <Button type="primary" ghost class="-p-modal-btn -date-search" @click="toExcel">导出表格</Button>
+        </div>
       </Row>
 
       <Table class="-c-tab" :loading="isFetching" :columns="columns" :data="dataList"></Table>
@@ -304,14 +304,15 @@
       },
       toExcel() {
         let params = {
-          orderId: '',
+          id: '',
           nickname: '',
           userId: '',
+          phone: '',
           ...this.paramsInit()
         }
 
-        let downUrl = `${getBaseUrl()}/order/queryAdminPageDownload?gmtCreateBegin=${params.gmtCreateBegin}&gmtCreateEnd=${params.gmtCreateEnd}&tradeState=${params.tradeState}&mode=${params.mode}&orderId=${params.orderId}&nickname=${params.nickname}&userId=${params.userId}`
-
+        let downUrl = `${getBaseUrl()}/poem/order/getOrderExcele?startTime=${params.startTime}&endTime=${params.endTime}&payStatus=${params.payStatus}&nickName=${params.nickname}&id=${params.id}&phone=${params.phone}`
+        console.log(downUrl,'导出路径')
         window.open(downUrl, '_blank');
       },
       currentChange(val) {

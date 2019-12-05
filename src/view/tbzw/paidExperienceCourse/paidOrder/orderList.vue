@@ -4,7 +4,7 @@
       <Row class="g-search">
         <Col :span="4" class="g-t-left">
           <div class="g-flex-a-j-center">
-            <div class="-search-select-text">课程名称：</div>
+            <div class="-search-select-text">课程名称</div>
             <Select v-model="searchInfo.courseId" @on-change="selectChange" class="-search-selectOne">
               <Option v-for="(item,index) in experienceLessonList" :label="item.name" :value="item.id" :key="index"></Option>
             </Select>
@@ -12,7 +12,7 @@
         </Col>
         <Col :span="4" class="g-t-left">
           <div class="g-flex-a-j-center">
-            <div class="-search-select-text">订单状态：</div>
+            <div class="-search-select-text">订单状态</div>
             <Select v-model="searchInfo.status" @on-change="selectChange" class="-search-selectOne">
               <Option v-for="(item,index) in orderStatusList" :label="item.name" :value="item.id" :key="index"></Option>
             </Select>
@@ -29,12 +29,15 @@
                    @on-click="selectChange"></Input>
           </div>
         </Col>
-        <Col :span="8" style="margin-left: 10px" class="g-flex-a-j-center">
+        <div class="g-text-right">
+          <Button type="primary" ghost class="-p-modal-btn -date-search" @click="toExcel">导出表格</Button>
+        </div>
+      </Row>
+
+      <Row class="g-search -c-tab">
+        <Col :span="8" class="g-flex-a-j-center">
           <date-picker-template :dataInfo="dateOption" @changeDate="changeDate"></date-picker-template>
         </Col>
-        <!--<div class="g-text-right">-->
-          <!--<Button type="primary" ghost class="-p-modal-btn -date-search" @click="toExcel">导出表格</Button>-->
-        <!--</div>-->
       </Row>
 
       <Table class="-c-tab" :loading="isFetching" :columns="columns" :data="dataList"></Table>
@@ -299,14 +302,15 @@
       },
       toExcel() {
         let params = {
-          orderId: '',
+          id: '',
           nickname: '',
           userId: '',
+          phone: '',
           ...this.paramsInit()
         }
 
-        let downUrl = `${getBaseUrl()}/order/queryAdminPageDownload?gmtCreateBegin=${params.gmtCreateBegin}&gmtCreateEnd=${params.gmtCreateEnd}&tradeState=${params.tradeState}&mode=${params.mode}&orderId=${params.orderId}&nickname=${params.nickname}&userId=${params.userId}`
-
+        let downUrl = `${getBaseUrl()}/compositionv2/order/getOrderExcele?startTime=${params.startTime}&endTime=${params.endTime}&payStatus=${params.payStatus}&nickName=${params.nickname}&id=${params.id}&phone=${params.phone}&orderMode=${params.orderMode}&type=${params.type}&courseId=${params.courseId=='-1' ? '' : params.courseId}`
+        console.log(downUrl,'导出路径')
         window.open(downUrl, '_blank');
       },
       currentChange(val) {
