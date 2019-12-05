@@ -389,6 +389,7 @@
         this.detailInfo.uid = this.$route.query.id || this.userId
       },
       currentChange(val) {
+        console.log(val,11)
         this.listLessonProgress(val);
       },
       listBase() {
@@ -428,11 +429,15 @@
       listLessonProgress(page) {
         if (this.sortNum) {
           this.tab.page = page || Math.ceil(this.sortNum / 10)
+        } else {
+          if (page) {
+            this.tab.currentPage = 1
+          }
         }
         this.$api.jsdJob.listLessonProgress({
           uid: this.$route.query.id || this.userId,
           courseId: this.searchInfo.appId,
-          current: this.tab.page,
+          current: page ? page : this.tab.page,
           size: this.tab.pageSize
         })
           .then(
