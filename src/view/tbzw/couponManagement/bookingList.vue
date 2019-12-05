@@ -375,7 +375,7 @@
                     size: 'small'
                   },
                   style: {
-                    display: !params.row.activeStatus > 2 ? 'inline-block' : 'none',
+                    display: !(params.row.activeStatus > 2) ? 'inline-block' : 'none',
                     color: '#5444E4'
                   },
                   on: {
