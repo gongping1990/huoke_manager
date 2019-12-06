@@ -29,59 +29,39 @@
         isFetching: false,
         columns: [
           {
-            title: '日期',
+            title: '时间',
             key: 'day',
-            width: 100,
             align: 'center'
           },
           {
-            title: '当日总量/已处理',
-            render: (h,p)=>{
+            title: '当日作业总量/批改',
+            render: (h, p) => {
               return h('div', `${p.row.total}/${p.row.totalHandled}`)
             },
             align: 'center',
           },
           {
-            title: '当日自动分配/已处理',
-            render: (h,p)=>{
-              return h('div', `${p.row.autonum}/${p.row.autoHandled}`)
-            },
-            align: 'center',
-          },
-          {
-            title: '补批/已处理',
-            render: (h,p)=>{
-              return h('div', `${p.row.oldnum}/${p.row.oldHandled}`)
-            },
-            align: 'center',
-          },
-          {
-            title: '调度/已处理',
-            render: (h,p)=>{
+            title: '当日提交/已批改',
+            render: (h, p) => {
               return h('div', `${p.row.allotnum}/${p.row.allotHandled}`)
             },
             align: 'center',
           },
           {
-            title: '重交/已处理',
-            render: (h,p)=>{
+            title: '历史堆积/已批该',
+            render: (h, p) => {
+              return h('div', `${p.row.oldnum}/${p.row.oldHandled}`)
+            },
+            align: 'center',
+          },
+          {
+            title: '不合格重交/已批该',
+            render: (h, p) => {
               return h('div', `${p.row.resubmitnum}/${p.row.handleResubmit}`)
             },
             align: 'center',
-          },
-          {
-            title: '效率（分钟）',
-            key: 'replytime',
-            align: 'center',
-          },
-          {
-            title: '好评率/差评率',
-            render: (h,p)=>{
-              return h('div', `${p.row.good}/${p.row.bad}`)
-            },
-            align: 'center',
           }
-        ],
+        ]
       };
     },
     mounted() {
