@@ -40,4 +40,10 @@
   input::-webkit-input-placeholder {
     color: #c5c8ce;
   }
+
+  :root {
+    --main-bg-color: red;
+    --mian-padding: 150px;
+    --main-font-size: 20px;
+  }
 </style>

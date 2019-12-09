@@ -55,7 +55,7 @@
                 style: {
                   color: '#FFB200'
                 }
-              }, `${params.row.reservePercent*100}%`)
+              }, `${(params.row.reservePercent*100).toFixed(2)}%`)
             },
             align: 'center'
           },
@@ -106,7 +106,7 @@
                 style: {
                   color: '#FFB200'
                 }
-              }, `${params.row.reserveBuyPercent*100}%`)
+              }, `${(params.row.reserveBuyPercent*100).toFixed(2)}%`)
             },
             align: 'center'
           },
@@ -117,7 +117,7 @@
                 style: {
                   color: '#FFB200'
                 }
-              }, `${params.row.reserveBuyAllPercent*100}%`)
+              }, `${(params.row.reserveBuyAllPercent*100).toFixed(2)}%`)
             },
             align: 'center'
           },
@@ -160,7 +160,7 @@
                 style: {
                   color: '#FFB200'
                 }
-              }, `${params.row.formalConversionPercent*100}%`)
+              }, `${(params.row.formalConversionPercent*100).toFixed(2)}%`)
             },
             align: 'center'
           },
@@ -176,7 +176,7 @@
                 style: {
                   color: '#FFB200'
                 }
-              }, `${params.row.learnPercent*100}%`)
+              }, `${(params.row.learnPercent*100).toFixed(2)}%`)
             },
             align: 'center'
           },
@@ -192,7 +192,7 @@
                 style: {
                   color: '#FFB200'
                 }
-              }, `${params.row.finishPercent*100}%`)
+              }, `${(params.row.finishPercent*100).toFixed(2)}%`)
             },
             align: 'center'
           },
@@ -208,7 +208,7 @@
                 style: {
                   color: '#FFB200'
                 }
-              }, `${params.row.finishHomeworkPercent*100}%`)
+              }, `${(params.row.finishHomeworkPercent*100).toFixed(2)}%`)
             },
             align: 'center'
           }

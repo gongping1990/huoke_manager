@@ -91,7 +91,7 @@
                 style: {
                   color: '#FFB200'
                 }
-              }, `${params.row.learnPercent * 100}%`)
+              }, `${(params.row.learnPercent * 100).toFixed(2)}%`)
             },
             align: 'center'
           },
@@ -107,7 +107,7 @@
                 style: {
                   color: '#FFB200'
                 }
-              }, `${params.row.finishPercent * 100}%`)
+              }, `${(params.row.finishPercent * 100).toFixed(2)}%`)
             },
             align: 'center'
           },
@@ -123,7 +123,7 @@
                 style: {
                   color: '#FFB200'
                 }
-              }, `${params.row.subHomeworkPercent * 100}%`)
+              }, `${(params.row.subHomeworkPercent * 100).toFixed(2)}%`)
             },
             align: 'center'
           },
@@ -319,7 +319,7 @@
           })
           this.percentData.push({
             name: item.lessonName,
-            value: item[attrName[this.tabType - 1]]*100
+            value: (item[attrName[this.tabType - 1]]*100).toFixed(2)
           })
         })
         console.log(this.percentData,111)
@@ -338,7 +338,7 @@
             })
             this.percentDataTwo.push({
               name: this.tabTypeTwo === 1 ? `上第1节课` : (this.tabTypeTwo === 2 ? '完成1节课' : '交第1节课作业'),
-              value: (item[attrName[this.tabTypeTwo - 1]] / (item[attrName[this.tabTypeTwo - 1]] ? item[attrName[this.tabTypeTwo - 1]] : 1))*100,
+              value: ((item[attrName[this.tabTypeTwo - 1]] / (item[attrName[this.tabTypeTwo - 1]] ? item[attrName[this.tabTypeTwo - 1]] : 1))*100).toFixed(2),
               old: item[attrName[this.tabTypeTwo - 1]]
             })
           }
@@ -349,7 +349,7 @@
             })
             this.percentDataTwo.push({
               name: this.tabTypeTwo === 1 ? `上前${index+1}节课` : (this.tabTypeTwo === 2 ? `完成前${index+1}节课` : `交前${index+1}节课作业`),
-              value: (item[attrName[this.tabTypeTwo - 1]] / (this.percentDataTwo[index-1].old ? this.percentDataTwo[index-1].old : 1))*100,
+              value: ((item[attrName[this.tabTypeTwo - 1]] / (this.percentDataTwo[index-1].old ? this.percentDataTwo[index-1].old : 1))*100).toFixed(2),
               old: item[attrName[this.tabTypeTwo - 1]]
             })
           }

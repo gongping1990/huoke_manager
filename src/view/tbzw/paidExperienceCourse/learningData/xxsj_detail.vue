@@ -70,7 +70,7 @@
                 style: {
                   color: '#FFB200'
                 }
-              }, `${params.row.firstLearnPercent * 100}%`)
+              }, `${(params.row.firstLearnPercent * 100).toFixed(2)}%`)
             },
             align: 'center'
           },
@@ -87,7 +87,7 @@
                 style: {
                   color: '#FFB200'
                 }
-              }, `${params.row.finishLearnPercent * 100}%`)
+              }, `${(params.row.finishLearnPercent * 100).toFixed(2)}%`)
             },
             align: 'center'
           },
@@ -105,7 +105,7 @@
                 style: {
                   color: '#FFB200'
                 }
-              }, `${params.row.firstSubmitHomeworkPercent * 100}%`)
+              }, `${(params.row.firstSubmitHomeworkPercent * 100).toFixed(2)}%`)
             },
             align: 'center'
           }
