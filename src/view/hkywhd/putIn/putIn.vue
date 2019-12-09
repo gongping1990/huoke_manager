@@ -137,18 +137,8 @@
             align: 'center'
           },
           {
-            title: '中转页访问量',
-            key: 'transferPageNums',
-            align: 'center'
-          },
-          {
             title: '中转页UV',
             key: 'uv',
-            align: 'center'
-          },
-          {
-            title: '按钮点击次数',
-            key: 'buttonNums',
             align: 'center'
           },
           {
@@ -224,13 +214,8 @@
             align: 'center'
           },
           {
-            title: '中转页访问量',
-            key: 'pv',
-            align: 'center'
-          },
-          {
-            title: '按钮点击次数',
-            key: 'clickNum',
+            title: '中转页UV',
+            key: 'uv',
             align: 'center'
           },
           {
