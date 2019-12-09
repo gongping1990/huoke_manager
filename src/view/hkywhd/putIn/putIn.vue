@@ -210,7 +210,9 @@
         columnsModal: [
           {
             title: '日期',
-            key: 'date',
+            render: (h, params)=> {
+              return h('div', dayjs(+params.row.date).format('YYYY-MM-DD HH:mm'))
+            },
             align: 'center'
           },
           {
