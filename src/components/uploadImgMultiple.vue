@@ -15,10 +15,12 @@
       </div>
     </Upload>
     <div class="-c-course-wrap" v-if="imgArray.length">
-      <div class="-c-course-item" v-for="(item, index) of imgArray" :key="index">
-        <img :src="item">
-        <div class="-i-del" @click="delImg(item,index)">删除</div>
-      </div>
+      <draggable v-model="imgArray">
+        <div class="-c-course-item" v-for="(item, index) of imgArray" :key="index">
+          <img :src="item">
+          <div class="-i-del" @click="delImg(item,index)">删除</div>
+        </div>
+      </draggable>
     </div>
     <div class="-c-tips">{{option.tipText}}</div>
   </div>
@@ -26,9 +28,11 @@
 
 <script>
   import {getBaseUrl} from '@/libs/index'
+  import draggable from 'vuedraggable'
 
   export default {
     name: 'uploadImgMultiple',
+    components: {draggable},
     props: ['option', 'childData'],
     data() {
       return {
@@ -97,7 +101,7 @@
         background-color: #EBEBEB;
         width: 180px;
         height: 100px;
-        margin: 20px 20px 20px 0;
+        margin: 20px 20px 0 0;
         border: 1px solid #EBEBEB;
         border-radius: 4px;
         padding: 4px;

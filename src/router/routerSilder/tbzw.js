@@ -207,6 +207,17 @@ export const tbzwRouter =[
         component: () => import('@/view/tbzw/formalcourse/formalOrder/orderList')
       },
       {
+        path: '/tbzw_formal_learnAndUse',
+        name: 'tbzw_formal_learnAndUse',
+        meta: [
+          {name: '正式课管理'},
+          {name: '课程列表', url: 'tbzw_forma_courseList'},
+          {name: '课时内容', url: 'tbzw_forma_courseContent'},
+          {name: '活学活用'}
+        ],
+        component: () => import('@/view/tbzw/formalcourse/formalCourseList/learnAndUse')
+      },
+      {
         path: '/tbzw_deliverGoods',
         name: 'tbzw_deliverGoods',
         meta: [
