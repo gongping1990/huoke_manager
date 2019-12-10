@@ -144,3 +144,7 @@
 .g-width {
   width: 100%!important;
 }
+
+.g-margin-center {
+  margin: 0 auto;
+}
