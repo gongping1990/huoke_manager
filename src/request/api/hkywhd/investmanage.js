@@ -17,10 +17,10 @@ const hkywhdInvestmanage = {
   },
   // 修改排序值 (朗读)
   addInvestManage(params) {
-    return axios.post('/fissionprep/investmanage/addInvestManage', qs.stringify(params))
+    return axios.post('/fissionprep/investmanage/addInvestManage', params)
   },
   updateInvestManage(params) {
-    return axios.post('/fissionprep/investmanage/updateInvestManage', qs.stringify(params))
+    return axios.post('/fissionprep/investmanage/updateInvestManage', params)
   },
   listBizSystem(params) {
     return axios.post('/fissionprep/investmanage/listBizSystem', qs.stringify(params))
