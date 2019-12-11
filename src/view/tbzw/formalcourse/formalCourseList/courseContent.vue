@@ -90,10 +90,10 @@
           <upload-video ref="childVideo" v-model="addInfo.videoUrl" :option="uploadVideoOption"></upload-video>
         </Form-item>
         <Form-item label="电视视频" class="-c-form-item">
-          <upload-video ref="childVideo" v-model="addInfo.videoUrl" :option="uploadVideoOption"></upload-video>
+          <upload-video ref="childVideo" v-model="addInfo.tvUrl" :option="uploadVideoOption"></upload-video>
         </Form-item>
         <Form-item label="ipad视频" class="-c-form-item">
-          <upload-video ref="childVideo" v-model="addInfo.videoUrl" :option="uploadVideoOption"></upload-video>
+          <upload-video ref="childVideo" v-model="addInfo.ipadUrl" :option="uploadVideoOption"></upload-video>
         </Form-item>
       </Form>
 
@@ -103,7 +103,7 @@
       </div>
     </Modal>
 
-    <learn-content-template v-model="isOpenModalLearn"></learn-content-template>
+    <learn-content-template v-model="isOpenModalLearn" :data-info="dataItem"></learn-content-template>
   </div>
 </template>
 
@@ -759,7 +759,8 @@
               courseId: this.$route.query.courseId,
               id: this.addInfo.id,
               name: this.addInfo.name,
-              // sortnum: this.addInfo.sortnum,
+              tvUrl: this.addInfo.tvUrl,
+              ipadUrl: this.addInfo.ipadUrl,
               videoUrl: this.addInfo.videoUrl,
               content: this.addInfo.content,
               coverphoto: this.addInfo.coverphoto

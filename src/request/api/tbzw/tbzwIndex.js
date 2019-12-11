@@ -18,6 +18,7 @@ import tbzwVest from "./vest";
 import tbzwStatistics from "./statistics";
 import tbzwReserveBuy from "./reserveBuy";
 import tbzwDubbing from "./dubbing";
+import tbzwLesson from "./lesson";
 
 export const tbzwIndex = {
   composition,
@@ -39,5 +40,6 @@ export const tbzwIndex = {
   tbzwVest,
   tbzwStatistics,
   tbzwReserveBuy,
-  tbzwDubbing
+  tbzwDubbing,
+  tbzwLesson
 }
