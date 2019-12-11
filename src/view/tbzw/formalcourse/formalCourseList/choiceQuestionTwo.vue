@@ -6,19 +6,20 @@
         <Input class="-input-name -s-width" v-model="list.name" type="text" :maxlength="40"
                placeholder="请输入题目（最多四十个字）"/>
       </div>
-      <div class="-name">
-        <span class="-span">题干音频：</span>
-        <upload-audio class="-input-name" ref="childChoiceAudio" v-model="list.questionAudio"
-                      :option="uploadAudioOption"></upload-audio>
-      </div>
-      <div class="-name"  v-if="type=='1' || type=='3'">
+      <!--<div class="-name">-->
+      <!--<span class="-span">题干音频：</span>-->
+      <!--<upload-audio class="-input-name" ref="childChoiceAudio" v-model="list.topicAudio"-->
+      <!--:option="uploadAudioOption"></upload-audio>-->
+      <!--</div>-->
+      <div class="-name" v-if="type=='1' || type=='3'">
         <span class="-span">题干图片：</span>
-        <upload-img class="-input-name" v-model="list.questionImgUrl" :option="uploadOption"></upload-img>
+        <upload-img class="-input-name" v-model="list.topicImage" :option="uploadOption"></upload-img>
       </div>
       <div class="-name">
         <span class="-span">答题时间：</span>
         <Input class="-input-name -s-b-width" v-model="list.answerMinute" type="text" placeholder="请输入答题时间（分）"/>分
-        <Input class="-input-name -s-b-width -s-b-margin" v-model="list.answerSecond" type="text" placeholder="请输入答题时间（分）"/>秒
+        <Input class="-input-name -s-b-width -s-b-margin" v-model="list.answerSecond" type="text"
+               placeholder="请输入答题时间（分）"/>秒
       </div>
       <!--//answerPoint-->
       <div class="-name">
@@ -28,27 +29,38 @@
       <div class="-name">
         <span class="-span">答案公布时间：</span>
         <Input class="-input-name -s-b-width" v-model="list.publishMinute" type="text" placeholder="请输入答题时间（分）"/>分
-        <Input class="-input-name -s-b-width -s-b-margin" v-model="list.publishSecond" type="text" placeholder="请输入答题时间（秒）"/>秒
+        <Input class="-input-name -s-b-width -s-b-margin" v-model="list.publishSecond" type="text"
+               placeholder="请输入答题时间（秒）"/>秒
       </div>
       <!--publishPoint-->
       <div v-for="(item,index) of list.optionJson" :key="index" class="-p-item-select-wrap">
         <span class="-s-width -span">选项{{optionLetter[index]}}：</span>
         <Input v-if="type=='1' || type=='3'" class="-s-width" v-model="item.value" type="textarea" placeholder="请输入选择题干"
                :maxlength="40" style="width: 300px"/>
-        <upload-img v-if="type=='2' || type=='4'" v-model="item.optionImg" :option="uploadOption"></upload-img>
-        <Checkbox v-if="!isEdit && (type=='1' || type=='2')" v-model="item.isChecked" class="-s-b-margin"
+        <upload-img v-if="type=='2' || type=='4'" v-model="item.value" :option="uploadOption"></upload-img>
+        <Checkbox v-if="!isEdit && (type=='1' || type=='2')" v-model="item.checked" class="-s-b-margin"
                   @on-change="changeCheck(list,index)">设为答案
         </Checkbox>
         <div v-if="type=='3' || type=='4'" class="g-flex-a-j-center -s-b-margin">
-          <span style="width: 70px">顺序：</span>
-          <Select v-model="item.sortnum">
+          <span style="width: 50px">顺序：</span>
+          <Select v-model="item.sortNum" style="width: 70px">
             <Option v-for="(item,index) in numList" :label="item.name" :value="item.id" :key="index"></Option>
           </Select>
         </div>
 
         <span v-if="!isEdit" class="-s-width -s-color g-cursor" @click="delOption(list,index)">删除</span>
       </div>
-      <div class="-form-btn g-cursor" v-if="list.optionJson.length < 4 && !isEdit" @click="addOption(list)">+ 新增选项</div>
+      <div class="-form-btn g-cursor" v-if="list.optionJson.length < 4 && !isEdit && (type > 2)"
+           @click="addOption(list)">+ 新增选项
+      </div>
+      <div class="-form-btn g-cursor" v-if="list.optionJson.length < 2 && !isEdit && (type < 3)"
+           @click="addOption(list)">+ 新增选项
+      </div>
+    </div>
+
+    <div class="g-flex-j-sa">
+      <Button @click="backCancel()" ghost type="primary" style="width: 100px;">取 消</Button>
+      <div @click="submitInfo()" class="g-primary-btn" style="line-height: 40px">确 认</div>
     </div>
   </div>
 </template>
@@ -61,7 +73,7 @@
   export default {
     name: "choiceQuestionTwo",
     components: {UploadImg, UploadAudio},
-    props: ['type', 'childList', 'isChildEdit'],
+    props: ['type', 'childList', 'isChildEdit', 'length'],
     data() {
       return {
         uploadOption: {
@@ -71,9 +83,10 @@
         choiceList: [
           {
             name: '',
+            qetype: this.type,
             optionJson: [],
-            questionImgUrl: '',
-            questionAudio: ''
+            topicImage: '',
+            topicAudio: ''
           }
         ],
         uploadAudioOption: {
@@ -82,21 +95,7 @@
           format: ['mp3', 'wma', 'arm']
         },
         optionLetter: ['A', 'B', 'C', 'D'],
-        numList: [
-          {
-            id: 1,
-            name: 1
-          },
-          {
-            id: 2,
-            name: 2
-          },
-          {
-            id: 3,
-            name: 3
-          }
-        ],
-        isShowAddChoice: true,
+        numList: [],
         isEdit: this.isChildEdit || false
       }
     },
@@ -106,35 +105,61 @@
         console.log(_n)
       }
     },
-    mounted() {
-      console.log(this.type, 11111)
-    },
     methods: {
       init() {
-        this.isShowAddChoice = true
-        this.choiceList = this.childList || []
-        if (this.choiceList.length > 2) {
-          this.isShowAddChoice = false
+        this.numList = []
+        this.choiceList = this.childList.length ? JSON.parse(JSON.stringify(this.childList)) : [
+          {
+            name: '',
+            sortnum: this.length + 1,
+            qetype: this.type,
+            optionJson: [],
+            topicImage: '',
+            topicAudio: ''
+          }
+        ]
+
+        if (this.choiceList.length) {
+          this.choiceList[0].optionJson.forEach((item, index) => {
+            this.numList.push({
+              id: index + 1,
+              name: index + 1
+            })
+          })
         }
       },
       changeCheck(list, idx) {
         list.optionJson.forEach((item, index) => {
           if (idx !== index) {
-            item.isChecked = false
+            item.checked = false
           }
         })
       },
       addOption(list) {
+        this.numList = []
         list.optionJson.push({
           value: '',
-          isChecked: false,
-          optionImg: '',
+          sortNum: '',
+          checked: false,
           index: this.optionLetter[list.optionJson.length]
+        })
+
+        list.optionJson.forEach((item, index) => {
+          this.numList.push({
+            id: index + 1,
+            name: index + 1
+          })
         })
       },
       delOption(list, index) {
         list.optionJson.splice(index, 1)
       },
+      submitInfo () {
+        this.$emit('submitChoice', this.choiceList)
+      },
+      backCancel () {
+        this.$emit('cancelChoice')
+      }
     }
   }
 </script>
