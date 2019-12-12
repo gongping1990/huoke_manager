@@ -2,7 +2,7 @@
   <div class="p-choice">
     <div v-for="(list,listIndex) of choiceList" :key="listIndex" class="p-choice-wrap">
       <div class="-name">
-        <span class="-span">题目{{listIndex+1}}：</span>
+        <span class="-span">题目：</span>
         <Input class="-input-name -s-width" v-model="list.name" type="text" :maxlength="40"
                placeholder="请输入题目（最多四十个字）"/>
       </div>
@@ -36,7 +36,7 @@
       <div v-for="(item,index) of list.optionJson" :key="index" class="-p-item-select-wrap">
         <span class="-s-width -span">选项{{optionLetter[index]}}：</span>
         <Input v-if="type=='1' || type=='3'" class="-s-width" v-model="item.value" type="textarea" placeholder="请输入选择题干"
-               :maxlength="40" style="width: 300px"/>
+               :maxlength="28" style="width: 300px"/>
         <upload-img v-if="type=='2' || type=='4'" v-model="item.value" :option="uploadOption"></upload-img>
         <Checkbox v-if="!isEdit && (type=='1' || type=='2')" v-model="item.checked" class="-s-b-margin"
                   @on-change="changeCheck(list,index)">设为答案

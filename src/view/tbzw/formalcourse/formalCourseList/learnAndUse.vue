@@ -11,7 +11,7 @@
                   @click="delCheckpoint(item)"/>
           </div>
           <Button @click="openModal(1)" ghost type="primary" class="-c-btn">+添加题目</Button>
-          <Button @click="openModal(2)" ghost type="primary" class="-c-btn">题目排序</Button>
+          <!--<Button @click="openModal(2)" ghost type="primary" class="-c-btn">题目排序</Button>-->
         </div>
 
         <div v-show="isShowFormItem">

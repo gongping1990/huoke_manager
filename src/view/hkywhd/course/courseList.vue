@@ -79,6 +79,9 @@
           </Form-item>
         </Form>
         <Form ref="addInfo" :model="addInfo" :label-width="110" v-if="modalType === 2" class="ivu-form-item-required">
+          <FormItem label="课程原价" prop="oriPrice">
+            <Input type="text" v-model="addInfo.oriPrice" placeholder="请输入课程原价"></Input>
+          </FormItem>
           <FormItem label="单独购价格" prop="ddgPrice">
             <Input type="text" v-model="addInfo.ddgPrice" placeholder="请输入单独购价格"></Input>
           </FormItem>
@@ -404,6 +407,7 @@
             this.addInfo.tbookId = data.id
             this.addInfo.open = this.addInfo.open ? 1 : 0
             this.addInfo.ddgPrice = this.addInfo.ddgPrice / 100
+            this.addInfo.oriPrice = this.addInfo.oriPrice / 100
             this.addInfo.activityPrice = this.addInfo.activityPrice / 100
           })
       },
@@ -532,7 +536,9 @@
       submitInfoTypeTwo(name) {
         if (this.isSending) return
 
-        if (this.addInfo.ddgPrice === '') {
+        if (this.addInfo.oriPrice === '') {
+          return this.$Message.error('请输入课程价格')
+        } else if (this.addInfo.ddgPrice === '') {
           return this.$Message.error('请输入单独购价格')
         } else if (this.addInfo.open === 1 && this.addInfo.activityPrice === '') {
           return this.$Message.error('请输入活动价格')
@@ -547,6 +553,7 @@
         this.isSending = true
 
         let paramsData = {
+          oriPrice: this.addInfo.oriPrice * 100,
           ddgPrice: this.addInfo.ddgPrice * 100,
           tbookId: this.addInfo.tbookId,
           activityPrice: this.addInfo.activityPrice * 100,
