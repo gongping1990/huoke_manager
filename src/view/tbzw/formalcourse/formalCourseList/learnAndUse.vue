@@ -23,10 +23,6 @@
                                @submitChoice="submitChoice"
                                @cancelChoice="cancelChoice"></choice-question-two>
         </div>
-
-        <div class="g-flex-j-sa -wrap-title" v-if="dataItem || isShowFormItem">
-          <Button v-if="!isEdit" @click="backCancel()" ghost type="primary">进入编辑</Button>
-        </div>
       </div>
     </Card>
 
