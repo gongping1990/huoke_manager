@@ -562,7 +562,7 @@
                 list.answerSecond = list.answerPoint % 60
                 list.publishMinute = parseInt(list.publishPoint / 60)
                 list.publishSecond = list.publishPoint % 60
-                list.optionJson = JSON.parse(list.optionJson)
+                // list.optionJson = JSON.parse(list.optionJson)
               })
               setTimeout(() => {
                 this.$refs.childOne.init()
