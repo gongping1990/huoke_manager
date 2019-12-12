@@ -89,6 +89,12 @@
         <Form-item label="课程视频" class="-c-form-item ivu-form-item-required">
           <upload-video ref="childVideo" v-model="addInfo.videoUrl" :option="uploadVideoOption"></upload-video>
         </Form-item>
+        <Form-item label="电视视频" class="-c-form-item">
+          <upload-video ref="childVideo" v-model="addInfo.tvUrl" :option="uploadVideoOption"></upload-video>
+        </Form-item>
+        <Form-item label="ipad视频" class="-c-form-item">
+          <upload-video ref="childVideo" v-model="addInfo.ipadUrl" :option="uploadVideoOption"></upload-video>
+        </Form-item>
       </Form>
 
       <div slot="footer" class="g-flex-j-sa">
@@ -97,6 +103,7 @@
       </div>
     </Modal>
 
+    <learn-content-template v-model="isOpenModalLearn" :data-info="dataItem"></learn-content-template>
   </div>
 </template>
 
@@ -108,11 +115,12 @@
   import Operation from "iview/src/components/transfer/operation";
   import UploadAudio from "@/components/uploadAudio";
   import ChoiceQuestion from "./choiceQuestion";
+  import LearnContentTemplate from "./learnContentTemplate";
 
 
   export default {
     name: 'tbzw_paid_courseContent',
-    components: {ChoiceQuestion, UploadAudio, Operation, UploadVideo, UploadImg, Editor},
+    components: {LearnContentTemplate, ChoiceQuestion, UploadAudio, Operation, UploadVideo, UploadImg, Editor},
     data() {
       return {
         baseUrl: `${getBaseUrl()}/sch/common/uploadPublicFile`, // 公有 （图片）
@@ -156,6 +164,7 @@
         isEdit: false,
         isOpenModalAdd: false,
         isOpenModalContent: false,
+        isOpenModalLearn: false,
         modalType: '',
         addInfo: {
           videoUrl: ''
@@ -209,7 +218,7 @@
           {
             title: '补充内容',
             align: 'center',
-            width: 340,
+            width: 400,
             render: (h, params) => {
               return h('div', [
                 h('Button', {
@@ -253,7 +262,7 @@
                   },
                   on: {
                     click: () => {
-                      this.openModalContent(params.row, 3)
+                      this.openModalLearnAndUse(params.row)
                     }
                   }
                 }, '活学活用'),
@@ -301,14 +310,29 @@
                       this.openModalContent(params.row, 6)
                     }
                   }
-                }, '素材评价')
+                }, '素材评价'),
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    display: 'inline-block',
+                    color: '#5444E4'
+                  },
+                  on: {
+                    click: () => {
+                      this.openModalLearn(params.row)
+                    }
+                  }
+                }, '学习内容')
               ])
             }
           },
           {
             title: '操作',
             align: 'center',
-            width: 300,
+            width: 200,
             render: (h, params) => {
               return h('div', [
                 h('Button', {
@@ -439,9 +463,6 @@
         this.detailInfo.teacher = this.dataItem.teacherId
 
         switch (this.modalType) {
-          case 3:
-            this.getListByLessonQuestion()
-            break
           case 4:
             this.getListByLessonQuestion()
             break
@@ -449,6 +470,19 @@
             this.getListByLessonScore()
             break
         }
+      },
+      openModalLearn (data) {
+        this.isOpenModalLearn = true
+        this.dataItem = JSON.parse(JSON.stringify(data))
+      },
+      openModalLearnAndUse (data) {
+        this.$router.push({
+          name: 'tbzw_paid_learnAndUse',
+          query: {
+            courseId: this.$route.query.courseId,
+            lessonId: data.id
+          }
+        })
       },
       closeModal(name) {
         if (this.addInfo.id && (this.addInfo.type === 1)) {
@@ -516,7 +550,7 @@
       },
       getListByLessonQuestion() {
         this.$api.composition.listByLessonQuestion({
-          type: this.modalType === 3 ? 1 : 2,
+          type: 2,
           lessonId: this.dataItem.id
         })
           .then(
@@ -528,7 +562,7 @@
                 list.answerSecond = list.answerPoint % 60
                 list.publishMinute = parseInt(list.publishPoint / 60)
                 list.publishSecond = list.publishPoint % 60
-                list.optionJson = JSON.parse(list.optionJson)
+                // list.optionJson = JSON.parse(list.optionJson)
               })
               setTimeout(() => {
                 this.$refs.childOne.init()
@@ -545,9 +579,6 @@
             break
           case 2:
             this.submitUploadGuideAudio()
-            break
-          case 3:
-            this.submitSaveLessonQuestion()
             break
           case 4:
             this.submitSaveLessonQuestion()
@@ -681,7 +712,7 @@
         this.$api.composition.saveLessonQuestion({
           lessonId: this.dataItem.id,
           questionList: choiceDataList,
-          type: this.modalType === 3 ? 1 : 2
+          type: 2
         })
           .then(response => {
             if (response.data.code == '200') {
@@ -728,7 +759,8 @@
               id: this.addInfo.id,
               courseId: this.$route.query.courseId,
               name: this.addInfo.name,
-              // sortnum: this.addInfo.sortnum,
+              tvUrl: this.addInfo.tvUrl,
+              ipadUrl: this.addInfo.ipadUrl,
               videoUrl: this.addInfo.videoUrl,
               content: this.addInfo.content,
               coverphoto: this.addInfo.coverphoto
