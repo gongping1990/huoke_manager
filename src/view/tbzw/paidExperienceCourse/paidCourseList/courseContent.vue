@@ -115,7 +115,7 @@
   import Operation from "iview/src/components/transfer/operation";
   import UploadAudio from "@/components/uploadAudio";
   import ChoiceQuestion from "./choiceQuestion";
-  import LearnContentTemplate from "./learnContentTemplate";
+  import LearnContentTemplate from "../../formalcourse/formalCourseList/learnContentTemplate";
 
 
   export default {
