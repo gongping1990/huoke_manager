@@ -74,7 +74,7 @@
   import {getBaseUrl} from "@/libs/index";
   import Loading from "@/components/loading";
   import draggable from 'vuedraggable'
-  import ChoiceQuestionTwo from "./choiceQuestionTwo";
+  import ChoiceQuestionTwo from "../../formalcourse/formalCourseList/choiceQuestionTwo";
 
   export default {
     name: 'tbzw_paid_learnAndUse',
