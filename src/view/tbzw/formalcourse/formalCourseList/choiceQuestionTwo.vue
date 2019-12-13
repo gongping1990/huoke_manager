@@ -37,7 +37,7 @@
       <div v-for="(item,index) of list.optionJson" :key="index" class="-p-item-select-wrap">
         <span class="-s-width -span">选项{{optionLetter[index]}}：</span>
         <Input v-if="type=='1' || type=='3'" class="-s-width" v-model="item.value" type="textarea" placeholder="请输入选择题干"
-               :maxlength="20" style="width: 300px"/>
+               :maxlength="type == '3' ? 20 : 28" style="width: 300px"/>
         <upload-img ref="childImg" v-if="type=='2' || type=='4'" v-model="item.value" :option="uploadOption"></upload-img>
         <Checkbox v-if="!isEdit && (type=='1' || type=='2')" v-model="item.checked" class="-s-b-margin"
                   @on-change="changeCheck(list,index)">设为答案
@@ -51,7 +51,7 @@
 
         <span v-if="!isEdit" class="-s-width -s-color g-cursor" @click="delOption(list,index)">删除</span>
       </div>
-      <div class="g-tips -s-b-marginLeft" v-if="type== '1' || type == '3'">选项所有字数相加不得超过40字</div>
+      <div class="g-tips -s-b-marginLeft" v-if="type == '3'">选项所有字数相加不得超过40字</div>
       <div class="-form-btn g-cursor" v-if="list.optionJson.length < 4 && !isEdit && (type > 2)"
            @click="addOption(list)">+ 新增选项
       </div>
@@ -123,7 +123,7 @@
 
         if (this.choiceList.length) {
           setTimeout(()=>{
-            this.$refs.childImg.forEach(item=>{
+            this.$refs.childImg.length && this.$refs.childImg.forEach(item=>{
               item.init()
             })
           })
