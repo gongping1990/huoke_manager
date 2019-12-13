@@ -6,11 +6,11 @@
     width="750"
     title="学习内容">
     <Form :model="addInfo" ref="addInfo" :label-width="80">
-      <FormItem label="学习内容" prop="name" class="ivu-form-item-required">
+      <FormItem label="知识要点" prop="name" class="ivu-form-item-required">
         <div class="p-learnContent-formDataItem" v-for="(item,index) of addInfo.learncontent" :key="index">
-          <div class="item-label">内容{{index+1}}:</div>
+          <div class="item-label">要点{{index+1}}:</div>
           <div class="item-wrap">
-            <Input class="-item-input" type="text" v-model="item.value" placeholder="请输入内容"></Input>
+            <Input class="-item-input" :maxlength="30" type="text" v-model="item.value" placeholder="请输入内容(最多三十字)"></Input>
           </div>
           <div @click="delContent(index)" class="item-del g-error g-cursor">删除</div>
         </div>
