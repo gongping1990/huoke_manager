@@ -74,6 +74,9 @@
           <Form-item label="竖版课程封面" class="ivu-form-item-required">
             <upload-img v-model="addInfo.coverImgUrl" :option="uploadOption"></upload-img>
           </Form-item>
+          <Form-item label="购买页图片" >
+            <upload-img-multiple v-model="addInfo.payImgUrl" :option="uploadOption"></upload-img-multiple>
+          </Form-item>
           <Form-item label="海报图片" class="ivu-form-item-required">
             <upload-img v-model="addInfo.posterUrl" :option="uploadOption"></upload-img>
           </Form-item>
@@ -140,10 +143,11 @@
   import UploadImg from "../../../components/uploadImg";
   import Hkywhd_courseTemplate from "./courseTemplate";
   import {forEach} from "../../../libs/tools";
+  import UploadImgMultiple from "../../../components/uploadImgMultiple";
 
   export default {
     name: 'hkywhd_courseList',
-    components: {Hkywhd_courseTemplate, UploadImg, DatePickerTemplate},
+    components: {UploadImgMultiple, Hkywhd_courseTemplate, UploadImg, DatePickerTemplate},
     data() {
       return {
         tab: {
@@ -321,6 +325,20 @@
                     }
                   }
                 }, '删除'),
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: 'rgba(218, 55, 75)'
+                  },
+                  on: {
+                    click: () => {
+                      this.lowerItem(params.row)
+                    }
+                  }
+                }, !params.row.lowerShelf ? '下架' : '上架')
               ])
             }
           }
@@ -356,6 +374,7 @@
         this.isOpenModal = true
         if (data) {
           this.addInfo = JSON.parse(JSON.stringify(data))
+          this.addInfo.payImgUrl = JSON.parse(this.addInfo.payImgUrl)
           this.modalType === 2 && this.getActivityByTbookId(data)
           this.modalType === 3 && this.listSuggestedBook(data)
         } else {
@@ -365,6 +384,7 @@
             id: '',
             type: 0,
             coverImgUrl: '',
+            payImgUrl: [],
             posterUrl: '',
             coverPage: ''
           }
@@ -466,6 +486,23 @@
           }
         })
       },
+      lowerItem(param) {
+        this.$Modal.confirm({
+          title: '提示',
+          content:  param.lowerShelf ? '确认要上架' : '确认要下架？',
+          onOk: () => {
+            this.$api.hkywhdTextbook.lowerShelfTextBook({
+              bookId: param.id
+            }).then(
+              response => {
+                if (response.data.code == "200") {
+                  this.$Message.success("操作成功");
+                  this.getList();
+                }
+              })
+          }
+        })
+      },
       submitInfo(name) {
         switch (+this.modalType) {
           case 1:
@@ -511,6 +548,7 @@
           coverPage: this.addInfo.coverPage,
           coverImgUrl: this.addInfo.coverImgUrl,
           posterUrl: this.addInfo.posterUrl,
+          payImgUrl: JSON.stringify(this.addInfo.payImgUrl),
           salesUrl: this.addInfo.salesUrl,
           courseId: this.addInfo.courseId
         }
