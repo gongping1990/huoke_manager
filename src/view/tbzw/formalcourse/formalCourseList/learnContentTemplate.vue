@@ -83,10 +83,8 @@
           return item.value !== ''
         })
 
-        if (!isPass || !this.addInfo.learncontent.length){
-          return this.$Message.error('学习内容不能为空')
-        } else if (!this.addInfo.keynotes.length) {
-          return this.$Message.error('请上传重点笔记截图')
+        if (!isPass){
+          return this.$Message.error('已增加的知识要点选项不能有空项')
         } else if (this.addInfo.keynotes.length > 9) {
           return this.$Message.error('最多上传9张')
         }
