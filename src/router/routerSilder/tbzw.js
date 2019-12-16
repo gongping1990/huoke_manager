@@ -159,6 +159,19 @@ export const tbzwRouter =[
           }
         ],
         component: () => import('@/view/tbzw/dubbing/dubbing')
+      },
+      {
+        path: '/tbzw_systemSetting',
+        name: 'tbzw_systemSetting',
+        meta: [
+          {
+            name: '运营管理'
+          },
+          {
+            name: '系统配置'
+          }
+        ],
+        component: () => import('@/view/tbzw/systemSetting/systemSetting')
       }
     ]
   },
