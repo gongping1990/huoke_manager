@@ -8,7 +8,7 @@
               <Radio label='0' :disabled="!isShowEdit">不启用</Radio>
               <Radio label='1' :disabled="!isShowEdit">启用</Radio>
             </Radio-group>
-            <span v-if="isShowEdit" @click="submitInfo(item)" class="g-cursor -c-tips">确认</span>
+            <div v-if="isShowEdit" @click="submitInfo(item)" class="g-primary-btn -c-tips">确认</div>
           </div>
         </Form-item>
         <FormItem>
@@ -120,7 +120,6 @@
     .-c-flex {
       display: flex;
       align-items: center;
-      justify-content: space-between;
     }
 
     .-c-btn {
@@ -128,8 +127,11 @@
     }
 
     .-c-tips {
-      font-size: 16px;
-      color: #39f
+      margin-left: 50%;
+      font-size: 14px;
+      width: 80px;
+      height: 31px;
+      line-height: 31px;
     }
 
   }
