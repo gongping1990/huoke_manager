@@ -52,7 +52,7 @@
         <span v-if="!isEdit" class="-s-width -s-color g-cursor" @click="delOption(list,index)">删除</span>
       </div>
       <div class="g-tips -s-b-marginLeft" v-if="type == '3'">选项所有字数相加不得超过40字</div>
-      <div class="-form-btn g-cursor" v-if="list.optionJson.length < 4 && !isEdit && (type > 2)"
+      <div class="-form-btn g-cursor" v-if="list.optionJson.length < 3 && !isEdit && (type > 2)"
            @click="addOption(list)">+ 新增选项
       </div>
       <div class="-form-btn g-cursor" v-if="list.optionJson.length < 2 && !isEdit && (type < 3)"
