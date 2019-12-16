@@ -186,7 +186,7 @@
           {
             title: '课时名称',
             key: 'name',
-
+            tooltip: true,
             align: 'center'
           },
           {
