@@ -6,7 +6,7 @@
     width="750"
     title="学习内容">
     <Form :model="addInfo" ref="addInfo" :label-width="80">
-      <FormItem label="知识要点" prop="name" class="ivu-form-item-required">
+      <FormItem label="知识要点" prop="name">
         <div class="p-learnContent-formDataItem" v-for="(item,index) of addInfo.learncontent" :key="index">
           <div class="item-label">要点{{index+1}}:</div>
           <div class="item-wrap">
@@ -14,10 +14,10 @@
           </div>
           <div @click="delContent(index)" class="item-del g-error g-cursor">删除</div>
         </div>
-        <div class="-c-tips">学习内容将在每课的学情报告中向用户展示</div>
-        <Button @click="addContent('addInfoAdd')" ghost type="primary">+添加学习内容</Button>
+        <div class="-c-tips">知识要点将在每课的学情报告中向用户展示</div>
+        <Button @click="addContent('addInfoAdd')" ghost type="primary">+添加知识要点</Button>
       </FormItem>
-      <FormItem label="重点笔记" class="ivu-form-item-required">
+      <FormItem label="重点笔记" >
         <upload-img-multiple v-model="addInfo.keynotes" :option="uploadOption"></upload-img-multiple>
         <div class="-c-tips">可将上课视频中重要的板书总结截图下来直接使用，不超过9张，可拖动排序</div>
       </FormItem>
