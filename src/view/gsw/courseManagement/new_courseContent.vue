@@ -325,6 +325,7 @@
           this.addInfo.sortnum = +this.addInfo.sortnum
         } else {
           this.addInfo = {
+            courseId: this.$route.query.courseId,
             sortnum: null,
             content: ''
           }
