@@ -51,11 +51,6 @@
             align: 'center'
           },
           {
-            title: '排序值',
-            key: 'opentime',
-            align: 'center'
-          },
-          {
             title: '操作',
             width: 200,
             align: 'center',
@@ -75,7 +70,7 @@
                       this.toCourseContent(params.row)
                     }
                   }
-                }, '课时内容'),
+                }, '课程内容'),
                  h('Button', {
                   props: {
                     type: 'text',
