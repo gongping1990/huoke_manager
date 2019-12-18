@@ -8,6 +8,9 @@ const gswCourse = {
   },
   getById(params) {
     return axios.get(`/poem/course/getById/${params}`);
+  },
+  removeCourseById(params) {
+    return axios.get(`/poem/course/removeCourseById`,{params: params});
   }
 };
 

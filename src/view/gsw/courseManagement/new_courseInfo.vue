@@ -99,7 +99,7 @@
             </div>
             <div class="-c-tips">图片尺寸不低于960px*360px 图片大小：500K以内</div>
           </Form-item>
-          <Form-item label="试听banner" class="-c-form-item ivu-form-item-required">
+          <Form-item label="试听banner" class="-c-form-item">
             <Upload
 
               style="display: inline-block"
@@ -178,7 +178,9 @@
           groupPrice: null,
           consultPhone: null,
           aloneInfo: '',
+          qrCode: '',
           verticalCover: '',
+          bannerpic: '',
           groupInfo: '',
           launchInfo: '',
           coverphoto: ""
@@ -347,7 +349,7 @@
                 .then(response => {
                   if (response.data.code == '200') {
                     this.$Message.success('修改成功');
-                    this.getList()
+                    // this.getList()
                     this.closeEdit(name)
                   }
                 })

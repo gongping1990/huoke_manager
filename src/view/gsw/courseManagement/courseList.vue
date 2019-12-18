@@ -126,7 +126,23 @@
           }
         })
       },
-
+      delItem(param) {
+        this.$Modal.confirm({
+          title: '提示',
+          content: '确认要删除吗？',
+          onOk: () => {
+            this.$api.gswCourse.removeCourseById({
+              courseId: param.id
+            }).then(
+              response => {
+                if (response.data.code == "200") {
+                  this.$Message.success("操作成功");
+                  this.getList();
+                }
+              })
+          }
+        })
+      },
       currentChange(val) {
         this.tab.page = val;
         this.getList();
