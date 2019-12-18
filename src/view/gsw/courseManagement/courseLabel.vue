@@ -216,6 +216,7 @@
         this.isOpenModal = true
         if (data) {
           this.addInfo = JSON.parse(JSON.stringify(data))
+          this.addInfo.fullPrice = +this.addInfo.fullPrice / 100
         } else {
           this.addInfo = {
             fullPrice: null
@@ -296,7 +297,12 @@
         this.$refs[name].validate((valid) => {
           if (valid) {
             this.isSending = true
-            this.$api.gswTags.editTag(this.addInfo)
+            this.$api.gswTags.editTag({
+              id: this.addInfo.id,
+              name: this.addInfo.name,
+              sortnum: this.addInfo.sortnum,
+              fullPrice: this.addInfo.fullPrice*100
+            })
               .then(
                 response => {
                   if (response.data.code == '200') {
