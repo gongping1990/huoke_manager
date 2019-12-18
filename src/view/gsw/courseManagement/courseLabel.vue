@@ -23,6 +23,10 @@
           <FormItem label="排序值" prop="sortnum">
             <Input type="text" v-model="addInfo.sortnum" placeholder="请输入排序值"></Input>
           </FormItem>
+          <FormItem label="全册价格">
+            <InputNumber type="text"  v-model="addInfo.fullPrice" :min="0"
+                         placeholder="请输入全册价格"></InputNumber>
+          </FormItem>
         </Form>
         <div slot="footer" class="-p-b-flex">
           <Button @click="closeModal('addInfo')" ghost type="primary" style="width: 100px;">取消</Button>
@@ -213,7 +217,9 @@
         if (data) {
           this.addInfo = JSON.parse(JSON.stringify(data))
         } else {
-          this.addInfo = {}
+          this.addInfo = {
+            fullPrice: null
+          }
         }
       },
       openModalCourse (data) {

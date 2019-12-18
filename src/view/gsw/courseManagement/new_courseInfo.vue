@@ -38,10 +38,6 @@
                          placeholder="请输入拼课时限（小时）"></InputNumber>
             <span class="-c-tips">* 小时</span>
           </FormItem>
-          <FormItem label="全册价格">
-            <InputNumber type="text"  v-model="addInfo.fullPrice" :min="0"
-                         placeholder="请输入全册价格"></InputNumber>
-          </FormItem>
           <FormItem label="咨询电话" prop="consultPhone">
             <InputNumber type="text"  v-model="addInfo.consultPhone"  class="g-width"
                          placeholder="请输入咨询电话"></InputNumber>
@@ -181,7 +177,6 @@
           alonePrice: null,
           groupPrice: null,
           consultPhone: null,
-          fullPrice: null,
           aloneInfo: '',
           verticalCover: '',
           groupInfo: '',
