@@ -430,7 +430,7 @@
           .then(
             response => {
               this.detailInfo = response.data.resultData;
-              this.detailInfo.type = this.detailInfo.type ? this.detailInfo.type : 2
+              this.detailInfo.type = this.detailInfo.type ? this.detailInfo.type : 1
               this.$refs.editor && this.$refs.editor.setHtml(this.detailInfo.content)
             })
           .finally(() => {
