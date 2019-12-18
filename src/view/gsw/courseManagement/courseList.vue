@@ -52,7 +52,6 @@
           },
           {
             title: '操作',
-            width: 200,
             align: 'center',
             render: (h, params) => {
               return h('div', [

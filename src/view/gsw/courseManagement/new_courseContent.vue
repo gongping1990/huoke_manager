@@ -331,7 +331,7 @@
         }
       },
       openModalPoetry(data, type) {
-        if(this.routeType === 1) {
+        if(this.routeType === 1 && type === 2) {
           this.lessonId = data.id
           return this.isOpenLesson = true
         }
