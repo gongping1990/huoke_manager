@@ -4,7 +4,7 @@
       <Row class="g-search">
         <Col :span="3" class="g-t-left">
           <div class="g-flex-a-j-center">
-            <div class="-search-select-text">订单状态：</div>
+            <div class="-search-select-text">支付状态：</div>
             <Select v-model="searchInfo.status" @on-change="selectChange" class="-search-selectOne">
               <Option v-for="(item,index) in orderStatusList" :label="item.name" :value="item.id" :key="index"></Option>
             </Select>
@@ -61,7 +61,7 @@
         </div>
         <div class="-p-o-flex">
           <FormItem label="手机号码" class="-p-o-width">{{orderInfo.phone}}</FormItem>
-          <FormItem  class="-p-o-width"></FormItem>
+          <FormItem class="-p-o-width"></FormItem>
         </div>
         <div class="-p-o-title" v-if="orderInfo.refundInfo">
           退款信息
@@ -159,7 +159,7 @@
             id: '20'
           }
         ],
-        orderType: ['单独购买', '开团购买', '跟团购买'],
+        orderType: ['单独购买', '开团购买', '跟团购买', '手动开通', '打包购买'],
         orderPageType: ['玖桔成都', '社群', '公众号投放'],
         dataList: [],
         dateOption: {
@@ -220,7 +220,7 @@
           {
             title: '订单状态',
             render: (h, params) => {
-              return h('div', this.orderType[params.row.orderMode-1])
+              return h('div', this.orderType[params.row.orderMode - 1])
             },
             align: 'center'
           },
@@ -234,7 +234,7 @@
           {
             title: '落地页面',
             render: (h, params) => {
-              return h('div', this.orderPageType[params.row.orderPageSource-1])
+              return h('div', this.orderPageType[params.row.orderPageSource - 1])
             },
             align: 'center'
           },
@@ -297,7 +297,7 @@
       this.getList()
     },
     methods: {
-      changeDate (data) {
+      changeDate(data) {
         this.getStartTime = data.startTime
         this.getEndTime = data.endTime
         this.selectChange()
@@ -312,7 +312,7 @@
         }
 
         let downUrl = `${getBaseUrl()}/poem/order/getOrderExcele?startTime=${params.startTime}&endTime=${params.endTime}&payStatus=${params.payStatus}&nickName=${params.nickname}&id=${params.id}&phone=${params.phone}`
-        console.log(downUrl,'导出路径')
+        console.log(downUrl, '导出路径')
         window.open(downUrl, '_blank');
       },
       currentChange(val) {
@@ -389,7 +389,7 @@
 <style lang="less" scoped>
   .p-order {
     .-p-o-title {
-      color: #B3B5B8 ;
+      color: #B3B5B8;
       margin: 5px 0;
       font-size: 16px;
     }
@@ -440,7 +440,7 @@
       color: #39f
     }
 
-    .-c-red{
+    .-c-red {
       color: rgb(218, 55, 75);
     }
 
