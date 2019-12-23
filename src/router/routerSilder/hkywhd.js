@@ -204,5 +204,41 @@ export const hkywhdRouter =[
         component: () => import('@/view/hkywhd/course/classHourList')
       }
     ]
+  },
+  {
+    path: '/content',
+    name: 'content',
+    title: '内容管理',
+    component: Main,
+    children: [
+      {
+        path: '/hkywhd_column',
+        name: 'hkywhd_column',
+        meta: [
+          {name: '内容管理'},
+          {name: '栏目列表'}
+        ],
+        component: () => import('@/view/hkywhd/columnList/columnList')
+      },
+      {
+        path: '/hkywhd_column_act',
+        name: 'hkywhd_column_act',
+        meta: [
+          {name: '内容管理'},
+          {name: '栏目列表', url: 'hkywhd_column'},
+          {name: '文章管理'}
+        ],
+        component: () => import('@/view/hkywhd/columnList/articleManager')
+      },
+      {
+        path: '/hkywhd_synLearn',
+        name: 'hkywhd_synLearn',
+        meta: [
+          {name: '内容管理'},
+          {name: '同步学习'}
+        ],
+        component: () => import('@/view/hkywhd/syncLearn/syncLearnList')
+      },
+    ]
   }
 ]

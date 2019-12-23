@@ -183,6 +183,7 @@
           },
           {
             title: '教材名称',
+            tooltip: true,
             key: 'courseName',
             align: 'center'
           },

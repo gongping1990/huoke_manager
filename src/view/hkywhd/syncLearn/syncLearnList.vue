@@ -1,0 +1,255 @@
+<template>
+  <div class="p-syncLearnList">
+    <Card>
+      <Row class="g-search">
+        <Col :span="24" class="g-t-left">
+          <div class="g-flex-a-j-center">
+            <div class="g-flex-a-j-center">
+              <div class="-search-select-text">选择年级：</div>
+              <RadioGroup v-model="selectInfo.grade" @on-change="getList(1)" type="button">
+                <Radio v-for="(item,index) in gradeList" :label="item.key" :key="index">{{item.name}}</Radio>
+              </RadioGroup>
+            </div>
+
+            <div class="g-flex-a-j-center -c-left">
+              <div class="-search-select-text">选择学科：</div>
+              <RadioGroup v-model="selectInfo.subject" @on-change="getList(1)" type="button">
+                <Radio v-for="(item,index) in subjectList" :label="item.key" :key="index">{{item.name}}</Radio>
+              </RadioGroup>
+            </div>
+          </div>
+        </Col>
+      </Row>
+
+      <Table class="-c-tab" :loading="isFetching" :columns="columns" :data="dataList"></Table>
+
+      <Page class="g-text-right" :total="total" size="small" show-elevator :page-size="tab.pageSize"
+            :current.sync="tab.currentPage"
+            @on-change="currentChange"></Page>
+    </Card>
+
+    <Modal
+      class="p-syncLearnList"
+      v-model="isOpenModal"
+      @on-cancel="isOpenModal = false"
+      footer-hide
+      width="800"
+      title="数据详情">
+
+      <Table class="-c-tab" :loading="isFetching" :columns="columnsTwo" :data="detailList"></Table>
+
+      <Page class="g-text-right" :total="totalDetail" size="small" show-elevator :page-size="tabDetail.pageSize"
+            :current.sync="tabDetail.currentPage"
+            @on-change="detailCurrentChange"></Page>
+    </Modal>
+    
+  </div>
+</template>
+
+<script>
+  export default {
+    name: 'syncLearnList',
+    data() {
+      return {
+        tab: {
+          page: 1,
+          currentPage: 1,
+          pageSize: 10
+        },
+        tabDetail: {
+          page: 1,
+          currentPage: 1,
+          pageSize: 10
+        },
+        selectInfo: {
+          grade: '1',
+          subject: '1'
+        },
+        dataList: [],
+        detailList: [],
+        total: 0,
+        totalDetail: 0,
+        isFetching: false,
+        isOpenModal: false,
+        gradeList: [
+          {
+            name: '一年级',
+            key: '1'
+          },
+          {
+            name: '二年级',
+            key: '2'
+          },
+          {
+            name: '三年级',
+            key: '3'
+          },
+          {
+            name: '四年级',
+            key: '4'
+          },
+          {
+            name: '五年级',
+            key: '5'
+          },
+          {
+            name: '六年级',
+            key: '6'
+          }
+        ],
+        subjectList: [
+          {
+            name: '语文',
+            key: '1'
+          },
+          {
+            name: '数学',
+            key: '2'
+          },
+          {
+            name: '英语',
+            key: '3'
+          }
+        ],
+        columns: [
+          {
+            title: '学科',
+            key: 'name',
+            align: 'center'
+          },
+          {
+            title: '教材名称',
+            key: 'name',
+            align: 'center'
+          },
+          {
+            title: '教材版本',
+            render: (h, params) => {
+              return h('div', this.teachVersion[params.row.teachEdition - 1].name)
+            },
+            align: 'center'
+          },
+          {
+            title: '适用年级 (学期)',
+            key: 'gradeText',
+            render: (h, params) => {
+              return h('div', `${this.gradeList[params.row.grade - 1].name} (${this.semesterList[params.row.term - 1].name})`)
+            },
+            align: 'center'
+          },
+          {
+            title: '操作',
+            align: 'center',
+            render: (h, params) => {
+              return h('div', [
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: '#5444E4'
+                  },
+                  on: {
+                    click: () => {
+                      this.toChapter(params.row)
+                    }
+                  }
+                }, '文章管理')
+              ])
+            }
+          }
+        ],
+        columnsTwo: [
+          {
+            title: '标题',
+            key: 'name',
+            align: 'center'
+          },
+          {
+            title: '排序值',
+            key: 'name',
+            align: 'center'
+          },
+          {
+            title: '播放量',
+            key: 'name',
+            align: 'center'
+          }
+        ],
+      };
+    },
+    mounted() {
+      this.getList()
+    },
+    methods: {
+      currentChange(val) {
+        this.tab.page = val;
+        this.getList();
+      },
+      detailCurrentChange(val) {
+        this.tabDetail.page = val;
+        this.getList();
+      },
+      toChapter (data) {
+        this.isOpenModal = true
+      },
+      getList(num) {
+        this.isFetching = true
+        if (num) {
+          this.tab.currentPage = 1
+        }
+        this.$api.wzjh.teachingList({
+          current: num ? num : this.tab.page,
+          size: this.tab.pageSize,
+          grade: this.selectInfo.grade,
+          subject: this.selectInfo.subject
+        })
+          .then(
+            response => {
+              this.dataList = response.data.resultData.records;
+              this.total = response.data.resultData.total;
+            })
+          .finally(() => {
+            this.isFetching = false
+          })
+      },
+    }
+  };
+</script>
+
+
+<style lang="less" scoped>
+  .p-syncLearnList {
+    .-search-select-text {
+      min-width: 70px;
+    }
+    .-search-selectOne {
+      width: 100px;
+      border: 1px solid #dcdee2;
+      border-radius: 4px;
+      margin-right: 20px;
+    }
+
+    .-p-text-right {
+      text-align: right;
+    }
+
+    .-t-add-icon {
+      top: 36px;
+    }
+
+    .-g-m-tip {
+      color: #b3b5b8;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .-c-tab {
+      margin: 20px 0;
+    }
+    .-c-left {
+      margin-left: 24px;
+    }
+  }
+</style>
