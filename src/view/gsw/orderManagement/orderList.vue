@@ -179,12 +179,14 @@
           {
             title: '订单号',
             key: 'id',
+            tooltip: true,
             align: 'center'
           },
           {
             title: '教材名称',
-            tooltip: true,
-            key: 'courseName',
+            render: (h, params) => {
+              return h('div', params.row.orderMode === 5 ? params.row.tagName : params.row.courseName)
+            },
             align: 'center'
           },
           {
@@ -211,11 +213,13 @@
           {
             title: '用户昵称',
             key: 'nickName',
+            tooltip: true,
             align: 'center'
           },
           {
             title: '手机号码',
             key: 'phone',
+            tooltip: true,
             align: 'center'
           },
           {
