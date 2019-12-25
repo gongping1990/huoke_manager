@@ -1,17 +1,12 @@
 <template>
   <div class="p-articleManager">
     <Card>
-      <Row class="-t-header" style="height: 100%">
-        <Col :span="24">
-          <path-record-sp :data-prop="detailInfo"></path-record-sp>
-        </Col>
-      </Row>
       <div class="g-flex-j-sa -p-a-tree">
-        <Col :span="4" class="g-t-left -p-a-left" v-if="detailInfo.type == '2'">
+        <Col :span="4" class="g-t-left -p-a-left">
           <Tree :data="treeList" @on-select-change="changeTree" class="-p-a-l-t"></Tree>
         </Col>
-        <Col :span="detailInfo.type == '2' ? 20 : 24">
-          <managerArticleList ref="childMethod" :columnId="columnId" :nodeData="nodeData"></managerArticleList>
+        <Col :span="20">
+          <managerArticleList ref="childMethod" :columnInfo="columnId"></managerArticleList>
         </Col>
       </div>
     </Card>
@@ -20,41 +15,71 @@
 
 <script>
   import managerArticleList from "./articleLis";
-  import PathRecordSp from "@/components/tree/pathRecordSp";
 
   export default {
     name: 'articleManager',
-    components: {PathRecordSp, managerArticleList},
+    components: {managerArticleList},
     data() {
       return {
         detailInfo: this.$route.query,
+        treeList: [],
         columnId: '',
-        nodeData: '',
-      }
-    },
-    computed: {
-      treeList() {
-        let list = []
-        list.unshift({
-          title: this.detailInfo.columnName,
-          id: this.detailInfo.columnId,
-          expand: true,
-          selected: true,
-          children: JSON.parse(localStorage.getItem('columnList'))
-        })
-        return list
       }
     },
     mounted() {
-      this.columnId = this.detailInfo.columnId
+      this.initTree()
     },
     methods: {
+      initTree () {
+        this.getTreeList()
+      },
+      getTreeList() {
+        this.isFetching = true
+        this.$api.hkywhdMaterial[this.detailInfo.urlList]({
+          subject: this.detailInfo.subject,
+        })
+          .then(
+            response => {
+              let array = []
+              let arrayChild = []
+              for (let list of response.data.resultData) {
+
+                arrayChild = []
+
+                if (list.subCategoryName) {
+                  for (let item of list.subCategoryName) {
+                    arrayChild.push({
+                      firstName: list.categoryName,
+                      title: item,
+                      isFirst: false,
+                    })
+                  }
+                }
+
+                array.push({
+                  firstName: list.categoryName,
+                  title: list.categoryName,
+                  isFirst: true,
+                  children: arrayChild
+                })
+              }
+              this.treeList.unshift({
+                title: this.detailInfo.columnName,
+                id: this.detailInfo.columnId,
+                expand: true,
+                selected: true,
+                children: array
+              })
+            })
+          .finally(() => {
+            this.isFetching = false
+          })
+      },
       changeTree(data) {
-        this.columnId = data[0].id
-        this.nodeData = data[0]
+        this.columnId = data.length && data[0]
 
         setTimeout(() => {
-          this.$refs.childMethod.getList()
+          data.length && this.$refs.childMethod.getList(1)
         }, 0)
       }
     }

@@ -28,7 +28,7 @@
 
   export default {
     name: 'managerArticleList',
-    props: ['columnId', 'nodeData'],
+    props: ['columnInfo'],
     data() {
       return {
         tab: {
@@ -37,21 +37,16 @@
           pageSize: 10
         },
         dataList: [],
-        radioList: [],
-        columnList: '',
         selectInfo: '1',
         searchInfo: {},
         total: 0,
-        radioType: '',
         isFetching: false,
-        sortNum: '',
-        jumpType: this.$route.query.type,
-        level: this.$route.query.level,
-        columnName: this.$route.query.columnName,
+        detailInfo: this.$route.query,
         columns: [
           {
             title: '标题',
-            key: 'title'
+            align: 'center',
+            key: 'name'
           },
           {
             title: '排序值',
@@ -72,34 +67,31 @@
       };
     },
     mounted() {
-      this.getList()
+      // this.getList()
     },
     methods: {
-      initData() {
-        this.columnList = this.nodeData.children
-      },
       currentChange(val) {
         this.tab.page = val;
         this.getList();
       },
       //分页查询
       getList(num) {
-        this.initData()
         this.isFetching = true
         if (num) {
           this.tab.currentPage = 1
         }
-
-        this.$api.wzjh.articleList({
+        this.$api.hkywhdMaterial[this.detailInfo.urlDetail]({
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
-          title: this.searchInfo.nickname,
-          categoryId: this.jumpType == '2' ? (this.columnId || this.$route.query.columnId) : this.radioType
+          categoryName: this.columnInfo.firstName,
+          subject: this.detailInfo.subject,
+          name: this.searchInfo.nickname,
+          subCategoryName: this.columnInfo.isFirst ?  '' : this.columnInfo.title
         })
           .then(
             response => {
-              this.dataList = response.data.resultData.records;
-              this.total = response.data.resultData.total;
+              this.dataList = response.data.resultData.records
+              this.total = response.data.resultData.total
             })
           .finally(() => {
             this.isFetching = false

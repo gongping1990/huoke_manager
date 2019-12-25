@@ -34,24 +34,24 @@
         subjectList: [
           {
             name: '语文',
-            key: '1'
+            key: 1
           },
-          {
-            name: '数学',
-            key: '2'
-          },
+          // {
+          //   name: '数学',
+          //   key: '2'
+          // },
           {
             name: '英语',
-            key: '3'
+            key: 3
           }
         ],
         tab: {
           page: 1,
           pageSize: 10
         },
-        dataList: [],
         total: 0,
-        selectInfo: localStorage.nowRadioType || '1',
+        dataList: [],
+        selectInfo: 1,
         isFetching: false,
         isSending: false,
         addInfo: {},
@@ -63,11 +63,8 @@
           },
           {
             title: '下属栏目',
-            render: (h,params)=> {
-              return h('div', params.row.childLevel == '0' ? '无' : `${params.row.childLevel}级`)
-            },
             align: 'center',
-            key: 'creatTime'
+            key: 'columnNum'
           },
           {
             title: '操作',
@@ -94,26 +91,23 @@
           }
         ]
       }
-        ;
     },
     computed: {},
     mounted() {
       this.getList()
     },
     methods: {
-      goJump(item1) {
+      goJump(item) {
         this.$router.push({
           name: 'hkywhd_column_act',
           query: {
-            type: '2',
-            level: item1.childLevel,
-            subject: this.subjectList[this.selectInfo - 1].name,
-            columnId: item1.id,
-            columnName: item1.title
+            columnId: item.id,
+            subject: item.subject,
+            columnName: item.title,
+            urlList: item.urlList,
+            urlDetail: item.urlDetail,
           }
         })
-        localStorage.setItem('nowRadioType', this.selectInfo)
-        localStorage.setItem('columnList', JSON.stringify(item1.children))
       },
       currentChange(val) {
         this.tab.page = val;
@@ -121,20 +115,91 @@
       },
       //分页查询
       getList() {
-        this.isFetching = true
-        this.$api.wzjh.columnList({
-          subject: this.selectInfo,
-          current: this.tab.page,
-          size: this.tab.pageSize
-        })
-          .then(
-            response => {
-              this.dataList = response.data.resultData;
-              this.total = response.data.resultData.total;
-            })
-          .finally(() => {
-            this.isFetching = false
-          })
+        // this.isFetching = true
+        // this.$api.wzjh.columnList({
+        //   subject: this.selectInfo,
+        //   current: this.tab.page,
+        //   size: this.tab.pageSize
+        // })
+        //   .then(
+        //     response => {
+        //       this.dataList = response.data.resultData;
+        //       this.total = response.data.resultData.total;
+        //     })
+        //   .finally(() => {
+        //     this.isFetching = false
+        //   })
+        if (this.selectInfo === 1) {
+          this.dataList = [
+            {
+              id: '1',
+              urlList: 'getCompositionMaterialCategory',
+              urlDetail: 'getCompositionMaterial',
+              subject: '1',
+              title: '作文素材',
+              columnNum: '2',
+            },
+            {
+              id: '2',
+              urlList: 'getChengyuCategory',
+              urlDetail: 'getChengyu',
+              subject: '1',
+              title: '成语大全',
+              columnNum: '2',
+            },
+            {
+              id: '3',
+              urlList: 'getRiddleCategory',
+              urlDetail: 'getRiddle',
+              subject: '1',
+              title: '谜语大全',
+              columnNum: '1',
+            },
+            {
+              id: '4',
+              urlList: 'getDrawTutorialCategory',
+              urlDetail: 'getDrawTutorial',
+              subject: '1',
+              title: '简笔画',
+              columnNum: '1',
+            }
+          ]
+        } else {
+          this.dataList = [
+            {
+              id: '5',
+              urlList: 'getLetter',
+              urlDetail: '',
+              subject: '3',
+              title: '音标发音',
+              columnNum: '无',
+            },
+            {
+              id: '6',
+              urlList: 'getPhonetic',
+              urlDetail: '',
+              subject: '3',
+              title: '26个字母',
+              columnNum: '无',
+            },
+            {
+              id: '7',
+              urlList: 'getGrammarCategory',
+              urlDetail: 'getGrammar',
+              subject: '3',
+              title: '语法大全',
+              columnNum: '1',
+            },
+            {
+              id: '8',
+              urlList: 'getCompositionMaterialCategory',
+              urlDetail: 'getCompositionMaterial',
+              subject: '3',
+              title: '英语作文',
+              columnNum: '1',
+            }
+          ]
+        }
       },
     }
   };

@@ -36,6 +36,21 @@
       width="800"
       title="数据详情">
 
+      <Row class="g-search">
+        <Col :span="12">
+          <div class="g-flex-a-j-center">
+            <div class="-search">
+              <Select v-model="selectInfo.name" class="-search-select">
+                <Option value="1">标题</Option>
+              </Select>
+              <span class="-search-center">|</span>
+              <Input v-model="selectInfo.title" class="-search-input" placeholder="请输入关键字" icon="ios-search"
+                     @on-click="getList(1)"></Input>
+            </div>
+          </div>
+        </Col>
+      </Row>
+
       <Table class="-c-tab" :loading="isFetching" :columns="columnsTwo" :data="detailList"></Table>
 
       <Page class="g-text-right" :total="totalDetail" size="small" show-elevator :page-size="tabDetail.pageSize"
@@ -63,12 +78,15 @@
         },
         selectInfo: {
           grade: '1',
-          subject: '1'
+          subject: '1',
+          name: '1',
+          title: ''
         },
         dataList: [],
         detailList: [],
         total: 0,
         totalDetail: 0,
+        dataItem: '',
         isFetching: false,
         isOpenModal: false,
         gradeList: [
@@ -102,21 +120,16 @@
             name: '语文',
             key: '1'
           },
-          {
-            name: '数学',
-            key: '2'
-          },
+          // {
+          //   name: '数学',
+          //   key: '2'
+          // },
           {
             name: '英语',
             key: '3'
           }
         ],
         columns: [
-          {
-            title: '学科',
-            key: 'name',
-            align: 'center'
-          },
           {
             title: '教材名称',
             key: 'name',
@@ -125,7 +138,7 @@
           {
             title: '教材版本',
             render: (h, params) => {
-              return h('div', this.teachVersion[params.row.teachEdition - 1].name)
+              return h('div', params.row.teachEdition && this.teachVersion[params.row.teachEdition - 1].name)
             },
             align: 'center'
           },
@@ -133,7 +146,7 @@
             title: '适用年级 (学期)',
             key: 'gradeText',
             render: (h, params) => {
-              return h('div', `${this.gradeList[params.row.grade - 1].name} (${this.semesterList[params.row.term - 1].name})`)
+              return h('div', `${this.gradeList[params.row.grade - 1].name} (${params.row.semester === 1 ? '上册' : '下册'})`)
             },
             align: 'center'
           },
@@ -193,22 +206,45 @@
       },
       toChapter (data) {
         this.isOpenModal = true
+        this.dataItem = data
+        this.getDetailList()
       },
       getList(num) {
         this.isFetching = true
-        if (num) {
-          this.tab.currentPage = 1
-        }
-        this.$api.wzjh.teachingList({
-          current: num ? num : this.tab.page,
-          size: this.tab.pageSize,
+        // if (num) {
+        //   this.tab.currentPage = 1
+        // }
+        this.$api.hkywhdMaterial.getMaterialCategory({
+          // current: num ? num : this.tab.page,
+          // size: this.tab.pageSize,
           grade: this.selectInfo.grade,
           subject: this.selectInfo.subject
         })
           .then(
             response => {
-              this.dataList = response.data.resultData.records;
-              this.total = response.data.resultData.total;
+              this.dataList = response.data.resultData;
+              // this.total = response.data.resultData.total;
+            })
+          .finally(() => {
+            this.isFetching = false
+          })
+      },
+      getDetailList(num) {
+        this.isFetching = true
+        if (num) {
+          this.tabDetail.currentPage = 1
+        }
+
+        this.$api.hkywhdMaterial.getArticleData({
+          current: num ? num : this.tabDetail.page,
+          size: this.tabDetail.pageSize,
+          categoryId: this.dataItem.id,
+          name: this.selectInfo.title
+        })
+          .then(
+            response => {
+              this.dataList = response.data.resultData;
+              // this.total = response.data.resultData.total;
             })
           .finally(() => {
             this.isFetching = false

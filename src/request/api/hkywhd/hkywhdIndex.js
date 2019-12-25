@@ -10,6 +10,7 @@ import hkywhdInvestmanage from "./investmanage";
 import hkywhdTextbook from "./textbook";
 import hkywhdTextlesson from "./textlesson";
 import hkywhdHomePage from "./homePage";
+import hkywhdMaterial from "./material";
 
 
 export const hkywhdIndex = {
@@ -24,5 +25,6 @@ export const hkywhdIndex = {
   hkywhdInvestmanage,
   hkywhdTextbook,
   hkywhdTextlesson,
-  hkywhdHomePage
+  hkywhdHomePage,
+  hkywhdMaterial
 }
