@@ -20,6 +20,24 @@ const tbzwRules = {
   getLessonRulesByUser(params) {
     return axios.get("/compositionv2/rules/getLessonRulesByUser", {params: params});
   },
+  listTimeTableRules(params) {
+    return axios.get("/compositionv2/rules/listTimeTableRules", {params: params});
+  },
+  removeTimeTableRules(params) {
+    return axios.get("/compositionv2/rules/removeTimeTableRules", {params: params});
+  },
+  editTimeTableRules(params) {
+    return axios.post("/compositionv2/rules/editTimeTableRules", qs.stringify(params));
+  },
+  pageUserTtr(params) {
+    return axios.get("/compositionv2/rules/pageUserTtr", {params: params});
+  },
+  pageUserDateTtr(params) {
+    return axios.get("/compositionv2/rules/pageUserDateTtr", {params: params});
+  },
+  switchUserTtr(params) {
+    return axios.post("/compositionv2/rules/switchUserTtr", params);
+  },
 };
 
 export default tbzwRules;

@@ -17,7 +17,14 @@
             <Input type="text" :disabled="!isEdit" v-model="addInfo.courseDescribe" placeholder="请输入课程描述"></Input>
           </FormItem>
           <FormItem label="课时节数" prop="lessonDescribe">
-            <Input type="text" :disabled="!isEdit" v-model="addInfo.lessonDescribe" placeholder="请输入课时节数"></Input>
+            <InputNumber type="text" :disabled="!isEdit" v-model="addInfo.lessonDescribe" placeholder="请输入课时节数"></InputNumber>
+          </FormItem>
+          <FormItem label="排课规则" class="ivu-form-item-required">
+            <RadioGroup v-model="addInfo.hasgift">
+              <Radio label="0">每日上课</Radio>
+              <Radio label="1">每周自定义上课</Radio>
+              <Radio label="2">配置日期上课</Radio>
+            </RadioGroup>
           </FormItem>
           <FormItem label="单独购价格" prop="alonePrice">
             <InputNumber  style="width: 100%;" type="text" :disabled="addInfo.id !=''" v-model="addInfo.alonePrice" :min="0"
@@ -254,7 +261,7 @@
           courseDescribe: '',
           alonePrice: 999,
           groupPrice: 999,
-          lessonDescribe: '',
+          lessonDescribe: null,
           consultPhone: null,
           formTime: null,
           aloneInfo: '',
@@ -285,7 +292,7 @@
             {required: true, message: '请输入课程描述', trigger: 'blur'},
           ],
           lessonDescribe: [
-            {required: true, message: '请输入课时节数', trigger: 'blur'},
+            {required: true, type: 'number', message: '请输入课时节数', trigger: 'blur'},
           ],
           alonePrice: [
             {required: true, type: 'number', message: '请输入单独购价格', trigger: 'blur'},

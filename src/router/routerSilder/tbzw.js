@@ -244,11 +244,20 @@ export const tbzwRouter =[
         name: 'tbzw_timetableAdjustment',
         meta: [
           {name: '正式课管理'},
+          {name: '排课管理', url:'tbzw_timetableManagement'},
           {name: '排课调整'}
         ],
         component: () => import('@/view/tbzw/timetableAdjustment/timetableAdjustment')
       },
-
+      {
+        path: '/tbzw_timetableManagement',
+        name: 'tbzw_timetableManagement',
+        meta: [
+          {name: '正式课管理'},
+          {name: '排课管理'}
+        ],
+        component: () => import('@/view/tbzw/timetableManagement/timetableManagement')
+      }
     ]
   },
   {
