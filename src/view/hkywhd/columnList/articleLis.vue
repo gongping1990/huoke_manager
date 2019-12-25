@@ -46,7 +46,9 @@
           {
             title: '标题',
             align: 'center',
-            key: 'name'
+            render: (h, param)=> {
+              return h('div', param.row.name || param.row.title)
+            }
           },
           {
             title: '排序值',
@@ -67,7 +69,11 @@
       };
     },
     mounted() {
-      // this.getList()
+
+      if (this.detailInfo.columnNum === '0') {
+        this.getList()
+      }
+
     },
     methods: {
       currentChange(val) {
@@ -90,8 +96,12 @@
         })
           .then(
             response => {
-              this.dataList = response.data.resultData.records
-              this.total = response.data.resultData.total
+              if (this.detailInfo.columnNum === '0') {
+                this.dataList = response.data.resultData
+              } else {
+                this.dataList = response.data.resultData.records
+                this.total = response.data.resultData.total
+              }
             })
           .finally(() => {
             this.isFetching = false

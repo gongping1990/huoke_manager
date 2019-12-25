@@ -45,7 +45,7 @@
               </Select>
               <span class="-search-center">|</span>
               <Input v-model="selectInfo.title" class="-search-input" placeholder="请输入关键字" icon="ios-search"
-                     @on-click="getList(1)"></Input>
+                     @on-click="getDetailList(1)"></Input>
             </div>
           </div>
         </Col>
@@ -181,12 +181,12 @@
           },
           {
             title: '排序值',
-            key: 'name',
+            key: 'sort',
             align: 'center'
           },
           {
             title: '播放量',
-            key: 'name',
+            key: 'readTime',
             align: 'center'
           }
         ],
@@ -202,9 +202,10 @@
       },
       detailCurrentChange(val) {
         this.tabDetail.page = val;
-        this.getList();
+        this.getDetailList();
       },
       toChapter (data) {
+        this.selectInfo.title = ''
         this.isOpenModal = true
         this.dataItem = data
         this.getDetailList()
@@ -243,8 +244,8 @@
         })
           .then(
             response => {
-              this.dataList = response.data.resultData;
-              // this.total = response.data.resultData.total;
+              this.detailList = response.data.resultData.records;
+              this.totalDetail = response.data.resultData.total;
             })
           .finally(() => {
             this.isFetching = false

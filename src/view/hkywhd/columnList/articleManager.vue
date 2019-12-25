@@ -31,7 +31,16 @@
     },
     methods: {
       initTree () {
-        this.getTreeList()
+        if (this.detailInfo.urlList) {
+          this.getTreeList()
+        } else {
+          this.treeList.unshift({
+            title: this.detailInfo.columnName,
+            expand: true,
+            selected: true,
+            children: []
+          })
+        }
       },
       getTreeList() {
         this.isFetching = true

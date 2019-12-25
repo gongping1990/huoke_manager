@@ -64,6 +64,9 @@
           {
             title: '下属栏目',
             align: 'center',
+            render: (h, params)=> {
+              return h('div', params.row.columnNum === '0' ? '无' : params.row.columnNum)
+            },
             key: 'columnNum'
           },
           {
@@ -104,6 +107,7 @@
             columnId: item.id,
             subject: item.subject,
             columnName: item.title,
+            columnNum: item.columnNum,
             urlList: item.urlList,
             urlDetail: item.urlDetail,
           }
@@ -168,19 +172,19 @@
           this.dataList = [
             {
               id: '5',
-              urlList: 'getLetter',
-              urlDetail: '',
+              urlList: '',
+              urlDetail: 'getLetter',
               subject: '3',
               title: '音标发音',
-              columnNum: '无',
+              columnNum: '0',
             },
             {
               id: '6',
-              urlList: 'getPhonetic',
-              urlDetail: '',
+              urlList: '',
+              urlDetail: 'getPhonetic',
               subject: '3',
               title: '26个字母',
-              columnNum: '无',
+              columnNum: '0',
             },
             {
               id: '7',
