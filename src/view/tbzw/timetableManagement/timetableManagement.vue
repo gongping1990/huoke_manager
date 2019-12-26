@@ -12,7 +12,7 @@
         </Row>
 
         <Row class="g-t-left g-tab">
-          <Radio-group v-model="radioType" type="button" @on-change="getList">
+          <Radio-group v-model="radioType" type="button" @on-change="getList(1)">
             <Radio :label=1>独立排课</Radio>
             <Radio :label=2>公共排课</Radio>
           </Radio-group>

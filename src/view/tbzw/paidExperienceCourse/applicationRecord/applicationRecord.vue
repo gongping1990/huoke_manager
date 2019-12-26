@@ -90,6 +90,18 @@
             </div>
           </Col>
         </Row>
+
+        <Row style="margin-top: 29px">
+
+          <Col :span="5" class="g-t-left">
+            <div class="g-flex-a-j-center">
+              <div class="-search-select-text">是否完课</div>
+              <Select v-model="searchInfo.finishedStudy" @on-change="getList()" class="-search-selectOne">
+                <Option v-for="(item,index) in visitedStatusList" :label="item.name" :value="item.id" :key="index"></Option>
+              </Select>
+            </div>
+          </Col>
+        </Row>
       </Row>
 
       <Table class="g-tab" :loading="isFetching" :columns="columns" :data="dataList"></Table>
@@ -213,6 +225,7 @@
           useMa: '-1',
           subcribeMp: '-1',
           reserved: '-1',
+          finishedStudy: '-1',
           sortType: '0'
         },
         isFetching: false,
@@ -315,6 +328,24 @@
                   }
                 }
               },`${p.row.studyed ? '是' : '否'}(${p.row.studys})`)
+            },
+            width: 120,
+            align: 'center'
+          },
+          {
+            title: '是否完课',
+            render: (h,p)=> {
+              return h('div',{
+                style: {
+                  cursor: 'pointer',
+                  color: '#5444E4'
+                },
+                on: {
+                  click: () => {
+                    this.openModal(p.row)
+                  }
+                }
+              },`${p.row.finishedStudy ? '是' : '否'}(${p.row.finishedStudyNumber})`)
             },
             width: 120,
             align: 'center'
@@ -438,6 +469,11 @@
             align: 'center'
           },
           {
+            title: '首次完成完课时间',
+            key: 'studyTime',
+            align: 'center'
+          },
+          {
             title: '最后交作业时间',
             key: 'homeworkTime',
             align: 'center'
@@ -520,6 +556,7 @@
           subcribeMp: this.searchInfo.subcribeMp == '-1' ? '' : this.searchInfo.subcribeMp,
           useMa: this.searchInfo.useMa == '-1' ? '' : this.searchInfo.useMa,
           reserved: this.searchInfo.reserved == '-1' ? '' : this.searchInfo.reserved,
+          finishedStudy: this.searchInfo.finishedStudy == '-1' ? '' : this.searchInfo.finishedStudy,
           sortType: this.searchInfo.sortType,
           timeType: this.searchInfo.timeType,
           startTime: this.searchInfo.getStartTime ? new Date(this.searchInfo.getStartTime).getTime() : "",
