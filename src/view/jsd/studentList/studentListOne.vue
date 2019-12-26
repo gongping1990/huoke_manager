@@ -13,7 +13,7 @@
         <Col :span="6">
           <div class="-search">
             <Select v-model="selectInfo" class="-search-select">
-              <Option value="1">用户昵称</Option>
+              <!--<Option value="1">用户昵称</Option>-->
               <Option value="2">手机号码</Option>
             </Select>
             <span class="-search-center">|</span>
@@ -26,7 +26,7 @@
         <Col :span="6" class="g-t-left">
           <div class="g-flex-a-j-center">
             <div class="-search-select-text">当前是否上课：</div>
-            <Select v-model="searchInfo.courseId" @on-change="getList(1)" class="-search-selectOne">
+            <Select v-model="searchInfo.currentLearned" @on-change="getList(1)" class="-search-selectOne">
               <Option v-for="item of selectList" :label=item.name :value=item.id :key="item.id"></Option>
             </Select>
           </div>
@@ -34,7 +34,7 @@
         <Col :span="6" class="g-t-left">
           <div class="g-flex-a-j-center">
             <div class="-search-select-text">当前是否完课：</div>
-            <Select v-model="searchInfo.pay" @on-change="changeEmit()" class="-search-selectOne">
+            <Select v-model="searchInfo.currentCompleted" @on-change="changeEmit()" class="-search-selectOne">
               <Option v-for="(item,index) in selectList" :label="item.name" :value="item.id" :key="index"></Option>
             </Select>
           </div>
@@ -42,7 +42,7 @@
         <Col :span="6" class="g-t-left">
           <div class="g-flex-a-j-center">
             <div class="-search-select-text">当前是否交作业：</div>
-            <Select v-model="searchInfo.pay" @on-change="changeEmit()" class="-search-selectOne">
+            <Select v-model="searchInfo.currentHomeworked" @on-change="changeEmit()" class="-search-selectOne">
               <Option v-for="(item,index) in selectList" :label="item.name" :value="item.id" :key="index"></Option>
             </Select>
           </div>
@@ -52,7 +52,7 @@
         <Col :span="6" class="g-t-left">
           <div class="g-flex-a-j-center">
             <div class="-search-select-text">是否全部上课：</div>
-            <Select v-model="searchInfo.courseId" @on-change="getList(1)" class="-search-selectOne">
+            <Select v-model="searchInfo.allLearned" @on-change="getList(1)" class="-search-selectOne">
               <Option v-for="item of selectList" :label=item.name :value=item.id :key="item.id"></Option>
             </Select>
           </div>
@@ -60,7 +60,7 @@
         <Col :span="6" class="g-t-left">
           <div class="g-flex-a-j-center">
             <div class="-search-select-text">是否全部完课：</div>
-            <Select v-model="searchInfo.pay" @on-change="changeEmit()" class="-search-selectOne">
+            <Select v-model="searchInfo.allCompleted" @on-change="changeEmit()" class="-search-selectOne">
               <Option v-for="(item,index) in selectList" :label="item.name" :value="item.id" :key="index"></Option>
             </Select>
           </div>
@@ -68,7 +68,7 @@
         <Col :span="6" class="g-t-left">
           <div class="g-flex-a-j-center">
             <div class="-search-select-text">是否全部交作业：</div>
-            <Select v-model="searchInfo.pay" @on-change="changeEmit()" class="-search-selectOne">
+            <Select v-model="searchInfo.allHomeworked" @on-change="changeEmit()" class="-search-selectOne">
               <Option v-for="(item,index) in selectList" :label="item.name" :value="item.id" :key="index"></Option>
             </Select>
           </div>
@@ -102,7 +102,13 @@
           currentPage: 1
         },
         searchInfo: {
-          courseId: ''
+          courseId: '',
+          allCompleted: '-1',
+          allHomeworked: '-1',
+          allLearned: '-1',
+          currentCompleted: '-1',
+          currentHomeworked: '-1',
+          currentLearned: '-1',
         },
         selectList: [
           {
@@ -118,7 +124,7 @@
             name: '否',
           }
         ],
-        selectInfo: '1',
+        selectInfo: '2',
         dataList: [],
         courseList: [],
         detailInfo: {},
@@ -160,47 +166,56 @@
           },
           {
             title: '开课日期',
-            key: 'nickname',
+            render: (h, params) => {
+              return h('div', dayjs(+params.row.activeDate).format('YYYY-MM-DD HH:mm'))
+            },
+            key: 'activeDate',
             align: 'center'
           },
           {
             title: '排课数',
-            key: 'relationText',
+            key: 'schedulLessonNum',
             align: 'center'
           },
           {
             title: '上课数',
-            key: 'gradeText',
+            key: 'learnedNum',
             align: 'center'
           },
           {
             title: '完课数',
-            key: 'nickname',
+            key: 'completedNum',
             align: 'center'
           },
           {
             title: '交作业数',
-            key: 'relationText',
+            key: 'homeworkNum',
             align: 'center'
           },
           {
             title: '当前排课',
-            key: 'gradeText',
+            key: 'currentLessonName',
             align: 'center'
           },
           {
             title: '当前是否上课',
-            key: 'nickname',
+            render: (h, params) => {
+              return h('div', params.row.currentLearned ? '是' : '否')
+            },
             align: 'center'
           },
           {
             title: '当前是否完课',
-            key: 'relationText',
+            render: (h, params) => {
+              return h('div', params.row.currentCompleted ? '是' : '否')
+            },
             align: 'center'
           },
           {
             title: '当前是否交作业',
-            key: 'gradeText',
+            render: (h, params) => {
+              return h('div', params.row.currentHomeworked ? '是' : '否')
+            },
             align: 'center'
           },
           {
@@ -262,7 +277,13 @@
         let params = {
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
-          courseId: this.searchInfo.courseId
+          courseId: this.searchInfo.courseId,
+          allCompleted: this.searchInfo.allCompleted === '-1' ? '' : this.searchInfo.allCompleted === '1' ,
+          allHomeworked: this.searchInfo.allHomeworked === '-1' ? '' : this.searchInfo.allHomeworked === '1',
+          allLearned: this.searchInfo.allLearned === '-1' ? '' : this.searchInfo.allLearned === '1',
+          currentCompleted: this.searchInfo.currentCompleted === '-1' ? '' : this.searchInfo.currentCompleted === '1',
+          currentHomeworked: this.searchInfo.currentHomeworked === '-1' ? '' : this.searchInfo.currentHomeworked === '1',
+          currentLearned: this.searchInfo.currentLearned === '-1' ? '' : this.searchInfo.currentLearned === '1',
         }
 
         if (this.selectInfo == '1' && this.searchInfo) {
