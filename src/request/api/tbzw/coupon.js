@@ -14,6 +14,9 @@ const tbzwCoupon = {
   editCouponConfig(params) {
     return axios.post("/compositionv2/coupon/editCouponConfig", qs.stringify(params));
   },
+  getCouponUserDetais(params) {
+    return axios.get("/compositionv2/coupon/getCouponUserDetais", {params: params});
+  },
 };
 
 export default tbzwCoupon;

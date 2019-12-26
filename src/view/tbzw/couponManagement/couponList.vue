@@ -128,6 +128,8 @@
       title="数据详情">
       <Table class="-c-tab" :loading="isFetching" :columns="columnsModal" :data="detailList"></Table>
     </Modal>
+
+    <coupon-log-template v-model="isOpenModalLog" :couponId="dataItem"></coupon-log-template>
   </div>
 </template>
 
@@ -136,10 +138,11 @@
   import {getBaseUrl} from '@/libs/index'
   import DatePickerTemplate from "../../../components/datePickerTemplate";
   import UploadImg from "../../../components/uploadImg";
+  import CouponLogTemplate from "./couponLogTemplate";
 
   export default {
     name: 'flashScreen',
-    components: {UploadImg, DatePickerTemplate},
+    components: {CouponLogTemplate, UploadImg, DatePickerTemplate},
     data() {
       return {
         baseUrl: `${getBaseUrl()}/sch/common/uploadPublicFile`,
@@ -186,6 +189,7 @@
         isFetching: false,
         isOpenModal: false,
         isOpenModalDetail: false,
+        isOpenModalLog: false,
         isSending: false,
         addInfo: {},
         dataItem: {},
@@ -231,6 +235,7 @@
           {
             title: '优惠券名称',
             key: 'couponName',
+            tooltip: true,
             align: 'center'
           },
           {
@@ -264,12 +269,36 @@
           },
           {
             title: '已领取',
-            key: 'receives',
+            render: (h,p)=> {
+              return h('div',{
+                style: {
+                  cursor: 'pointer',
+                  color: '#5444E4'
+                },
+                on: {
+                  click: () => {
+                    this.openModalLog(p.row,1)
+                  }
+                }
+              }, p.row.receives)
+            },
             align: 'center'
           },
           {
             title: '已使用',
-            key: 'uses',
+            render: (h,p)=> {
+              return h('div',{
+                style: {
+                  cursor: 'pointer',
+                  color: '#5444E4'
+                },
+                on: {
+                  click: () => {
+                    this.openModalLog(p.row,2)
+                  }
+                }
+              }, p.row.uses)
+            },
             align: 'center'
           },
           {
@@ -410,6 +439,10 @@
       this.getList()
     },
     methods: {
+      openModalLog (data) {
+        this.dataItem = data.id
+        this.isOpenModalLog = true
+      },
       openModalDetail(data) {
         this.dataItem = data
         this.isOpenModalDetail = true

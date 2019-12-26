@@ -6,19 +6,71 @@
           <div class="g-flex-a-j-center">
             <div class="-search-select-text-two">课程名称：</div>
             <Select v-model="searchInfo.courseId" @on-change="getList(1)" class="-search-selectOne">
-              <Option v-for="item of courseList" :label=item.name :value=item.id :key="item.id" ></Option>
+              <Option v-for="item of courseList" :label=item.name :value=item.id :key="item.id"></Option>
             </Select>
           </div>
         </Col>
         <Col :span="6">
           <div class="-search">
             <Select v-model="selectInfo" class="-search-select">
-              <!--<Option value="1">用户昵称</Option>-->
+              <Option value="1">用户昵称</Option>
               <Option value="2">手机号码</Option>
             </Select>
             <span class="-search-center">|</span>
             <Input v-model="searchInfo.manner" class="-search-input" placeholder="请输入关键字" icon="ios-search"
                    @on-click="getList(1)"></Input>
+          </div>
+        </Col>
+      </Row>
+      <Row class="g-search g-tab">
+        <Col :span="6" class="g-t-left">
+          <div class="g-flex-a-j-center">
+            <div class="-search-select-text">当前是否上课：</div>
+            <Select v-model="searchInfo.courseId" @on-change="getList(1)" class="-search-selectOne">
+              <Option v-for="item of selectList" :label=item.name :value=item.id :key="item.id"></Option>
+            </Select>
+          </div>
+        </Col>
+        <Col :span="6" class="g-t-left">
+          <div class="g-flex-a-j-center">
+            <div class="-search-select-text">当前是否完课：</div>
+            <Select v-model="searchInfo.pay" @on-change="changeEmit()" class="-search-selectOne">
+              <Option v-for="(item,index) in selectList" :label="item.name" :value="item.id" :key="index"></Option>
+            </Select>
+          </div>
+        </Col>
+        <Col :span="6" class="g-t-left">
+          <div class="g-flex-a-j-center">
+            <div class="-search-select-text">当前是否交作业：</div>
+            <Select v-model="searchInfo.pay" @on-change="changeEmit()" class="-search-selectOne">
+              <Option v-for="(item,index) in selectList" :label="item.name" :value="item.id" :key="index"></Option>
+            </Select>
+          </div>
+        </Col>
+      </Row>
+      <Row class="g-search g-tab">
+        <Col :span="6" class="g-t-left">
+          <div class="g-flex-a-j-center">
+            <div class="-search-select-text">是否全部上课：</div>
+            <Select v-model="searchInfo.courseId" @on-change="getList(1)" class="-search-selectOne">
+              <Option v-for="item of selectList" :label=item.name :value=item.id :key="item.id"></Option>
+            </Select>
+          </div>
+        </Col>
+        <Col :span="6" class="g-t-left">
+          <div class="g-flex-a-j-center">
+            <div class="-search-select-text">是否全部完课：</div>
+            <Select v-model="searchInfo.pay" @on-change="changeEmit()" class="-search-selectOne">
+              <Option v-for="(item,index) in selectList" :label="item.name" :value="item.id" :key="index"></Option>
+            </Select>
+          </div>
+        </Col>
+        <Col :span="6" class="g-t-left">
+          <div class="g-flex-a-j-center">
+            <div class="-search-select-text">是否全部交作业：</div>
+            <Select v-model="searchInfo.pay" @on-change="changeEmit()" class="-search-selectOne">
+              <Option v-for="(item,index) in selectList" :label="item.name" :value="item.id" :key="index"></Option>
+            </Select>
           </div>
         </Col>
       </Row>
@@ -52,6 +104,20 @@
         searchInfo: {
           courseId: ''
         },
+        selectList: [
+          {
+            id: '-1',
+            name: '全部'
+          },
+          {
+            id: '1',
+            name: '是',
+          },
+          {
+            id: '0',
+            name: '否',
+          }
+        ],
         selectInfo: '1',
         dataList: [],
         courseList: [],
@@ -62,6 +128,8 @@
         columns: [
           {
             title: '用户头像/昵称',
+            width: 200,
+            align: 'center',
             render: (h, params) => {
               return h('div', {
                 style: {
@@ -86,29 +154,52 @@
           },
           {
             title: '电话',
+            tooltip: true,
             key: 'phone',
             align: 'center'
           },
           {
-            title: '孩子昵称',
+            title: '开课日期',
             key: 'nickname',
             align: 'center'
           },
           {
-            title: '孩子性别',
-            key: 'sex',
-            render: (h, params)=> {
-              return h('span', params.row.sex === null ? '' : params.row.sex ? '男' : '女')
-            },
-            align: 'center'
-          },
-          {
-            title: '与孩子关系',
+            title: '排课数',
             key: 'relationText',
             align: 'center'
           },
           {
-            title: '在读年级',
+            title: '上课数',
+            key: 'gradeText',
+            align: 'center'
+          },
+          {
+            title: '完课数',
+            key: 'nickname',
+            align: 'center'
+          },
+          {
+            title: '交作业数',
+            key: 'relationText',
+            align: 'center'
+          },
+          {
+            title: '当前排课',
+            key: 'gradeText',
+            align: 'center'
+          },
+          {
+            title: '当前是否上课',
+            key: 'nickname',
+            align: 'center'
+          },
+          {
+            title: '当前是否完课',
+            key: 'relationText',
+            align: 'center'
+          },
+          {
+            title: '当前是否交作业',
             key: 'gradeText',
             align: 'center'
           },
@@ -159,7 +250,7 @@
         })
           .then(response => {
             this.courseList = response.data.resultData
-            this.searchInfo.courseId =  this.courseList.length && this.courseList[0].id
+            this.searchInfo.courseId = this.courseList.length && this.courseList[0].id
             this.getList()
           })
       },
@@ -200,6 +291,9 @@
   .p-user {
     .-search-select-text-two {
       min-width: 80px;
+    }
+    .-search-select-text {
+      min-width: 120px;
     }
     .-search-selectOne {
       /*width: 100px;*/

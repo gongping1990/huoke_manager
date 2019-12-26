@@ -242,8 +242,20 @@
         isOpenModalClass: false,
         columns: [
           {
+            title: '排课日期',
+            key: 'lessonName',
+            align: 'center'
+          },
+          {
             title: '课时名称',
             key: 'lessonName',
+            align: 'center'
+          },
+          {
+            title: '课时时长',
+            render: (h, params) => {
+              return h('div', params.row.avgearnTime ? dayjs(params.row.avgearnTime*1000).format('mm:ss') : 0)
+            },
             align: 'center'
           },
           {
