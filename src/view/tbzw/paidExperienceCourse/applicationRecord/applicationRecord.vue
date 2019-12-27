@@ -470,7 +470,7 @@
           },
           {
             title: '首次完成完课时间',
-            key: 'studyTime',
+            key: 'firstHomeworkTime',
             align: 'center'
           },
           {

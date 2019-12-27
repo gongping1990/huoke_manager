@@ -452,7 +452,7 @@
           uid: this.$route.query.id || this.userId,
           courseId: this.searchInfo.appId,
           current: page ? page : this.tab.page,
-          size: this.tab.pageSize
+          size: 10000
         })
           .then(
             response => {
