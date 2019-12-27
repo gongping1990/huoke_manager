@@ -166,9 +166,6 @@
           },
           {
             title: '开课日期',
-            render: (h, params) => {
-              return h('div', dayjs(+params.row.activeDate).format('YYYY-MM-DD HH:mm'))
-            },
             key: 'activeDate',
             align: 'center'
           },
