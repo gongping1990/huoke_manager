@@ -107,11 +107,17 @@
           },
           {
             title: '领取时间',
+            render: (h, params)=>{
+              return h('div', dayjs(+params.row.getTime).format('YYYY-MM-DD HH:mm'))
+            },
             key: 'getTime',
             align: 'center'
           },
           {
             title: '使用时间',
+            render: (h, params)=>{
+              return h('div', dayjs(+params.row.useTime).format('YYYY-MM-DD HH:mm'))
+            },
             key: 'useTime',
             align: 'center'
           }
