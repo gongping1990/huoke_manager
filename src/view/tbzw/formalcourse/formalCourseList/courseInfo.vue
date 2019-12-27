@@ -20,10 +20,9 @@
             <InputNumber type="text" :disabled="!isEdit" v-model="addInfo.lessonDescribe" placeholder="请输入课时节数"></InputNumber>
           </FormItem>
           <FormItem label="排课规则" class="ivu-form-item-required">
-            <RadioGroup v-model="addInfo.hasgift">
-              <Radio label="0">每日上课</Radio>
-              <Radio label="1">每周自定义上课</Radio>
-              <Radio label="2">配置日期上课</Radio>
+            <RadioGroup v-model="addInfo.wayOfTeach">
+              <Radio :label=1>每周系统排课</Radio>
+              <Radio :label=2>人工排课</Radio>
             </RadioGroup>
             <div class="-c-tips">* 更改后只对新购用户生效</div>
           </FormItem>
@@ -272,6 +271,7 @@
           coverphoto: "",
           verticalCover: "",
           hasgift: "1",
+          wayOfTeach: 1,
           type: 1,
           qrCode: "",
           imgurl: "",
