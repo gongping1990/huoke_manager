@@ -16,6 +16,7 @@
       class="p-forma-courseList"
       v-model="isOpenModal"
       @on-cancel="isOpenModal = false"
+      :footer-hide="classType === 2"
       width="700"
       title="排课设置">
       <Form :model="addInfo" :label-width="60">
