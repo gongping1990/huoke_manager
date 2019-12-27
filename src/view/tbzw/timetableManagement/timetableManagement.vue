@@ -147,7 +147,7 @@
           },
           {
             title: '转入时间',
-            key: 'rulesDes',
+            key: 'switchTime',
             tooltip: true,
             align: 'center'
           },
