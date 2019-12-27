@@ -464,12 +464,12 @@
             align: 'center'
           },
           {
-            title: '首次完成上课时间',
+            title: '首次上课',
             key: 'studyTime',
             align: 'center'
           },
           {
-            title: '首次完成完课时间',
+            title: '首次完成上课',
             key: 'firstHomeworkTime',
             align: 'center'
           },
