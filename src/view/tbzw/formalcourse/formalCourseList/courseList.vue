@@ -21,7 +21,7 @@
       <Form :model="addInfo" :label-width="60">
         <FormItem label="排课类别">
           <Radio-group v-model="classType" @on-change="changeClassType">
-            <Radio :label=1>系统每周排课</Radio>
+            <Radio :label=1>每周系统排课</Radio>
             <Radio :label=2>人工排课</Radio>
           </Radio-group>
         </FormItem>
@@ -359,7 +359,7 @@
       },
       openEdit(data) {
         this.isOpenModal = true
-        this.classType = 2
+        this.classType = 1
         this.addInfo = JSON.parse(JSON.stringify(data))
       },
       openModalSecond(data) {
