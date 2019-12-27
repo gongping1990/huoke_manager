@@ -21,14 +21,14 @@
       <Form :model="addInfo" :label-width="60">
         <FormItem label="排课类别">
           <Radio-group v-model="classType" @on-change="changeClassType">
-            <Radio :label=1>独立排课</Radio>
-            <Radio :label=2>公共排课</Radio>
+            <Radio :label=1>系统每周排课</Radio>
+            <Radio :label=2>人工排课</Radio>
           </Radio-group>
         </FormItem>
       </Form>
       <Form v-show="classType === 1" ref="addInfo" :model="addInfo" :label-width="60">
         <FormItem label="注意">
-          <span class="-c-tips">请选择每周需要排课的天数，新建立即生效，更改5分钟后生效，更改不会影响已经排出的课时</span>
+          <span class="-c-tips">请选择每周需要排课的天数，更改后只对未排课的课时生效，不会影响已排课的课时</span>
         </FormItem>
         <FormItem label="排课模式">
           <Radio-group v-model="addInfo.type" @on-change="changeRadio">
@@ -76,14 +76,18 @@
       v-model="isOpenAddModal"
       @on-cancel="isOpenAddModal = false"
       width="500"
-      :title="secondInfo.id ? '编辑公共排课' : '新增公共排课'">
+      :title="secondInfo.id ? '编辑人工排课' : '新增人工排课'">
       <Form ref="addInfo" :model="secondInfo" :label-width="50">
         <FormItem label="日期" class="ivu-form-item-required">
-          <DatePicker type="date" placeholder="请选择" :options="dateStartOption" style="width: 200px" v-model="secondInfo.studyDate"></DatePicker>
+          <DatePicker type="date" placeholder="请选择" :options="dateStartOption" style="width: 200px"
+                      v-model="secondInfo.studyDate" @on-change="changeDate"></DatePicker>
         </FormItem>
         <FormItem label="课时" class="ivu-form-item-required">
-          <Select v-model="secondInfo.lessonId" placeholder="请选择">
-            <Option v-for="item of lessonList" :label="item.name" :value="item.id" :key="item.id"></Option>
+          <Select v-model="secondInfo.lessonId" placeholder="请选择" @on-change="changeLesson"
+                  :disabled="(secondInfo.studyDate == null) || (secondInfo.studyDate == '')">
+            <Option v-for="item of lessonList"
+                    :label="item.name"
+                    :value="item.id" :key="item.id"></Option>
           </Select>
         </FormItem>
       </Form>
@@ -120,7 +124,9 @@
         addInfo: {
           type: 1
         },
-        secondInfo: {},
+        secondInfo: {
+          studyDate: null
+        },
         dateStartOption: {
           disabledDate(date) {
             return date && (new Date(date).getTime() <= new Date().getTime() - 24 * 3600 * 1000);
@@ -303,6 +309,20 @@
       this.getList()
     },
     methods: {
+      changeDate () {
+        this.secondInfo.lessonId = ''
+      },
+      changeLesson() {
+        let nowDate = dayjs(this.secondInfo.studyDate).format('YYYY-MM-DD')
+        this.lessonList.forEach(item => {
+          if (this.secondInfo.lessonId === item.id && (nowDate === dayjs(item.studyDate).format('YYYY-MM-DD'))) {
+            this.$Message.info({
+              content: `${item.name}在${nowDate}已排课，是否覆盖？覆盖后，不会影响历史时间的排课记录。`,
+              duration: 10
+            })
+          }
+        })
+      },
       changeClassType() {
         if (this.classType === 2) {
           this.listTimeTableRules()

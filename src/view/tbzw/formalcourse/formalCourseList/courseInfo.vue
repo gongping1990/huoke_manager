@@ -25,7 +25,7 @@
               <Radio label="1">每周自定义上课</Radio>
               <Radio label="2">配置日期上课</Radio>
             </RadioGroup>
-            <span class="-c-tips">* 更改后只对新购用户生效</span>
+            <div class="-c-tips">* 更改后只对新购用户生效</div>
           </FormItem>
           <FormItem label="单独购价格" prop="alonePrice">
             <InputNumber  style="width: 100%;" type="text" :disabled="addInfo.id !=''" v-model="addInfo.alonePrice" :min="0"

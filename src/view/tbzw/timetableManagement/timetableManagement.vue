@@ -13,18 +13,18 @@
 
         <Row class="g-t-left g-tab">
           <Radio-group v-model="radioType" type="button" @on-change="getList(1)">
-            <Radio :label=1>独立排课</Radio>
-            <Radio :label=2>公共排课</Radio>
+            <Radio :label=1>每周系统排课</Radio>
+            <Radio :label=2>人工排课</Radio>
           </Radio-group>
         </Row>
 
-        <Row class="p-timetableAdjustment-tip">
-          <div class="-tip-div g-t-left" >
-            <Checkbox v-show="radioType === 1" v-model="selectAllData" @on-change="changeAloneSelect">全选所有用户</Checkbox>
+        <Row class="p-timetableAdjustment-tip" v-show="radioType === 1">
+          <div class="-tip-div g-t-left">
+            <Checkbox  v-model="selectAllData" @on-change="changeAloneSelect">全选所有用户</Checkbox>
           </div>
           <div class="-tip-div g-text-right">
             <Button @click="$router.push('/tbzw_timetableAdjustment')" ghost type="primary">调整排课规则</Button>
-            <Button @click="openModal()" ghost type="primary">转移到公共排课</Button>
+            <Button @click="openModal()" ghost type="primary">转移到人工排课</Button>
           </div>
         </Row>
       </Row>
@@ -179,7 +179,7 @@
 
         this.$Modal.confirm({
           title: '提示',
-          content: `确认将${this.selectAllData ? '所有' : `选中的${this.selectUserList.length}个`}用户转移到公共排课？更改次日生效，此操作不可逆，请谨慎操作！`,
+          content: `确认将${this.selectAllData ? '所有' : `选中的${this.selectUserList.length}个`}用户转移到人工排课？更改次日生效，此操作不可逆，请谨慎操作！`,
           onOk: () => {
             this.$api.tbzwRules.switchUserTtr({
               allUser: this.selectAllData,

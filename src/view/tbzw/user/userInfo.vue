@@ -244,7 +244,7 @@
           {
             title: '排课日期',
             render: (h, params) => {
-              return h('div', params.row.schedulDate ? dayjs(+params.row.schedulDate).format("YYYY-MM-DD HH") : '暂无')
+              return h('div', params.row.schedulDate ? dayjs(+params.row.schedulDate).format("YYYY-MM-DD") : '暂无')
             },
             align: 'center'
           },

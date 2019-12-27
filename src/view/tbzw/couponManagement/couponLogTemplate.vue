@@ -116,7 +116,7 @@
           {
             title: '使用时间',
             render: (h, params)=>{
-              return h('div', dayjs(+params.row.useTime).format('YYYY-MM-DD HH:mm'))
+              return h('div', params.row.useTime ? dayjs(+params.row.useTime).format('YYYY-MM-DD HH:mm') : '-')
             },
             key: 'useTime',
             align: 'center'
