@@ -541,6 +541,7 @@
               if (response.data.code == '200') {
                 this.$Message.success('提交成功');
                 this.getLearnDTO()
+                this.listLessonProgress()
                 this.isOpenModalTime = false
               }
             })
