@@ -18,7 +18,7 @@
       @on-cancel="closeModalContent()"
       width="700"
       :title="modalTitleName[modalType]">
-      <Form :model="detailInfo" :label-width="80"  v-if="modalType!=6">
+      <Form :model="detailInfo" :label-width="80">
         <FormItem label="选择教师" v-if="modalType===1" class="ivu-form-item-required">
           <Select v-model="detailInfo.teacher">
             <Option v-for="(item,index) in teacherList" :label="item.teacherName" :value="item.id"
@@ -42,9 +42,6 @@
             <Radio :label=2>书写</Radio>
           </Radio-group>
         </FormItem>
-        <!--<FormItem label="作业名称" v-if="modalType===5">-->
-          <!--<Input type="text" v-model="detailInfo.homework" placeholder="请输入作业名称（字数不超过20字）" :maxlength="20"></Input>-->
-        <!--</FormItem>-->
         <FormItem label="课程重点" v-if="modalType===5">
           <Input type="textarea" :rows="4" v-model="detailInfo.keyPoint" placeholder="请输入课程重点（字数不超过80字）"
                  :maxlength='80'></Input>
@@ -56,13 +53,16 @@
         <FormItem label="朗读内容" v-if="modalType===5 && detailInfo.homeworkType===1">
           <editor ref="editor" v-model="detailInfo.readContent"></editor>
         </FormItem>
+        <Form-item label="课程视频" v-if="modalType===6" class="-c-form-item ivu-form-item-required">
+          <upload-video ref="childVideo" v-model="detailInfo.videoUrl" :option="uploadVideoOption"></upload-video>
+        </Form-item>
+        <Form-item label="电视视频" v-if="modalType===6" class="-c-form-item">
+          <upload-video ref="childVideo" v-model="detailInfo.tvUrl" :option="uploadVideoOption"></upload-video>
+        </Form-item>
+        <Form-item label="ipad视频" v-if="modalType===6" class="-c-form-item">
+          <upload-video ref="childVideo" v-model="detailInfo.ipadUrl" :option="uploadVideoOption"></upload-video>
+        </Form-item>
       </Form>
-
-      <div v-else>
-        <Table class="-c-tab" :columns="columnsSource" :data="sourceList"></Table>
-        <Page class="g-text-right" :total="totalSource" size="small" show-elevator :page-size="tabSource.pageSize"
-              @on-change="currentChangeSource"></Page>
-      </div>
 
       <div slot="footer" class="g-flex-j-sa">
         <Button @click="closeModalContent()" ghost type="primary" style="width: 100px;">取消</Button>
@@ -77,6 +77,12 @@
       width="700"
       :title="addInfo.id ? '编辑课时' : '新增课时'">
       <Form :model="addInfo" ref="addInfoAdd" :label-width="120" :rules="ruleValidateAdd">
+        <FormItem label="课时类型" prop="name">
+          <Select v-model="addInfo.type">
+            <Option label="作文课" value="1"></Option>
+            <Option label="读写课" value="2"></Option>
+          </Select>
+        </FormItem>
         <FormItem label="课时名称" prop="name">
           <Input type="text" v-model="addInfo.name" :maxlength="14" placeholder="请输入课时名称(最多十四个字)"></Input>
         </FormItem>
@@ -85,15 +91,6 @@
         <!--</FormItem>-->
         <Form-item label="课程封面" class="-c-form-item ivu-form-item-required">
           <upload-img v-model="addInfo.coverphoto" :option="uploadOption"></upload-img>
-        </Form-item>
-        <Form-item label="课程视频" class="-c-form-item ivu-form-item-required">
-          <upload-video ref="childVideo" v-model="addInfo.videoUrl" :option="uploadVideoOption"></upload-video>
-        </Form-item>
-        <Form-item label="电视视频" class="-c-form-item">
-          <upload-video ref="childVideo" v-model="addInfo.tvUrl" :option="uploadVideoOption"></upload-video>
-        </Form-item>
-        <Form-item label="ipad视频" class="-c-form-item">
-          <upload-video ref="childVideo" v-model="addInfo.ipadUrl" :option="uploadVideoOption"></upload-video>
         </Form-item>
       </Form>
 
@@ -128,10 +125,6 @@
           page: 1,
           pageSize: 10
         },
-        tabSource: {
-          page: 1,
-          pageSize: 10
-        },
         uploadOption: {
           tipText: '只能上传jpg/png文件，且不超过200kb',
           size: 200
@@ -152,10 +145,9 @@
           '3': '活学活用',
           '4': '轻松一答',
           '5': '作业',
-          '6': '素材评价',
+          '6': '视频内容'
         },
         dataList: [],
-        sourceList: [],
         teacherList: [],
         choiceList: [],
         total: 0,
@@ -192,7 +184,7 @@
           {
             title: '类型',
             render: (h, params) => {
-              return h('div', params.row.type === 1 ? '小班课' : '素材课')
+              return h('div', params.row.type === 1 ? '作文课' : '读写课')
             },
             align: 'center'
           },
@@ -218,7 +210,7 @@
           {
             title: '补充内容',
             align: 'center',
-            width: 400,
+            width: 250,
             render: (h, params) => {
               return h('div', [
                 h('Button', {
@@ -292,17 +284,17 @@
                   },
                   on: {
                     click: () => {
-                      this.openModalContent(params.row, 5)
+                      this.openModalLearn(params.row)
                     }
                   }
-                }, '作业'),
+                }, '学习内容'),
                 h('Button', {
                   props: {
                     type: 'text',
                     size: 'small'
                   },
                   style: {
-                    display: params.row.type === 2 ? 'inline-block' : 'none',
+                    display: params.row.type === 1 ? 'inline-block' : 'none',
                     color: '#5444E4'
                   },
                   on: {
@@ -310,14 +302,14 @@
                       this.openModalContent(params.row, 6)
                     }
                   }
-                }, '素材评价'),
+                }, '视频内容'),
                 h('Button', {
                   props: {
                     type: 'text',
                     size: 'small'
                   },
                   style: {
-                    display: 'inline-block',
+                    display: params.row.type === 3 ? 'inline-block' : 'none',
                     color: '#5444E4'
                   },
                   on: {
@@ -325,14 +317,14 @@
                       this.openModalLearn(params.row)
                     }
                   }
-                }, '学习内容')
+                }, '关卡设置')
               ])
             }
           },
           {
             title: '操作',
             align: 'center',
-            width: 200,
+            width: 240,
             render: (h, params) => {
               return h('div', [
                 h('Button', {
@@ -349,6 +341,20 @@
                     }
                   }
                 }, !params.row.listen ? '开启试听' : '关闭试听'),
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: '#5444E4'
+                  },
+                  on: {
+                    click: () => {
+                      this.openModalContent(params.row, 5)
+                    }
+                  }
+                }, '作业'),
                 h('Button', {
                   props: {
                     type: 'text',
@@ -423,10 +429,6 @@
         this.tab.page = val;
         this.getList();
       },
-      currentChangeSource(val) {
-        this.tabSource.page = val;
-        this.getList();
-      },
       openModal(data) {
         this.isOpenModalAdd = true
         if (data) {
@@ -465,9 +467,6 @@
         switch (this.modalType) {
           case 4:
             this.getListByLessonQuestion()
-            break
-          case 6:
-            this.getListByLessonScore()
             break
         }
       },
@@ -537,17 +536,6 @@
               this.teacherList = response.data.resultData.records;
             })
       },
-      getListByLessonScore() {
-        this.$api.composition.listByLessonScore({
-          current: this.tabSource.page,
-          size: this.tabSource.pageSize,
-          lessonId: this.dataItem.id
-        })
-          .then(
-            response => {
-              this.sourceList = response.data.resultData.records;
-            })
-      },
       getListByLessonQuestion() {
         this.$api.composition.listByLessonQuestion({
           type: 2,
@@ -586,7 +574,9 @@
           case 5:
             this.saveHomeWork()
             break
-
+          case 6:
+            this.submitAdd('addInfoAdd')
+            break
         }
       },
       submitTeacher() {
@@ -748,10 +738,8 @@
           if (valid) {
             if (!this.addInfo.coverphoto) {
               return this.$Message.error('请上传课程封面')
-            } else if (this.addInfo.type === 1 && !this.addInfo.videoUrl) {
+            } else if (this.addInfo.type === 1 && !this.detailInfo.videoUrl) {
               return this.$Message.error('请上传课程视频')
-            } else if (this.addInfo.type === 2 && (!this.addInfo.content || this.addInfo.content === '<p><br></p>')) {
-              return this.$Message.error('请输入课时内容')
             }
 
             let paramUrl = this.addInfo.id ? this.$api.composition.updateLesson : this.$api.composition.saveLesson
@@ -762,7 +750,7 @@
               tvUrl: this.addInfo.tvUrl,
               ipadUrl: this.addInfo.ipadUrl,
               videoUrl: this.addInfo.videoUrl,
-              content: this.addInfo.content,
+              // content: this.addInfo.content,
               coverphoto: this.addInfo.coverphoto
             })
               .then(response => {
