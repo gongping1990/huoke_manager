@@ -14,7 +14,7 @@
         <Col :span="6">
           <div class="-search">
             <Select v-model="selectInfo" class="-search-select">
-              <Option value="1">用户昵称</Option>
+              <!--<Option value="1">用户昵称</Option>-->
               <Option value="2">手机号码</Option>
             </Select>
             <span class="-search-center">|</span>
@@ -23,7 +23,58 @@
           </div>
         </Col>
       </Row>
-
+      <Row class="g-search g-tab">
+        <Col :span="6" class="g-t-left">
+          <div class="g-flex-a-j-center">
+            <div class="-search-select-text">当前是否上课：</div>
+            <Select v-model="searchInfo.currentLearned" @on-change="getList(1)" class="-search-selectOne">
+              <Option v-for="item of selectList" :label=item.name :value=item.id :key="item.id"></Option>
+            </Select>
+          </div>
+        </Col>
+        <Col :span="6" class="g-t-left">
+          <div class="g-flex-a-j-center">
+            <div class="-search-select-text">当前是否完课：</div>
+            <Select v-model="searchInfo.currentCompleted" @on-change="changeEmit()" class="-search-selectOne">
+              <Option v-for="(item,index) in selectList" :label="item.name" :value="item.id" :key="index"></Option>
+            </Select>
+          </div>
+        </Col>
+        <Col :span="6" class="g-t-left">
+          <div class="g-flex-a-j-center">
+            <div class="-search-select-text">当前是否交作业：</div>
+            <Select v-model="searchInfo.currentHomeworked" @on-change="changeEmit()" class="-search-selectOne">
+              <Option v-for="(item,index) in selectList" :label="item.name" :value="item.id" :key="index"></Option>
+            </Select>
+          </div>
+        </Col>
+      </Row>
+      <Row class="g-search g-tab">
+        <Col :span="6" class="g-t-left">
+          <div class="g-flex-a-j-center">
+            <div class="-search-select-text">是否全部上课：</div>
+            <Select v-model="searchInfo.allLearned" @on-change="getList(1)" class="-search-selectOne">
+              <Option v-for="item of selectList" :label=item.name :value=item.id :key="item.id"></Option>
+            </Select>
+          </div>
+        </Col>
+        <Col :span="6" class="g-t-left">
+          <div class="g-flex-a-j-center">
+            <div class="-search-select-text">是否全部完课：</div>
+            <Select v-model="searchInfo.allCompleted" @on-change="changeEmit()" class="-search-selectOne">
+              <Option v-for="(item,index) in selectList" :label="item.name" :value="item.id" :key="index"></Option>
+            </Select>
+          </div>
+        </Col>
+        <Col :span="6" class="g-t-left">
+          <div class="g-flex-a-j-center">
+            <div class="-search-select-text">是否全部交作业：</div>
+            <Select v-model="searchInfo.allHomeworked" @on-change="changeEmit()" class="-search-selectOne">
+              <Option v-for="(item,index) in selectList" :label="item.name" :value="item.id" :key="index"></Option>
+            </Select>
+          </div>
+        </Col>
+      </Row>
       <Row class="p-student-flex -c-tab">
         <div class="-tip-div g-t-left">
           <Checkbox v-model="selectAllData" @on-change="changeAloneSelect">所有学生</Checkbox>
@@ -81,9 +132,29 @@
           currentPage: 1
         },
         searchInfo: {
-          courseId: ''
+          courseId: '',
+          allCompleted: '-1',
+          allHomeworked: '-1',
+          allLearned: '-1',
+          currentCompleted: '-1',
+          currentHomeworked: '-1',
+          currentLearned: '-1',
         },
-        selectInfo: '1',
+        selectList: [
+          {
+            id: '-1',
+            name: '全部'
+          },
+          {
+            id: '1',
+            name: '是',
+          },
+          {
+            id: '0',
+            name: '否',
+          }
+        ],
+        selectInfo: '2',
         dataList: [],
         teacherList: [],
         courseList: [],
@@ -129,30 +200,59 @@
           },
           {
             title: '电话',
+            tooltip: true,
             key: 'phone',
             align: 'center'
           },
           {
-            title: '孩子昵称',
-            key: 'nickname',
+            title: '开课日期',
+            key: 'activeDate',
             align: 'center'
           },
           {
-            title: '孩子性别',
-            key: 'sex',
-            render: (h, params)=> {
-              return h('span', params.row.sex === null ? '' : params.row.sex ? '男' : '女')
+            title: '排课数',
+            key: 'schedulLessonNum',
+            align: 'center'
+          },
+          {
+            title: '上课数',
+            key: 'learnedNum',
+            align: 'center'
+          },
+          {
+            title: '完课数',
+            key: 'completedNum',
+            align: 'center'
+          },
+          {
+            title: '交作业数',
+            key: 'homeworkNum',
+            align: 'center'
+          },
+          {
+            title: '当前排课',
+            key: 'currentLessonName',
+            align: 'center'
+          },
+          {
+            title: '当前是否上课',
+            render: (h, params) => {
+              return h('div', params.row.currentLearned ? '是' : '否')
             },
             align: 'center'
           },
           {
-            title: '与孩子关系',
-            key: 'relationText',
+            title: '当前是否完课',
+            render: (h, params) => {
+              return h('div', params.row.currentCompleted ? '是' : '否')
+            },
             align: 'center'
           },
           {
-            title: '在读年级',
-            key: 'gradeText',
+            title: '当前是否交作业',
+            render: (h, params) => {
+              return h('div', params.row.currentHomeworked ? '是' : '否')
+            },
             align: 'center'
           },
           {
@@ -243,6 +343,12 @@
         let params = {
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
+          allCompleted: this.searchInfo.allCompleted === '-1' ? '' : this.searchInfo.allCompleted === '1' ,
+          allHomeworked: this.searchInfo.allHomeworked === '-1' ? '' : this.searchInfo.allHomeworked === '1',
+          allLearned: this.searchInfo.allLearned === '-1' ? '' : this.searchInfo.allLearned === '1',
+          currentCompleted: this.searchInfo.currentCompleted === '-1' ? '' : this.searchInfo.currentCompleted === '1',
+          currentHomeworked: this.searchInfo.currentHomeworked === '-1' ? '' : this.searchInfo.currentHomeworked === '1',
+          currentLearned: this.searchInfo.currentLearned === '-1' ? '' : this.searchInfo.currentLearned === '1',
           courseId: this.searchInfo.courseId,
           teacherId: this.$route.query.teacherId
         }
@@ -312,6 +418,9 @@
 
     .-search-select-text-two {
       min-width: 80px;
+    }
+    .-search-select-text {
+      min-width: 120px;
     }
     .-search-selectOne {
       /*width: 100px;*/
