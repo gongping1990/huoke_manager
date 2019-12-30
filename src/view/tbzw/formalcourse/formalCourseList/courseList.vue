@@ -19,26 +19,27 @@
       :footer-hide="classType === 2"
       width="700"
       title="排课设置">
-      <Form :model="addInfo" :label-width="60">
+      <Form :model="addInfo" :label-width="100">
+        <FormItem label="当前排课规则">
+          <div class="-c-tips">{{storageInfo.wayOfTeach == '2' ? '人工排课' : '每周系统排课'}}</div>
+        </FormItem>
+        <FormItem label="注意">
+          <span class="-c-tips">此弹窗内部只能更改排课规则的配置，不能更改当前课程的排课规则</span>
+        </FormItem>
         <FormItem label="排课类别">
-          <Radio-group v-model="classType" @on-change="changeClassType">
-            <Radio :label=1>每周系统排课</Radio>
-            <Radio :label=2>人工排课</Radio>
+          <Radio-group v-model="classType" @on-change="changeClassType" >
+            <Radio :label=1 :disabled="storageInfo.wayOfTeach == '2'">每周系统排课</Radio>
+            <Radio :label=2 :disabled="storageInfo.wayOfTeach == '2'">人工排课</Radio>
           </Radio-group>
         </FormItem>
       </Form>
-      <Form v-show="classType === 1" ref="addInfo" :model="addInfo" :label-width="60">
+      <Form v-show="classType === 1" ref="addInfo" :model="addInfo" :label-width="100">
         <FormItem label="注意">
           <span class="-c-tips">请选择每周需要排课的天数，更改后只对未排课的课时生效，不会影响已排课的课时</span>
         </FormItem>
         <FormItem label="排课模式">
-          <Radio-group v-model="addInfo.type" @on-change="changeRadio">
-            <Radio :label=1>每周三节</Radio>
-            <Radio :label=2>每周五节</Radio>
-            <Radio :label=3>每周七节</Radio>
-          </Radio-group>
           <CheckboxGroup v-model="checkWeeks">
-            <Checkbox v-for="item of weekList" :label="item.id" :key="item.id" :disabled="true">{{item.name}}
+            <Checkbox v-for="item of weekList" :label="item.id" :key="item.id">{{item.name}}
             </Checkbox>
           </CheckboxGroup>
         </FormItem>
@@ -121,6 +122,7 @@
         isOpenModal: false,
         isOpenAddModal: false,
         classType: 1,
+        storageInfo: {},
         searchDate: new Date(),
         addInfo: {
           type: 1
@@ -329,19 +331,6 @@
           this.listTimeTableRules()
         }
       },
-      changeRadio() {
-        switch (+this.addInfo.type) {
-          case 1:
-            this.checkWeeks = ['2', '4', '6']
-            break
-          case 2:
-            this.checkWeeks = ['1', '2', '3', '4', '5']
-            break
-          case 3:
-            this.checkWeeks = ['1', '2', '3', '4', '5', '6', '7']
-            break
-        }
-      },
       toCourseContent(data) {
         this.$router.push({
           name: 'tbzw_forma_courseContent',
@@ -360,8 +349,9 @@
       },
       openEdit(data) {
         this.isOpenModal = true
-        this.classType = 1
         this.addInfo = JSON.parse(JSON.stringify(data))
+        this.storageInfo = JSON.parse(JSON.stringify(data))
+        this.classType = this.addInfo.wayOfTeach
       },
       openModalSecond(data) {
         this.isOpenAddModal = true

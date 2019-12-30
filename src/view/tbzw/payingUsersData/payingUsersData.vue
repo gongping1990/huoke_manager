@@ -208,7 +208,7 @@
             align: 'center'
           },
           {
-            title: '完课且交作业人数',
+            title: '排课当天完课且交作业人数',
             key: 'completeToWorkNums',
             align: 'center'
           }
@@ -407,7 +407,7 @@
             data: dataList.workNums
           },
           {
-            name: '完课后交作业人数',
+            name: '排课当天完课且交作业人数',
             type: 'line',
             data: dataList.completeToWorkNums
           }
@@ -536,7 +536,7 @@
                 icon: 'circle'
               },
               {
-                name: '完课后交作业人数',
+                name: '排课当天完课且交作业人数',
                 icon: 'circle'
               }
             ],
