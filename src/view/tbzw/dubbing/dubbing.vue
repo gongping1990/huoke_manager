@@ -1,15 +1,37 @@
 <template>
   <div class="p-dubbing">
     <Card>
-      <Form class="-c-form g-t-left ivu-form-item-required" ref="addInfo" :model="addInfo"
+      <Row class="g-t-left g-tab">
+        <Radio-group v-model="radioType" type="button" @on-change="getList">
+          <Radio label='1'>引导提示</Radio>
+          <Radio label='2'>课程答题</Radio>
+        </Radio-group>
+      </Row>
+
+      <Form class="-c-form g-t-left ivu-form-item-required" ref="addInfo" :model="addInfo" v-if="radioType === '1'"
             :label-width="120">
-        <Form-item :label="nameList[item.type]" prop="turn" class=" -c-form-item " v-for="item of audioList" :key="item.id">
+        <Form-item :label="nameList[item.type]" prop="turn" class=" -c-form-item " v-for="item of audioList"
+                   :key="item.id">
           <upload-audio v-model="item.vfUrl"
                         :option="uploadAudioOption"
                         @parentDel="delAudio(item)"
                         @successAudio="submitInfo(item)"></upload-audio>
         </Form-item>
       </Form>
+      <div v-if="radioType === '2'" class="g-t-left">
+        <div v-for="(list, index) of audioList" :key="index">
+          <div class="p-dubbing-title">{{list.name}}</div>
+          <div class="p-dubbing-item">
+            <div class="-item-list" v-for="(item, index1) of list.list" :key="index1">
+              <upload-audio v-model="item.url" :option="uploadAudioOption" @parentDel="delAudio(item)"
+                            @successAudio="submitInfo(item)"></upload-audio>
+            </div>
+            <div class="p-dubbing-btn g-flex-a-j-center">
+              <Button @click="addAudio()" class="-btn" ghost type="primary" style="width: 100px;">添加音频</Button>
+            </div>
+          </div>
+        </div>
+      </div>
     </Card>
     <loading v-if="isFetching"></loading>
   </div>
@@ -30,7 +52,7 @@
           format: ['mp3', 'wma', 'arm'],
           backstageDel: true
         },
-        isID: '',
+        radioType: '2',
         isShowEdit: false,
         isSending: false,
         isFetching: false,
@@ -46,19 +68,86 @@
           '9': '查看点评',
           '10': '完善用户信息',
         },
-        audioList: [],
+        audioList: [
+          {
+            name: '回答正确',
+            type: 11,
+            list: [
+              {
+                id: '111',
+                url: '2019/12/03/074c33f4-ccfe-436b-855c-22f6a562a3cb.mp3'
+              },
+              {
+                id: '222',
+                url: '2019/12/03/074c33f4-ccfe-436b-855c-22f6a562a3cb.mp3'
+              },
+              {
+                id: '3333',
+                url: '2019/12/03/074c33f4-ccfe-436b-855c-22f6a562a3cb.mp3'
+              },
+              {
+                id: '3333',
+                url: '2019/12/03/074c33f4-ccfe-436b-855c-22f6a562a3cb.mp3'
+              },
+              {
+                id: '3333',
+                url: '2019/12/03/074c33f4-ccfe-436b-855c-22f6a562a3cb.mp3'
+              }
+            ]
+          },
+          {
+            name: '回答错误',
+            type: 12,
+            list: [
+              {
+                id: '111',
+                url: '2019/12/03/074c33f4-ccfe-436b-855c-22f6a562a3cb.mp3'
+              },
+              {
+                id: '222',
+                url: '2019/12/03/074c33f4-ccfe-436b-855c-22f6a562a3cb.mp3'
+              },
+              {
+                id: '3333',
+                url: '2019/12/03/074c33f4-ccfe-436b-855c-22f6a562a3cb.mp3'
+              }
+            ]
+          },
+          {
+            name: '放弃作答',
+            type: 13,
+            list: [
+              {
+                id: '111',
+                url: '2019/12/03/074c33f4-ccfe-436b-855c-22f6a562a3cb.mp3'
+              },
+              {
+                id: '222',
+                url: '2019/12/03/074c33f4-ccfe-436b-855c-22f6a562a3cb.mp3'
+              },
+              {
+                id: '3333',
+                url: '2019/12/03/074c33f4-ccfe-436b-855c-22f6a562a3cb.mp3'
+              },
+              {
+                id: '3333',
+                url: '2019/12/03/074c33f4-ccfe-436b-855c-22f6a562a3cb.mp3'
+              }
+            ]
+          }
+
+        ],
         addInfo: {
           enable: 0
         }
       }
     },
     mounted() {
-      this.getList()
+      // this.getList()
     },
     methods: {
-      closeEdit() {
-        this.isShowEdit = false
-        this.getList()
+      addAudio () {
+
       },
       getList() {
         this.isFetching = true
@@ -73,7 +162,7 @@
             this.isFetching = false
           })
       },
-      delAudio (item) {
+      delAudio(item) {
         this.$Modal.confirm({
           title: '提示',
           content: '确认删除吗？',
@@ -91,10 +180,10 @@
         })
       },
       submitInfo(item) {
-        console.log(item,11)
+        console.log(item, 11)
         if (this.isFetching) return
         this.isFetching = true
-        setTimeout(()=>{
+        setTimeout(() => {
           this.$api.tbzwDubbing.editDubbing({
             type: item.type,
             vfUrl: item.vfUrl
@@ -106,10 +195,10 @@
                   this.$Message.success('提交成功');
                 }
               })
-            .finally(()=>{
+            .finally(() => {
               this.isFetching = false
             })
-        },0)
+        }, 0)
       },
     }
   };
@@ -117,6 +206,31 @@
 
 <style lang="less" scoped>
   .p-dubbing {
+
+    &-title {
+      margin: 10px 0;
+      font-size: 18px;
+    }
+
+    &-item {
+      display: flex;
+      flex-flow: wrap;
+
+      .-item-list {
+        margin: 0 20px 20px 0;
+        width: 30%;
+      }
+    }
+
+    &-btn {
+      width: 30%;
+      justify-content: center;
+
+      .-btn {
+        width: 100px;
+        height: 40px;
+      }
+    }
 
     .-c-form {
       display: flex;
