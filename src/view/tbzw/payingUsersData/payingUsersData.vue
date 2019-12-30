@@ -208,7 +208,7 @@
             align: 'center'
           },
           {
-            title: '完课且交作业人数',
+            title: '排课当天完课且交作业人数',
             key: 'completeToWorkNums',
             align: 'center'
           }
