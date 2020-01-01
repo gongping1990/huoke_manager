@@ -352,6 +352,7 @@
         this.addInfo = JSON.parse(JSON.stringify(data))
         this.storageInfo = JSON.parse(JSON.stringify(data))
         this.classType = this.addInfo.wayOfTeach
+        this.changeClassType()
       },
       openModalSecond(data) {
         this.isOpenAddModal = true
