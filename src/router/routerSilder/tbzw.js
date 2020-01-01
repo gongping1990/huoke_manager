@@ -257,6 +257,17 @@ export const tbzwRouter =[
           {name: '排课管理'}
         ],
         component: () => import('@/view/tbzw/timetableManagement/timetableManagement')
+      },
+      {
+        path: '/tbzw_checkpointMain',
+        name: 'tbzw_checkpointMain',
+        meta: [
+          {name: '正式课管理'},
+          {name: '课程列表', url:'tbzw_forma_courseList'},
+          {name: '课时内容', url:'tbzw_forma_courseContent'},
+          {name: '关卡设置'}
+        ],
+        component: () => import('@/view/tbzw/formalcourse/formalCourseList/checkpointMain/checkpointMain')
       }
     ]
   },

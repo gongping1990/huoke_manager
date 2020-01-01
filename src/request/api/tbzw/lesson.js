@@ -13,6 +13,42 @@ const tbzwLesson = {
   },
   sortByLessonQuestion(params) {
     return axios.post('/compositionv2/lesson/sortByLessonQuestion', params)
+  },
+  listCheckPoint(params) {
+    return axios.get('/compositionv2/lesson/listCheckPoint', {params: params})
+  },
+  removeCheckPointById(params) {
+    return axios.get('/compositionv2/lesson/removeCheckPointById', {params: params})
+  },
+  saveCheckPoint(params) {
+    return axios.post('/compositionv2/lesson/saveCheckPoint', qs.stringify(params))
+  },
+  sortByIds(params) {
+    return axios.post('/compositionv2/lesson/sortByIds', params)
+  },
+  listIllustrationBook(params) {
+    return axios.get('/compositionv2/lesson/listIllustrationBook', {params: params})
+  },
+  removeIllustrationBookById(params) {
+    return axios.get('/compositionv2/lesson/removeIllustrationBookById', {params: params})
+  },
+  saveIllustrationBook(params) {
+    return axios.post('/compositionv2/lesson/saveIllustrationBook', qs.stringify(params))
+  },
+  saveCheckPointVideo(params) {
+    return axios.post('/compositionv2/lesson/saveCheckPointVideo', qs.stringify(params))
+  },
+  listProblem(params) {
+    return axios.get('/compositionv2/lesson/listProblem', {params: params})
+  },
+  removeProblemById(params) {
+    return axios.get('/compositionv2/lesson/removeProblemById', {params: params})
+  },
+  saveProblem(params) {
+    return axios.post('/compositionv2/lesson/saveProblem', qs.stringify(params))
+  },
+  saveLessonVideo(params) {
+    return axios.post('/compositionv2/lesson/saveLessonVideo', qs.stringify(params))
   }
 };
 

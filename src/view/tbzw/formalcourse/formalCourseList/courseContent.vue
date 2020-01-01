@@ -50,8 +50,18 @@
           <Input type="textarea" :rows="4" v-model="detailInfo.homeworkClaim" placeholder="请输入作业要求（字数不超过80字）"
                  :maxlength='80'></Input>
         </FormItem>
+        <FormItem label="作业提示" v-if="modalType===5 && detailInfo.type!==1 && detailInfo.homeworkType!==1">
+          <upload-img v-model="addInfo.coverphoto" :option="uploadOption"></upload-img>
+        </FormItem>
         <FormItem label="朗读内容" v-if="modalType===5 && detailInfo.homeworkType===1">
-          <editor ref="editor" v-model="detailInfo.readContent"></editor>
+          <upload-img v-model="addInfo.coverphoto" :option="uploadOption"></upload-img>
+        </FormItem>
+        <FormItem label="关卡名称" v-if="modalType===5 && detailInfo.type!==1" class="ivu-form-item-required">
+          <Input type="textarea" :rows="4" v-model="detailInfo.keyPoint" placeholder="请输入课程重点（字数不超过80字）"
+                 :maxlength='80'></Input>
+        </FormItem>
+        <FormItem label="关卡图标" v-if="modalType===5 && detailInfo.type!==1" class="ivu-form-item-required">
+          <upload-img v-model="addInfo.coverphoto" :option="uploadOption"></upload-img>
         </FormItem>
         <Form-item label="课程视频" v-if="modalType===6" class="-c-form-item ivu-form-item-required">
           <upload-video ref="childVideo" v-model="detailInfo.videoUrl" :option="uploadVideoOption"></upload-video>
@@ -87,7 +97,7 @@
           <Input type="text" v-model="addInfo.name" :maxlength="14" placeholder="请输入课时名称(最多十四个字)"></Input>
         </FormItem>
         <!--<FormItem label="排序值" prop="sortnum">-->
-          <!--<InputNumber :max="999" :min="0" v-model="addInfo.sortnum" placeholder="请输入排序值"></InputNumber>-->
+        <!--<InputNumber :max="999" :min="0" v-model="addInfo.sortnum" placeholder="请输入排序值"></InputNumber>-->
         <!--</FormItem>-->
         <Form-item label="课程封面" class="-c-form-item ivu-form-item-required">
           <upload-img v-model="addInfo.coverphoto" :option="uploadOption"></upload-img>
@@ -314,7 +324,7 @@
                   },
                   on: {
                     click: () => {
-                      this.openModalLearn(params.row)
+                      this.checkpoint(params.row)
                     }
                   }
                 }, '关卡设置')
@@ -386,23 +396,6 @@
               ])
             }
           }
-        ],
-        columnsSource: [
-          {
-            title: '用户昵称',
-            key: 'nickName',
-            align: 'center'
-          },
-          {
-            title: '评分',
-            key: 'score',
-            align: 'center'
-          },
-          {
-            title: '评分时间',
-            key: 'gmtCreate',
-            align: 'center'
-          },
         ]
       };
     },
@@ -411,6 +404,32 @@
       this.getTeacherList()
     },
     methods: {
+      checkpoint (data) {
+        this.$Modal.confirm({
+          title: '提示',
+          content: '<p>选择模板后，系统会自动创建部分关卡，创建后可自定义更改，选错也没有关系</p>',
+          okText: '写作课',
+          cancelText: '阅读课',
+          onOk: () => {
+            this.$router.push({
+              name: 'tbzw_checkpointMain',
+              query: {
+                lessonId: data.id,
+                type: 1
+              }
+            })
+          },
+          onCancel: () => {
+            this.$router.push({
+              name: 'tbzw_checkpointMain',
+              query:{
+                lessonId: data.id,
+                type: 0
+              }
+            })
+          }
+        });
+      },
       changeTryOut(data) {
         this.$api.composition.updateListeningById({
           lessonId: data.id,
