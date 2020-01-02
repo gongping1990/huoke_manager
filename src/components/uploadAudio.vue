@@ -128,6 +128,7 @@
 
   .p-uploadAudio {
     .-c-tips {
+      margin-top: 10px;
       color: #39f
     }
     .-c-course-wrap {

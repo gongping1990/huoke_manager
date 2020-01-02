@@ -18,16 +18,17 @@
                         @successAudio="submitInfo(item)"></upload-audio>
         </Form-item>
       </Form>
+
       <div v-if="radioType === '2'" class="g-t-left">
         <div v-for="(list, index) of audioList" :key="index">
-          <div class="p-dubbing-title">{{list.name}}</div>
+          <div class="p-dubbing-title">{{list.typeName}}</div>
           <div class="p-dubbing-item">
-            <div class="-item-list" v-for="(item, index1) of list.list" :key="index1">
-              <upload-audio v-model="item.url" :option="uploadAudioOption" @parentDel="delAudio(item)"
+            <div class="-item-list" v-for="(item, index1) of list.answervfUrl" :key="index1">
+              <upload-audio v-model="item.url" :option="uploadAudioOption" @parentDel="delAudio(list.answervfUrl,index1)"
                             @successAudio="submitInfo(item)"></upload-audio>
             </div>
-            <div class="p-dubbing-btn g-flex-a-j-center">
-              <Button @click="addAudio()" class="-btn" ghost type="primary" style="width: 100px;">添加音频</Button>
+            <div class="p-dubbing-btn">
+              <Button @click="addAudio(list.answervfUrl)" class="-btn" ghost type="primary" style="width: 100px;">添加音频</Button>
             </div>
           </div>
         </div>
@@ -68,90 +69,26 @@
           '9': '查看点评',
           '10': '完善用户信息',
         },
-        audioList: [
-          {
-            name: '回答正确',
-            type: 11,
-            list: [
-              {
-                id: '111',
-                url: '2019/12/03/074c33f4-ccfe-436b-855c-22f6a562a3cb.mp3'
-              },
-              {
-                id: '222',
-                url: '2019/12/03/074c33f4-ccfe-436b-855c-22f6a562a3cb.mp3'
-              },
-              {
-                id: '3333',
-                url: '2019/12/03/074c33f4-ccfe-436b-855c-22f6a562a3cb.mp3'
-              },
-              {
-                id: '3333',
-                url: '2019/12/03/074c33f4-ccfe-436b-855c-22f6a562a3cb.mp3'
-              },
-              {
-                id: '3333',
-                url: '2019/12/03/074c33f4-ccfe-436b-855c-22f6a562a3cb.mp3'
-              }
-            ]
-          },
-          {
-            name: '回答错误',
-            type: 12,
-            list: [
-              {
-                id: '111',
-                url: '2019/12/03/074c33f4-ccfe-436b-855c-22f6a562a3cb.mp3'
-              },
-              {
-                id: '222',
-                url: '2019/12/03/074c33f4-ccfe-436b-855c-22f6a562a3cb.mp3'
-              },
-              {
-                id: '3333',
-                url: '2019/12/03/074c33f4-ccfe-436b-855c-22f6a562a3cb.mp3'
-              }
-            ]
-          },
-          {
-            name: '放弃作答',
-            type: 13,
-            list: [
-              {
-                id: '111',
-                url: '2019/12/03/074c33f4-ccfe-436b-855c-22f6a562a3cb.mp3'
-              },
-              {
-                id: '222',
-                url: '2019/12/03/074c33f4-ccfe-436b-855c-22f6a562a3cb.mp3'
-              },
-              {
-                id: '3333',
-                url: '2019/12/03/074c33f4-ccfe-436b-855c-22f6a562a3cb.mp3'
-              },
-              {
-                id: '3333',
-                url: '2019/12/03/074c33f4-ccfe-436b-855c-22f6a562a3cb.mp3'
-              }
-            ]
-          }
-
-        ],
+        audioList: [],
         addInfo: {
           enable: 0
         }
       }
     },
     mounted() {
-      // this.getList()
+      this.getList()
     },
     methods: {
-      addAudio () {
-
+      addAudio (list) {
+        list.push({
+          url: ''
+        })
       },
       getList() {
         this.isFetching = true
-        this.$api.tbzwDubbing.listByDubbing()
+        this.$api.tbzwDubbing.listByDubbing({
+          category: this.radioType
+        })
           .then(
             response => {
               if (response.data.resultData) {
@@ -162,22 +99,8 @@
             this.isFetching = false
           })
       },
-      delAudio(item) {
-        this.$Modal.confirm({
-          title: '提示',
-          content: '确认删除吗？',
-          onOk: () => {
-            this.$api.tbzwDubbing.removeDubbingById({
-              id: item.id
-            }).then(
-              response => {
-                if (response.data.code == "200") {
-                  this.$Message.success("操作成功");
-                  this.getList();
-                }
-              })
-          }
-        })
+      delAudio(list,index) {
+        list.splice(index,1)
       },
       submitInfo(item) {
         console.log(item, 11)
@@ -218,13 +141,13 @@
 
       .-item-list {
         margin: 0 20px 20px 0;
-        width: 30%;
+        width: 350px
       }
     }
 
     &-btn {
-      width: 30%;
-      justify-content: center;
+      display: flex;
+      align-items: center;
 
       .-btn {
         width: 100px;
