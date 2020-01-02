@@ -305,6 +305,11 @@
           if (this.modelChildType !== 2) {
             delete item.imgUrl
           }
+
+          if (this.modelChildType === 3) {
+            delete item.leftJson
+            delete item.rigthJson
+          }
         })
 
         this.$api.tbzwLesson.saveProblem({

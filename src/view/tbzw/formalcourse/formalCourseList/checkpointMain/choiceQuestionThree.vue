@@ -42,6 +42,7 @@
               <span style="width: 50px">关联：</span>
               <Select v-model="item.links" style="width: 70px">
                 <Option v-for="(item,index) in list.optionJsonTwo" :label="item.name" :value="item.index" :key="index"></Option>
+
               </Select>
             </div>
 
@@ -111,7 +112,7 @@
     },
     methods: {
       init() {
-        console.log(this.childList,11)
+
         this.numList = []
         this.choiceList = this.childList.length ? JSON.parse(JSON.stringify(this.childList)) : [
           {
@@ -130,6 +131,18 @@
             })
           })
         }
+
+        if (this.choiceList.length && this.type === 3) {
+          this.choiceList.forEach(item=>{
+            item.optionJson = item.leftJson || []
+            item.optionJsonTwo = item.rigthJson || []
+
+            item.optionJsonTwo.forEach((data,index)=> {
+              data.name = `右${this.optionLetter[index]}`
+            })
+          })
+        }
+
       },
       changeCheck(list, idx) {
         list.optionJson.forEach((item, index) => {
