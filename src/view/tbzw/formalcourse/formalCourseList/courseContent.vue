@@ -51,11 +51,11 @@
           <Input type="textarea" :rows="4" v-model="detailInfo.homeworkClaim" placeholder="请输入作业要求（字数不超过80字）"
                  :maxlength='80'></Input>
         </FormItem>
-        <FormItem label="作业提示" v-show="modalType===5 && detailInfo.category!==1 && detailInfo.homeworkType!==1">
-          <upload-img v-model="detailInfo.workImg" :option="uploadOption"></upload-img>
-        </FormItem>
-        <FormItem label="朗读内容" v-show="modalType===5 && detailInfo.homeworkType===1">
-          <upload-img v-model="detailInfo.workImg" :option="uploadOption"></upload-img>
+        <!--<FormItem label="作业提示" v-show="modalType===5 && detailInfo.category!==1 && detailInfo.homeworkType!==1">-->
+          <!--<upload-img ref="childImg" v-model="detailInfo.workImg" :option="uploadOption"></upload-img>-->
+        <!--</FormItem>-->
+        <FormItem label="朗读内容">
+          <upload-img ref="childImg" v-model="detailInfo.workImg" :option="uploadOption"></upload-img>
         </FormItem>
         <FormItem label="关卡名称" v-if="modalType===5 && detailInfo.category!==1" class="ivu-form-item-required">
           <Input v-model="detailInfo.cpn" placeholder="请输入关卡名称" :maxlength='80'></Input>
@@ -473,10 +473,10 @@
         } else {
           this.isEdit = false
           this.addInfo = {
+            id: '',
             sortnum: null,
             type: 1,
             workImg: '',
-            readContent: '',
             cpi: '',
             coverphoto: '',
           }
@@ -506,7 +506,15 @@
           case 4:
             this.getListByLessonQuestion()
             break
+          case 5:
+            // console.log(this.$refs,'ref')
+            this.$nextTick(()=>{
+              this.$refs.childImg.init()
+            })
+            break
         }
+
+
         console.log(this.detailInfo, 121)
       },
       openModalLearn(data) {
