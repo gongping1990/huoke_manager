@@ -46,7 +46,7 @@
             this.$refs.childTwo.getList(data)
             break
           case 3:
-            this.$refs.childThree.getListByLessonQuestion(data)
+            this.$refs.childThree.initData(data)
             break
         }
       }
@@ -73,12 +73,12 @@
     }
 
     &-nav {
-      width: 20%;
-
+      width: 210px;
+      border-right: 1px solid #EBEBEB
     }
 
     &-content {
-      width: 80%;
+      width: 100%;
     }
 
   }

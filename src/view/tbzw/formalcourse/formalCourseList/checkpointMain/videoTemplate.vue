@@ -6,6 +6,7 @@
       </FormItem>
     </Form>
     <div class="p-videoTemplate-footer g-flex-j-sa">
+      <!--<Button @click="closeModal()" ghost type="primary" style="width: 100px;">删除</Button>-->
       <div @click="submitInfo()" class="g-primary-btn ">确认</div>
     </div>
   </div>
@@ -36,11 +37,14 @@
     methods: {
       getList(data) {
         data && (this.addInfo = data)
-        console.log(this.addInfo,11)
+        // console.log(this.addInfo,11)
       },
+      // closeModal() {
+      //
+      // },
       submitInfo() {
         if (!this.addInfo.contentUrl) {
-          return this.$Message.error('请选择页面音频')
+          return this.$Message.error('请选择关卡视频')
         }
         this.$api.tbzwLesson.saveCheckPointVideo({
           id: this.addInfo.id,
@@ -58,11 +62,11 @@
 
 <style lang="less" scoped>
   .p-videoTemplate{
-    padding: 30px;
+    padding: 30px 30px 0 30px;
     text-align: left;
 
     &-footer {
-      width: 50%;
+      width: 60%;
       margin: 20px 0;
     }
   }

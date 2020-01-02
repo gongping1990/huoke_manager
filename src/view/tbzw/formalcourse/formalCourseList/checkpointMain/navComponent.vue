@@ -139,7 +139,7 @@
         this.$emit('changeChildItem', item)
       },
       addPoint(data) {
-        if (this.dataList.length > 5) {
+        if (this.dataList.length >= 5) {
           return this.$Message.error('关卡数量不能超过5个')
         }
         this.isOpenModalRadio = true
@@ -232,11 +232,10 @@
 <style lang="less" scoped>
   .p-navComponent {
     padding: 30px;
-    border-right: 1px solid #EBEBEB;
 
     &-item {
       position: relative;
-      margin-bottom: 20px;
+      margin: 0 auto 20px;
       text-align: center;
       width: 150px;
       padding: 10px 15px;
@@ -295,9 +294,9 @@
     }
 
     &-btn {
-      margin-top: 20px;
       display: block;
       width: 150px;
+      margin: 20px auto 0;
     }
 
     &-option {

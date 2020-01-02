@@ -1,16 +1,16 @@
 <template>
-  <div class="p-levelSetting">
-    <div class="p-levelSetting-wrap">
+  <div class="p-pictureBookTemplate">
+    <div class="p-pictureBookTemplate-wrap">
       <div class="-wrap-top">
         <div class="-c-item" v-for="(item, index) of dataList" :key="index">
           <div class="-c-point" :class="{'g-primary-btn': dataItem.id === item.id}" @click="toCheckBtn(item,index)">
-            页面{{item.sortnum}}
+            页面{{item.index}}
           </div>
           <Icon v-if=" dataItem.id === item.id" class="-c-item-icon g-cursor" size="20" type="md-close-circle"
                 @click="delCheckpoint(item)"/>
         </div>
         <Button @click="openModal()" ghost type="primary" class="-c-btn">添加题目</Button>
-        <Button @click="openSort()" ghost type="primary" class="-c-btn">页面排序</Button>
+        <Button @click="openSort()" ghost type="primary" class="-c-btn" v-if="dataList.length>1">页面排序</Button>
       </div>
 
       <div class="-wrap-down" v-show="isShowFormItem">
@@ -32,15 +32,15 @@
     </div>
 
     <Modal
-      class="p-levelSetting"
+      class="p-pictureBookTemplate"
       v-model="isOpenModal"
       @on-cancel="isOpenModal = false"
       title="页面排序">
-      <div class="p-levelSetting-wrap">
+      <div class="p-pictureBookTemplate-wrap">
         <draggable v-model="sortList">
           <div v-for="(item,index) in sortList" :key="index" class="-c-item">
             <div class="-c-point">
-              页面{{item.sortnum}}
+              页面{{item.index}}
             </div>
           </div>
         </draggable>
@@ -185,7 +185,7 @@
 </script>
 
 <style lang="less" scoped>
-  .p-levelSetting {
+  .p-pictureBookTemplate {
     padding: 30px 0;
 
     &-modal {

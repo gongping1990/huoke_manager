@@ -45,7 +45,7 @@ const tbzwLesson = {
     return axios.get('/compositionv2/lesson/removeProblemById', {params: params})
   },
   saveProblem(params) {
-    return axios.post('/compositionv2/lesson/saveProblem', qs.stringify(params))
+    return axios.post('/compositionv2/lesson/saveProblem', params)
   },
   saveLessonVideo(params) {
     return axios.post('/compositionv2/lesson/saveLessonVideo', qs.stringify(params))
