@@ -38,6 +38,10 @@
                          placeholder="请输入拼课时限（小时）"></InputNumber>
             <span class="-c-tips">* 小时</span>
           </FormItem>
+          <FormItem label="课时总数" prop="deadline">
+            <InputNumber type="text"  v-model="addInfo.lessNum" :min="0"  class="g-width"
+                         placeholder="请输入课时总数"></InputNumber>
+          </FormItem>
           <FormItem label="咨询电话" prop="consultPhone">
             <InputNumber type="text"  v-model="addInfo.consultPhone"  class="g-width"
                          placeholder="请输入咨询电话"></InputNumber>
@@ -177,6 +181,7 @@
           alonePrice: null,
           groupPrice: null,
           consultPhone: null,
+          lessNum: null,
           aloneInfo: '',
           qrCode: '',
           verticalCover: '',
