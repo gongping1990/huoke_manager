@@ -9,6 +9,7 @@
              :data="dataList"></Table>
 
       <Page class="g-text-right" :total="total" size="small" show-elevator :page-size="tab.pageSize"
+            :current.sync="tab.currentPage"
             @on-change="currentChange"></Page>
     </Card>
 
@@ -50,26 +51,25 @@
           <Input type="textarea" :rows="4" v-model="detailInfo.homeworkClaim" placeholder="请输入作业要求（字数不超过80字）"
                  :maxlength='80'></Input>
         </FormItem>
-        <FormItem label="作业提示" v-if="modalType===5 && detailInfo.type!==1 && detailInfo.homeworkType!==1">
-          <upload-img v-model="addInfo.coverphoto" :option="uploadOption"></upload-img>
+        <FormItem label="作业提示" v-show="modalType===5 && detailInfo.category!==1 && detailInfo.homeworkType!==1">
+          <upload-img v-model="detailInfo.workImg" :option="uploadOption"></upload-img>
         </FormItem>
-        <FormItem label="朗读内容" v-if="modalType===5 && detailInfo.homeworkType===1">
-          <upload-img v-model="addInfo.coverphoto" :option="uploadOption"></upload-img>
+        <FormItem label="朗读内容" v-show="modalType===5 && detailInfo.homeworkType===1">
+          <upload-img v-model="detailInfo.workImg" :option="uploadOption"></upload-img>
         </FormItem>
-        <FormItem label="关卡名称" v-if="modalType===5 && detailInfo.type!==1" class="ivu-form-item-required">
-          <Input type="textarea" :rows="4" v-model="detailInfo.keyPoint" placeholder="请输入课程重点（字数不超过80字）"
-                 :maxlength='80'></Input>
+        <FormItem label="关卡名称" v-if="modalType===5 && detailInfo.category!==1" class="ivu-form-item-required">
+          <Input v-model="detailInfo.cpn" placeholder="请输入关卡名称" :maxlength='80'></Input>
         </FormItem>
-        <FormItem label="关卡图标" v-if="modalType===5 && detailInfo.type!==1" class="ivu-form-item-required">
-          <upload-img v-model="addInfo.coverphoto" :option="uploadOption"></upload-img>
+        <FormItem label="关卡图标" v-show="modalType===5 && detailInfo.category!==1" class="ivu-form-item-required">
+          <upload-img v-model="detailInfo.cpi" :option="uploadOption"></upload-img>
         </FormItem>
-        <Form-item label="课程视频" v-if="modalType===6" class="-c-form-item ivu-form-item-required">
+        <Form-item label="课程视频" v-show="modalType===6" class="-c-form-item ivu-form-item-required">
           <upload-video ref="childVideo" v-model="detailInfo.videoUrl" :option="uploadVideoOption"></upload-video>
         </Form-item>
-        <Form-item label="电视视频" v-if="modalType===6" class="-c-form-item">
+        <Form-item label="电视视频" v-show="modalType===6" class="-c-form-item">
           <upload-video ref="childVideo" v-model="detailInfo.tvUrl" :option="uploadVideoOption"></upload-video>
         </Form-item>
-        <Form-item label="ipad视频" v-if="modalType===6" class="-c-form-item">
+        <Form-item label="ipad视频" v-show="modalType===6" class="-c-form-item">
           <upload-video ref="childVideo" v-model="detailInfo.ipadUrl" :option="uploadVideoOption"></upload-video>
         </Form-item>
       </Form>
@@ -87,8 +87,8 @@
       width="700"
       :title="addInfo.id ? '编辑课时' : '新增课时'">
       <Form :model="addInfo" ref="addInfoAdd" :label-width="120" :rules="ruleValidateAdd">
-        <FormItem label="课时类型" prop="name">
-          <Select v-model="addInfo.type">
+        <FormItem label="课时类型" prop="category">
+          <Select v-model="addInfo.category" :disabled="addInfo.id!=''">
             <Option label="作文课" value="1"></Option>
             <Option label="读写课" value="2"></Option>
           </Select>
@@ -133,6 +133,7 @@
         baseUrl: `${getBaseUrl()}/sch/common/uploadPublicFile`, // 公有 （图片）
         tab: {
           page: 1,
+          currentPage: 1,
           pageSize: 10
         },
         uploadOption: {
@@ -180,9 +181,9 @@
           name: [
             {required: true, message: '请输入课时名称', trigger: 'blur'},
           ],
-          // sortnum: [
-          //   {required: true, type: 'number', message: '请输入排序值', trigger: 'blur'},
-          // ]
+          category: [
+            {required: true, message: '请选择课时类型', trigger: 'change'},
+          ]
         },
         columns: [
           {
@@ -194,7 +195,7 @@
           {
             title: '类型',
             render: (h, params) => {
-              return h('div', params.row.type === 1 ? '作文课' : '读写课')
+              return h('div', params.row.category === 1 ? '作文课' : '读写课')
             },
             align: 'center'
           },
@@ -229,7 +230,7 @@
                     size: 'small'
                   },
                   style: {
-                    display: params.row.type === 1 ? 'inline-block' : 'none',
+                    display: params.row.category === 1 ? 'inline-block' : 'none',
                     color: '#5444E4'
                   },
                   on: {
@@ -244,7 +245,7 @@
                     size: 'small'
                   },
                   style: {
-                    display: params.row.type === 1 ? 'inline-block' : 'none',
+                    display: params.row.category === 1 ? 'inline-block' : 'none',
                     color: '#5444E4'
                   },
                   on: {
@@ -259,7 +260,7 @@
                     size: 'small'
                   },
                   style: {
-                    display: params.row.type === 1 ? 'inline-block' : 'none',
+                    display: params.row.category === 1 ? 'inline-block' : 'none',
                     color: '#5444E4'
                   },
                   on: {
@@ -274,7 +275,7 @@
                     size: 'small'
                   },
                   style: {
-                    display: params.row.type === 1 ? 'inline-block' : 'none',
+                    display: params.row.category === 1 ? 'inline-block' : 'none',
                     color: '#5444E4'
                   },
                   on: {
@@ -289,7 +290,7 @@
                     size: 'small'
                   },
                   style: {
-                    display: params.row.type === 1 ? 'inline-block' : 'none',
+                    display: params.row.category === 1 ? 'inline-block' : 'none',
                     color: '#5444E4'
                   },
                   on: {
@@ -304,7 +305,7 @@
                     size: 'small'
                   },
                   style: {
-                    display: params.row.type === 1 ? 'inline-block' : 'none',
+                    display: params.row.category === 1 ? 'inline-block' : 'none',
                     color: '#5444E4'
                   },
                   on: {
@@ -319,7 +320,7 @@
                     size: 'small'
                   },
                   style: {
-                    display: params.row.type === 3 ? 'inline-block' : 'none',
+                    display: params.row.category === 2 ? 'inline-block' : 'none',
                     color: '#5444E4'
                   },
                   on: {
@@ -400,35 +401,48 @@
       };
     },
     mounted() {
+      this.tab.currentPage = +localStorage.nowPage || 1
       this.getList()
       this.getTeacherList()
     },
     methods: {
-      checkpoint (data) {
-        this.$Modal.confirm({
-          title: '提示',
-          content: '<p>选择模板后，系统会自动创建部分关卡，创建后可自定义更改，选错也没有关系</p>',
-          okText: '写作课',
-          cancelText: '阅读课',
-          onOk: () => {
-            this.$router.push({
-              name: 'tbzw_checkpointMain',
-              query: {
-                lessonId: data.id,
-                type: 1
-              }
-            })
-          },
-          onCancel: () => {
-            this.$router.push({
-              name: 'tbzw_checkpointMain',
-              query:{
-                lessonId: data.id,
-                type: 0
-              }
-            })
-          }
-        });
+      checkpoint(data) {
+        if (!data.createCheckPoint) {
+          this.$Modal.confirm({
+            title: '提示',
+            content: '<p>选择模板后，系统会自动创建部分关卡，创建后可自定义更改，选错也没有关系</p>',
+            okText: '写作课',
+            cancelText: '阅读课',
+            onOk: () => {
+              this.$router.push({
+                name: 'tbzw_checkpointMain',
+                query: {
+                  lessonId: data.id,
+                  courseId: data.courseId,
+                  type: 1
+                }
+              })
+            },
+            onCancel: () => {
+              this.$router.push({
+                name: 'tbzw_checkpointMain',
+                query: {
+                  lessonId: data.id,
+                  courseId: data.courseId,
+                  type: 0
+                }
+              })
+            }
+          });
+        } else {
+          this.$router.push({
+            name: 'tbzw_checkpointMain',
+            query: {
+              courseId: data.courseId,
+              lessonId: data.id
+            }
+          })
+        }
       },
       changeTryOut(data) {
         this.$api.composition.updateListeningById({
@@ -446,6 +460,7 @@
       },
       currentChange(val) {
         this.tab.page = val;
+        localStorage.setItem('nowPage', val)
         this.getList();
       },
       openModal(data) {
@@ -454,11 +469,15 @@
           this.isEdit = true
           this.addInfo = JSON.parse(JSON.stringify(data))
           this.addInfo.sortnum = +this.addInfo.sortnum
+          this.addInfo.category = this.addInfo.category.toString()
         } else {
           this.isEdit = false
           this.addInfo = {
             sortnum: null,
             type: 1,
+            workImg: '',
+            readContent: '',
+            cpi: '',
             coverphoto: '',
           }
         }
@@ -488,12 +507,13 @@
             this.getListByLessonQuestion()
             break
         }
+        console.log(this.detailInfo, 121)
       },
-      openModalLearn (data) {
+      openModalLearn(data) {
         this.isOpenModalLearn = true
         this.dataItem = JSON.parse(JSON.stringify(data))
       },
-      openModalLearnAndUse (data) {
+      openModalLearnAndUse(data) {
         this.$router.push({
           name: 'tbzw_formal_learnAndUse',
           query: {
@@ -533,7 +553,7 @@
         this.isFetching = true
         this.$api.composition.getQueryLessonPage({
           courseId: this.$route.query.courseId,
-          current: this.tab.page,
+          current:  localStorage.nowPage || this.tab.page,
           size: this.tab.pageSize
         })
           .then(
@@ -594,7 +614,7 @@
             this.saveHomeWork()
             break
           case 6:
-            this.submitAdd('addInfoAdd')
+            this.submitVideo()
             break
         }
       },
@@ -611,7 +631,6 @@
               this.$Message.success('操作成功');
               this.getList()
               this.closeModalContent()
-              this.isOpenModalAdd = false
             }
           })
       },
@@ -645,7 +664,7 @@
         let isCheckErrorAudio = true
 
         this.choiceList.forEach(item => {
-          if ( item.answerMinute === '' || item.answerSecond === '' || !item.answerTime || item.publishMinute === '' || item.publishSecond === '' ) {
+          if (item.answerMinute === '' || item.answerSecond === '' || !item.answerTime || item.publishMinute === '' || item.publishSecond === '') {
             isCheckQuestion = false
           }
 
@@ -733,6 +752,10 @@
       saveHomeWork() {
         if (!this.detailInfo.homeworkType) {
           return this.$Message.error('请选择作业类型')
+        } else if (!this.detailInfo.cpn && this.detailInfo.category!==1) {
+          return this.$Message.error('请输入关卡名称')
+        } else if (!this.detailInfo.cpi && this.detailInfo.category!==1) {
+          return this.$Message.error('请输入关卡图标')
         }
 
         this.$api.composition.saveHomeWork({
@@ -741,7 +764,30 @@
           keyPoint: this.detailInfo.keyPoint,
           homeworkClaim: this.detailInfo.homeworkClaim,
           homeWorkType: this.detailInfo.homeworkType,
-          readContent: this.detailInfo.readContent
+          cpn: this.detailInfo.cpn,
+          cpi: this.detailInfo.cpi,
+          workImg: this.detailInfo.workImg,
+          // readContent: this.detailInfo.readContent
+        })
+          .then(response => {
+            if (response.data.code == '200') {
+              this.$Message.success('操作成功');
+              this.getList()
+              this.closeModalContent()
+              this.isOpenModalAdd = false
+            }
+          })
+      },
+      submitVideo() {
+        if (!this.detailInfo.videoUrl) {
+          return this.$Message.error('请上传课程视频')
+        }
+
+        this.$api.tbzwLesson.saveLessonVideo({
+          id: this.dataItem.id,
+          tvUrl: this.detailInfo.tvUrl,
+          ipadUrl: this.detailInfo.ipadUrl,
+          videoUrl: this.detailInfo.videoUrl
         })
           .then(response => {
             if (response.data.code == '200') {
@@ -757,8 +803,6 @@
           if (valid) {
             if (!this.addInfo.coverphoto) {
               return this.$Message.error('请上传课程封面')
-            } else if (this.addInfo.type === 1 && !this.detailInfo.videoUrl) {
-              return this.$Message.error('请上传课程视频')
             }
 
             let paramUrl = this.addInfo.id ? this.$api.composition.updateLesson : this.$api.composition.saveLesson
@@ -766,10 +810,7 @@
               courseId: this.$route.query.courseId,
               id: this.addInfo.id,
               name: this.addInfo.name,
-              tvUrl: this.addInfo.tvUrl,
-              ipadUrl: this.addInfo.ipadUrl,
-              videoUrl: this.addInfo.videoUrl,
-              // content: this.addInfo.content,
+              category: this.addInfo.category,
               coverphoto: this.addInfo.coverphoto
             })
               .then(response => {
