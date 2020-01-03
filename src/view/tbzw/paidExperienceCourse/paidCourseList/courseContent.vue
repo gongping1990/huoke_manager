@@ -192,7 +192,7 @@
           {
             title: '类型',
             render: (h, params) => {
-              return h('div', params.row.type === 1 ? '小班课' : '素材课')
+              return h('div', params.row.category === 1 ? '小班课' : '素材课')
             },
             align: 'center'
           },
@@ -227,7 +227,7 @@
                     size: 'small'
                   },
                   style: {
-                    display: params.row.type === 1 ? 'inline-block' : 'none',
+                    display: params.row.category === 1 ? 'inline-block' : 'none',
                     color: '#5444E4'
                   },
                   on: {
@@ -242,7 +242,7 @@
                     size: 'small'
                   },
                   style: {
-                    display: params.row.type === 1 ? 'inline-block' : 'none',
+                    display: params.row.category === 1 ? 'inline-block' : 'none',
                     color: '#5444E4'
                   },
                   on: {
@@ -257,7 +257,7 @@
                     size: 'small'
                   },
                   style: {
-                    display: params.row.type === 1 ? 'inline-block' : 'none',
+                    display: params.row.category === 1 ? 'inline-block' : 'none',
                     color: '#5444E4'
                   },
                   on: {
@@ -272,7 +272,7 @@
                     size: 'small'
                   },
                   style: {
-                    display: params.row.type === 1 ? 'inline-block' : 'none',
+                    display: params.row.category === 1 ? 'inline-block' : 'none',
                     color: '#5444E4'
                   },
                   on: {
@@ -287,7 +287,7 @@
                     size: 'small'
                   },
                   style: {
-                    display: params.row.type === 1 ? 'inline-block' : 'none',
+                    display: params.row.category === 1 ? 'inline-block' : 'none',
                     color: '#5444E4'
                   },
                   on: {
@@ -302,7 +302,7 @@
                     size: 'small'
                   },
                   style: {
-                    display: params.row.type === 2 ? 'inline-block' : 'none',
+                    display: params.row.category === 2 ? 'inline-block' : 'none',
                     color: '#5444E4'
                   },
                   on: {
