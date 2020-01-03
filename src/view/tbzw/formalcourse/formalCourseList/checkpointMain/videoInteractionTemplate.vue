@@ -15,7 +15,7 @@
           <div class="-c-point" :class="{'g-primary-btn': dataItem.id === item.id}" @click="toCheckBtn(item,index)">
             [{{item.answerMinute}}: {{item.answerSecond}}] {{item.subject}}
           </div>
-          <div class="-c-item-tip">{{tipObj[item.type]}}</div>
+          <img class="-c-item-tip" :src="tipObj[item.type]"/>
           <Icon v-if=" dataItem.id === item.id" class="-c-item-icon g-cursor" size="20" type="md-close-circle"
                 @click="delCheckpoint(item)"/>
         </div>
@@ -70,9 +70,9 @@
         levelType: 1,
         dataList: [],
         tipObj: {
-          '1': '录',
-          '2': '选',
-          '3': '连'
+          '1': require('@/assets/images/guanka/lu1.png'),
+          '2': require('@/assets/images/guanka/x1.png'),
+          '3': require('@/assets/images/guanka/l1.png')
         },
         dataItem: {},
         addInfo: {},
@@ -90,6 +90,7 @@
     methods: {
       initData (data) {
         this.queryInfo = data
+        this.levelType = 1
         this.$refs.childTwo.getList(data)
       },
       changeRadio () {
@@ -383,12 +384,8 @@
           top: -10px;
           left: -10px;
           font-size: 12px;
-          background-color: #2baee9;
-          color: #ffffff;
-          width: 20px;
-          height: 20px;
-          line-height: 20px;
-          border-radius: 50%;
+          width: 18px;
+          height: 18px;
         }
 
         .-c-point {

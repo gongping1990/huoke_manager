@@ -73,7 +73,7 @@
     }
 
     &-nav {
-      width: 210px;
+      /*width: 210px;*/
       border-right: 1px solid #EBEBEB
     }
 

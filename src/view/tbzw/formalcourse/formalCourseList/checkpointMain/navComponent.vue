@@ -5,13 +5,16 @@
          :class="{'-active' : dataItem.id === item.id}"
          v-for="(item, index) of dataList"
          :key="index" @click="openChild(item)">
-      <div class="-item-type" :class="typeList[item.type-1].class">{{typeList[item.type-1].name}}</div>
-      {{item.name}}
-      <Icon @click.stop="openMask(item)" class="-item-icon" type="ios-create-outline"/>
+      <img class="-item-img" :src="typeList[item.type-1].url"/>
+      <div class="-item-text">
+        {{item.name}}
+      </div>
+      <img @click.stop="openMask(item)" class="-item-icon" src="../../../../../assets/images/guanka/bj.png"/>
       <div class="-item-mask" v-if="item.id === dataIcon.id">
         <p class="g-cursor" @click="addPoint(item)">编辑</p>
         <p class="g-cursor" @click="delCheckpoint(item)">删除</p>
       </div>
+      <div class="-item-tip">{{typeList[item.type-1].name}}</div>
     </div>
 
     <Button class="p-navComponent-btn" @click="addPoint()" ghost type="primary">添加关卡</Button>
@@ -56,7 +59,8 @@
         </FormItem>
         <Form-item label="关卡图标" prop="icon">
           <Select v-model="addInfo.icon">
-            <Option class="p-navComponent-option" :label="item.name" :value="item.src" v-for="(item, index) of iconList" :key="index">
+            <Option class="p-navComponent-option" :label="item.name" :value="item.src" v-for="(item, index) of iconList"
+                    :key="index">
               <img class="p-navComponent-img" :src="item.src"/>
               <span>{{item.name}}</span>
             </Option>
@@ -84,15 +88,15 @@
         dataList: [],
         typeList: [
           {
-            class: '-typeOne',
+            url: require('@/assets/images/guanka/h1.png'),
             name: '绘本'
           },
           {
-            class: '-typeTwo',
+            url: require('@/assets/images/guanka/s1.png'),
             name: '视频',
           },
           {
-            class: '-typeThree',
+            url: require('@/assets/images/guanka/j1.png'),
             name: '视频交互',
           }
         ],
@@ -130,8 +134,13 @@
       this.getList()
     },
     methods: {
-      openMask (item) {
-        this.dataIcon = item
+      openMask(item) {
+        if(this.dataIcon.id === item.id) {
+          this.dataIcon = ''
+        } else {
+          this.dataIcon = item
+        }
+        console.log(this.dataIcon)
         this.$forceUpdate()
       },
       openChild(item) {
@@ -234,42 +243,51 @@
     padding: 30px;
 
     &-item {
+      display: flex;
+      align-items: center;
       position: relative;
-      margin: 0 auto 20px;
+      margin: 0 60px 20px 0;
       text-align: center;
-      width: 150px;
-      padding: 10px 15px;
-      border-radius: 4px;
+      padding: 15px 20px;
       border: 1px solid #EBEBEB;
+      min-width:200px;
+      background:rgba(255,255,255,1);
+      box-shadow:0px 4px 30px 0px rgba(205, 206, 201, 0.35);
+      border-radius:10px;
 
-      .-item-type {
-        position: absolute;
-        top: 0;
-        left: 0;
-        padding: 1px 4px;
-        font-size: 12px;
-        border-radius: 2px;
-        color: #ffffff;
-
-        &.-typeOne {
-          background-color: #39ba5c;
-        }
-
-        &.-typeTwo {
-          background: #2baee9;
-        }
-
-        &.-typeThree {
-          background: #f48336;
-        }
+      .-item-img {
+        margin-right: 27px;
+        width: 27px;
+        height: 25px;
       }
 
+      .-item-text {
+        height: 23px;
+        font-size: 16px;
+        font-weight: 400;
+        color: rgba(0, 0, 0, 1);
+      }
+
+      .-item-tip {
+        position: absolute;
+        right: -68px;
+        width:62px;
+        height:27px;
+        font-size: 12px;
+        line-height: 27px;
+        text-align: center;
+        background:rgba(0,0,0,1);
+        border-radius:14px 14px 14px 0px;
+        color: #ffffff;
+      }
+
+
       .-item-icon {
-        background-color: #2baee9;
         position: absolute;
         top: -10px;
         right: -10px;
-        font-size: 18px;
+        width: 18px;
+        height: 18px;
       }
 
       .-item-mask {
@@ -284,8 +302,10 @@
         padding: 10px 30px;
         width: 100%;
         height: 100%;
-        background: rgba(0, 0, 0, 0.3);
+        font-size: 18px;
+        background: rgba(0, 0, 0, 0.7);
         color: #ffffff;
+        border-radius:10px;
       }
 
       &.-active {
@@ -312,7 +332,6 @@
         margin-right: 10px;
         text-align: center;
         cursor: pointer;
-        width: 100px;
         padding: 10px 15px;
         border-radius: 4px;
         border: 1px solid #EBEBEB;
