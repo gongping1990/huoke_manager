@@ -23,12 +23,12 @@
         <div v-for="(list, index) of audioList" :key="index">
           <div class="p-dubbing-title">{{list.typeName}}</div>
           <div class="p-dubbing-item">
-            <div class="-item-list" v-for="(item, index1) of list.answervfUrl" :key="index1">
-              <upload-audio v-model="item.url" :option="uploadAudioOption" @parentDel="delAudio(list.answervfUrl,index1)"
-                            @successAudio="submitInfo(item)"></upload-audio>
+            <div class="-item-list" v-for="(item, index1) of list.vfUrls" :key="index1">
+              <upload-audio v-model="item.url" :option="uploadAudioOption" @parentDel="delAudio(list.vfUrls,index1)"
+                            @successAudio="submitInfoTwo(item,list)"></upload-audio>
             </div>
             <div class="p-dubbing-btn">
-              <Button @click="addAudio(list.answervfUrl)" class="-btn" ghost type="primary" style="width: 100px;">添加音频</Button>
+              <Button @click="addAudio(list.vfUrls)" class="-btn" ghost type="primary" style="width: 100px;">添加音频</Button>
             </div>
           </div>
         </div>
@@ -53,7 +53,7 @@
           format: ['mp3', 'wma', 'arm'],
           backstageDel: true
         },
-        radioType: '2',
+        radioType: '1',
         isShowEdit: false,
         isSending: false,
         isFetching: false,
@@ -103,13 +103,38 @@
         list.splice(index,1)
       },
       submitInfo(item) {
-        console.log(item, 11)
         if (this.isFetching) return
         this.isFetching = true
         setTimeout(() => {
           this.$api.tbzwDubbing.editDubbing({
+            category: this.radioType,
             type: item.type,
             vfUrl: item.vfUrl
+          })
+            .then(
+              response => {
+                if (response.data.code == '200') {
+                  // this.getList()
+                  this.$Message.success('提交成功');
+                }
+              })
+            .finally(() => {
+              this.isFetching = false
+            })
+        }, 0)
+      },
+      submitInfoTwo(item, list) {
+        if (this.isFetching) return
+        this.isFetching = true
+        let  arrayUrl = []
+        setTimeout(() => {
+          for(let item of list.vfUrls) {
+            arrayUrl.push(item.url)
+          }
+          this.$api.tbzwDubbing.editDubbing({
+            category: this.radioType,
+            type: list.type,
+            vfUrl: arrayUrl.toString()
           })
             .then(
               response => {
