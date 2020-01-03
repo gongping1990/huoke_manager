@@ -102,12 +102,40 @@
         ],
         iconList: [
           {
-            src: 'https://pub.file.k12.vip/2019/09/30/1178583754778177537.png',
-            name: '图标1'
+            src: 'https://pub.file.k12.vip/2020/01/03/1212944961940107265.png',
+            name: '开心练一练'
           },
           {
-            src: 'https://pub.file.k12.vip/2019/09/19/1174632403613650946.png',
-            name: '图标2',
+            src: 'https://pub.file.k12.vip/2020/01/03/1212945089908322305.png',
+            name: '情景录音',
+          },
+          {
+            src: 'https://pub.file.k12.vip/2020/01/03/1212945288223404034.png',
+            name: '小小朗读者',
+          },
+          {
+            src: 'https://pub.file.k12.vip/2020/01/03/1212945366161960962.png',
+            name: '小小图书馆',
+          },
+          {
+            src: 'https://pub.file.k12.vip/2020/01/03/1212945474001711105.png',
+            name: '知识小剧场',
+          },
+          {
+            src: 'https://pub.file.k12.vip/2020/01/03/1212945576317562881.png',
+            name: '知识小课堂',
+          },
+          {
+            src: 'https://pub.file.k12.vip/2020/01/03/1212945780819243010.png',
+            name: '作文小锦囊1',
+          },
+          {
+            src: 'https://pub.file.k12.vip/2020/01/03/1212945961795072001.png',
+            name: '作文小锦囊2',
+          },
+          {
+            src: 'https://pub.file.k12.vip/2020/01/03/1212945890517069826.png',
+            name: '作文大比拼',
           }
         ],
         addInfo: {},
@@ -154,6 +182,7 @@
         this.isOpenModalRadio = true
         if (data) {
           this.addInfo = JSON.parse(JSON.stringify(data))
+          this.addInfo.type = this.addInfo.type.toString()
         } else {
           this.addInfo = {
             lessonId: this.queryInfo.lessonId
@@ -228,6 +257,7 @@
                 if (response.data.code == '200') {
                   this.closeModal(name)
                   this.getList()
+                  this.dataIcon = ''
                   this.$Message.success('操作成功');
                 }
               })
