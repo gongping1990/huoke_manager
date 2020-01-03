@@ -376,7 +376,8 @@
           content: '确认要删除吗？',
           onOk: () => {
             this.$api.tbzwRules.removeTimeTableRules({
-              lessonId: param.lessonId
+              lessonId: param.lessonId,
+              planId: param.planId
             }).then(
               response => {
                 if (response.data.code == "200") {
@@ -456,6 +457,7 @@
           }
           this.$api.tbzwRules.editTimeTableRules({
             lessonId: this.secondInfo.lessonId,
+            planId: this.secondInfo.planId,
             studyDate: dayjs(this.secondInfo.studyDate).format('YYYY-MM-DD')
           })
             .then(
