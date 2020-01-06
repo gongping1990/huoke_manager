@@ -416,6 +416,7 @@
     },
     methods: {
       checkpoint(data) {
+        this.dataItem = data
         if (!data.createCheckPoint) {
           this.isOpenLevel = true
         } else {
@@ -432,8 +433,8 @@
         this.$router.push({
           name: 'tbzw_checkpointMain',
           query: {
-            lessonId: data.id,
-            courseId: data.courseId,
+            lessonId: this.dataItem.id,
+            courseId: this.dataItem.courseId,
             type: this.levelType
           }
         })
