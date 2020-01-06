@@ -11,8 +11,8 @@
       </div>
       <img @click.stop="openMask(item)" class="-item-icon" src="../../../../../assets/images/guanka/bj.png"/>
       <div class="-item-mask" v-if="item.id === dataIcon.id">
-        <p class="g-cursor" @click="addPoint(item)">编辑</p>
-        <p class="g-cursor" @click="delCheckpoint(item)">删除</p>
+        <p class="g-cursor" @click.stop="addPoint(item)">编辑</p>
+        <p class="g-cursor" @click.stop="delCheckpoint(item)">删除</p>
       </div>
       <!--<div class="-item-tip">{{typeList[item.type-1].name}}</div>-->
     </div>
@@ -135,7 +135,7 @@
         this.$forceUpdate()
       },
       openChild(item) {
-        this.dataItem = item
+        this.dataItem = item || {}
         this.$emit('changeChildItem', item)
       },
       addPoint(data) {
