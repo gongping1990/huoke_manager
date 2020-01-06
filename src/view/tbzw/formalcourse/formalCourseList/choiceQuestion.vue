@@ -27,7 +27,7 @@
         <span class="-s-width -span">选项{{optionLetter[index]}}：</span>
         <Input class="-s-width" v-model="item.value" type="textarea" placeholder="请输入选择题干"
                :maxlength="40" style="width: 300px"/>
-        <Checkbox v-model="item.checked" @on-change="changeCheck(list,index)">设为答案</Checkbox>
+        <Checkbox v-model="item.isChecked" @on-change="changeCheck(list,index)">设为答案</Checkbox>
         <span class="-s-width -s-color g-cursor" @click="delOption(list,index)">删除</span>
       </div>
       <div class="-audio" v-if="type !== 1">
@@ -88,14 +88,14 @@
       changeCheck(list, idx) {
         list.optionJson.forEach((item, index) => {
           if (idx !== index) {
-            item.checked = false
+            item.isChecked = false
           }
         })
       },
       addOption(list) {
         list.optionJson.push({
           value: '',
-          checked: false,
+          isChecked: false,
           index: this.optionLetter[list.optionJson.length]
         })
       },

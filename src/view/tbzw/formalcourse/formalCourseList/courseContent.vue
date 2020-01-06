@@ -684,7 +684,7 @@
 
           if (item.optionJson.length) {
             isCheckOptionBool = item.optionJson.some(list => {
-              return list.checked == true
+              return list.isChecked == true
             })
 
             isCheckOptionOK = item.optionJson.every(list => {
