@@ -9,7 +9,7 @@
           <Icon v-if=" dataItem.id === item.id" class="-c-item-icon g-cursor" size="20" type="md-close-circle"
                 @click="delCheckpoint(item)"/>
         </div>
-        <Button @click="openModal()" ghost type="primary" class="-c-btn">添加题目</Button>
+        <Button @click="openModal()" ghost type="primary" class="-c-btn">添加页面</Button>
         <Button @click="openSort()" ghost type="primary" class="-c-btn" v-if="dataList.length>1">页面排序</Button>
       </div>
 

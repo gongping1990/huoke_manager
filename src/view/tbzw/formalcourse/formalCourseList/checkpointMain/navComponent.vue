@@ -14,7 +14,7 @@
         <p class="g-cursor" @click="addPoint(item)">编辑</p>
         <p class="g-cursor" @click="delCheckpoint(item)">删除</p>
       </div>
-      <div class="-item-tip">{{typeList[item.type-1].name}}</div>
+      <!--<div class="-item-tip">{{typeList[item.type-1].name}}</div>-->
     </div>
 
     <Button class="p-navComponent-btn" @click="addPoint()" ghost type="primary">添加关卡</Button>
@@ -59,10 +59,10 @@
         </FormItem>
         <Form-item label="关卡图标" prop="icon">
           <Select v-model="addInfo.icon">
-            <Option class="p-navComponent-option" :label="item.name" :value="item.src" v-for="(item, index) of iconList"
+            <Option class="p-navComponent-option" :label="item.text" :value="item.value" v-for="(item, index) of iconList"
                     :key="index">
-              <img class="p-navComponent-img" :src="item.src"/>
-              <span>{{item.name}}</span>
+              <img class="p-navComponent-img" :src="item.url"/>
+              <span>{{item.text}}</span>
             </Option>
           </Select>
         </Form-item>
@@ -100,44 +100,7 @@
             name: '视频交互',
           }
         ],
-        iconList: [
-          {
-            src: 'https://pub.file.k12.vip/2020/01/03/1212944961940107265.png',
-            name: '开心练一练'
-          },
-          {
-            src: 'https://pub.file.k12.vip/2020/01/03/1212945089908322305.png',
-            name: '情景录音',
-          },
-          {
-            src: 'https://pub.file.k12.vip/2020/01/03/1212945288223404034.png',
-            name: '小小朗读者',
-          },
-          {
-            src: 'https://pub.file.k12.vip/2020/01/03/1212945366161960962.png',
-            name: '小小图书馆',
-          },
-          {
-            src: 'https://pub.file.k12.vip/2020/01/03/1212945474001711105.png',
-            name: '知识小剧场',
-          },
-          {
-            src: 'https://pub.file.k12.vip/2020/01/03/1212945576317562881.png',
-            name: '知识小课堂',
-          },
-          {
-            src: 'https://pub.file.k12.vip/2020/01/03/1212945780819243010.png',
-            name: '作文小锦囊1',
-          },
-          {
-            src: 'https://pub.file.k12.vip/2020/01/03/1212945961795072001.png',
-            name: '作文小锦囊2',
-          },
-          {
-            src: 'https://pub.file.k12.vip/2020/01/03/1212945890517069826.png',
-            name: '作文大比拼',
-          }
-        ],
+        iconList: [],
         addInfo: {},
         sortList: [],
         dataIcon: '',
@@ -153,7 +116,7 @@
             {required: true, message: '请选择关卡类型', trigger: 'change'},
           ],
           icon: [
-            {required: true, message: '请选择关卡图标', trigger: 'change'},
+            {required: true, type: 'number', message: '请选择关卡图标', trigger: 'change'},
           ]
         },
       };
@@ -180,8 +143,9 @@
           return this.$Message.error('关卡数量不能超过5个')
         }
         this.isOpenModalRadio = true
+        this.getPresetIcon()
         if (data) {
-          this.addInfo = JSON.parse(JSON.stringify(data))
+          // this.addInfo = JSON.parse(JSON.stringify(data))
           this.addInfo.type = this.addInfo.type.toString()
         } else {
           this.addInfo = {
@@ -249,6 +213,13 @@
             this.isFetching = false
           })
       },
+      getPresetIcon() {
+        this.$api.tbzwLesson.getPresetIcon()
+          .then(
+            response => {
+              this.iconList = response.data.resultData;
+            })
+      },
       submitInfo(name) {
         this.$refs[name].validate((valid) => {
           if (valid) {
@@ -276,7 +247,7 @@
       display: flex;
       align-items: center;
       position: relative;
-      margin: 0 60px 20px 0;
+      margin: 0 0 20px 0;
       text-align: center;
       padding: 15px 20px;
       border: 1px solid #EBEBEB;

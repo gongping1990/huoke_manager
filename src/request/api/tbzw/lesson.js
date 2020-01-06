@@ -44,6 +44,9 @@ const tbzwLesson = {
   removeProblemById(params) {
     return axios.get('/compositionv2/lesson/removeProblemById', {params: params})
   },
+  getPresetIcon(params) {
+    return axios.get('/compositionv2/lesson/getPresetIcon', {params: params})
+  },
   saveProblem(params) {
     return axios.post('/compositionv2/lesson/saveProblem', params)
   },

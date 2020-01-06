@@ -51,10 +51,10 @@
           <Input type="textarea" :rows="4" v-model="detailInfo.homeworkClaim" placeholder="请输入作业要求（字数不超过80字）"
                  :maxlength='80'></Input>
         </FormItem>
-        <!--<FormItem label="作业提示" v-show="modalType===5 && detailInfo.category!==1 && detailInfo.homeworkType!==1">-->
-          <!--<upload-img ref="childImg" v-model="detailInfo.workImg" :option="uploadOption"></upload-img>-->
-        <!--</FormItem>-->
-        <FormItem label="朗读内容">
+        <FormItem label="作业提示" v-show="modalType===5 && detailInfo.category!==1 && detailInfo.homeworkType!==1">
+          <upload-img ref="childImg" v-model="detailInfo.workImg" :option="uploadOption"></upload-img>
+        </FormItem>
+        <FormItem label="朗读内容" v-if="modalType===5 && detailInfo.homeworkType===1">
           <upload-img ref="childImg" v-model="detailInfo.workImg" :option="uploadOption"></upload-img>
         </FormItem>
         <FormItem label="关卡名称" v-if="modalType===5 && detailInfo.category!==1" class="ivu-form-item-required">
@@ -205,16 +205,16 @@
             align: 'center'
           },
           {
-            title: '数据完整',
+            title: '补充内容完整',
             render: (h, params) => {
               return h('div', params.row.complete ? '是' : '否')
             },
             align: 'center'
           },
           {
-            title: '是否试听',
+            title: '是否布置作业',
             render: (h, params) => {
-              return h('div', params.row.listen ? '是' : '否')
+              return h('div', params.row.fixupHomework ? '是' : '否')
             },
             align: 'center'
           },
@@ -501,6 +501,7 @@
         this.dataItem = data
         this.modalType = type
         this.detailInfo.teacher = this.dataItem.teacherId
+        this.detailInfo.homeworkType = this.detailInfo.homeworkType || 1
 
         switch (this.modalType) {
           case 4:
