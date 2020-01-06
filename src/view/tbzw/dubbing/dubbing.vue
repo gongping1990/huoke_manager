@@ -24,8 +24,8 @@
           <div class="p-dubbing-title">{{list.typeName}}</div>
           <div class="p-dubbing-item">
             <div class="-item-list" v-for="(item, index1) of list.vfUrls" :key="index1">
-              <upload-audio v-model="item.url" :option="uploadAudioOption" @parentDel="delAudio(list.vfUrls,index1)"
-                            @successAudio="submitInfoTwo(item,list)"></upload-audio>
+              <upload-audio v-model="item.url" :option="uploadAudioOption" @parentDel="delAudioTwo(list,index1)"
+                            @successAudio="submitInfoTwo(list)"></upload-audio>
             </div>
             <div class="p-dubbing-btn">
               <Button @click="addAudio(list.vfUrls)" class="-btn" ghost type="primary" style="width: 100px;">添加音频</Button>
@@ -102,6 +102,10 @@
       delAudio(list,index) {
         list.splice(index,1)
       },
+      delAudioTwo(list,index) {
+        list.vfUrls.splice(index,1)
+        this.submitInfoTwo(list)
+      },
       submitInfo(item) {
         if (this.isFetching) return
         this.isFetching = true
@@ -123,7 +127,7 @@
             })
         }, 0)
       },
-      submitInfoTwo(item, list) {
+      submitInfoTwo(list) {
         if (this.isFetching) return
         this.isFetching = true
         let  arrayUrl = []
