@@ -67,7 +67,7 @@
            @click="addOption(list)">+ 新增选项
       </div>
 
-      <div class="-form-btn g-cursor" v-if="list.optionJson.length < 6 && (type == 3)"
+      <div class="-form-btn g-cursor" v-if="list.optionJson.length < 3 && (type == 3)"
            @click="addOption(list)">+ 新增选项
       </div>
     </div>

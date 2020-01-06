@@ -2,8 +2,8 @@
   <div class="p-levelSetting">
     <div class="p-levelSetting-top">
       <Radio-group v-model="levelType" type="button" @on-change="changeRadio">
-        <Radio :label=1>视频</Radio>
-        <Radio :label=2>题目</Radio>
+        <Radio :label=1>视频({{audioNum}})</Radio>
+        <Radio :label=2>题目({{questionNum}})</Radio>
       </Radio-group>
     </div>
     <div class="p-levelSetting-wrap" v-show="levelType===1">
@@ -80,6 +80,8 @@
         choiceList: [],
         modelRadioType: '',
         modelChildType: '',
+        audioNum: 0,
+        questionNum: 0,
         isEdit: false,
         isOpenModalRadio: false,
         isShowFormItem: false,
@@ -90,6 +92,8 @@
     methods: {
       initData (data) {
         this.queryInfo = data
+        this.audioNum = this.queryInfo.contentUrl ? 1 : 0
+        this.questionNum = this.queryInfo.problemNum
         this.levelType = 1
         this.$refs.childTwo.getList(data)
       },
@@ -128,6 +132,7 @@
                 if (response.data.code == "200") {
                   this.$Message.success('删除成功')
                   this.getList()
+                  this.$emit('updateNav')
                 }
               })
           }
@@ -173,6 +178,7 @@
           .then(
             response => {
               this.dataList = response.data.resultData;
+              this.questionNum = this.dataList.length
               this.dataList.forEach(item=>{
                 item.answerMinute = parseInt(item.answerPoint / 60) > 9 ? parseInt(item.answerPoint / 60) : `0${parseInt(item.answerPoint / 60)}`
                 item.answerSecond = (item.answerPoint % 60) > 9 ? item.answerPoint % 60 : `0${item.answerPoint % 60}`
@@ -186,7 +192,6 @@
         let isCheckQuestion = true
         let isCheckName = true
         let isCheckImgUrl = true
-        let isCheckVfUrl= true
         let isCheckOptionBool = false
         let isCheckoptionJsonLength = true
         let isCheckOptionOK = false
@@ -209,10 +214,6 @@
 
           if (!item.imgUrl) {
             isCheckImgUrl = false
-          }
-
-          if (!item.vfUrl) {
-            isCheckVfUrl = false
           }
 
           if (!item.optionJson.length && this.modelChildType !== 1) {
@@ -264,8 +265,6 @@
 
         if (!isCheckName) {
           return this.$Message.error('请输入题目')
-        } else if (!isCheckVfUrl) {
-          return this.$Message.error('请上传题干音频')
         } else if (!this.choiceList.length) {
           return this.$Message.error('请新增题目')
         } else if (!isCheckQuestion) {
@@ -278,7 +277,7 @@
           return this.$Message.error('选项不能有空')
         } else if (this.choiceList[0].optionJson.length < 2 && this.modelChildType === 2) {
           return this.$Message.error('选择题选项不少于2个')
-        } else if (this.choiceList[0].optionJson.length < 4 && this.modelChildType === 3) {
+        } else if (this.choiceList[0].optionJson.length < 2 && this.modelChildType === 3) {
           return this.$Message.error('连线题选项不少于4个')
         } else if (!isCheckImgUrl && this.modelChildType === 1) {
           return this.$Message.error('请上传录音提示')
@@ -298,18 +297,15 @@
           delete item.duration
           delete item.authVfUrl
           delete item.optionJsonTwo
+          delete item.leftJson
+          delete item.rigthJson
 
           if (this.modelChildType === 1 ) {
             delete item.optionJson
           }
 
-          if (this.modelChildType !== 2) {
+          if (this.modelChildType !== 1) {
             delete item.imgUrl
-          }
-
-          if (this.modelChildType === 3) {
-            delete item.leftJson
-            delete item.rigthJson
           }
         })
 
@@ -323,6 +319,7 @@
             if (response.data.code == '200') {
               this.initChildQuestion()
               this.getList()
+              this.$emit('updateNav')
               this.$Message.success('操作成功');
             }
           })

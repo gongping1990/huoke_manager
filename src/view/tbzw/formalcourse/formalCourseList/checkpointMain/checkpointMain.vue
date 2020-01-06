@@ -2,12 +2,12 @@
   <div class="p-checkpointMain">
     <Card class="p-checkpointMain-body">
         <div class="p-checkpointMain-nav">
-          <nav-component @changeChildItem="changeChild"></nav-component>
+          <nav-component ref="childNav" @changeChildItem="changeChild"></nav-component>
         </div>
         <div class="p-checkpointMain-content" v-show="isShow">
           <picture-book-template ref="childOne" v-show="dataInfo.type === 1"></picture-book-template>
           <video-template ref="childTwo" v-show="dataInfo.type === 2"></video-template>
-          <VideoInteractionTemplate ref="childThree" v-show="dataInfo.type === 3" ></VideoInteractionTemplate>
+          <VideoInteractionTemplate ref="childThree" v-show="dataInfo.type === 3" @updateNav="updateNav"></VideoInteractionTemplate>
         </div>
     </Card>
   </div>
@@ -32,6 +32,9 @@
     mounted() {
     },
     methods: {
+      updateNav () {
+        this.$refs.childNav.getList()
+      },
       changeChild (data) {
         if (!data) {
           this.isShow = false
