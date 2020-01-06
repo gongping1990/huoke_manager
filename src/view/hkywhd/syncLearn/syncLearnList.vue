@@ -137,9 +137,7 @@
           },
           {
             title: '教材版本',
-            render: (h, params) => {
-              return h('div', params.row.teachEdition && this.teachVersion[params.row.teachEdition - 1].name)
-            },
+            key: 'teachEdition',
             align: 'center'
           },
           {
