@@ -45,7 +45,7 @@
                          placeholder="请输入成团时限（小时）"></InputNumber>
           </FormItem>
           <FormItem label="咨询电话" prop="consultPhone">
-            <InputNumber style="width: 100%;" type="text" :disabled="!isEdit" v-model="addInfo.consultPhone"
+            <InputNumber style="width: 100%;" type="text" :min="0" :disabled="!isEdit" v-model="addInfo.consultPhone"
                          placeholder="请输入咨询电话"></InputNumber>
           </FormItem>
           <FormItem label="实物礼包" class="ivu-form-item-required">

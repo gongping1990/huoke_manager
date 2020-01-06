@@ -142,6 +142,7 @@
               <Radio :label=1>是</Radio>
               <Radio :label=0>否</Radio>
             </Radio-group>
+            <p class="-c-tips">如果用户的作业还不错，请选择“是”，如果用户的作业不太好甚至不合格，请选择“否”</p>
           </FormItem>
         </Form>
         <div slot="footer" class="-p-b-flex">
