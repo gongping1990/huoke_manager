@@ -68,6 +68,7 @@
               <span>{{item.text}}</span>
             </Option>
           </Select>
+          <p class="-c-tips">图标为系统内置，如需增加，请联系技术人员</p>
         </FormItem>
         <Form-item label="课程视频" v-show="modalType===6" class="-c-form-item ivu-form-item-required">
           <upload-video ref="childVideo" v-model="detailInfo.videoUrl" :option="uploadVideoOption"></upload-video>

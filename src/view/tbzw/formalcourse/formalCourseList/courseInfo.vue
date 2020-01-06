@@ -45,8 +45,8 @@
                          placeholder="请输入成团时限（小时）"></InputNumber>
           </FormItem>
           <FormItem label="咨询电话" prop="consultPhone">
-            <InputNumber style="width: 100%;" type="text" :min="0" :disabled="!isEdit" v-model="addInfo.consultPhone"
-                         placeholder="请输入咨询电话"></InputNumber>
+            <Input style="width: 100%;" type="text" :min="0" :disabled="!isEdit" v-model="addInfo.consultPhone"
+                         placeholder="请输入咨询电话"></Input>
           </FormItem>
           <FormItem label="实物礼包" class="ivu-form-item-required">
             <RadioGroup v-model="addInfo.hasgift">
@@ -262,7 +262,7 @@
           alonePrice: 999,
           groupPrice: 999,
           lessonDescribe: null,
-          consultPhone: null,
+          consultPhone: '',
           formTime: null,
           aloneInfo: '',
           groupInfo: '',
@@ -308,7 +308,7 @@
             {required: true, type: 'number', message: '请输入成团时限', trigger: 'blur'},
           ],
           consultPhone: [
-            {required: true, type: 'number', message: '请输入咨询电话', trigger: 'blur'},
+            {required: true, message: '请输入咨询电话', trigger: 'blur'},
           ]
         }
       };
@@ -398,7 +398,6 @@
                 this.addInfo.alonePrice = +this.addInfo.alonePrice
                 this.addInfo.groupPrice = +this.addInfo.groupPrice
                 this.addInfo.groupTime = +this.addInfo.groupTime
-                this.addInfo.consultPhone = +this.addInfo.consultPhone
                 this.addInfo.hasgift = this.addInfo.hasgift ? '1' : '0'
               }
             })

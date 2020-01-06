@@ -43,8 +43,6 @@
       class="p-navComponent"
       v-model="isOpenModalRadio"
       @on-cancel="isOpenModalRadio = false"
-      :closable="false"
-      :mask-closable="false"
       :title="addInfo.id ? '编辑关卡' : '新增关卡'">
       <Form :model="addInfo" ref="addInfo" :label-width="80" :rules="ruleValidate">
         <FormItem label="关卡名称" prop="name">
@@ -65,6 +63,7 @@
               <span>{{item.text}}</span>
             </Option>
           </Select>
+          <p class="-c-tips">图标为系统内置，如需增加，请联系技术人员</p>
         </Form-item>
       </Form>
       <div slot="footer" class="g-flex-j-sa">
@@ -342,6 +341,10 @@
     &-img {
       width: 50px;
       height: 50px;
+    }
+
+    .-c-tips {
+      color: #39f;
     }
 
   }
