@@ -27,7 +27,7 @@
           <span class="-c-tips">此弹窗内部只能更改排课规则的配置，不能更改当前课程的排课规则</span>
         </FormItem>
         <FormItem label="排课类别">
-          <Radio-group v-model="classType" @on-change="changeClassType" >
+          <Radio-group v-model="classType" @on-change="changeClassType">
             <Radio :label=1 :disabled="storageInfo.wayOfTeach == '2'">每周系统排课</Radio>
             <Radio :label=2 :disabled="storageInfo.wayOfTeach == '2'">人工排课</Radio>
           </Radio-group>
@@ -312,7 +312,7 @@
       this.getList()
     },
     methods: {
-      changeDate () {
+      changeDate() {
         this.secondInfo.lessonId = ''
       },
       changeLesson() {
@@ -338,6 +338,7 @@
             courseId: data ? data.id : ''
           }
         })
+        localStorage.setItem('nowPage', 1)
       },
       openModal(data) {
         this.$router.push({
@@ -352,7 +353,7 @@
         this.addInfo = JSON.parse(JSON.stringify(data))
         this.storageInfo = JSON.parse(JSON.stringify(data))
         this.classType = this.addInfo.wayOfTeach
-        this.addInfo.rules.forEach(item=>{
+        this.addInfo.rules.forEach(item => {
           this.checkWeeks.push(item.toString())
         })
         this.changeClassType()
