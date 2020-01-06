@@ -110,6 +110,28 @@
       </div>
     </Modal>
 
+    <Modal
+      class="p-gsw-course-list"
+      v-model="isOpenLevel"
+      @on-cancel="isOpenLevel = false"
+      width="500"
+      title="关卡模板选择">
+      <Form :model="addInfo" ref="addInfoAdd" :label-width="80" :rules="ruleValidateAdd">
+        <FormItem label="选择模板">
+          <Radio-group v-model="levelType">
+            <Radio :label=0>阅读课</Radio>
+            <Radio :label=1>写作课</Radio>
+          </Radio-group>
+          <p class="-c-tips">选择模板后，系统会自动创建部分关卡，创建后可自定义更改，选错也没有关系</p>
+        </FormItem>
+      </Form>
+
+      <div slot="footer" class="g-flex-j-sa">
+        <Button @click="isOpenLevel = false" ghost type="primary" style="width: 100px;">取消</Button>
+        <div @click="submitLevel()" class="g-primary-btn ">确认</div>
+      </div>
+    </Modal>
+
     <learn-content-template v-model="isOpenModalLearn" :data-info="dataItem"></learn-content-template>
   </div>
 </template>
@@ -123,7 +145,6 @@
   import UploadAudio from "@/components/uploadAudio";
   import ChoiceQuestion from "./choiceQuestion";
   import LearnContentTemplate from "./learnContentTemplate";
-
 
   export default {
     name: 'tbzw_forma_courseContent',
@@ -163,11 +184,13 @@
         choiceList: [],
         total: 0,
         totalSource: 0,
+        levelType: 0,
         isFetching: false,
         isEdit: false,
         isOpenModalAdd: false,
         isOpenModalContent: false,
         isOpenModalLearn: false,
+        isOpenLevel: false,
         modalType: '',
         addInfo: {
           videoUrl: ''
@@ -335,23 +358,9 @@
           {
             title: '操作',
             align: 'center',
-            width: 240,
+            width: 200,
             render: (h, params) => {
               return h('div', [
-                h('Button', {
-                  props: {
-                    type: 'text',
-                    size: 'small'
-                  },
-                  style: {
-                    color: '#5444E4'
-                  },
-                  on: {
-                    click: () => {
-                      this.changeTryOut(params.row)
-                    }
-                  }
-                }, !params.row.listen ? '开启试听' : '关闭试听'),
                 h('Button', {
                   props: {
                     type: 'text',
@@ -408,32 +417,7 @@
     methods: {
       checkpoint(data) {
         if (!data.createCheckPoint) {
-          this.$Modal.confirm({
-            title: '提示',
-            content: '<p>选择模板后，系统会自动创建部分关卡，创建后可自定义更改，选错也没有关系</p>',
-            okText: '写作课',
-            cancelText: '阅读课',
-            onOk: () => {
-              this.$router.push({
-                name: 'tbzw_checkpointMain',
-                query: {
-                  lessonId: data.id,
-                  courseId: data.courseId,
-                  type: 1
-                }
-              })
-            },
-            onCancel: () => {
-              this.$router.push({
-                name: 'tbzw_checkpointMain',
-                query: {
-                  lessonId: data.id,
-                  courseId: data.courseId,
-                  type: 0
-                }
-              })
-            }
-          });
+          this.isOpenLevel = true
         } else {
           this.$router.push({
             name: 'tbzw_checkpointMain',
@@ -444,19 +428,15 @@
           })
         }
       },
-      changeTryOut(data) {
-        this.$api.composition.updateListeningById({
-          lessonId: data.id,
-          isListen: !data.listen
+      submitLevel () {
+        this.$router.push({
+          name: 'tbzw_checkpointMain',
+          query: {
+            lessonId: data.id,
+            courseId: data.courseId,
+            type: this.levelType
+          }
         })
-          .then(
-            response => {
-              if (response.data.code == '200') {
-                this.$Message.success('更改成功')
-                this.getList()
-              }
-            })
-
       },
       currentChange(val) {
         this.tab.page = val;
