@@ -61,7 +61,13 @@
           <Input v-model="detailInfo.cpn" placeholder="请输入关卡名称" :maxlength='80'></Input>
         </FormItem>
         <FormItem label="关卡图标" v-show="modalType===5 && detailInfo.category!==1" class="ivu-form-item-required">
-          <upload-img v-model="detailInfo.cpi" :option="uploadOption"></upload-img>
+          <Select v-model="detailInfo.cpi">
+            <Option class="p-gsw-course-list-option" :label="item.text" :value="item.value" v-for="(item, index) of iconList"
+                    :key="index">
+              <img class="p-gsw-course-list-img" :src="item.url"/>
+              <span>{{item.text}}</span>
+            </Option>
+          </Select>
         </FormItem>
         <Form-item label="课程视频" v-show="modalType===6" class="-c-form-item ivu-form-item-required">
           <upload-video ref="childVideo" v-model="detailInfo.videoUrl" :option="uploadVideoOption"></upload-video>
@@ -181,6 +187,7 @@
         },
         dataList: [],
         teacherList: [],
+        iconList: [],
         choiceList: [],
         total: 0,
         totalSource: 0,
@@ -482,8 +489,9 @@
         this.dataItem = data
         this.modalType = type
         this.detailInfo.teacher = this.dataItem.teacherId
+        this.detailInfo.cpi = +this.dataItem.cpi
         this.detailInfo.homeworkType = this.detailInfo.homeworkType || 1
-
+        this.getPresetIcon()
         switch (this.modalType) {
           case 4:
             this.getListByLessonQuestion()
@@ -554,6 +562,13 @@
           .finally(() => {
             this.isFetching = false
           })
+      },
+      getPresetIcon() {
+        this.$api.tbzwLesson.getPresetIcon()
+          .then(
+            response => {
+              this.iconList = response.data.resultData;
+            })
       },
       getTeacherList() {
         this.$api.composition.getTeacherList({
@@ -821,6 +836,18 @@
 
 <style lang="less" scoped>
   .p-gsw-course-list {
+
+    &-option {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    &-img {
+      width: 50px;
+      height: 50px;
+    }
+
     .-c-tips {
       color: #39f;
     }
