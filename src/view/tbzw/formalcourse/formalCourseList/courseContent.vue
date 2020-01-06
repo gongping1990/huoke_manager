@@ -707,6 +707,9 @@
           delete item.answerSecond
           delete item.publishMinute
           delete item.publishSecond
+          if (this.modalType === 4) {
+            delete item.qetype
+          }
         })
 
         this.$api.composition.saveLessonQuestion({
