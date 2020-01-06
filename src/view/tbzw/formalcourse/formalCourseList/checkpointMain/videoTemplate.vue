@@ -1,7 +1,7 @@
 <template>
   <div class="p-videoTemplate">
     <Form :model="addInfo" :label-width="80">
-      <FormItem label="关卡音频" class="ivu-form-item-required">
+      <FormItem label="关卡视频" class="ivu-form-item-required">
         <upload-video v-model="addInfo.contentUrl" :option="uploadVideoOption"></upload-video>
       </FormItem>
     </Form>

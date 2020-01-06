@@ -85,7 +85,7 @@
       v-model="isOpenModalAdd"
       @on-cancel="closeModal('addInfoAdd')"
       width="700"
-      :title="addInfo.id ? '编辑课时' : '新增课时'">
+      :title="addInfo.id ? '编辑课时1' : '新增课时'">
       <Form :model="addInfo" ref="addInfoAdd" :label-width="120" :rules="ruleValidateAdd">
         <FormItem label="课时类型" prop="category">
           <Select v-model="addInfo.category" :disabled="addInfo.id!=''">
@@ -116,7 +116,7 @@
       @on-cancel="isOpenLevel = false"
       width="500"
       title="关卡模板选择">
-      <Form :model="addInfo" ref="addInfoAdd" :label-width="80" :rules="ruleValidateAdd">
+      <Form :model="addInfo" :label-width="80">
         <FormItem label="选择模板">
           <Radio-group v-model="levelType">
             <Radio :label=0>阅读课</Radio>
@@ -789,30 +789,30 @@
           })
       },
       submitAdd(name) {
-        this.$refs[name].validate((valid) => {
-          if (valid) {
-            if (!this.addInfo.coverphoto) {
-              return this.$Message.error('请上传课程封面')
-            }
+        if (!this.addInfo.coverphoto) {
+          return this.$Message.error('请上传课程封面')
+        } else if (!this.addInfo.coverphoto) {
+          return this.$Message.error('请上传课程封面')
+        } else if  (!this.addInfo.coverphoto) {
+          return this.$Message.error('请上传课程封面')
+        }
 
-            let paramUrl = this.addInfo.id ? this.$api.composition.updateLesson : this.$api.composition.saveLesson
-            paramUrl({
-              courseId: this.$route.query.courseId,
-              id: this.addInfo.id,
-              name: this.addInfo.name,
-              category: this.addInfo.category,
-              coverphoto: this.addInfo.coverphoto
-            })
-              .then(response => {
-                if (response.data.code == '200') {
-                  this.$Message.success('操作成功');
-                  this.getList()
-                  this.closeModal(name)
-                  this.isOpenModalAdd = false
-                }
-              })
-          }
+        let paramUrl = this.addInfo.id ? this.$api.composition.updateLesson : this.$api.composition.saveLesson
+        paramUrl({
+          courseId: this.$route.query.courseId,
+          id: this.addInfo.id,
+          name: this.addInfo.name,
+          category: this.addInfo.category,
+          coverphoto: this.addInfo.coverphoto
         })
+          .then(response => {
+            if (response.data.code == '200') {
+              this.$Message.success('操作成功');
+              this.getList()
+              this.closeModal(name)
+              this.isOpenModalAdd = false
+            }
+          })
       }
     }
   };
