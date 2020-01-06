@@ -36,19 +36,17 @@
       class="p-levelSetting"
       v-model="isOpenModalRadio"
       @on-cancel="isOpenModalRadio = false"
-      :closable="false"
-      :mask-closable="false"
       title="选择题型">
       <div class="p-levelSetting-modal">
-        <Radio-group v-model="modelRadioType" @on-change="changeModelType">
+        <Radio-group v-model="modelRadioType">
           <Radio class="-modal-radio" :label=1>录音题</Radio>
           <Radio class="-modal-radio" :label=2>选择题（选项含图片）</Radio>
           <Radio class="-modal-radio" :label=3>连线题（选项含图片）</Radio>
         </Radio-group>
       </div>
       <div slot="footer" class="g-flex-j-sa">
-        <div @click="submitRadio()" class="g-primary-btn" style="line-height: 40px"> {{isSending ? '提交中...' : '确 认'}}
-        </div>
+        <Button @click="isOpenModalRadio = false" ghost type="primary" style="width: 100px;">取消</Button>
+        <div @click="submitRadio()" class="g-primary-btn" style="line-height: 40px">确认</div>
       </div>
     </Modal>
   </div>
@@ -84,8 +82,7 @@
         questionNum: 0,
         isEdit: false,
         isOpenModalRadio: false,
-        isShowFormItem: false,
-        isSending: false
+        isShowFormItem: false
       };
     },
     mounted() {},
@@ -100,9 +97,10 @@
       changeRadio () {
         this.levelType === 2 && this.getList()
       },
-      changeModelType () {
-        this.modelChildType = this.modelRadioType
-      },
+      // changeModelType () {
+      //   localStorage.setItem('modelChildChoice', this.modelRadioType)
+      //
+      // },
       toCheckBtn(data) {
         this.dataItem = JSON.parse(JSON.stringify(data))
         this.modelChildType = data.type
@@ -138,8 +136,9 @@
           }
         })
       },
-      openModal(num) {
+      openModal() {
         this.isOpenModalRadio = true
+        this.modelRadioType = ''
       },
       backCancel() {
         this.isEdit = !this.isEdit
@@ -152,6 +151,7 @@
         if (!this.modelRadioType) {
           return this.$Message.error('请选择题型')
         }
+        this.modelChildType = this.modelRadioType
         this.isEdit = true
         this.isShowFormItem = true
         this.isOpenModalRadio = false

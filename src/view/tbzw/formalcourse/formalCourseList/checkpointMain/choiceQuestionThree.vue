@@ -126,7 +126,7 @@
 
         if (this.choiceList.length && this.type != 1) {
           setTimeout(() => {
-            this.$refs.childImg.length && this.$refs.childImg.forEach(item => {
+            this.$refs.childImg && this.$refs.childImg.length && this.$refs.childImg.forEach(item => {
               item.init()
             })
           })
