@@ -135,7 +135,7 @@
             return date && (new Date(date).getTime() <= new Date().getTime() - 24 * 3600 * 1000);
           }
         },
-        checkWeeks: ['2', '4', '6'],
+        checkWeeks: [],
         weekList: [
           {
             id: '1',
@@ -352,7 +352,11 @@
         this.addInfo = JSON.parse(JSON.stringify(data))
         this.storageInfo = JSON.parse(JSON.stringify(data))
         this.classType = this.addInfo.wayOfTeach
+        this.addInfo.rules.forEach(item=>{
+          this.checkWeeks.push(item.toString())
+        })
         this.changeClassType()
+        console.log(this.checkWeeks)
       },
       openModalSecond(data) {
         this.isOpenAddModal = true
