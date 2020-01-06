@@ -109,7 +109,7 @@
         this.modelRadioType = ''
         this.isEdit = true
         this.isShowFormItem = true
-        this.choiceList = [data];
+        this.choiceList = [this.dataItem];
         this.choiceList.forEach(list => {
           list.answerMinute = parseInt(list.answerPoint / 60)
           list.answerSecond = list.answerPoint % 60
