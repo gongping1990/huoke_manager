@@ -53,6 +53,7 @@
           .then(response => {
             if (response.data.code == '200') {
               this.$Message.success('操作成功');
+              this.$emit('updateNavVideo')
             }
           })
       }

@@ -60,11 +60,6 @@
             }
           },
           {
-            title: '落地页链接',
-            key: 'opentime',
-            align: 'center'
-          },
-          {
             title: '操作',
             width: 200,
             align: 'center',

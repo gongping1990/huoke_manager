@@ -7,7 +7,7 @@
       </Radio-group>
     </div>
     <div class="p-levelSetting-wrap" v-show="levelType===1">
-      <video-template ref="childTwo"></video-template>
+      <video-template ref="childTwo" @updateNavVideo="updateNavVideo"></video-template>
     </div>
     <div class="p-levelSetting-wrap" v-show="levelType===2">
       <div class="-wrap-top">
@@ -87,6 +87,9 @@
     },
     mounted() {},
     methods: {
+      updateNavVideo () {
+        this.audioNum = 1
+      },
       initData (data) {
         this.queryInfo = data
         this.audioNum = this.queryInfo.contentUrl ? 1 : 0

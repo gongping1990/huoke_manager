@@ -92,7 +92,7 @@
       v-model="isOpenModalAdd"
       @on-cancel="closeModal('addInfoAdd')"
       width="700"
-      :title="addInfo.id ? '编辑课时1' : '新增课时'">
+      :title="addInfo.id ? '编辑课时' : '新增课时'">
       <Form :model="addInfo" ref="addInfoAdd" :label-width="120" :rules="ruleValidateAdd">
         <FormItem label="课时类型" prop="category">
           <Select v-model="addInfo.category" :disabled="addInfo.id!=''">
