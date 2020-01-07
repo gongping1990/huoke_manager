@@ -157,7 +157,7 @@
           value: '',
           check: false,
           link: '',
-          index: `L${this.optionLetter[list.optionJson.length]}`
+          index: this.type == 3 ? `L${this.optionLetter[list.optionJson.length]}` : `${this.optionLetter[list.optionJson.length]}`
         })
 
         if(this.type == 3) {

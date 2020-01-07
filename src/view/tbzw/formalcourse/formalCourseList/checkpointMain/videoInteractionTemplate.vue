@@ -294,7 +294,11 @@
 
         choiceDataList.forEach(item => {
           item.answerPoint = (+item.answerMinute * 60) + (+item.answerSecond)
-          item.optionJson = JSON.stringify(item.optionJson.concat(item.optionJsonTwo))
+          if (this.modelChildType === 3 ) {
+            item.optionJson = JSON.stringify(item.optionJson.concat(item.optionJsonTwo))
+          } else {
+            item.optionJson = JSON.stringify(item.optionJson)
+          }
           delete item.answerMinute
           delete item.answerSecond
           delete item.duration
