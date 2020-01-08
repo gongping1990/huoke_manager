@@ -58,15 +58,15 @@
       <div class="-c-tab">
         <Row>
           <div class="-c-text">上课作业记录</div>
-          <Table :columns="columns" :data="dataList"></Table>
+          <Table :loading="isFetching" :columns="columns" :data="dataList"></Table>
         </Row>
       </div>
 
-      <Page class="-p-text-right" :total="total" size="small" show-elevator :page-size="tab.pageSize"
-            :current.sync="tab.currentPage"
-            @on-change="currentChange"></Page>
+      <!--<Page class="-p-text-right" :total="total" size="small" show-elevator :page-size="tab.pageSize"-->
+            <!--:current.sync="tab.currentPage"-->
+            <!--@on-change="currentChange"></Page>-->
     </Card>
-    <loading v-if="isFetching"></loading>
+    <!--<loading v-if="isFetching"></loading>-->
 
     <job-record-template v-model="isOpenModal" :dataInfo="detailInfo" :type="2"></job-record-template>
 
@@ -243,68 +243,62 @@
         columns: [
           {
             title: '排课日期',
-            render: (h, params) => {
-              return h('div', params.row.schedulDate ? dayjs(+params.row.schedulDate).format("YYYY-MM-DD") : '暂无')
-            },
+            key: 'schedulDate',
+            tooltip: true,
             align: 'center'
           },
           {
             title: '课时名称',
             key: 'lessonName',
+            tooltip: true,
             align: 'center'
           },
           {
             title: '课时时长',
-            render: (h, params) => {
-              return h('div', params.row.lessonTime ? dayjs(params.row.lessonTime*1000).format('mm:ss') : 0)
-            },
+            key: 'lessonTime',
+            tooltip: true,
             align: 'center'
           },
           {
             title: '首次上课时间',
-            render: (h, params) => {
-              return h('div', params.row.firstStartLearnTime ? dayjs(+params.row.firstStartLearnTime).format("YYYY-MM-DD HH:mm") : '暂无')
-            },
+            key: 'firstStartLearnTime',
+            tooltip: true,
             align: 'center'
           },
           {
             title: '首次完成上课时间',
-            render: (h, params) => {
-              return h('div', params.row.firstLearnTime ? dayjs(+params.row.firstLearnTime).format("YYYY-MM-DD HH:mm") : '暂无')
-            },
+            tooltip: true,
+            key: 'firstLearnTime',
             align: 'center'
           },
           {
             title: '上课次数',
+            tooltip: true,
             key: 'learnFrequency',
             align: 'center'
           },
           {
             title: '累计播放时长',
-            render: (h, params) => {
-              return h('div', params.row.allLearnTime ? formatTime(params.row.allLearnTime*1000) : 0)
-            },
+            tooltip: true,
+            key: 'allLearnTime',
             align: 'center'
           },
           {
             title: '次均时长',
-            render: (h, params) => {
-              return h('div', params.row.avgearnTime ? dayjs(params.row.avgearnTime*1000).format('mm:ss') : 0)
-            },
+            tooltip: true,
+            key: 'avgearnTime',
             align: 'center'
           },
           {
             title: '最后交作业时间',
-            render: (h, params) => {
-              return h('div', params.row.lastSubmitTime ? dayjs(+params.row.lastSubmitTime).format("YYYY-MM-DD HH:mm") : '暂无')
-            },
+            tooltip: true,
+            key: 'lastSubmitTime',
             align: 'center'
           },
           {
             title: '老师最后批改时间',
-            render: (h, params) => {
-              return h('div', params.row.lastReplyTime ? dayjs(+params.row.lastReplyTime).format("YYYY-MM-DD HH:mm") : '暂无')
-            },
+            tooltip: true,
+            key: 'lastReplyTime',
             align: 'center'
           },
           {
@@ -424,7 +418,6 @@
       },
       //分页查询
       getLearnDTO() {
-        this.isFetching = true
         this.$api.jsdJob.getLearnDTO({
           uid: this.$route.query.id || this.userId,
           courseId: this.searchInfo.appId
@@ -436,9 +429,6 @@
               this.userInfo.buyedTime = dataInfo.buyedTime ? dayjs(+dataInfo.buyedTime).format('YYYY-MM-DD HH:mm') : '暂无'
               this.userInfo.createTime = dayjs(+dataInfo.createTime).format('YYYY-MM-DD HH:mm')
             })
-          .finally(() => {
-            this.isFetching = false
-          })
       },
       listLessonProgress(page) {
         if (this.sortNum) {
@@ -448,6 +438,8 @@
             this.tab.currentPage = 1
           }
         }
+        this.dataList= []
+        this.isFetching = true
         this.$api.jsdJob.listLessonProgress({
           uid: this.$route.query.id || this.userId,
           courseId: this.searchInfo.appId,
@@ -456,9 +448,26 @@
         })
           .then(
             response => {
-              this.dataList = response.data.resultData.records;
-              this.total = response.data.resultData.total;
+              let data = response.data.resultData.records
+              data.forEach(item=>{
+                this.dataList.push({
+                  ...item,
+                  schedulDate: item.schedulDate ? dayjs(+item.schedulDate).format("YYYY-MM-DD") : '暂无',
+                  lessonTime: item.lessonTime ? dayjs(item.lessonTime*1000).format('mm:ss') : 0,
+                  allLearnTime: item.allLearnTime ?formatTime(item.allLearnTime*1000) : 0,
+                  avgearnTime: item.avgearnTime ? dayjs(item.avgearnTime*1000).format('mm:ss') : 0,
+                  firstStartLearnTime: item.firstStartLearnTime ? dayjs(+item.firstStartLearnTime).format("YYYY-MM-DD HH:mm") : '暂无',
+                  firstLearnTime: item.firstLearnTime ? dayjs(+item.firstLearnTime).format("YYYY-MM-DD HH:mm") : '暂无',
+                  lastSubmitTime: item.lastSubmitTime ? dayjs(+item.lastSubmitTime).format("YYYY-MM-DD HH:mm") : '暂无',
+                  lastReplyTime: item.lastReplyTime ? dayjs(+item.lastReplyTime).format("YYYY-MM-DD HH:mm") : '暂无',
+                })
+              })
+              // this.total = response.data.resultData.total;
+
             })
+          .finally(()=>{
+            this.isFetching = false
+          })
         this.$forceUpdate()
       },
       getUserInfo() {
