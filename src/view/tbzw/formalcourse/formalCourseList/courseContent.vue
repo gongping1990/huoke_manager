@@ -39,7 +39,7 @@
         </FormItem>
         <FormItem label="作业类型" v-if="modalType===5" class="ivu-form-item-required">
           <Radio-group v-model="detailInfo.homeworkType">
-            <Radio :label=1>朗读</Radio>
+            <Radio :label=1 :disabled="detailInfo.category === 1">朗读</Radio>
             <Radio :label=2>书写</Radio>
           </Radio-group>
         </FormItem>
@@ -51,7 +51,7 @@
           <Input type="textarea" :rows="4" v-model="detailInfo.homeworkClaim" placeholder="请输入作业要求（字数不超过80字）"
                  :maxlength='80'></Input>
         </FormItem>
-        <FormItem label="作业提示" v-show="modalType===5 && detailInfo.category!==1 && detailInfo.homeworkType!==1">
+        <FormItem label="作业提示" v-if="modalType===5 && detailInfo.category!==1 && detailInfo.homeworkType!==1">
           <upload-img ref="childImg" v-model="detailInfo.workImg" :option="uploadOption"></upload-img>
         </FormItem>
         <FormItem label="朗读内容" v-if="modalType===5 && detailInfo.homeworkType===1">
@@ -491,7 +491,7 @@
         this.modalType = type
         this.detailInfo.teacher = this.dataItem.teacherId
         this.detailInfo.cpi = +this.dataItem.cpi
-        this.detailInfo.homeworkType = this.detailInfo.homeworkType || 1
+        this.detailInfo.homeworkType = this.detailInfo.homeworkType || (this.detailInfo.category===1 ? 2 : 1)
         this.getPresetIcon()
         switch (this.modalType) {
           case 4:
@@ -500,7 +500,7 @@
           case 5:
             // console.log(this.$refs,'ref')
             this.$nextTick(()=>{
-              this.$refs.childImg.init()
+              this.$refs.childImg && this.$refs.childImg.init()
             })
             break
         }
