@@ -1,5 +1,5 @@
 <template>
-  <div class="p-userInfo">
+  <div ref="modelUserInfo" class="p-userInfo">
     <Card>
       <Row>
         <Col :span="24">
@@ -58,7 +58,7 @@
       <div class="-c-tab">
         <Row>
           <div class="-c-text">上课作业记录</div>
-          <Table :loading="isFetching" :columns="columns" :data="dataList"></Table>
+          <Table class="-c-table" :loading="isFetching" :columns="columns" :data="dataList"></Table>
         </Row>
       </div>
 
@@ -414,6 +414,10 @@
             this.appList.length && this.getLearnDTO()
             this.appList.length && this.listLessonProgress()
             localStorage.setItem('isJump', '2')
+            this.$nextTick(()=>{
+              this.$refs.modelUserInfo.scrollTop  = this.$refs.modelUserInfo.clientHeight
+              console.log(this.$refs.modelUserInfo.scrollTop)
+            })
           })
       },
       //分页查询
@@ -560,6 +564,12 @@
 </script>
 <style lang="less" scoped>
   .p-userInfo {
+    overflow-y: auto;
+    height: 700px;
+
+    .-c-table {
+      min-height: 500px;
+    }
 
     .-p-header {
       display: flex;
