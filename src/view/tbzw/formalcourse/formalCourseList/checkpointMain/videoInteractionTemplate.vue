@@ -96,6 +96,7 @@
         this.questionNum = this.queryInfo.problemNum
         this.levelType = 1
         this.$refs.childTwo.getList(data)
+        this.cancelChoice()
       },
       changeRadio () {
         this.levelType === 2 && this.getList()

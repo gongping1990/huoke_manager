@@ -41,7 +41,7 @@
         }
         this.dataInfo = data
         this.isShow = true
-        console.log('jin')
+
         switch (+this.dataInfo.type) {
           case 1:
             this.$refs.childOne.getList(data)

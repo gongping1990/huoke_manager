@@ -130,7 +130,6 @@
         } else {
           this.dataIcon = item
         }
-        console.log(this.dataIcon)
         this.$forceUpdate()
       },
       openChild(item) {
@@ -138,13 +137,13 @@
         this.$emit('changeChildItem', item)
       },
       addPoint(data) {
-        if (this.dataList.length >= 5) {
+        if (this.dataList.length >= 5 && !data) {
           return this.$Message.error('关卡数量不能超过5个')
         }
         this.isOpenModalRadio = true
         this.getPresetIcon()
         if (data) {
-          // this.addInfo = JSON.parse(JSON.stringify(data))
+          this.addInfo = JSON.parse(JSON.stringify(data))
           this.addInfo.type = this.addInfo.type.toString()
         } else {
           this.addInfo = {
