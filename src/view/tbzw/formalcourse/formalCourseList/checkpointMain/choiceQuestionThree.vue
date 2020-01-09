@@ -17,6 +17,7 @@
         <Input class="-input-name -s-b-width -s-b-margin" v-model="list.answerSecond" type="text"
                placeholder="请输入答题时间（分）"/>秒
       </div>
+      <p class="-name -c-tips">答题时间与上一题答案公布时间间隔不得小于8秒</p>
       <div class="-name">
         <span class="-span">答题时长：</span>
         <Input class="-input-name -s-width" v-model="list.answerTime" type="text" placeholder="请输入答题时长"/>
@@ -273,5 +274,9 @@
       margin-left: 120px;
     }
 
+    .-c-tips {
+      color: #39f;
+      margin-left: 90px;
+    }
   }
 </style>
