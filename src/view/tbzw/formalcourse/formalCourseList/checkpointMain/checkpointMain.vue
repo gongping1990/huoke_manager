@@ -5,7 +5,7 @@
           <nav-component ref="childNav" @changeChildItem="changeChild"></nav-component>
         </div>
         <div class="p-checkpointMain-content" v-show="isShow">
-          <picture-book-template ref="childOne" v-show="dataInfo.type === 1"></picture-book-template>
+          <picture-book-template ref="childOne" v-show="dataInfo.type === 1" @updateNav="updateNav"></picture-book-template>
           <video-template ref="childTwo" v-show="dataInfo.type === 2"></video-template>
           <VideoInteractionTemplate ref="childThree" v-show="dataInfo.type === 3" @updateNav="updateNav"></VideoInteractionTemplate>
         </div>

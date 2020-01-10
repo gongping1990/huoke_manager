@@ -160,6 +160,9 @@
         this.$refs[name].resetFields()
       },
       delCheckpoint(data) {
+        if (this.dataList.length === 1) {
+          return this.$Message.info('课时需至少保留一个关卡，无法删除')
+        }
         this.$Modal.confirm({
           title: '提示',
           content: '确认要删除吗？',

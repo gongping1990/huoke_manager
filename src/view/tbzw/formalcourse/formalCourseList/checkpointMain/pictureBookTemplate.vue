@@ -192,6 +192,7 @@
             if (response.data.code == '200') {
               this.getList()
               this.openModal()
+              this.$emit('updateNav')
               this.$Message.success('操作成功');
             }
           })
