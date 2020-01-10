@@ -1,22 +1,42 @@
 <template>
   <div class="p-pictureBookTemplate">
-    <div class="p-pictureBookTemplate-wrap">
+
+    <div class="p-pictureBookTemplate-tab">
+      <Radio-group v-model="levelType" type="button" @on-change="changeRadio">
+        <Radio :label=1>音频({{audioNum}})</Radio>
+        <Radio :label=2>页面({{questionNum}})</Radio>
+      </Radio-group>
+    </div>
+
+    <div class="p-pictureBookTemplate-wrap" v-show="levelType===1">
+      <Form :model="addInfo" :label-width="80" class="-wrap-audio">
+        <FormItem label="页面音频" class="ivu-form-item-required">
+          <upload-audio v-model="addInfo.contentUrl " :option="uploadAudioOption"></upload-audio>
+        </FormItem>
+      </Form>
+
+      <div class="-wrap-footer g-flex-j-sa">
+        <div @click="submitAudio()" class="g-primary-btn ">确认</div>
+      </div>
+    </div>
+
+    <div class="p-pictureBookTemplate-wrap" v-show="levelType===2">
       <div class="-wrap-top">
         <div class="-c-item" v-for="(item, index) of dataList" :key="index">
           <div class="-c-point" :class="{'g-primary-btn': dataItem.id === item.id}" @click="toCheckBtn(item,index)">
-            页面{{item.index}}
+            [{{item.answerMinute}}: {{item.answerSecond}}]
           </div>
           <Icon v-if=" dataItem.id === item.id" class="-c-item-icon g-cursor" size="20" type="md-close-circle"
                 @click="delCheckpoint(item)"/>
         </div>
         <Button @click="openModal()" ghost type="primary" class="-c-btn">添加页面</Button>
-        <Button @click="openSort()" ghost type="primary" class="-c-btn" v-if="dataList.length>1">页面排序</Button>
       </div>
 
       <div class="-wrap-down" v-show="isShowFormItem">
         <Form :model="addInfo" :label-width="120">
-          <FormItem label="页面音频" class="ivu-form-item-required">
-            <upload-audio v-model="addInfo.vfUrl" :option="uploadAudioOption"></upload-audio>
+          <FormItem label="展示时间" class="ivu-form-item-required">
+            <Input class="-s-b-width" v-model="addInfo.answerMinute" type="text" placeholder="请输入答题时间（分）"/>分&ensp;
+            <Input class="-s-b-width" v-model="addInfo.answerSecond" type="text" placeholder="请输入答题时间（分）"/>秒
           </FormItem>
           <Form-item label="页面图片" class="ivu-form-item-required">
             <upload-img v-model="addInfo.imgUrl" :option="uploadOption"></upload-img>
@@ -30,41 +50,19 @@
       </div>
 
     </div>
-
-    <Modal
-      class="p-pictureBookTemplate"
-      v-model="isOpenModal"
-      @on-cancel="isOpenModal = false"
-      title="页面排序">
-      <div class="p-pictureBookTemplate-wrap">
-        <draggable v-model="sortList">
-          <div v-for="(item,index) in sortList" :key="index" class="-c-item">
-            <div class="-c-point">
-              页面{{item.index}}
-            </div>
-          </div>
-        </draggable>
-      </div>
-      <div slot="footer" class="g-flex-j-sa">
-        <Button @click="isOpenModal = false" ghost type="primary" style="width: 100px;">取 消</Button>
-        <div @click="submitSort()" class="g-primary-btn" style="line-height: 40px"> {{isSending ? '提交中...' : '确 认'}}
-        </div>
-      </div>
-    </Modal>
   </div>
 </template>
 
 <script>
   import {getBaseUrl} from "@/libs/index";
   import Loading from "@/components/loading";
-  import draggable from 'vuedraggable'
   import ChoiceQuestionTwo from "../choiceQuestionTwo";
   import UploadImg from "../../../../../components/uploadImg";
   import UploadAudio from "../../../../../components/uploadAudio";
 
   export default {
     name: 'pictureBookTemplate',
-    components: {UploadAudio, UploadImg, ChoiceQuestionTwo, Loading, draggable},
+    components: {UploadAudio, UploadImg, ChoiceQuestionTwo, Loading},
     data() {
       return {
         uploadAudioOption: {
@@ -79,23 +77,37 @@
         dataList: [],
         dataItem: {},
         addInfo: {},
-        sortList: [],
+        audioNum: 0,
+        questionNum: 0,
+        levelType: 1,
         pointId: '',
-        isOpenModal: false,
         isShowFormItem: false,
+        isFetching: false,
         isSending: false
       };
     },
     mounted() {
     },
     methods: {
-      closeModal () {
+      initData (data) {
+        data && (this.pointId = data.id)
+        this.addInfo = data
+        this.audioNum = data.contentUrl ? 1 : 0
+        this.questionNum = data.problemNum
+        this.levelType = 1
+      },
+      changeRadio() {
+        this.levelType === 2 && this.getList()
+      },
+      closeModal() {
         this.dataItem = ''
         this.isShowFormItem = false
       },
       toCheckBtn(data) {
         this.dataItem = data
         this.addInfo = JSON.parse(JSON.stringify(data))
+        this.addInfo.answerMinute = parseInt(this.addInfo.answerPoint / 60)
+        this.addInfo.answerSecond = this.addInfo.answerPoint % 60
         this.isShowFormItem = true
         this.$forceUpdate()
       },
@@ -117,10 +129,6 @@
           }
         })
       },
-      openSort () {
-        this.isOpenModal = true
-        this.sortList = JSON.parse(JSON.stringify(this.dataList))
-      },
       openModal() {
         this.dataItem = ''
         this.isShowFormItem = true
@@ -130,29 +138,8 @@
           vfUrl: ''
         }
       },
-      submitSort() {
-        this.dataItem = {}
-        let array = []
-        this.sortList.forEach(item=>{
-          array.push(item.id)
-        })
-        this.$api.tbzwLesson.sortByIds({
-          ids: array,
-          pointId: this.pointId,
-          type: 2
-        })
-          .then(response => {
-            if (response.data.code == '200') {
-              this.isOpenModal = false
-              this.getList()
-              this.closeModal()
-              this.$Message.success('操作成功');
-            }
-          })
-      },
       //分页查询
-      getList(data) {
-        data && (this.pointId = data.id)
+      getList() {
         this.isFetching = true
         this.$api.tbzwLesson.listIllustrationBook({
           pointId: this.pointId
@@ -160,18 +147,47 @@
           .then(
             response => {
               this.dataList = response.data.resultData;
+              this.dataList.forEach(item=>{
+                item.answerMinute = parseInt(item.answerPoint / 60) > 9 ? parseInt(item.answerPoint / 60) : `0${parseInt(item.answerPoint / 60)}`
+                item.answerSecond = (item.answerPoint % 60) > 9 ? item.answerPoint % 60 : `0${item.answerPoint % 60}`
+              })
+              this.questionNum = this.dataList.length
             })
           .finally(() => {
             this.isFetching = false
           })
       },
+      submitAudio () {
+        if (!this.addInfo.contentUrl) {
+          return this.$Message.error('请上传页面音频')
+        }
+
+        this.$api.tbzwLesson.saveCheckPointVideo({
+          id: this.addInfo.id,
+          contentUrl: this.addInfo.contentUrl
+        })
+          .then(response => {
+            if (response.data.code == '200') {
+              // this.getList()
+              // this.openModal()
+              this.audioNum = 1
+              this.$Message.success('操作成功');
+            }
+          })
+      },
       submitInfo() {
-        if (!this.addInfo.vfUrl) {
-          return this.$Message.error('请选择页面音频')
+        if (!this.addInfo.answerMinute || !this.addInfo.answerSecond) {
+          return this.$Message.error('请输入完整展示时间')
         } else if (!this.addInfo.imgUrl) {
           return this.$Message.error('请选择页面图片')
         }
-        this.$api.tbzwLesson.saveIllustrationBook(this.addInfo)
+        this.addInfo.answerPoint = (+this.addInfo.answerMinute * 60) + (+this.addInfo.answerSecond)
+        this.$api.tbzwLesson.saveIllustrationBook({
+          answerPoint: this.addInfo.answerPoint,
+          id: this.addInfo.id,
+          imgUrl: this.addInfo.imgUrl,
+          pointId: this.addInfo.pointId
+        })
           .then(response => {
             if (response.data.code == '200') {
               this.getList()
@@ -188,6 +204,12 @@
   .p-pictureBookTemplate {
     padding: 30px 0;
 
+    &-tab {
+      padding: 0 30px 30px;
+      text-align: left;
+      border-bottom: 1px solid #ebebeb;
+    }
+
     &-modal {
       margin-left: 60px;
 
@@ -200,15 +222,24 @@
     &-wrap {
       text-align: left;
 
+      .-wrap-audio {
+        padding: 30px 30px 0 30px;
+      }
+
       .-wrap-top {
         display: flex;
         align-items: center;
-        padding: 0 0 20px 30px;
+        padding: 30px;
         border-bottom: 1px solid #ebebeb;
       }
 
       .-wrap-down {
-        margin: 20px 0;
+        margin: 40px 0 20px;
+
+        .-s-b-width {
+          margin-right: 10px;
+          width: 27%
+        }
       }
 
       .-c-item {

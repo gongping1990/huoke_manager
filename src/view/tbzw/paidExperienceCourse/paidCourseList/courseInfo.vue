@@ -24,6 +24,13 @@
           <FormItem label="课时节数" prop="lessonDescribe">
             <Input type="text" :disabled="!isEdit" v-model="addInfo.lessonDescribe" placeholder="请输入课时节数"></Input>
           </FormItem>
+          <FormItem label="排课规则" class="ivu-form-item-required">
+            <RadioGroup v-model="addInfo.wayOfTeach">
+              <Radio :label=1>每周系统排课</Radio>
+              <Radio :label=2>人工排课</Radio>
+            </RadioGroup>
+            <div class="-c-tips">* 更改后只对新购用户生效</div>
+          </FormItem>
           <FormItem label="单独购价格" prop="alonePrice">
             <InputNumber  style="width: 100%;" type="text" :disabled="!isEdit" v-model="addInfo.alonePrice" :min="0"
                          placeholder="请输入单独购价格（元）"></InputNumber>
@@ -191,6 +198,7 @@
           cardimgurl: "",
           shareTemplates: "",
           smalltitle: "",
+          wayOfTeach: 1,
           bigtitle: "",
           cardtitle: "",
           href: "",

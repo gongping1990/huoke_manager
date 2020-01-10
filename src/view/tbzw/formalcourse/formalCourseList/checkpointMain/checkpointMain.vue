@@ -44,7 +44,7 @@
 
         switch (+this.dataInfo.type) {
           case 1:
-            this.$refs.childOne.getList(data)
+            this.$refs.childOne.initData(data)
             break
           case 2:
             this.$refs.childTwo.getList(data)
