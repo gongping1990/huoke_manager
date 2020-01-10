@@ -9,9 +9,9 @@
     </div>
 
     <div class="p-pictureBookTemplate-wrap" v-show="levelType===1">
-      <Form :model="addInfo" :label-width="80" class="-wrap-audio">
+      <Form :model="videoInfo" :label-width="80" class="-wrap-audio">
         <FormItem label="页面音频" class="ivu-form-item-required">
-          <upload-audio v-model="addInfo.contentUrl " :option="uploadAudioOption"></upload-audio>
+          <upload-audio v-model="videoInfo.contentUrl " :option="uploadAudioOption"></upload-audio>
         </FormItem>
       </Form>
 
@@ -77,6 +77,7 @@
         dataList: [],
         dataItem: {},
         addInfo: {},
+        videoInfo: {},
         audioNum: 0,
         questionNum: 0,
         levelType: 1,
@@ -91,13 +92,14 @@
     methods: {
       initData (data) {
         data && (this.pointId = data.id)
-        this.addInfo = data
+        this.videoInfo = data
         this.audioNum = data.contentUrl ? 1 : 0
         this.questionNum = data.problemNum
         this.levelType = 1
       },
       changeRadio() {
         this.levelType === 2 && this.getList()
+        this.closeModal()
       },
       closeModal() {
         this.dataItem = ''
@@ -158,13 +160,13 @@
           })
       },
       submitAudio () {
-        if (!this.addInfo.contentUrl) {
+        if (!this.videoInfo.contentUrl) {
           return this.$Message.error('请上传页面音频')
         }
 
         this.$api.tbzwLesson.saveCheckPointVideo({
-          id: this.addInfo.id,
-          contentUrl: this.addInfo.contentUrl
+          id: this.videoInfo.id,
+          contentUrl: this.videoInfo.contentUrl
         })
           .then(response => {
             if (response.data.code == '200') {
