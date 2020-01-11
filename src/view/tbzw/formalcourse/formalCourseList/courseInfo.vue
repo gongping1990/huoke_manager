@@ -21,6 +21,7 @@
           </FormItem>
           <FormItem label="排课规则" class="ivu-form-item-required">
             <RadioGroup v-model="addInfo.wayOfTeach">
+              <Radio :label=3>交作业解锁</Radio>
               <Radio :label=1>每周系统排课</Radio>
               <Radio :label=2>人工排课</Radio>
             </RadioGroup>

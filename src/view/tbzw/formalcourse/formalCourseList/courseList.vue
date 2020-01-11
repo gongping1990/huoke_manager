@@ -21,15 +21,16 @@
       title="排课设置">
       <Form :model="addInfo" :label-width="100">
         <FormItem label="当前排课规则">
-          <div class="-c-tips">{{storageInfo.wayOfTeach == '2' ? '人工排课' : '每周系统排课'}}</div>
+          <div class="-c-tips">{{ruleText[storageInfo.wayOfTeach]}}</div>
         </FormItem>
         <FormItem label="注意">
           <span class="-c-tips">此弹窗内部只能更改排课规则的配置，不能更改当前课程的排课规则</span>
         </FormItem>
         <FormItem label="排课类别">
           <Radio-group v-model="classType" @on-change="changeClassType">
-            <Radio :label=1 :disabled="storageInfo.wayOfTeach == '2'">每周系统排课</Radio>
-            <Radio :label=2 :disabled="storageInfo.wayOfTeach == '2'">人工排课</Radio>
+            <Radio :label=3 :disabled="!(storageInfo.wayOfTeach == '1')">交作业解锁</Radio>
+            <Radio :label=1 :disabled="!(storageInfo.wayOfTeach == '1')">每周系统排课</Radio>
+            <Radio :label=2 :disabled="!(storageInfo.wayOfTeach == '1')">人工排课</Radio>
           </Radio-group>
         </FormItem>
       </Form>
@@ -66,7 +67,14 @@
         </Row>
         <Table class="-c-tab" :loading="isFetching" :columns="columnsTwo" :data="detailList"></Table>
       </div>
-
+      <Form v-show="classType === 3" ref="addInfo" :model="addInfo" :label-width="100">
+        <FormItem label="注意">
+          <span class="-c-tips">请填写每日最大可解锁课时数，更改后立即生效</span>
+        </FormItem>
+        <FormItem label="最大解锁课时数">
+          <Input type="text" v-model="addInfo.dayToUnlock" placeholder="请输入最大解锁课时数"></Input>
+        </FormItem>
+      </Form>
       <div slot="footer" class="-p-b-flex">
         <Button @click="closeModal()" ghost type="primary" style="width: 100px;">取消</Button>
         <div @click="submitInfo()" class="g-primary-btn ">确认</div>
@@ -113,6 +121,11 @@
           page: 1,
           currentPage: 1,
           pageSize: 10
+        },
+        ruleText: {
+          '1': '每周系统排课',
+          '2': '人工排课',
+          '3': '交作业解锁'
         },
         dataList: [],
         detailList: [],
@@ -349,13 +362,16 @@
         })
       },
       openEdit(data) {
+        this.checkWeeks = []
         this.isOpenModal = true
         this.addInfo = JSON.parse(JSON.stringify(data))
         this.storageInfo = JSON.parse(JSON.stringify(data))
         this.classType = this.addInfo.wayOfTeach
-        this.addInfo.rules.forEach(item => {
-          this.checkWeeks.push(item.toString())
-        })
+        if (this.classType === 1) {
+          this.addInfo.rules.forEach(item => {
+            this.checkWeeks.push(item.toString())
+          })
+        }
         this.changeClassType()
         console.log(this.checkWeeks)
       },
@@ -454,7 +470,7 @@
             .finally(() => {
               this.isSending = false
             })
-        } else {
+        } else if (this.classType === 2) {
           if (!this.secondInfo.studyDate) {
             return this.$Message.error('请选择日期')
           } else if (!this.secondInfo.lessonId) {
@@ -471,6 +487,25 @@
                   this.$Message.success('提交成功');
                   this.listTimeTableRules()
                   this.isOpenAddModal = false
+                }
+              })
+            .finally(() => {
+              this.isSending = false
+            })
+        } else if (this.classType === 3) {
+          if (!this.addInfo.dayToUnlock) {
+            return this.$Message.error('请输入最大解锁课时数')
+          }
+          this.$api.tbzwRules.editSubmitWorkRules({
+            courseId: this.addInfo.id,
+            dayToUnlock: this.addInfo.dayToUnlock
+          })
+            .then(
+              response => {
+                if (response.data.code == '200') {
+                  this.$Message.success('提交成功');
+                  this.getList()
+                  this.closeModal()
                 }
               })
             .finally(() => {

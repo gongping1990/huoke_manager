@@ -38,6 +38,9 @@ const tbzwRules = {
   switchUserTtr(params) {
     return axios.post("/compositionv2/rules/switchUserTtr", params);
   },
+  editSubmitWorkRules(params) {
+    return axios.post("/compositionv2/rules/editSubmitWorkRules", qs.stringify(params));
+  },
 };
 
 export default tbzwRules;

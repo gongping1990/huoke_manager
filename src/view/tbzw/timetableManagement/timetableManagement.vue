@@ -13,6 +13,7 @@
 
         <Row class="g-t-left g-tab">
           <Radio-group v-model="radioType" type="button" @on-change="getList(1)">
+            <Radio :label=3>交作业解锁</Radio>
             <Radio :label=1>每周系统排课</Radio>
             <Radio :label=2>人工排课</Radio>
           </Radio-group>
@@ -29,7 +30,7 @@
         </Row>
       </Row>
 
-      <Table :loading="isFetching" :columns="radioType === 1 ? columns : columnsTwo" :data="dataList" ref="selection"
+      <Table :loading="isFetching" :columns="columnsType" :data="dataList" ref="selection"
              @on-selection-change="changeSelectData"></Table>
 
       <Page class="-p-text-right" :total="total" size="small" show-elevator :page-size="tab.pageSize"
@@ -156,8 +157,57 @@
             key: 'pkNum',
             align: 'center'
           }
+        ],
+        columnsThree: [
+          {
+            title: '用户头像/昵称',
+            render: (h, params) => {
+              return h('div', {
+                style: {
+                  'display': 'flex',
+                  'align-items': 'center',
+                }
+              }, [
+                h('img', {
+                  attrs: {
+                    src: params.row.headimgurl
+                  },
+                  style: {
+                    width: '36px',
+                    height: '36px',
+                    margin: '10px',
+                    'border-radius': '50%'
+                  }
+                }),
+                h('span', params.row.nickname)
+              ])
+            },
+            align: 'center'
+          },
+          {
+            title: '开课日期',
+            key: 'startDate',
+            align: 'center'
+          },
+          {
+            title: '解锁数',
+            key: 'pkNum',
+            align: 'center'
+          }
         ]
       };
+    },
+    computed : {
+      columnsType () {
+        switch (this.radioType) {
+          case 1:
+            return this.columns
+          case 2:
+            return this.columnsTwo
+          case 3:
+            return this.columnsThree
+        }
+      }
     },
     mounted() {
       this.courseQueryPage()
@@ -228,7 +278,8 @@
         paramUrl({
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
-          courseId: this.searchInfo.courseId
+          courseId: this.searchInfo.courseId,
+          ttr: this.radioType+1
         })
           .then(
             response => {

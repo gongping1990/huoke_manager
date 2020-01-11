@@ -52,6 +52,9 @@ const tbzwLesson = {
   },
   saveLessonVideo(params) {
     return axios.post('/compositionv2/lesson/saveLessonVideo', qs.stringify(params))
+  },
+  saveStrokeImgById(params) {
+    return axios.post('/compositionv2/lesson/saveStrokeImgById', qs.stringify(params))
   }
 };
 

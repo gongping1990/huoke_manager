@@ -39,7 +39,7 @@
         </FormItem>
         <FormItem label="作业类型" v-if="modalType===5" class="ivu-form-item-required">
           <Radio-group v-model="detailInfo.homeworkType">
-            <Radio :label=1 :disabled="detailInfo.category === 1">朗读</Radio>
+            <Radio :label=1 :disabled="detailInfo.category !== 2">朗读</Radio>
             <Radio :label=2>书写</Radio>
           </Radio-group>
         </FormItem>
@@ -51,16 +51,16 @@
           <Input type="textarea" :rows="4" v-model="detailInfo.homeworkClaim" placeholder="请输入作业要求（字数不超过80字）"
                  :maxlength='80'></Input>
         </FormItem>
-        <FormItem label="作业提示" v-if="modalType===5 && detailInfo.category!==1 && detailInfo.homeworkType!==1">
+        <FormItem label="作业提示" v-if="modalType===5 && detailInfo.category===2 && detailInfo.homeworkType!==1">
           <upload-img ref="childImg" v-model="detailInfo.workImg" :option="uploadOption"></upload-img>
         </FormItem>
-        <FormItem label="朗读内容" v-if="modalType===5 && detailInfo.homeworkType===1">
+        <FormItem label="朗读内容" v-if="modalType===5 && detailInfo.category===2 && detailInfo.homeworkType===1">
           <upload-img ref="childImg" v-model="detailInfo.workImg" :option="uploadOption"></upload-img>
         </FormItem>
-        <FormItem label="关卡名称" v-if="modalType===5 && detailInfo.category!==1" class="ivu-form-item-required">
+        <FormItem label="关卡名称" v-if="modalType===5 && detailInfo.category===2" class="ivu-form-item-required">
           <Input v-model="detailInfo.cpn" placeholder="请输入关卡名称" :maxlength='80'></Input>
         </FormItem>
-        <FormItem label="关卡图标" v-show="modalType===5 && detailInfo.category!==1" class="ivu-form-item-required">
+        <FormItem label="关卡图标" v-show="modalType===5 && detailInfo.category===2" class="ivu-form-item-required">
           <Select v-model="detailInfo.cpi">
             <Option class="p-gsw-course-list-option" :label="item.text" :value="item.value" v-for="(item, index) of iconList"
                     :key="index">
@@ -78,6 +78,9 @@
         </Form-item>
         <Form-item label="ipad视频" v-show="modalType===6" class="-c-form-item">
           <upload-video ref="childVideo" v-model="detailInfo.ipadUrl" :option="uploadVideoOption"></upload-video>
+        </Form-item>
+        <Form-item label="笔画动图" v-show="modalType===7" class="-c-form-item">
+          <upload-img v-model="detailInfo.strokeImg" :option="uploadOption" ></upload-img>
         </Form-item>
       </Form>
 
@@ -98,6 +101,7 @@
           <Select v-model="addInfo.category" :disabled="addInfo.id!=''">
             <Option label="作文课" value="1"></Option>
             <Option label="读写课" value="2"></Option>
+            <Option label="写字课" value="3"></Option>
           </Select>
         </FormItem>
         <FormItem label="课时名称" prop="name">
@@ -139,7 +143,7 @@
       </div>
     </Modal>
 
-    <learn-content-template v-model="isOpenModalLearn" :data-info="dataItem"></learn-content-template>
+    <learn-content-template v-model="isOpenModalLearn" :data-info="dataItem" @successData="getList"></learn-content-template>
   </div>
 </template>
 
@@ -165,8 +169,8 @@
           pageSize: 10
         },
         uploadOption: {
-          tipText: '只能上传jpg/png文件，且不超过200kb',
-          size: 200
+          tipText: '只能上传jpg/png文件，且不超过500kb',
+          size: 500
         },
         uploadVideoOption: {
           tipText: '视频格式：mp4、wmv、rmvb、avi 视频大小：150M以内',
@@ -184,7 +188,14 @@
           '3': '活学活用',
           '4': '轻松一答',
           '5': '作业',
-          '6': '视频内容'
+          '6': '视频内容',
+          '7': '笔画特写',
+          '8': '书写要点'
+        },
+        lessonTextObj: {
+          '1': '作文课',
+          '2': '读写课',
+          '3': '写字课'
         },
         dataList: [],
         teacherList: [],
@@ -226,7 +237,7 @@
           {
             title: '类型',
             render: (h, params) => {
-              return h('div', params.row.category === 1 ? '作文课' : '读写课')
+              return h('div', this.lessonTextObj[params.row.category])
             },
             align: 'center'
           },
@@ -336,7 +347,7 @@
                     size: 'small'
                   },
                   style: {
-                    display: params.row.category === 1 ? 'inline-block' : 'none',
+                    display: (params.row.category === 1 || params.row.category === 3) ? 'inline-block' : 'none',
                     color: '#5444E4'
                   },
                   on: {
@@ -359,7 +370,37 @@
                       this.checkpoint(params.row)
                     }
                   }
-                }, '关卡设置')
+                }, '关卡设置'),
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    display: params.row.category === 3 ? 'inline-block' : 'none',
+                    color: '#5444E4'
+                  },
+                  on: {
+                    click: () => {
+                      this.openModalContent(params.row, 7)
+                    }
+                  }
+                }, '笔画特写'),
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    display: params.row.category === 3 ? 'inline-block' : 'none',
+                    color: '#5444E4'
+                  },
+                  on: {
+                    click: () => {
+                      this.openModalLearn(params.row)
+                    }
+                  }
+                }, '书写要点')
               ])
             }
           },
@@ -491,7 +532,8 @@
         this.modalType = type
         this.detailInfo.teacher = this.dataItem.teacherId
         this.detailInfo.cpi = +this.dataItem.cpi
-        this.detailInfo.homeworkType = this.detailInfo.homeworkType || (this.detailInfo.category===1 ? 2 : 1)
+        this.detailInfo.homeworkType = this.detailInfo.homeworkType || (this.detailInfo.category===2 ? 1 : 2)
+        this.detailInfo.homeworkClaim = this.detailInfo.category === 3 ? '正确、端正、整洁、行款整齐' : this.detailInfo.homeworkClaim
         this.getPresetIcon()
         switch (this.modalType) {
           case 4:
@@ -504,9 +546,6 @@
             })
             break
         }
-
-
-        console.log(this.detailInfo, 121)
       },
       openModalLearn(data) {
         this.isOpenModalLearn = true
@@ -621,6 +660,9 @@
             break
           case 6:
             this.submitVideo()
+            break
+          case 7:
+            this.submitStrokeImg()
             break
         }
       },
@@ -804,6 +846,23 @@
               this.getList()
               this.closeModalContent()
               this.isOpenModalAdd = false
+            }
+          })
+      },
+      submitStrokeImg() {
+        if (!this.detailInfo.strokeImg) {
+          return this.$Message.error('请上传笔画特写图片')
+        }
+
+        this.$api.tbzwLesson.saveStrokeImgById({
+          lessonId: this.dataItem.id,
+          strokeImg: this.detailInfo.strokeImg
+        })
+          .then(response => {
+            if (response.data.code == '200') {
+              this.$Message.success('操作成功');
+              this.getList()
+              this.closeModalContent()
             }
           })
       },
