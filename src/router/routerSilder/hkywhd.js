@@ -33,6 +33,15 @@ export const hkywhdRouter =[
           {name: '课程数据'}
         ],
         component: () => import('@/view/hkywhd/courseData/courseData')
+      },
+      {
+        path: '/hkywhd_memberData',
+        name: 'hkywhd_memberData',
+        meta: [
+          {name: '数据统计'},
+          {name: '会员数据'}
+        ],
+        component: () => import('@/view/hkywhd/memberData/memberData')
       }
     ]
   },
@@ -119,6 +128,15 @@ export const hkywhdRouter =[
           {name: '用户信息'}
         ],
         component: () => import('@/view/hkywhd/user/userInfo')
+      },
+      {
+        path: '/hkywhd_memberList',
+        name: 'hkywhd_memberList',
+        meta: [
+          {name: '用户管理'},
+          {name: '会员列表'}
+        ],
+        component: () => import('@/view/hkywhd/user/memberList')
       }
     ]
   },

@@ -6,7 +6,8 @@
           <div class="g-flex-a-j-center">
             <div class="-search-select-text">课程分类</div>
             <Select v-model="searchInfo.courseType" @on-change="getList(1)" class="-search-selectOne">
-              <Option v-for="(item,index) in courseTypeListAll" :label="item.name" :value="item.id" :key="index"></Option>
+              <Option v-for="(item,index) in courseTypeListAll" :label="item.name" :value="item.id"
+                      :key="index"></Option>
             </Select>
           </div>
         </Col>
@@ -43,10 +44,17 @@
         :title="titleText[modalType]">
         <Form ref="addInfo" :model="addInfo" :label-width="110" v-if="modalType === 1">
           <FormItem label="课程类型">
-            <RadioGroup v-model="addInfo.type" >
+            <RadioGroup v-model="addInfo.type">
               <Radio :label=0 :disabled="addInfo.id !== ''">单个课程</Radio>
               <Radio :label=1 :disabled="addInfo.id !== ''">多个课程</Radio>
             </RadioGroup>
+          </FormItem>
+          <FormItem label="是否显示">
+            <RadioGroup v-model="addInfo.display">
+              <Radio :label=1>是</Radio>
+              <Radio :label=0>否</Radio>
+            </RadioGroup>
+            <p class="-c-tips">这里的配置决定课程是否在精选好课中显示</p>
           </FormItem>
           <FormItem label="课程名称" class="ivu-form-item-required">
             <Input type="text" v-model="addInfo.name" placeholder="请输入课程名称"></Input>
@@ -74,7 +82,7 @@
           <Form-item label="竖版课程封面" class="ivu-form-item-required">
             <upload-img v-model="addInfo.coverImgUrl" :option="uploadOption"></upload-img>
           </Form-item>
-          <Form-item label="购买页图片" >
+          <Form-item label="购买页图片">
             <upload-img-multiple v-model="addInfo.payImgUrl" :option="uploadOption"></upload-img-multiple>
           </Form-item>
           <Form-item label="海报图片" class="ivu-form-item-required">
@@ -352,7 +360,7 @@
       checkCourseList(data) {
         this.courseListModal = JSON.parse(JSON.stringify(data))
       },
-      delCourse (item, index) {
+      delCourse(item, index) {
         this.courseListModal.splice(index, 1)
       },
       toJump(data) {
@@ -375,6 +383,7 @@
         if (data) {
           this.addInfo = JSON.parse(JSON.stringify(data))
           this.addInfo.payImgUrl = JSON.parse(this.addInfo.payImgUrl)
+          this.addInfo.display = this.addInfo.display ? 1 : 0
           this.modalType === 2 && this.getActivityByTbookId(data)
           this.modalType === 3 && this.listSuggestedBook(data)
         } else {
@@ -383,6 +392,7 @@
           this.addInfo = {
             id: '',
             type: 0,
+            display: 1,
             coverImgUrl: '',
             payImgUrl: [],
             posterUrl: '',
@@ -404,7 +414,7 @@
         this.$api.hkywhdCourse.listAllOn()
           .then(response => {
             let dataInfo = response.data.resultData
-            dataInfo.forEach(item=>{
+            dataInfo.forEach(item => {
               if (item.disabled) {
                 this.courseTypeList.push(item)
               }
@@ -438,7 +448,7 @@
         })
           .then(response => {
             let ArrayList = response.data.resultData
-            ArrayList.forEach(item=>{
+            ArrayList.forEach(item => {
               this.courseListModal.push({
                 ...item,
                 id: item.suggestId
@@ -489,7 +499,7 @@
       lowerItem(param) {
         this.$Modal.confirm({
           title: '提示',
-          content:  param.lowerShelf ? '确认要上架' : '确认要下架？',
+          content: param.lowerShelf ? '确认要上架' : '确认要下架？',
           onOk: () => {
             this.$api.hkywhdTextbook.lowerShelfTextBook({
               bookId: param.id
@@ -550,7 +560,8 @@
           posterUrl: this.addInfo.posterUrl,
           payImgUrl: JSON.stringify(this.addInfo.payImgUrl),
           salesUrl: this.addInfo.salesUrl,
-          courseId: this.addInfo.courseId
+          courseId: this.addInfo.courseId,
+          display: this.addInfo.display === 1
         }
 
         let paramsUrl = this.addInfo.id ? this.$api.hkywhdTextbook.updateTextBook({
@@ -629,7 +640,7 @@
         this.isSending = true
         let arrayStorage = []
 
-        this.courseListModal.forEach(item=>{
+        this.courseListModal.forEach(item => {
           arrayStorage.push(item.id)
         })
 
