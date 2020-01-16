@@ -165,6 +165,14 @@
             title: '延长后到期时间',
             key: 'afterEndTime',
             align: 'center'
+          },
+          {
+            title: '创建时间',
+            key: 'gmtCreate',
+            render: (h, params)=>{
+              return h('div', dayjs(+params.row.gmtCreate).format('YYYY-MM-DD'))
+            },
+            align: 'center'
           }
         ]
       };
