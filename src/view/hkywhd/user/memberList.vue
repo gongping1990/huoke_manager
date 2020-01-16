@@ -225,7 +225,7 @@
             response => {
               this.dataDetailList = response.data.resultData.records;
               this.dataDetailList.forEach(item=>{
-                item.days = parseInt((new Date(item.beforeEndTime).getTime() - new Date(item.afterEndTime).getTime()) / (24 * 60 * 60 * 1000))
+                item.days = parseInt((new Date(item.afterEndTime).getTime() - new Date(item.beforeEndTime).getTime()) / (24 * 60 * 60 * 1000))
               })
             })
       },
