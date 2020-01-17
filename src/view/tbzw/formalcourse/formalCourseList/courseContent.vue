@@ -83,6 +83,9 @@
         <Form-item label="笔画动图" v-show="modalType===7" class="-c-form-item">
           <upload-img v-model="detailInfo.strokeImg" :option="uploadOption"></upload-img>
         </Form-item>
+        <Form-item label="笔画文字" v-show="modalType===7" class="-c-form-item">
+          <Input v-model="detailInfo.stroke" placeholder="请输入笔画文字" :maxlength='1'></Input>
+        </Form-item>
       </Form>
 
       <div slot="footer" class="g-flex-j-sa">
@@ -854,11 +857,14 @@
       submitStrokeImg() {
         if (!this.detailInfo.strokeImg) {
           return this.$Message.error('请上传笔画特写图片')
+        } else if (!this.detailInfo.stroke) {
+          return this.$Message.error('请输入文字笔画')
         }
 
         this.$api.tbzwLesson.saveStrokeImgById({
           lessonId: this.dataItem.id,
-          strokeImg: this.detailInfo.strokeImg
+          strokeImg: this.detailInfo.strokeImg,
+          stroke: this.detailInfo.stroke
         })
           .then(response => {
             if (response.data.code == '200') {
