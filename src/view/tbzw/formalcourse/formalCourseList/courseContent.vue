@@ -62,7 +62,8 @@
         </FormItem>
         <FormItem label="关卡图标" v-show="modalType===5 && detailInfo.category===2" class="ivu-form-item-required">
           <Select v-model="detailInfo.cpi">
-            <Option class="p-gsw-course-list-option" :label="item.text" :value="item.value" v-for="(item, index) of iconList"
+            <Option class="p-gsw-course-list-option" :label="item.text" :value="item.value"
+                    v-for="(item, index) of iconList"
                     :key="index">
               <img class="p-gsw-course-list-img" :src="item.url"/>
               <span>{{item.text}}</span>
@@ -80,7 +81,7 @@
           <upload-video ref="childVideo" v-model="detailInfo.ipadUrl" :option="uploadVideoOption"></upload-video>
         </Form-item>
         <Form-item label="笔画动图" v-show="modalType===7" class="-c-form-item">
-          <upload-img v-model="detailInfo.strokeImg" :option="uploadOption" ></upload-img>
+          <upload-img v-model="detailInfo.strokeImg" :option="uploadOption"></upload-img>
         </Form-item>
       </Form>
 
@@ -143,7 +144,8 @@
       </div>
     </Modal>
 
-    <learn-content-template v-model="isOpenModalLearn" :data-info="dataItem" @successData="getList"></learn-content-template>
+    <learn-content-template v-model="isOpenModalLearn" :data-info="dataItem"
+                            @successData="getList"></learn-content-template>
   </div>
 </template>
 
@@ -478,7 +480,7 @@
           })
         }
       },
-      submitLevel () {
+      submitLevel() {
         this.$router.push({
           name: 'tbzw_checkpointMain',
           query: {
@@ -532,7 +534,7 @@
         this.modalType = type
         this.detailInfo.teacher = this.dataItem.teacherId
         this.detailInfo.cpi = +this.dataItem.cpi
-        this.detailInfo.homeworkType = this.detailInfo.homeworkType || (this.detailInfo.category===2 ? 1 : 2)
+        this.detailInfo.homeworkType = this.detailInfo.homeworkType || (this.detailInfo.category === 2 ? 1 : 2)
         this.detailInfo.homeworkClaim = this.detailInfo.category === 3 ? '正确、端正、整洁、行款整齐' : this.detailInfo.homeworkClaim
         this.getPresetIcon()
         switch (this.modalType) {
@@ -541,7 +543,7 @@
             break
           case 5:
             // console.log(this.$refs,'ref')
-            this.$nextTick(()=>{
+            this.$nextTick(() => {
               this.$refs.childImg && this.$refs.childImg.init()
             })
             break
@@ -591,7 +593,7 @@
         this.isFetching = true
         this.$api.composition.getQueryLessonPage({
           courseId: this.$route.query.courseId,
-          current:  localStorage.nowPage || this.tab.page,
+          current: localStorage.nowPage || this.tab.page,
           size: this.tab.pageSize
         })
           .then(
@@ -803,9 +805,9 @@
       saveHomeWork() {
         if (!this.detailInfo.homeworkType) {
           return this.$Message.error('请选择作业类型')
-        } else if (!this.detailInfo.cpn && this.detailInfo.category!==1) {
+        } else if (!this.detailInfo.cpn && this.detailInfo.category === 2) {
           return this.$Message.error('请输入关卡名称')
-        } else if (!this.detailInfo.cpi && this.detailInfo.category!==1) {
+        } else if (!this.detailInfo.cpi && this.detailInfo.category === 2) {
           return this.$Message.error('请输入关卡图标')
         }
 
@@ -871,7 +873,7 @@
           return this.$Message.error('请上传课程封面')
         } else if (!this.addInfo.coverphoto) {
           return this.$Message.error('请上传课程封面')
-        } else if  (!this.addInfo.coverphoto) {
+        } else if (!this.addInfo.coverphoto) {
           return this.$Message.error('请上传课程封面')
         }
 
