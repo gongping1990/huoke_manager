@@ -13,6 +13,9 @@
           <FormItem label="课程名称" prop="name">
             <Input type="text"  v-model="addInfo.name" placeholder="请输入课程名称"></Input>
           </FormItem>
+          <FormItem label="课程原价" prop="originalPrice">
+            <Input type="text"  v-model="addInfo.originalPrice" placeholder="请输入课程原价"></Input>
+          </FormItem>
           <FormItem label="单独购价格" prop="alonePrice">
             <InputNumber type="text"  v-model="addInfo.alonePrice" :min="0"  class="g-width"
                          placeholder="请输入单独购价格（元）"></InputNumber>

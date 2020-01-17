@@ -23,6 +23,9 @@
           <FormItem label="排序值" prop="sortnum">
             <Input type="text" v-model="addInfo.sortnum" placeholder="请输入排序值"></Input>
           </FormItem>
+          <FormItem label="课程原价">
+            <Input type="text" v-model="addInfo.originalPrice" placeholder="请输入课程原价"></Input>
+          </FormItem>
           <FormItem label="全册价格">
             <InputNumber type="text"  v-model="addInfo.fullPrice" :min="0"
                          placeholder="请输入全册价格"></InputNumber>
@@ -217,6 +220,7 @@
         if (data) {
           this.addInfo = JSON.parse(JSON.stringify(data))
           this.addInfo.fullPrice = +this.addInfo.fullPrice / 100
+          this.addInfo.originalPrice = +this.addInfo.originalPrice / 100
         } else {
           this.addInfo = {
             fullPrice: null
@@ -301,6 +305,7 @@
               id: this.addInfo.id,
               name: this.addInfo.name,
               sortnum: this.addInfo.sortnum,
+              originalPrice: this.addInfo.originalPrice*100,
               fullPrice: this.addInfo.fullPrice*100
             })
               .then(
