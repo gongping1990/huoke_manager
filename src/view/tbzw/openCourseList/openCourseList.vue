@@ -250,7 +250,6 @@
         this.dataItem.courseId = this.radioType
       },
       chioceUsers(data) {
-        console.log(data,11)
         this.userImgList = data
       },
       toJump (data) {
@@ -270,6 +269,10 @@
         if(!bool && !data) {
           this.getActiveDetails()
         } else {
+          if (new Date(data.opentime).getTime() < new Date().getTime()) {
+            this.isEdit = true
+          }
+
           this.getActiveDetailsByActiveId(data)
         }
 

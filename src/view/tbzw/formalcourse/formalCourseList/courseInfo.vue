@@ -21,9 +21,9 @@
           </FormItem>
           <FormItem label="排课规则" class="ivu-form-item-required">
             <RadioGroup v-model="addInfo.wayOfTeach">
-              <Radio :label=3>交作业解锁</Radio>
-              <Radio :label=1>每周系统排课</Radio>
-              <Radio :label=2>人工排课</Radio>
+              <Radio :label=3 :disabled="addInfo.id !=''">交作业解锁</Radio>
+              <Radio :label=1 :disabled="addInfo.id !=''">每周系统排课</Radio>
+              <Radio :label=2 :disabled="addInfo.id !=''">人工排课</Radio>
             </RadioGroup>
             <div class="-c-tips">* 更改后只对新购用户生效</div>
           </FormItem>
@@ -258,6 +258,7 @@
       return {
         baseUrl: `${getBaseUrl()}/sch/common/uploadPublicFile`, // 公有 （图片）
         addInfo: {
+          id: '',
           name: '',
           courseDescribe: '',
           alonePrice: 999,
