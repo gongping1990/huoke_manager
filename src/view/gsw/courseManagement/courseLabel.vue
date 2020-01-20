@@ -30,6 +30,9 @@
             <InputNumber type="text"  v-model="addInfo.fullPrice" :min="0"
                          placeholder="请输入全册价格"></InputNumber>
           </FormItem>
+          <FormItem label="课程封面">
+            <upload-img v-model="addInfo.coverphoto" :option="uploadOption"></upload-img>
+          </FormItem>
         </Form>
         <div slot="footer" class="-p-b-flex">
           <Button @click="closeModal('addInfo')" ghost type="primary" style="width: 100px;">取消</Button>
@@ -62,11 +65,17 @@
 <script>
   import dayjs from 'dayjs'
   import {getBaseUrl} from '@/libs/index'
+  import UploadImg from "../../../components/uploadImg";
 
   export default {
     name: 'fxgl_pageType',
+    components: {UploadImg},
     data() {
       return {
+        uploadOption: {
+          tipText: '只能上传jpg/png文件，且不超过500kb',
+          size: 500
+        },
         tab: {
           page: 1,
           pageSize: 10
@@ -223,7 +232,8 @@
           this.addInfo.originalPrice = +this.addInfo.originalPrice / 100
         } else {
           this.addInfo = {
-            fullPrice: null
+            fullPrice: null,
+            coverphoto: ''
           }
         }
       },
@@ -305,6 +315,7 @@
               id: this.addInfo.id,
               name: this.addInfo.name,
               sortnum: this.addInfo.sortnum,
+              coverphoto: this.addInfo.coverphoto,
               originalPrice: this.addInfo.originalPrice*100,
               fullPrice: this.addInfo.fullPrice*100
             })
