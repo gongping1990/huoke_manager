@@ -3,11 +3,13 @@
     <Card>
 
       <Row class="g-t-left">
-        <Radio-group v-model="classType" type="button" style="margin-right: 20px" @on-change="getList()">
+        <Radio-group v-model="classType" type="button"  @on-change="getList()">
           <Radio :label=2>古诗词升级版</Radio>
           <Radio :label=3>古诗词1-6</Radio>
         </Radio-group>
+      </Row>
 
+      <Row class="g-t-left -c-tab">
         <Radio-group v-model="radioType" type="button" @on-change="getList(1)">
           <Radio :label=0>待发货</Radio>
           <Radio :label=1>已发货</Radio>
