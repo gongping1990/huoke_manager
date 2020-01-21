@@ -348,7 +348,8 @@
         this.$router.push({
           name: 'tbzw_forma_courseContent',
           query: {
-            courseId: data ? data.id : ''
+            courseId: data ? data.id : '',
+            type: data.wayOfTeach
           }
         })
         localStorage.setItem('nowPage', 1)

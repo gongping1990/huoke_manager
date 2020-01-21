@@ -102,7 +102,7 @@
       :title="addInfo.id ? '编辑课时' : '新增课时'">
       <Form :model="addInfo" ref="addInfoAdd" :label-width="120" :rules="ruleValidateAdd">
         <FormItem label="课时类型" prop="category">
-          <Select v-model="addInfo.category" :disabled="addInfo.id!=''">
+          <Select v-model="addInfo.category" :disabled="(addInfo.id!='') || $route.query.type == '3'">
             <Option label="作文课" value="1"></Option>
             <Option label="读写课" value="2"></Option>
             <Option label="写字课" value="3"></Option>
@@ -514,6 +514,7 @@
             workImg: '',
             cpi: '',
             coverphoto: '',
+            category: this.$route.query.type == '3' ? this.$route.query.type.toString() : '',
           }
         }
       },
