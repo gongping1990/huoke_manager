@@ -144,6 +144,10 @@
           {
             name: '乐小狮福利社',
             appid: 'wx650c047987664716'
+          },
+          {
+            name: '小学学习宝',
+            appid: 'wx53ad61415a2785cf'
           }
         ],
         ruleValidate: {

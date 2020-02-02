@@ -1,5 +1,5 @@
 <template>
-  <div class="correct" v-if="workData.workId">
+  <div class="correct" v-if="workData.workId" @click="closePop">
     <div class="nav-left" :class="{ show: showLeftNav }">
       <div class="nav-header">编辑工具</div>
       <div class="nav-content">
@@ -21,9 +21,9 @@
         <div class="fabric">
           <Transverse
             ref="canvas"
-            v-if="workData.imgArr[imgActive]"
-            :image="workData.imgArr[imgActive].url"
-            :type="workData.imgArr[imgActive].type"
+            v-if="imgArr[imgActive]"
+            :image="imgArr[imgActive].url"
+            :type="imgArr[imgActive].type"
             :data="canvasObj"
             :courseName="workData.courseName"
             @mousedown="mouseDown"
@@ -57,14 +57,19 @@
         </div>
       </div>
     </div>
-    <div class="nav-right" :class="{ show: showRightNav }">
+    <div
+      class="nav-right"
+      :class="{ show: showRightNav }"
+      @mousedown="bindMouseDown"
+    >
       <div class="nav-header">图片选择</div>
       <div class="nav-img-list" v-if="workData.imgArr">
         <div
           class="nav-img-item"
-          v-for="(img, i) in workData.imgArr"
+          v-for="(img, i) in imgArr"
           :key="i"
           @click="handleClickWorkImg(img, i)"
+          @mousedown.stop="bindMouseDownItem(img, i, $event)"
         >
           <div class="nav-img-wrap">
             <img class="nav-img" :src="img.url" />
@@ -77,7 +82,9 @@
               `${
                 img.type == 1
                   ? "学生作业" + (i + 1)
-                  : "老师批改" + (img.index + 1)
+                  : img.type == 2
+                  ? "老师批改" + (img.index + 1)
+                  : "自定义画布" + (img.index + 1)
               }`
             }}
           </p>
@@ -106,6 +113,24 @@
         @click="clickPoptipItem('cropper')"
       >
         裁剪
+      </a>
+    </div>
+    <div
+      class="-poptip"
+      :class="{ show: showTipOne }"
+      :style="{ left: leftOne, top: topOne }"
+    >
+      <a href="javascript:" class="-poptip-item" @click="addEmptyCanvas">
+        新建画布
+      </a>
+    </div>
+    <div
+      class="-poptip"
+      :class="{ show: showTipTwo }"
+      :style="{ left: leftTwo, top: topTwo }"
+    >
+      <a href="javascript:" class="-poptip-item" @click="deleteEmptyCanvas">
+        删除画布
       </a>
     </div>
     <Modal v-model="popupShow" fullscreen>
@@ -244,17 +269,26 @@ export default {
       badgeShow: false,
       popupShow: false,
       showTip: false,
+      showTipOne: false,
+      showTipTwo: false,
       showLeftNav: false,
       showRightNav: false,
       showCropper: false,
       left: 0,
       top: 0,
+      leftOne: 0,
+      topOne: 0,
+      leftTwo: 0,
+      topTwo: 0,
+      emptyObj: null,
+      emptyIndex: 0,
       imgActive: 0,
       imgActiveObj: null,
       mode: 1,
       canvasImg: "",
       canvasTarget: null,
       cropperUrl: "",
+      emptyCanvas: [],
       canvasObj: {
         type: "",
         show: false,
@@ -298,6 +332,11 @@ export default {
       pzImgArr: [pzImg, pzSbImg]
     };
   },
+  computed: {
+    imgArr() {
+      return [...this.workData.imgArr, ...this.emptyCanvas];
+    }
+  },
   created() {
     this.getViewWork();
     document.oncontextmenu = function(e) {
@@ -306,6 +345,51 @@ export default {
     // this.fullScreen()
   },
   methods: {
+    addEmptyCanvas() {
+      this.emptyCanvas.push({
+        url: "",
+        type: 3,
+        index: this.emptyCanvas.length
+      });
+      console.log(this.emptyCanvas);
+    },
+    deleteEmptyCanvas() {
+      let { emptyObj, emptyIndex, imgActive, imgArr } = this;
+      if (emptyIndex == imgActive) {
+        this.imgActive -= 1;
+        this.imgActiveObj = imgArr[this.imgActive];
+      }
+      this.emptyCanvas.splice(emptyObj.index, 1);
+    },
+    closePop() {
+      this.showTip = false;
+      this.showTipOne = false;
+      this.showTipTwo = false;
+    },
+    bindMouseDown(option) {
+      if (option.button == 2) {
+        this.leftOne = option.clientX + "px";
+        this.topOne = option.clientY + "px";
+        this.showTipOne = true;
+      } else {
+        this.showTipOne = false;
+      }
+      this.showTipTwo = false;
+      this.showTip = false;
+    },
+    bindMouseDownItem(img, index, option) {
+      if (option.button == 2 && img.type == 3) {
+        this.leftTwo = option.clientX + "px";
+        this.topTwo = option.clientY + "px";
+        this.emptyIndex = index;
+        this.emptyObj = img;
+        this.showTipTwo = true;
+      } else {
+        this.showTipTwo = false;
+      }
+      this.showTipOne = false;
+      this.showTip = false;
+    },
     getViewWork(fn) {
       this.$api.jsdJob
         .viewWork({
@@ -317,7 +401,9 @@ export default {
           let workImgSrc = workData.workImgSrc
             ? workData.workImgSrc.split(",")
             : [];
-          let replyImg = workData.replyImgTmp ? workData.replyImgTmp.split(",") : [];
+          let replyImg = workData.replyImgTmp
+            ? workData.replyImgTmp.split(",")
+            : [];
           workData.workImgSrc = workImgSrc.map((e, i) => {
             return {
               type: 1,
@@ -351,7 +437,7 @@ export default {
           this.$Spin.hide();
           this.$Message.success("图片上传成功");
           if (fn) {
-            this.getViewWork(fn)
+            this.getViewWork(fn);
           } else {
             this.getViewWork(() => {
               this.imgActive += this.workData.workImgSrc.length;
@@ -374,6 +460,7 @@ export default {
     },
     mouseDown(option) {
       let { canvas } = this.$refs;
+      console.log(option);
       if (option.button == 3 && option.target) {
         this.left = option.e.clientX + "px";
         this.top = option.e.clientY + "px";
@@ -384,6 +471,7 @@ export default {
       }
     },
     handleClickWorkImg(img, i) {
+      console.log(img.type == 3);
       this.$Modal.confirm({
         title: "提示",
         content: "你正在切换作业图片， 是否保存当前修改？",
@@ -391,7 +479,11 @@ export default {
         cancelText: "不保存",
         onOk: () => {
           this.handleSaveCanvasImage(() => {
-            this.imgActive = i;
+            this.imgActive =
+              img.type == 3
+                ? this.workData.imgArr.length -
+                  (this.emptyCanvas.length - img.index)
+                : i;
             this.imgActiveObj = img;
           });
         },
@@ -402,12 +494,12 @@ export default {
       });
     },
     handleSaveCanvasImage(fn) {
-      if(fn) {
+      if (fn) {
         let { canvas } = this.$refs;
         this.canvasImg = canvas.toDataUrl();
 
         this.uploadImg(fn);
-        return
+        return;
       }
       this.$Modal.confirm({
         title: "提示",
@@ -471,9 +563,9 @@ export default {
         case "cropper":
           cropper.getCropData(data => {
             // do something
-            let left = canvasTarget.left
-            let top = canvasTarget.top
-            canvas.remove(canvasTarget)
+            let left = canvasTarget.left;
+            let top = canvasTarget.top;
+            canvas.remove(canvasTarget);
             canvas.addImg(data, {
               left,
               top
@@ -792,6 +884,7 @@ export default {
         width: 180px;
         height: 130px;
         border-radius: 20px;
+        border: 1px solid #808080;
         overflow: hidden;
       }
       &-mask {
