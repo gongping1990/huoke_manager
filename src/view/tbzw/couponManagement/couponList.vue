@@ -118,6 +118,18 @@
         </div>
       </Modal>
     </Card>
+
+    <Modal
+      class="p-couponList"
+      v-model="isOpenModalDetail"
+      @on-cancel="isOpenModalDetail = false"
+      footer-hide
+      width="800"
+      title="数据详情">
+      <Table class="-c-tab" :loading="isFetching" :columns="columnsModal" :data="detailList"></Table>
+    </Modal>
+
+    <coupon-log-template v-model="isOpenModalLog" :couponId="dataItem"></coupon-log-template>
   </div>
 </template>
 
@@ -126,10 +138,11 @@
   import {getBaseUrl} from '@/libs/index'
   import DatePickerTemplate from "../../../components/datePickerTemplate";
   import UploadImg from "../../../components/uploadImg";
+  import CouponLogTemplate from "./couponLogTemplate";
 
   export default {
     name: 'flashScreen',
-    components: {UploadImg, DatePickerTemplate},
+    components: {CouponLogTemplate, UploadImg, DatePickerTemplate},
     data() {
       return {
         baseUrl: `${getBaseUrl()}/sch/common/uploadPublicFile`,
@@ -166,6 +179,7 @@
         ],
         radioType: 0,
         dataList: [],
+        detailList: [],
         selectInfo: '1',
         searchInfo: {
           payed: '-1'
@@ -174,9 +188,11 @@
         totalDetail: 0,
         isFetching: false,
         isOpenModal: false,
-        isOpenModalData: false,
+        isOpenModalDetail: false,
+        isOpenModalLog: false,
         isSending: false,
         addInfo: {},
+        dataItem: {},
         copy_url: '',
         statusList: {
           '0': '未开始',
@@ -219,6 +235,7 @@
           {
             title: '优惠券名称',
             key: 'couponName',
+            tooltip: true,
             align: 'center'
           },
           {
@@ -252,12 +269,36 @@
           },
           {
             title: '已领取',
-            key: 'receives',
+            render: (h,p)=> {
+              return h('div',{
+                style: {
+                  cursor: 'pointer',
+                  color: '#5444E4'
+                },
+                on: {
+                  click: () => {
+                    this.openModalLog(p.row,1)
+                  }
+                }
+              }, p.row.receives)
+            },
             align: 'center'
           },
           {
             title: '已使用',
-            key: 'uses',
+            render: (h,p)=> {
+              return h('div',{
+                style: {
+                  cursor: 'pointer',
+                  color: '#5444E4'
+                },
+                on: {
+                  click: () => {
+                    this.openModalLog(p.row,2)
+                  }
+                }
+              }, p.row.uses)
+            },
             align: 'center'
           },
           {
@@ -268,7 +309,7 @@
           },
           {
             title: '操作',
-            width: 200,
+            width: 260,
             render: (h, params) => {
               return h('div', [
                 h('Button', {
@@ -277,9 +318,36 @@
                     size: 'small'
                   },
                   style: {
-                    display: params.row.type < 2 ? 'inline-block' : 'none',
                     color: '#5444E4',
-                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.openModalDetail(params.row)
+                    }
+                  }
+                }, '数据统计'),
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: '#5444E4'
+                  },
+                  on: {
+                    click: () => {
+                      this.copyUrl(params.row)
+                    }
+                  }
+                }, '复制链接'),
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    display: params.row.type < 2 ? 'inline-block' : 'none',
+                    color: '#5444E4'
                   },
                   on: {
                     click: () => {
@@ -294,34 +362,57 @@
                   },
                   style: {
                     display: params.row.type > 1 ? 'none' : 'inline-block',
-                    color: 'rgba(218, 55, 75)',
-                    marginRight: '5px'
+                    color: 'rgba(218, 55, 75)'
                   },
                   on: {
                     click: () => {
                       this.endItem(params.row)
                     }
                   }
-                }, '结束'),
-                h('Button', {
-                  props: {
-                    type: 'text',
-                    size: 'small'
-                  },
-                  style: {
-                    color: '#5444E4',
-                    marginRight: '5px'
-                  },
-                  on: {
-                    click: () => {
-                      this.copyUrl(params.row)
-                    }
-                  }
-                }, '复制链接')
+                }, '结束')
               ])
             }
           }
-        ]
+        ],
+        columnsModal: [
+         {
+           title: '领取页面PV',
+           key: 'pv',
+           align: 'center'
+         },
+         {
+           title: '领取页面UV',
+           key: 'uv',
+           align: 'center'
+         },
+         {
+           title: '页面分享次数',
+           key: 'shareNum',
+           align: 'center'
+         },
+         {
+           title: '领取人数',
+           key: 'getNum',
+           align: 'center'
+         },
+         {
+           title: '下单人数',
+           key: 'orderNum',
+           align: 'center'
+         },
+         {
+           title: '成功订单数',
+           key: 'successOrderNum',
+           align: 'center'
+         },
+         {
+           title: '付费转化率',
+           render: (h, params)=> {
+             return h('div', `${params.row.payPercent*100}%`)
+           },
+           align: 'center'
+         }
+       ]
       };
     },
     watch: {
@@ -348,6 +439,15 @@
       this.getList()
     },
     methods: {
+      openModalLog (data) {
+        this.dataItem = data.id
+        this.isOpenModalLog = true
+      },
+      openModalDetail(data) {
+        this.dataItem = data
+        this.isOpenModalDetail = true
+        this.getCouponData()
+      },
       changeStartClick () {
         let data1 = new Date(this.addInfo.receiveStartDate).getTime()
         let data2 = new Date(this.addInfo.receiveEndDate).getTime()
@@ -409,6 +509,19 @@
             response => {
               this.dataList = response.data.resultData.records;
               this.total = response.data.resultData.total;
+            })
+          .finally(() => {
+            this.isFetching = false
+          })
+      },
+      getCouponData() {
+        this.isFetching = true
+        this.$api.tbzwCoupon.getCouponData({
+          id: this.dataItem.id,
+        })
+          .then(
+            response => {
+              this.detailList = [response.data.resultData];
             })
           .finally(() => {
             this.isFetching = false

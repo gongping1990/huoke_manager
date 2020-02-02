@@ -9,6 +9,7 @@
              :data="dataList"></Table>
 
       <Page class="g-text-right" :total="total" size="small" show-elevator :page-size="tab.pageSize"
+            :current.sync="tab.currentPage"
             @on-change="currentChange"></Page>
     </Card>
 
@@ -18,7 +19,7 @@
       @on-cancel="closeModalContent()"
       width="700"
       :title="modalTitleName[modalType]">
-      <Form :model="detailInfo" :label-width="70"  v-if="modalType!=6">
+      <Form :model="detailInfo" :label-width="80">
         <FormItem label="选择教师" v-if="modalType===1" class="ivu-form-item-required">
           <Select v-model="detailInfo.teacher">
             <Option v-for="(item,index) in teacherList" :label="item.teacherName" :value="item.id"
@@ -38,27 +39,54 @@
         </FormItem>
         <FormItem label="作业类型" v-if="modalType===5" class="ivu-form-item-required">
           <Radio-group v-model="detailInfo.homeworkType">
-            <Radio :label=1>朗读</Radio>
+            <Radio :label=1 :disabled="detailInfo.category !== 2">朗读</Radio>
             <Radio :label=2>书写</Radio>
           </Radio-group>
         </FormItem>
-        <!--<FormItem label="作业名称" v-if="modalType===5">-->
-          <!--<Input type="text" v-model="detailInfo.homework" placeholder="请输入作业名称（字数不超过20字）" :maxlength="20"></Input>-->
-        <!--</FormItem>-->
+        <FormItem label="课程重点" v-if="modalType===5">
+          <Input type="textarea" :rows="4" v-model="detailInfo.keyPoint" placeholder="请输入课程重点（字数不超过80字）"
+                 :maxlength='80'></Input>
+        </FormItem>
         <FormItem label="作业要求" v-if="modalType===5">
           <Input type="textarea" :rows="4" v-model="detailInfo.homeworkClaim" placeholder="请输入作业要求（字数不超过80字）"
                  :maxlength='80'></Input>
         </FormItem>
-        <FormItem label="朗读内容" v-if="modalType===5 && detailInfo.homeworkType===1">
-          <editor ref="editor" v-model="detailInfo.readContent"></editor>
+        <FormItem label="作业提示" v-if="modalType===5 && detailInfo.category===2 && detailInfo.homeworkType!==1">
+          <upload-img ref="childImg" v-model="detailInfo.workImg" :option="uploadOption"></upload-img>
         </FormItem>
+        <FormItem label="朗读内容" v-if="modalType===5 && detailInfo.category===2 && detailInfo.homeworkType===1">
+          <upload-img ref="childImg" v-model="detailInfo.workImg" :option="uploadOption"></upload-img>
+        </FormItem>
+        <FormItem label="关卡名称" v-if="modalType===5 && detailInfo.category===2" class="ivu-form-item-required">
+          <Input v-model="detailInfo.cpn" placeholder="请输入关卡名称" :maxlength='80'></Input>
+        </FormItem>
+        <FormItem label="关卡图标" v-show="modalType===5 && detailInfo.category===2" class="ivu-form-item-required">
+          <Select v-model="detailInfo.cpi">
+            <Option class="p-gsw-course-list-option" :label="item.text" :value="item.value"
+                    v-for="(item, index) of iconList"
+                    :key="index">
+              <img class="p-gsw-course-list-img" :src="item.url"/>
+              <span>{{item.text}}</span>
+            </Option>
+          </Select>
+          <p class="-c-tips">图标为系统内置，如需增加，请联系技术人员</p>
+        </FormItem>
+        <Form-item label="课程视频" v-show="modalType===6" class="-c-form-item ivu-form-item-required">
+          <upload-video ref="childVideo" v-model="detailInfo.videoUrl" :option="uploadVideoOption"></upload-video>
+        </Form-item>
+        <Form-item label="电视视频" v-show="modalType===6" class="-c-form-item">
+          <upload-video ref="childVideo" v-model="detailInfo.tvUrl" :option="uploadVideoOption"></upload-video>
+        </Form-item>
+        <Form-item label="ipad视频" v-show="modalType===6" class="-c-form-item">
+          <upload-video ref="childVideo" v-model="detailInfo.ipadUrl" :option="uploadVideoOption"></upload-video>
+        </Form-item>
+        <Form-item label="笔画动图" v-show="modalType===7" class="-c-form-item">
+          <upload-img v-model="detailInfo.strokeImg" :option="uploadOption"></upload-img>
+        </Form-item>
+        <Form-item label="笔画文字" v-show="modalType===7" class="-c-form-item">
+          <Input v-model="detailInfo.stroke" placeholder="请输入笔画文字" :maxlength='1'></Input>
+        </Form-item>
       </Form>
-
-      <div v-else>
-        <Table class="-c-tab" :columns="columnsSource" :data="sourceList"></Table>
-        <Page class="g-text-right" :total="totalSource" size="small" show-elevator :page-size="tabSource.pageSize"
-              @on-change="currentChangeSource"></Page>
-      </div>
 
       <div slot="footer" class="g-flex-j-sa">
         <Button @click="closeModalContent()" ghost type="primary" style="width: 100px;">取消</Button>
@@ -73,17 +101,21 @@
       width="700"
       :title="addInfo.id ? '编辑课时' : '新增课时'">
       <Form :model="addInfo" ref="addInfoAdd" :label-width="120" :rules="ruleValidateAdd">
+        <FormItem label="课时类型" prop="category">
+          <Select v-model="addInfo.category" :disabled="addInfo.id!=''">
+            <Option label="作文课" value="1"></Option>
+            <Option label="读写课" value="2"></Option>
+            <Option label="写字课" value="3"></Option>
+          </Select>
+        </FormItem>
         <FormItem label="课时名称" prop="name">
           <Input type="text" v-model="addInfo.name" :maxlength="14" placeholder="请输入课时名称(最多十四个字)"></Input>
         </FormItem>
         <!--<FormItem label="排序值" prop="sortnum">-->
-          <!--<InputNumber :max="999" :min="0" v-model="addInfo.sortnum" placeholder="请输入排序值"></InputNumber>-->
+        <!--<InputNumber :max="999" :min="0" v-model="addInfo.sortnum" placeholder="请输入排序值"></InputNumber>-->
         <!--</FormItem>-->
         <Form-item label="课程封面" class="-c-form-item ivu-form-item-required">
           <upload-img v-model="addInfo.coverphoto" :option="uploadOption"></upload-img>
-        </Form-item>
-        <Form-item label="课程视频" class="-c-form-item ivu-form-item-required">
-          <upload-video ref="childVideo" v-model="addInfo.videoUrl" :option="uploadVideoOption"></upload-video>
         </Form-item>
       </Form>
 
@@ -93,6 +125,30 @@
       </div>
     </Modal>
 
+    <Modal
+      class="p-gsw-course-list"
+      v-model="isOpenLevel"
+      @on-cancel="isOpenLevel = false"
+      width="500"
+      title="关卡模板选择">
+      <Form :model="addInfo" :label-width="80">
+        <FormItem label="选择模板">
+          <Radio-group v-model="levelType">
+            <Radio :label=0>阅读课</Radio>
+            <Radio :label=1>写作课</Radio>
+          </Radio-group>
+          <p class="-c-tips">选择模板后，系统会自动创建部分关卡，创建后可自定义更改，选错也没有关系</p>
+        </FormItem>
+      </Form>
+
+      <div slot="footer" class="g-flex-j-sa">
+        <Button @click="isOpenLevel = false" ghost type="primary" style="width: 100px;">取消</Button>
+        <div @click="submitLevel()" class="g-primary-btn ">确认</div>
+      </div>
+    </Modal>
+
+    <learn-content-template v-model="isOpenModalLearn" :data-info="dataItem"
+                            @successData="getList"></learn-content-template>
   </div>
 </template>
 
@@ -104,25 +160,22 @@
   import Operation from "iview/src/components/transfer/operation";
   import UploadAudio from "@/components/uploadAudio";
   import ChoiceQuestion from "./choiceQuestion";
-
+  import LearnContentTemplate from "./learnContentTemplate";
 
   export default {
     name: 'tbzw_forma_courseContent',
-    components: {ChoiceQuestion, UploadAudio, Operation, UploadVideo, UploadImg, Editor},
+    components: {LearnContentTemplate, ChoiceQuestion, UploadAudio, Operation, UploadVideo, UploadImg, Editor},
     data() {
       return {
         baseUrl: `${getBaseUrl()}/sch/common/uploadPublicFile`, // 公有 （图片）
         tab: {
           page: 1,
-          pageSize: 10
-        },
-        tabSource: {
-          page: 1,
+          currentPage: 1,
           pageSize: 10
         },
         uploadOption: {
-          tipText: '只能上传jpg/png文件，且不超过200kb',
-          size: 200
+          tipText: '只能上传jpg/png文件，且不超过500kb',
+          size: 500
         },
         uploadVideoOption: {
           tipText: '视频格式：mp4、wmv、rmvb、avi 视频大小：150M以内',
@@ -140,18 +193,28 @@
           '3': '活学活用',
           '4': '轻松一答',
           '5': '作业',
-          '6': '素材评价',
+          '6': '视频内容',
+          '7': '笔画特写',
+          '8': '书写要点'
+        },
+        lessonTextObj: {
+          '1': '作文课',
+          '2': '读写课',
+          '3': '写字课'
         },
         dataList: [],
-        sourceList: [],
         teacherList: [],
+        iconList: [],
         choiceList: [],
         total: 0,
         totalSource: 0,
+        levelType: 0,
         isFetching: false,
         isEdit: false,
         isOpenModalAdd: false,
         isOpenModalContent: false,
+        isOpenModalLearn: false,
+        isOpenLevel: false,
         modalType: '',
         addInfo: {
           videoUrl: ''
@@ -165,21 +228,21 @@
           name: [
             {required: true, message: '请输入课时名称', trigger: 'blur'},
           ],
-          // sortnum: [
-          //   {required: true, type: 'number', message: '请输入排序值', trigger: 'blur'},
-          // ]
+          category: [
+            {required: true, message: '请选择课时类型', trigger: 'change'},
+          ]
         },
         columns: [
           {
             title: '课时名称',
             key: 'name',
-
+            tooltip: true,
             align: 'center'
           },
           {
             title: '类型',
             render: (h, params) => {
-              return h('div', params.row.type === 1 ? '小班课' : '素材课')
+              return h('div', this.lessonTextObj[params.row.category])
             },
             align: 'center'
           },
@@ -189,23 +252,23 @@
             align: 'center'
           },
           {
-            title: '数据完整',
+            title: '补充内容完整',
             render: (h, params) => {
               return h('div', params.row.complete ? '是' : '否')
             },
             align: 'center'
           },
           {
-            title: '是否试听',
+            title: '是否布置作业',
             render: (h, params) => {
-              return h('div', params.row.listen ? '是' : '否')
+              return h('div', params.row.fixupHomework ? '是' : '否')
             },
             align: 'center'
           },
           {
             title: '补充内容',
             align: 'center',
-            width: 340,
+            width: 250,
             render: (h, params) => {
               return h('div', [
                 h('Button', {
@@ -214,7 +277,7 @@
                     size: 'small'
                   },
                   style: {
-                    display: params.row.type === 1 ? 'inline-block' : 'none',
+                    display: params.row.category === 1 ? 'inline-block' : 'none',
                     color: '#5444E4'
                   },
                   on: {
@@ -229,7 +292,7 @@
                     size: 'small'
                   },
                   style: {
-                    display: params.row.type === 1 ? 'inline-block' : 'none',
+                    display: params.row.category === 1 ? 'inline-block' : 'none',
                     color: '#5444E4'
                   },
                   on: {
@@ -244,12 +307,12 @@
                     size: 'small'
                   },
                   style: {
-                    display: params.row.type === 1 ? 'inline-block' : 'none',
+                    display: params.row.category === 1 ? 'inline-block' : 'none',
                     color: '#5444E4'
                   },
                   on: {
                     click: () => {
-                      this.openModalContent(params.row, 3)
+                      this.openModalLearnAndUse(params.row)
                     }
                   }
                 }, '活学活用'),
@@ -259,7 +322,7 @@
                     size: 'small'
                   },
                   style: {
-                    display: params.row.type === 1 ? 'inline-block' : 'none',
+                    display: params.row.category === 1 ? 'inline-block' : 'none',
                     color: '#5444E4'
                   },
                   on: {
@@ -274,22 +337,22 @@
                     size: 'small'
                   },
                   style: {
-                    display: params.row.type === 1 ? 'inline-block' : 'none',
+                    display: params.row.category === 1 ? 'inline-block' : 'none',
                     color: '#5444E4'
                   },
                   on: {
                     click: () => {
-                      this.openModalContent(params.row, 5)
+                      this.openModalLearn(params.row)
                     }
                   }
-                }, '作业'),
+                }, '学习内容'),
                 h('Button', {
                   props: {
                     type: 'text',
                     size: 'small'
                   },
                   style: {
-                    display: params.row.type === 2 ? 'inline-block' : 'none',
+                    display: (params.row.category === 1 || params.row.category === 3) ? 'inline-block' : 'none',
                     color: '#5444E4'
                   },
                   on: {
@@ -297,14 +360,59 @@
                       this.openModalContent(params.row, 6)
                     }
                   }
-                }, '素材评价')
+                }, '视频内容'),
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    display: params.row.category === 2 ? 'inline-block' : 'none',
+                    color: '#5444E4'
+                  },
+                  on: {
+                    click: () => {
+                      this.checkpoint(params.row)
+                    }
+                  }
+                }, '关卡设置'),
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    display: params.row.category === 3 ? 'inline-block' : 'none',
+                    color: '#5444E4'
+                  },
+                  on: {
+                    click: () => {
+                      this.openModalContent(params.row, 7)
+                    }
+                  }
+                }, '笔画特写'),
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    display: params.row.category === 3 ? 'inline-block' : 'none',
+                    color: '#5444E4'
+                  },
+                  on: {
+                    click: () => {
+                      this.openModalLearn(params.row)
+                    }
+                  }
+                }, '书写要点')
               ])
             }
           },
           {
             title: '操作',
             align: 'center',
-            width: 300,
+            width: 200,
             render: (h, params) => {
               return h('div', [
                 h('Button', {
@@ -317,10 +425,10 @@
                   },
                   on: {
                     click: () => {
-                      this.changeTryOut(params.row)
+                      this.openModalContent(params.row, 5)
                     }
                   }
-                }, !params.row.listen ? '开启试听' : '关闭试听'),
+                }, '作业'),
                 h('Button', {
                   props: {
                     type: 'text',
@@ -352,51 +460,42 @@
               ])
             }
           }
-        ],
-        columnsSource: [
-          {
-            title: '用户昵称',
-            key: 'nickName',
-            align: 'center'
-          },
-          {
-            title: '评分',
-            key: 'score',
-            align: 'center'
-          },
-          {
-            title: '评分时间',
-            key: 'gmtCreate',
-            align: 'center'
-          },
         ]
       };
     },
     mounted() {
+      this.tab.currentPage = +localStorage.nowPage || 1
       this.getList()
       this.getTeacherList()
     },
     methods: {
-      changeTryOut(data) {
-        this.$api.composition.updateListeningById({
-          lessonId: data.id,
-          isListen: !data.listen
+      checkpoint(data) {
+        this.dataItem = data
+        if (!data.createCheckPoint) {
+          this.isOpenLevel = true
+        } else {
+          this.$router.push({
+            name: 'tbzw_checkpointMain',
+            query: {
+              courseId: data.courseId,
+              lessonId: data.id
+            }
+          })
+        }
+      },
+      submitLevel() {
+        this.$router.push({
+          name: 'tbzw_checkpointMain',
+          query: {
+            lessonId: this.dataItem.id,
+            courseId: this.dataItem.courseId,
+            type: this.levelType
+          }
         })
-          .then(
-            response => {
-              if (response.data.code == '200') {
-                this.$Message.success('更改成功')
-                this.getList()
-              }
-            })
-
       },
       currentChange(val) {
         this.tab.page = val;
-        this.getList();
-      },
-      currentChangeSource(val) {
-        this.tabSource.page = val;
+        localStorage.setItem('nowPage', val)
         this.getList();
       },
       openModal(data) {
@@ -405,11 +504,15 @@
           this.isEdit = true
           this.addInfo = JSON.parse(JSON.stringify(data))
           this.addInfo.sortnum = +this.addInfo.sortnum
+          this.addInfo.category = this.addInfo.category.toString()
         } else {
           this.isEdit = false
           this.addInfo = {
+            id: '',
             sortnum: null,
             type: 1,
+            workImg: '',
+            cpi: '',
             coverphoto: '',
           }
         }
@@ -433,18 +536,34 @@
         this.dataItem = data
         this.modalType = type
         this.detailInfo.teacher = this.dataItem.teacherId
-
+        this.detailInfo.cpi = +this.dataItem.cpi
+        this.detailInfo.homeworkType = this.detailInfo.homeworkType || (this.detailInfo.category === 2 ? 1 : 2)
+        this.detailInfo.homeworkClaim = this.detailInfo.category === 3 ? '正确、端正、整洁、行款整齐' : this.detailInfo.homeworkClaim
+        this.getPresetIcon()
         switch (this.modalType) {
-          case 3:
-            this.getListByLessonQuestion()
-            break
           case 4:
             this.getListByLessonQuestion()
             break
-          case 6:
-            this.getListByLessonScore()
+          case 5:
+            // console.log(this.$refs,'ref')
+            this.$nextTick(() => {
+              this.$refs.childImg && this.$refs.childImg.init()
+            })
             break
         }
+      },
+      openModalLearn(data) {
+        this.isOpenModalLearn = true
+        this.dataItem = JSON.parse(JSON.stringify(data))
+      },
+      openModalLearnAndUse(data) {
+        this.$router.push({
+          name: 'tbzw_formal_learnAndUse',
+          query: {
+            courseId: this.$route.query.courseId,
+            lessonId: data.id
+          }
+        })
       },
       closeModal(name) {
         if (this.addInfo.id && (this.addInfo.type === 1)) {
@@ -477,7 +596,7 @@
         this.isFetching = true
         this.$api.composition.getQueryLessonPage({
           courseId: this.$route.query.courseId,
-          current: this.tab.page,
+          current: localStorage.nowPage || this.tab.page,
           size: this.tab.pageSize
         })
           .then(
@@ -489,6 +608,13 @@
             this.isFetching = false
           })
       },
+      getPresetIcon() {
+        this.$api.tbzwLesson.getPresetIcon()
+          .then(
+            response => {
+              this.iconList = response.data.resultData;
+            })
+      },
       getTeacherList() {
         this.$api.composition.getTeacherList({
           current: this.tab.page,
@@ -499,20 +625,9 @@
               this.teacherList = response.data.resultData.records;
             })
       },
-      getListByLessonScore() {
-        this.$api.composition.listByLessonScore({
-          current: this.tabSource.page,
-          size: this.tabSource.pageSize,
-          lessonId: this.dataItem.id
-        })
-          .then(
-            response => {
-              this.sourceList = response.data.resultData.records;
-            })
-      },
       getListByLessonQuestion() {
         this.$api.composition.listByLessonQuestion({
-          type: this.modalType === 3 ? 1 : 2,
+          type: 2,
           lessonId: this.dataItem.id
         })
           .then(
@@ -524,7 +639,7 @@
                 list.answerSecond = list.answerPoint % 60
                 list.publishMinute = parseInt(list.publishPoint / 60)
                 list.publishSecond = list.publishPoint % 60
-                list.optionJson = JSON.parse(list.optionJson)
+                // list.optionJson = JSON.parse(list.optionJson)
               })
               setTimeout(() => {
                 this.$refs.childOne.init()
@@ -542,16 +657,18 @@
           case 2:
             this.submitUploadGuideAudio()
             break
-          case 3:
-            this.submitSaveLessonQuestion()
-            break
           case 4:
             this.submitSaveLessonQuestion()
             break
           case 5:
             this.saveHomeWork()
             break
-
+          case 6:
+            this.submitVideo()
+            break
+          case 7:
+            this.submitStrokeImg()
+            break
         }
       },
       submitTeacher() {
@@ -567,7 +684,6 @@
               this.$Message.success('操作成功');
               this.getList()
               this.closeModalContent()
-              this.isOpenModalAdd = false
             }
           })
       },
@@ -601,7 +717,7 @@
         let isCheckErrorAudio = true
 
         this.choiceList.forEach(item => {
-          if ( item.answerMinute === '' || item.answerSecond === '' || !item.answerTime || item.publishMinute === '' || item.publishSecond === '' ) {
+          if (item.answerMinute === '' || item.answerSecond === '' || !item.answerTime || item.publishMinute === '' || item.publishSecond === '') {
             isCheckQuestion = false
           }
 
@@ -672,12 +788,15 @@
           delete item.answerSecond
           delete item.publishMinute
           delete item.publishSecond
+          if (this.modalType === 4) {
+            delete item.qetype
+          }
         })
 
         this.$api.composition.saveLessonQuestion({
           lessonId: this.dataItem.id,
           questionList: choiceDataList,
-          type: this.modalType === 3 ? 1 : 2
+          type: 2
         })
           .then(response => {
             if (response.data.code == '200') {
@@ -689,14 +808,42 @@
       saveHomeWork() {
         if (!this.detailInfo.homeworkType) {
           return this.$Message.error('请选择作业类型')
+        } else if (!this.detailInfo.cpn && this.detailInfo.category === 2) {
+          return this.$Message.error('请输入关卡名称')
+        } else if (!this.detailInfo.cpi && this.detailInfo.category === 2) {
+          return this.$Message.error('请输入关卡图标')
         }
 
         this.$api.composition.saveHomeWork({
           lessonId: this.dataItem.id,
           homework: this.detailInfo.homework,
+          keyPoint: this.detailInfo.keyPoint,
           homeworkClaim: this.detailInfo.homeworkClaim,
           homeWorkType: this.detailInfo.homeworkType,
-          readContent: this.detailInfo.readContent
+          cpn: this.detailInfo.cpn,
+          cpi: this.detailInfo.cpi,
+          workImg: this.detailInfo.workImg,
+          // readContent: this.detailInfo.readContent
+        })
+          .then(response => {
+            if (response.data.code == '200') {
+              this.$Message.success('操作成功');
+              this.getList()
+              this.closeModalContent()
+              this.isOpenModalAdd = false
+            }
+          })
+      },
+      submitVideo() {
+        if (!this.detailInfo.videoUrl) {
+          return this.$Message.error('请上传课程视频')
+        }
+
+        this.$api.tbzwLesson.saveLessonVideo({
+          id: this.dataItem.id,
+          tvUrl: this.detailInfo.tvUrl,
+          ipadUrl: this.detailInfo.ipadUrl,
+          videoUrl: this.detailInfo.videoUrl
         })
           .then(response => {
             if (response.data.code == '200') {
@@ -707,37 +854,51 @@
             }
           })
       },
-      submitAdd(name) {
-        this.$refs[name].validate((valid) => {
-          if (valid) {
-            if (!this.addInfo.coverphoto) {
-              return this.$Message.error('请上传课程封面')
-            } else if (this.addInfo.type === 1 && !this.addInfo.videoUrl) {
-              return this.$Message.error('请上传课程视频')
-            } else if (this.addInfo.type === 2 && (!this.addInfo.content || this.addInfo.content === '<p><br></p>')) {
-              return this.$Message.error('请输入课时内容')
-            }
+      submitStrokeImg() {
+        if (!this.detailInfo.strokeImg) {
+          return this.$Message.error('请上传笔画特写图片')
+        } else if (!this.detailInfo.stroke) {
+          return this.$Message.error('请输入文字笔画')
+        }
 
-            let paramUrl = this.addInfo.id ? this.$api.composition.updateLesson : this.$api.composition.saveLesson
-            paramUrl({
-              courseId: this.$route.query.courseId,
-              id: this.addInfo.id,
-              name: this.addInfo.name,
-              // sortnum: this.addInfo.sortnum,
-              videoUrl: this.addInfo.videoUrl,
-              content: this.addInfo.content,
-              coverphoto: this.addInfo.coverphoto
-            })
-              .then(response => {
-                if (response.data.code == '200') {
-                  this.$Message.success('操作成功');
-                  this.getList()
-                  this.closeModal(name)
-                  this.isOpenModalAdd = false
-                }
-              })
-          }
+        this.$api.tbzwLesson.saveStrokeImgById({
+          lessonId: this.dataItem.id,
+          strokeImg: this.detailInfo.strokeImg,
+          stroke: this.detailInfo.stroke
         })
+          .then(response => {
+            if (response.data.code == '200') {
+              this.$Message.success('操作成功');
+              this.getList()
+              this.closeModalContent()
+            }
+          })
+      },
+      submitAdd(name) {
+        if (!this.addInfo.coverphoto) {
+          return this.$Message.error('请上传课程封面')
+        } else if (!this.addInfo.coverphoto) {
+          return this.$Message.error('请上传课程封面')
+        } else if (!this.addInfo.coverphoto) {
+          return this.$Message.error('请上传课程封面')
+        }
+
+        let paramUrl = this.addInfo.id ? this.$api.composition.updateLesson : this.$api.composition.saveLesson
+        paramUrl({
+          courseId: this.$route.query.courseId,
+          id: this.addInfo.id,
+          name: this.addInfo.name,
+          category: this.addInfo.category,
+          coverphoto: this.addInfo.coverphoto
+        })
+          .then(response => {
+            if (response.data.code == '200') {
+              this.$Message.success('操作成功');
+              this.getList()
+              this.closeModal(name)
+              this.isOpenModalAdd = false
+            }
+          })
       }
     }
   };
@@ -746,6 +907,18 @@
 
 <style lang="less" scoped>
   .p-gsw-course-list {
+
+    &-option {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    &-img {
+      width: 50px;
+      height: 50px;
+    }
+
     .-c-tips {
       color: #39f;
     }

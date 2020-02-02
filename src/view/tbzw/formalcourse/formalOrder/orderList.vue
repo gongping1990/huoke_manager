@@ -26,9 +26,9 @@
             </Select>
           </div>
         </Col>
-        <!--<div class="g-text-right">-->
-          <!--<Button type="primary" ghost class="-p-modal-btn -date-search" @click="toExcel">导出表格</Button>-->
-        <!--</div>-->
+        <div class="g-text-right">
+          <Button type="primary" ghost class="-p-modal-btn -date-search" @click="toExcel">导出表格</Button>
+        </div>
       </Row>
 
       <Row class="g-search -c-tab">
@@ -101,6 +101,17 @@
           <FormItem label="备注内容" class="-p-o-width">{{orderInfo.remarks}}</FormItem>
           <FormItem label="" class="-p-o-width"></FormItem>
         </div>
+        <div class="-p-o-title" v-if="orderInfo.refundInfo">
+          退款信息
+        </div>
+        <div class="-p-o-flex" v-if="orderInfo.refundInfo">
+          <FormItem label="退款发起时间" class="-p-o-width">{{orderInfo.refundInfo.gmtCreate | timeFormatter}}</FormItem>
+          <FormItem label="退款结果" class="-p-o-width">{{orderStatus[orderInfo.payStatus]}}</FormItem>
+        </div>
+        <div class="-p-o-flex" v-if="orderInfo.refundInfo">
+          <FormItem label="退款结果时间" class="-p-o-width">{{orderInfo.refundInfo.successTime}}</FormItem>
+          <FormItem label="退款备注" class="-p-o-width">{{orderInfo.refundInfo.comment}}</FormItem>
+        </div>
       </Form>
       <div slot="footer" class="-p-o-footer">
         <div @click="isOpenModal = false" class="g-primary-btn ">确 认</div>
@@ -108,6 +119,23 @@
     </Modal>
 
     <look-user-info v-model="isOpenUserInfo" :dataInfo="detailInfo"></look-user-info>
+
+    <Modal
+      class="p-order"
+      v-model="isOpenModalRefund"
+      @on-cancel="isOpenModalRefund = false"
+      width="500"
+      title="退款">
+      <Form :model="addInfo" :label-width="90" class="ivu-form-item-required">
+        <FormItem label="退款备注">
+          <Input type="textarea" :rows="4" v-model="addInfo.comment" placeholder="请输入退款备注" :maxlength='80'></Input>
+        </FormItem>
+      </Form>
+      <div slot="footer" class="g-flex-j-sa">
+        <Button @click="isOpenModalRefund = false" ghost type="primary" style="width: 100px;">取消</Button>
+        <div @click="submitInfo('addInfoTwo')" class="g-primary-btn ">确 认</div>
+      </div>
+    </Modal>
   </div>
 </template>
 
@@ -133,10 +161,14 @@
           orderMode: '0',
           antistop: ''
         },
+        addInfo: {},
         selectInfo: '0',
         orderStatus: {
           '0': '未支付',
           '10': '已支付',
+          '13': '退款中',
+          '14': '退款失败',
+          '15': '已退款',
           '20': '已取消',
         },
         orderStatusList: [
@@ -151,6 +183,18 @@
           {
             name: '已支付',
             id: '10'
+          },
+          {
+            name: '退款中',
+            id: '13'
+          },
+          {
+            name: '退款失败',
+            id: '14'
+          },
+          {
+            name: '已退款',
+            id: '15'
           },
           {
             name: '已取消',
@@ -192,6 +236,7 @@
         isFetching: false,
         isOpenModal: false,
         isOpenUserInfo: false,
+        isOpenModalRefund: false,
         getStartTime: '',
         getEndTime: '',
         orderInfo: {
@@ -306,7 +351,22 @@
                       this.openModal(params.row)
                     }
                   }
-                }, '订单详情')
+                }, '订单详情'),
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    display: (params.row.payStatus == '10' || params.row.payStatus == '14') ? 'inline-block' : 'none',
+                    color: '#5444E4'
+                  },
+                  on: {
+                    click: () => {
+                      this.openModalRerund(params.row)
+                    }
+                  }
+                }, '退款')
               ])
             }
           }
@@ -327,9 +387,13 @@
     },
     methods: {
       toDetail(data) {
-        this.isOpenUserInfo = true
-        this.detailInfo = JSON.parse(JSON.stringify(data))
-        this.detailInfo.uid = this.detailInfo.userId
+        if (data.payStatus <= 10) {
+          this.isOpenUserInfo = true
+          this.detailInfo = JSON.parse(JSON.stringify(data))
+          this.detailInfo.uid = this.detailInfo.userId
+        } else {
+          this.$Message.error('该用户未购买课程,无法查看')
+        }
       },
       changeDate (data) {
         this.getStartTime = data.startTime
@@ -338,14 +402,15 @@
       },
       toExcel() {
         let params = {
-          orderId: '',
+          id: '',
           nickname: '',
           userId: '',
+          phone: '',
           ...this.paramsInit()
         }
 
-        let downUrl = `${getBaseUrl()}/order/queryAdminPageDownload?gmtCreateBegin=${params.gmtCreateBegin}&gmtCreateEnd=${params.gmtCreateEnd}&tradeState=${params.tradeState}&mode=${params.mode}&orderId=${params.orderId}&nickname=${params.nickname}&userId=${params.userId}`
-
+        let downUrl = `${getBaseUrl()}/compositionv2/order/getOrderExcele?startTime=${params.startTime}&endTime=${params.endTime}&payStatus=${params.payStatus}&nickName=${params.nickname}&id=${params.id}&phone=${params.phone}&orderMode=${params.orderMode}&type=${params.type}&courseId=${params.courseId=='-1' ? '' : params.courseId}`
+        console.log(downUrl,'导出路径')
         window.open(downUrl, '_blank');
       },
       currentChange(val) {
@@ -360,6 +425,10 @@
       openModal(data) {
         this.getOrderDetails(data)
         this.isOpenModal = true
+      },
+      openModalRerund(data) {
+        this.isOpenModalRefund = true
+        this.addInfo = JSON.parse(JSON.stringify(data))
       },
       paramsInit() {
         let params = {
@@ -419,6 +488,24 @@
           .finally(() => {
             this.isFetching = false
           })
+      },
+      submitInfo() {
+        if (!this.addInfo.comment) {
+         return this.$Message.error('请输入退款备注')
+        }
+        this.$api.tbzwOrder.refund({
+          orderId: this.addInfo.id,
+          comment: this.addInfo.comment,
+        })
+          .then(
+            response => {
+              if (response.data.code == '200') {
+                this.$Message.success('提交成功');
+                this.isOpenModalRefund = false
+                this.getList()
+              }
+            })
+
       }
     }
   };

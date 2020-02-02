@@ -24,6 +24,14 @@
           <FormItem label="课时节数" prop="lessonDescribe">
             <Input type="text" :disabled="!isEdit" v-model="addInfo.lessonDescribe" placeholder="请输入课时节数"></Input>
           </FormItem>
+          <FormItem label="排课规则" class="ivu-form-item-required">
+            <RadioGroup v-model="addInfo.wayOfTeach">
+              <Radio :label=3>交作业解锁</Radio>
+              <Radio :label=1>每周系统排课</Radio>
+              <Radio :label=2>人工排课</Radio>
+            </RadioGroup>
+            <div class="-c-tips">* 更改后只对新购用户生效</div>
+          </FormItem>
           <FormItem label="单独购价格" prop="alonePrice">
             <InputNumber  style="width: 100%;" type="text" :disabled="!isEdit" v-model="addInfo.alonePrice" :min="0"
                          placeholder="请输入单独购价格（元）"></InputNumber>
@@ -67,6 +75,25 @@
             </div>
             <div class="-c-tips">图片尺寸不低于960px*360px 图片大小：500K以内</div>
           </Form-item>
+          <!--<Form-item label="咨询图片" class="-c-form-item ivu-form-item-required">-->
+            <!--<Upload-->
+              <!--v-if="isEdit"-->
+              <!--style="display: inline-block"-->
+              <!--:action="baseUrl"-->
+              <!--:show-upload-list="false"-->
+              <!--:max-size="500"-->
+              <!--:on-success="handleSuccessConsultationImg"-->
+              <!--:on-exceeded-size="handleSize"-->
+              <!--:on-error="handleErr">-->
+              <!--<Button ghost type="primary">上传图片</Button>-->
+            <!--</Upload>-->
+            <!--<div class="-c-course-wrap" v-if="addInfo.consultationImg">-->
+              <!--<div class="-c-course-item">-->
+                <!--<img :src="addInfo.consultationImg">-->
+              <!--</div>-->
+            <!--</div>-->
+            <!--<div class="-c-tips">图片尺寸不低于960px*360px 图片大小：500K以内</div>-->
+          <!--</Form-item>-->
         </Form>
         <Form v-show="radioType==='3'" ref="addInfo" :model="addInfo" :label-width="90">
           <FormItem label="卡片标题" prop="cardtitle">
@@ -172,9 +199,11 @@
           cardimgurl: "",
           shareTemplates: "",
           smalltitle: "",
+          wayOfTeach: 1,
           bigtitle: "",
           cardtitle: "",
           href: "",
+          consultationImg: "",
         },
         experienceLessonList: [],
         radioType: '1',
@@ -247,6 +276,12 @@
           this.addInfo.cardimgurl = res.resultData.url
         }
       },
+      // handleSuccessConsultationImg(res) {
+      //   if (res.code === 200) {
+      //     this.$Message.success('上传成功')
+      //     this.addInfo.consultationImg = res.resultData.url
+      //   }
+      // },
       handleSuccessImgurl(res) {
         if (res.code === 200) {
           this.$Message.success('上传成功')
@@ -294,7 +329,11 @@
               return this.$Message.error('请上传封面图片')
             } else if (!this.addInfo.verticalCover && this.radioType === '1') {
               return this.$Message.error('请上传竖版封面')
-            } else if (this.radioType === '3' && !this.addInfo.smalltitle) {
+            }
+            // else if (!this.addInfo.consultationImg && this.radioType === '1') {
+            //   return this.$Message.error('请上传咨询图片')
+            // }
+            else if (this.radioType === '3' && !this.addInfo.smalltitle) {
               return this.$Message.error('请输入链接小标题')
             } else if (this.radioType === '3' && !this.addInfo.bigtitle) {
               return this.$Message.error('请输入链接大标题')

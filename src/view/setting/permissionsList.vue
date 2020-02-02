@@ -2,10 +2,14 @@
   <div class="p-permissionsList">
 
     <Card>
-      <Row class="g-search g-t-left">
-        <RadioGroup v-model="radioType" @on-change="getList" type="button">
-          <Radio :label="item.id" v-for="(item,index) of systemList" :key="index">{{item.name}}</Radio>
-        </RadioGroup>
+      <Row class="g-search g-t-left g-flex-a-j-center">
+        <div class="-search-select-text">选择系统：</div>
+        <Select v-model="radioType" @on-change="getList()" class="-search-selectOne">
+          <Option v-for="item of systemList" :label=item.name :value=item.id :key="item.id"></Option>
+        </Select>
+        <!--<RadioGroup v-model="radioType" @on-change="getList" type="button">-->
+          <!--<Radio :label="item.id" v-for="(item,index) of systemList" :key="index">{{item.name}}</Radio>-->
+        <!--</RadioGroup>-->
       </Row>
 
       <div class="g-add-btn g-add-top" @click="openModal('', '',true, 0)">
@@ -296,7 +300,7 @@
       min-width: 70px;
     }
     .-search-selectOne {
-      width: 100px;
+      width: 180px;
       border: 1px solid #dcdee2;
       border-radius: 4px;
       margin-right: 20px;

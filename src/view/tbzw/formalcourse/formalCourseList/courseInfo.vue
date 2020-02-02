@@ -17,7 +17,15 @@
             <Input type="text" :disabled="!isEdit" v-model="addInfo.courseDescribe" placeholder="请输入课程描述"></Input>
           </FormItem>
           <FormItem label="课时节数" prop="lessonDescribe">
-            <Input type="text" :disabled="!isEdit" v-model="addInfo.lessonDescribe" placeholder="请输入课时节数"></Input>
+            <InputNumber type="text" :disabled="!isEdit" v-model="addInfo.lessonDescribe" placeholder="请输入课时节数"></InputNumber>
+          </FormItem>
+          <FormItem label="排课规则" class="ivu-form-item-required">
+            <RadioGroup v-model="addInfo.wayOfTeach">
+              <Radio :label=3 :disabled="addInfo.id !=''">交作业解锁</Radio>
+              <Radio :label=1 :disabled="addInfo.id !=''">每周系统排课</Radio>
+              <Radio :label=2 :disabled="addInfo.id !=''">人工排课</Radio>
+            </RadioGroup>
+            <div class="-c-tips">* 更改后只对新购用户生效</div>
           </FormItem>
           <FormItem label="单独购价格" prop="alonePrice">
             <InputNumber  style="width: 100%;" type="text" :disabled="addInfo.id !=''" v-model="addInfo.alonePrice" :min="0"
@@ -38,8 +46,8 @@
                          placeholder="请输入成团时限（小时）"></InputNumber>
           </FormItem>
           <FormItem label="咨询电话" prop="consultPhone">
-            <InputNumber style="width: 100%;" type="text" :disabled="!isEdit" v-model="addInfo.consultPhone"
-                         placeholder="请输入咨询电话"></InputNumber>
+            <Input style="width: 100%;" type="text" :min="0" :disabled="!isEdit" v-model="addInfo.consultPhone"
+                         placeholder="请输入咨询电话"></Input>
           </FormItem>
           <FormItem label="实物礼包" class="ivu-form-item-required">
             <RadioGroup v-model="addInfo.hasgift">
@@ -250,12 +258,13 @@
       return {
         baseUrl: `${getBaseUrl()}/sch/common/uploadPublicFile`, // 公有 （图片）
         addInfo: {
+          id: '',
           name: '',
           courseDescribe: '',
           alonePrice: 999,
           groupPrice: 999,
-          lessonDescribe: '',
-          consultPhone: null,
+          lessonDescribe: null,
+          consultPhone: '',
           formTime: null,
           aloneInfo: '',
           groupInfo: '',
@@ -264,6 +273,7 @@
           coverphoto: "",
           verticalCover: "",
           hasgift: "1",
+          wayOfTeach: 1,
           type: 1,
           qrCode: "",
           imgurl: "",
@@ -285,7 +295,7 @@
             {required: true, message: '请输入课程描述', trigger: 'blur'},
           ],
           lessonDescribe: [
-            {required: true, message: '请输入课时节数', trigger: 'blur'},
+            {required: true, type: 'number', message: '请输入课时节数', trigger: 'blur'},
           ],
           alonePrice: [
             {required: true, type: 'number', message: '请输入单独购价格', trigger: 'blur'},
@@ -300,7 +310,7 @@
             {required: true, type: 'number', message: '请输入成团时限', trigger: 'blur'},
           ],
           consultPhone: [
-            {required: true, type: 'number', message: '请输入咨询电话', trigger: 'blur'},
+            {required: true, message: '请输入咨询电话', trigger: 'blur'},
           ]
         }
       };
@@ -390,7 +400,6 @@
                 this.addInfo.alonePrice = +this.addInfo.alonePrice
                 this.addInfo.groupPrice = +this.addInfo.groupPrice
                 this.addInfo.groupTime = +this.addInfo.groupTime
-                this.addInfo.consultPhone = +this.addInfo.consultPhone
                 this.addInfo.hasgift = this.addInfo.hasgift ? '1' : '0'
               }
             })

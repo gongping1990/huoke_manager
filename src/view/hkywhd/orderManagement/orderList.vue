@@ -23,6 +23,7 @@
             <Select v-model="selectInfo" class="-search-select">
               <Option value="0">订单号</Option>
               <Option value="1">用户昵称</Option>
+              <Option value="2">课程名称</Option>
             </Select>
             <span class="-search-center">|</span>
             <Input v-model="searchInfo.antistop" class="-search-input" placeholder="请输入关键字" icon="ios-search"
@@ -68,11 +69,40 @@
           <FormItem label="创建时间" class="-p-o-width">{{orderInfo.gmtCreate | timeFormatter}}</FormItem>
           <FormItem label="支付时间" class="-p-o-width">{{orderInfo.timeEnd}}</FormItem>
         </div>
+        <div class="-p-o-title" v-if="orderInfo.refundInfo">
+          退款信息
+        </div>
+        <div class="-p-o-flex" v-if="orderInfo.refundInfo">
+          <FormItem label="退款发起时间" class="-p-o-width">{{orderInfo.refundInfo.gmtCreate | timeFormatter}}</FormItem>
+          <FormItem label="退款结果" class="-p-o-width">{{orderStatus[orderInfo.orderStatus]}}</FormItem>
+        </div>
+        <div class="-p-o-flex" v-if="orderInfo.refundInfo">
+          <FormItem label="退款结果时间" class="-p-o-width">{{orderInfo.refundInfo.successTime}}</FormItem>
+          <FormItem label="退款备注" class="-p-o-width">{{orderInfo.refundInfo.comment}}</FormItem>
+        </div>
       </Form>
       <div slot="footer" class="-p-o-footer">
         <div @click="isOpenModal = false" class="g-primary-btn ">确 认</div>
       </div>
     </Modal>
+
+    <Modal
+      class="p-order"
+      v-model="isOpenModalRefund"
+      @on-cancel="isOpenModalRefund = false"
+      width="500"
+      title="退款">
+      <Form :model="addInfo" :label-width="90" class="ivu-form-item-required">
+        <FormItem label="退款备注">
+          <Input type="textarea" :rows="4" v-model="addInfo.comment" placeholder="请输入退款备注" :maxlength='80'></Input>
+        </FormItem>
+      </Form>
+      <div slot="footer" class="g-flex-j-sa">
+        <Button @click="isOpenModalRefund = false" ghost type="primary" style="width: 100px;">取消</Button>
+        <div @click="submitInfo('addInfoTwo')" class="g-primary-btn ">确 认</div>
+      </div>
+    </Modal>
+
   </div>
 </template>
 
@@ -97,9 +127,13 @@
           antistop: ''
         },
         selectInfo: '0',
+        addInfo: {},
         orderStatus: {
           '0': '未支付',
           '10': '已支付',
+          '13': '退款中',
+          '14': '退款失败',
+          '15': '已退款',
           '20': '已取消'
         },
         orderStatusList: [
@@ -114,6 +148,18 @@
           {
             name: '已支付',
             id: '10'
+          },
+          {
+            name: '退款中',
+            id: '13'
+          },
+          {
+            name: '退款失败',
+            id: '14'
+          },
+          {
+            name: '已退款',
+            id: '15'
           },
           {
             name: '已取消',
@@ -145,6 +191,7 @@
         total: 0,
         isFetching: false,
         isOpenModal: false,
+        isOpenModalRefund: false,
         nowStatus: '',
         getStartTime: '',
         getEndTime: '',
@@ -235,7 +282,22 @@
                       this.openModal(params.row,2)
                     }
                   }
-                }, '订单详情')
+                }, '订单详情'),
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    display: (params.row.orderStatus == '10' || params.row.orderStatus == '14') ? 'inline-block' : 'none',
+                    color: '#5444E4'
+                  },
+                  on: {
+                    click: () => {
+                      this.openModalRerund(params.row)
+                    }
+                  }
+                }, '退款')
               ])
             }
           }
@@ -255,6 +317,13 @@
             title: '助力时间',
             render: (h, params) => {
               return h('div', dayjs(+params.row.gmtCreate).format("YYYY-MM-DD HH:mm"))
+            },
+            align: 'center'
+          },
+          {
+            title: '助力后是否购买',
+            render: (h, params)=> {
+              return h('div', params.row.buyed ? '是' : '否')
             },
             align: 'center'
           }
@@ -305,6 +374,10 @@
         this.orderInfo = data
         num === 1 && this.getOrderHelpUser(data)
       },
+      openModalRerund(data) {
+        this.isOpenModalRefund = true
+        this.addInfo = JSON.parse(JSON.stringify(data))
+      },
       paramsInit() {
         let params = {
           current: this.tab.page,
@@ -319,6 +392,8 @@
           params.orderId = this.searchInfo.antistop
         } else if (this.selectInfo == '1' && this.searchInfo.antistop) {
           params.nickName = this.searchInfo.antistop
+        } else if (this.selectInfo == '2' && this.searchInfo.antistop) {
+          params.courseName = this.searchInfo.antistop
         }
 
         return params
@@ -345,6 +420,24 @@
               this.dataListDetail = response.data.resultData;
             })
 
+      },
+      submitInfo() {
+        if (!this.addInfo.comment) {
+          return this.$Message.error('请输入退款备注')
+        }
+        this.$api.hkywhdOrder.refund({
+          orderId: this.addInfo.id,
+          comment: this.addInfo.comment,
+        })
+          .then(
+            response => {
+              if (response.data.code == '200') {
+                this.$Message.success('提交成功');
+                this.isOpenModalRefund = false
+                this.getList()
+              }
+            })
+
       }
     }
   };
@@ -352,14 +445,21 @@
 
 <style lang="less" scoped>
   .p-order {
+
+    .-p-o-title {
+      color: #B3B5B8 ;
+      margin: 5px 0;
+      font-size: 16px;
+    }
+    .-p-o-width {
+      width: 50%;
+    }
+
     .-title {
       color: #B3B5B8;
       font-size: 16px;
       font-weight: bold;
       margin-bottom: 10px;
-    }
-    .-p-o-width {
-      width: 50%;
     }
 
     .-p-o-footer {

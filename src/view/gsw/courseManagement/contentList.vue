@@ -82,7 +82,7 @@
   export default {
     name: 'contentList',
     components: {Loading},
-    props: ['open', 'lessonId'],
+    props: ['value', 'lessonId'],
     data() {
       return {
         tab: {
@@ -94,7 +94,7 @@
         dataList: [],
         audioType: ['mp3', 'wma', 'arm'],
         isFetching: false,
-        isOpenModal: this.open,
+        isOpenModal: false,
         isOpenModalItem: false,
         isSending: false,
         playAudioUrl: '',
@@ -166,9 +166,13 @@
         ]
       };
     },
-    mounted() {
-      this.getList()
+    watch: {
+      value (_n) {
+        this.isOpenModal = _n
+        _n && this.getList()
+      }
     },
+    mounted() {},
     methods: {
       closeAudio() {
         this.addInfo.video = ''
@@ -237,8 +241,8 @@
         }
       },
       closeModal() {
-        this.$emit('closeContentChild')
         this.isOpenModal = false
+        this.$emit('input', false)
       },
       delItem(param) {
         this.$Modal.confirm({

@@ -4,7 +4,7 @@
       <Row class="g-search">
         <Col :span="3" class="g-t-left">
           <div class="g-flex-a-j-center">
-            <div class="-search-select-text">订单状态：</div>
+            <div class="-search-select-text">支付状态：</div>
             <Select v-model="searchInfo.status" @on-change="selectChange" class="-search-selectOne">
               <Option v-for="(item,index) in orderStatusList" :label="item.name" :value="item.id" :key="index"></Option>
             </Select>
@@ -25,9 +25,9 @@
         <Col :span="10" style="margin-left: 10px" class="g-flex-a-j-center">
           <date-picker-template :dataInfo="dateOption" @changeDate="changeDate"></date-picker-template>
         </Col>
-        <!--<div class="g-text-right">-->
-          <!--<Button type="primary" ghost class="-p-modal-btn -date-search" @click="toExcel">导出表格</Button>-->
-        <!--</div>-->
+        <div class="g-text-right">
+          <Button type="primary" ghost class="-p-modal-btn -date-search" @click="toExcel">导出表格</Button>
+        </div>
       </Row>
 
       <Table class="-c-tab" :loading="isFetching" :columns="columns" :data="dataList"></Table>
@@ -61,13 +61,42 @@
         </div>
         <div class="-p-o-flex">
           <FormItem label="手机号码" class="-p-o-width">{{orderInfo.phone}}</FormItem>
-          <FormItem  class="-p-o-width"></FormItem>
+          <FormItem class="-p-o-width"></FormItem>
+        </div>
+        <div class="-p-o-title" v-if="orderInfo.refundInfo">
+          退款信息
+        </div>
+        <div class="-p-o-flex" v-if="orderInfo.refundInfo">
+          <FormItem label="退款发起时间" class="-p-o-width">{{orderInfo.refundInfo.gmtCreate | timeFormatter}}</FormItem>
+          <FormItem label="退款结果" class="-p-o-width">{{orderStatus[orderInfo.payStatus]}}</FormItem>
+        </div>
+        <div class="-p-o-flex" v-if="orderInfo.refundInfo">
+          <FormItem label="退款结果时间" class="-p-o-width">{{orderInfo.refundInfo.successTime}}</FormItem>
+          <FormItem label="退款备注" class="-p-o-width">{{orderInfo.refundInfo.comment}}</FormItem>
         </div>
       </Form>
       <div slot="footer" class="-p-o-footer">
         <div @click="isOpenModal = false" class="g-primary-btn ">确 认</div>
       </div>
     </Modal>
+
+    <Modal
+      class="p-order"
+      v-model="isOpenModalRefund"
+      @on-cancel="isOpenModalRefund = false"
+      width="500"
+      title="退款">
+      <Form :model="addInfo" :label-width="90" class="ivu-form-item-required">
+        <FormItem label="退款备注">
+          <Input type="textarea" :rows="4" v-model="addInfo.comment" placeholder="请输入退款备注" :maxlength='80'></Input>
+        </FormItem>
+      </Form>
+      <div slot="footer" class="g-flex-j-sa">
+        <Button @click="isOpenModalRefund = false" ghost type="primary" style="width: 100px;">取消</Button>
+        <div @click="submitInfo('addInfoTwo')" class="g-primary-btn ">确 认</div>
+      </div>
+    </Modal>
+
   </div>
 </template>
 
@@ -91,9 +120,14 @@
           antistop: ''
         },
         selectInfo: '0',
+        addInfo: {},
         orderStatus: {
           '0': '未支付',
-          '10': '已支付'
+          '10': '已支付',
+          '13': '退款中',
+          '14': '退款失败',
+          '15': '已退款',
+          '20': '已取消',
         },
         orderStatusList: [
           {
@@ -109,11 +143,23 @@
             id: '10'
           },
           {
+            name: '退款中',
+            id: '13'
+          },
+          {
+            name: '退款失败',
+            id: '14'
+          },
+          {
+            name: '已退款',
+            id: '15'
+          },
+          {
             name: '已取消',
             id: '20'
           }
         ],
-        orderType: ['单独购买', '开团购买', '跟团购买'],
+        orderType: ['单独购买', '开团购买', '跟团购买', '手动开通', '打包购买'],
         orderPageType: ['玖桔成都', '社群', '公众号投放'],
         dataList: [],
         dateOption: {
@@ -124,6 +170,7 @@
         total: 0,
         isFetching: false,
         isOpenModal: false,
+        isOpenModalRefund: false,
         getStartTime: '',
         getEndTime: '',
         orderInfo: {},
@@ -132,11 +179,14 @@
           {
             title: '订单号',
             key: 'id',
+            tooltip: true,
             align: 'center'
           },
           {
             title: '教材名称',
-            key: 'courseName',
+            render: (h, params) => {
+              return h('div', params.row.orderMode === 5 ? params.row.tagName : params.row.courseName)
+            },
             align: 'center'
           },
           {
@@ -163,17 +213,19 @@
           {
             title: '用户昵称',
             key: 'nickName',
+            tooltip: true,
             align: 'center'
           },
           {
             title: '手机号码',
             key: 'phone',
+            tooltip: true,
             align: 'center'
           },
           {
             title: '订单状态',
             render: (h, params) => {
-              return h('div', this.orderType[params.row.orderMode-1])
+              return h('div', this.orderType[params.row.orderMode - 1])
             },
             align: 'center'
           },
@@ -187,7 +239,7 @@
           {
             title: '落地页面',
             render: (h, params) => {
-              return h('div', this.orderPageType[params.row.orderPageSource-1])
+              return h('div', this.orderPageType[params.row.orderPageSource - 1])
             },
             align: 'center'
           },
@@ -216,7 +268,22 @@
                       this.openModal(params.row)
                     }
                   }
-                }, '订单详情')
+                }, '订单详情'),
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    display: (params.row.payStatus == '10' || params.row.payStatus == '14') ? 'inline-block' : 'none',
+                    color: '#5444E4'
+                  },
+                  on: {
+                    click: () => {
+                      this.openModalRerund(params.row)
+                    }
+                  }
+                }, '退款')
               ])
             }
           }
@@ -235,21 +302,22 @@
       this.getList()
     },
     methods: {
-      changeDate (data) {
+      changeDate(data) {
         this.getStartTime = data.startTime
         this.getEndTime = data.endTime
         this.selectChange()
       },
       toExcel() {
         let params = {
-          orderId: '',
+          id: '',
           nickname: '',
           userId: '',
+          phone: '',
           ...this.paramsInit()
         }
 
-        let downUrl = `${getBaseUrl()}/order/queryAdminPageDownload?gmtCreateBegin=${params.gmtCreateBegin}&gmtCreateEnd=${params.gmtCreateEnd}&tradeState=${params.tradeState}&mode=${params.mode}&orderId=${params.orderId}&nickname=${params.nickname}&userId=${params.userId}`
-
+        let downUrl = `${getBaseUrl()}/poem/order/getOrderExcele?startTime=${params.startTime}&endTime=${params.endTime}&payStatus=${params.payStatus}&nickName=${params.nickname}&id=${params.id}&phone=${params.phone}`
+        console.log(downUrl, '导出路径')
         window.open(downUrl, '_blank');
       },
       currentChange(val) {
@@ -264,6 +332,10 @@
       openModal(data) {
         this.isOpenModal = true
         this.orderInfo = data
+      },
+      openModalRerund(data) {
+        this.isOpenModalRefund = true
+        this.addInfo = JSON.parse(JSON.stringify(data))
       },
       paramsInit() {
         let params = {
@@ -296,6 +368,24 @@
           .finally(() => {
             this.isFetching = false
           })
+      },
+      submitInfo() {
+        if (!this.addInfo.comment) {
+          return this.$Message.error('请输入退款备注')
+        }
+        this.$api.gswOrder.refund({
+          orderId: this.addInfo.id,
+          comment: this.addInfo.comment,
+        })
+          .then(
+            response => {
+              if (response.data.code == '200') {
+                this.$Message.success('提交成功');
+                this.isOpenModalRefund = false
+                this.getList()
+              }
+            })
+
       }
     }
   };
@@ -303,6 +393,11 @@
 
 <style lang="less" scoped>
   .p-order {
+    .-p-o-title {
+      color: #B3B5B8;
+      margin: 5px 0;
+      font-size: 16px;
+    }
     .-title {
       color: #B3B5B8;
       font-size: 16px;
@@ -350,7 +445,7 @@
       color: #39f
     }
 
-    .-c-red{
+    .-c-red {
       color: rgb(218, 55, 75);
     }
 

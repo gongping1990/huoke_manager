@@ -36,12 +36,13 @@
         @on-cancel="isOpenModalData = false"
         width="500"
         title="版本记录">
-        <Timeline>
+        <Timeline v-if="versionList.length">
           <TimelineItem v-for="(item, index) of versionList" :key="index">
             <p class="time">{{item.time | timeFormatter}}</p>
             <p class="content">{{item.names}}</p>
           </TimelineItem>
         </Timeline>
+        <div class="g-t-center" v-else>暂无版本记录~~</div>
         <div slot="footer" class="p-score-btn">
           <div @click="isOpenModalData = false" class="g-primary-btn"> 确 认</div>
         </div>

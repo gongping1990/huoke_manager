@@ -63,6 +63,15 @@ export const getBaseUrl = () => {
   return 'http://huoke.prod.k12.vip'
 }
 
+// 线上地址
+export const getVisitUrl = () => {
+  // 环境的切换
+  if (process.env.NODE_ENV == 'development' || process.env.NODE_ENV == 'test') {
+      return 'http://testadmin.k12.vip'
+  }
+  return 'http://huoke.admin.k12.vip'
+}
+
 export const getGroupPrice = (groupPrice, price) => {
   if (groupPrice) {
     return groupPrice == 0 ?  '免费' : groupPrice / 100
@@ -83,3 +92,27 @@ export const thousandFormatter = function (num) {
   formatterNum = (numOne || num).toString().replace(/(\d)(?=(?:\d{3})+$)/g, '$1,')
   return numTwo ? `${formatterNum}.${numTwo}` : `${formatterNum}.00`
 } // 重置千位符
+
+export const formatTime = function (msTime) {
+
+  let time = msTime /1000;
+
+  let day = Math.floor(time /60 /60 /24);
+
+  let hour = Math.floor(time /60 /60) %24;
+
+  let minute = Math.floor(time /60) %60;
+
+  let second = Math.floor(time) %60;
+
+  function zeroMat(num) {
+    if (num < 10) {
+      return '0' + num;
+    } else {
+      return '' + num;
+    }
+  }
+
+  return `${zeroMat(hour)}:${zeroMat(minute)}:${zeroMat(second)}`
+
+}

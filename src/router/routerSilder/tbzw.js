@@ -42,6 +42,24 @@ export const tbzwRouter =[
           {name: '落地页数据'}
         ],
         component: () => import('@/view/tbzw/landingPage/landingPage')
+      },
+      {
+        path: '/tbzw_courseQualityData',
+        name: 'tbzw_courseQualityData',
+        meta: [
+          {name: '数据统计'},
+          {name: '课程质量评估'}
+        ],
+        component: () => import('@/view/tbzw/courseQualityData/courseQualityData')
+      },
+      {
+        path: '/tbzw_payingUsersData',
+        name: 'tbzw_payingUsersData',
+        meta: [
+          {name: '数据统计'},
+          {name: '付费用户数据概览'}
+        ],
+        component: () => import('@/view/tbzw/payingUsersData/payingUsersData')
       }
     ]
   },
@@ -128,6 +146,32 @@ export const tbzwRouter =[
           }
         ],
         component: () => import('@/view/tbzw/news/news')
+      },
+      {
+        path: '/tbzw_dubbing',
+        name: 'tbzw_dubbing',
+        meta: [
+          {
+            name: '运营管理'
+          },
+          {
+            name: '配音管理'
+          }
+        ],
+        component: () => import('@/view/tbzw/dubbing/dubbing')
+      },
+      {
+        path: '/tbzw_systemSetting',
+        name: 'tbzw_systemSetting',
+        meta: [
+          {
+            name: '运营管理'
+          },
+          {
+            name: '系统配置'
+          }
+        ],
+        component: () => import('@/view/tbzw/systemSetting/systemSetting')
       }
     ]
   },
@@ -176,6 +220,17 @@ export const tbzwRouter =[
         component: () => import('@/view/tbzw/formalcourse/formalOrder/orderList')
       },
       {
+        path: '/tbzw_formal_learnAndUse',
+        name: 'tbzw_formal_learnAndUse',
+        meta: [
+          {name: '正式课管理'},
+          {name: '课程列表', url: 'tbzw_forma_courseList'},
+          {name: '课时内容', url: 'tbzw_forma_courseContent'},
+          {name: '活学活用'}
+        ],
+        component: () => import('@/view/tbzw/formalcourse/formalCourseList/learnAndUse')
+      },
+      {
         path: '/tbzw_deliverGoods',
         name: 'tbzw_deliverGoods',
         meta: [
@@ -189,11 +244,31 @@ export const tbzwRouter =[
         name: 'tbzw_timetableAdjustment',
         meta: [
           {name: '正式课管理'},
+          {name: '排课管理', url:'tbzw_timetableManagement'},
           {name: '排课调整'}
         ],
         component: () => import('@/view/tbzw/timetableAdjustment/timetableAdjustment')
       },
-
+      {
+        path: '/tbzw_timetableManagement',
+        name: 'tbzw_timetableManagement',
+        meta: [
+          {name: '正式课管理'},
+          {name: '排课管理'}
+        ],
+        component: () => import('@/view/tbzw/timetableManagement/timetableManagement')
+      },
+      {
+        path: '/tbzw_checkpointMain',
+        name: 'tbzw_checkpointMain',
+        meta: [
+          {name: '正式课管理'},
+          {name: '课程列表', url:'tbzw_forma_courseList'},
+          {name: '课时内容', url:'tbzw_forma_courseContent'},
+          {name: '关卡设置'}
+        ],
+        component: () => import('@/view/tbzw/formalcourse/formalCourseList/checkpointMain/checkpointMain')
+      }
     ]
   },
   {
@@ -241,6 +316,17 @@ export const tbzwRouter =[
         component: () => import('@/view/tbzw/paidExperienceCourse/paidOrder/orderList')
       },
       {
+        path: '/tbzw_paid_learnAndUse',
+        name: 'tbzw_paid_learnAndUse',
+        meta: [
+          {name: '正式课管理'},
+          {name: '课程列表', url: 'tbzw_paid_courseList'},
+          {name: '课时内容', url: 'tbzw_paid_courseContent'},
+          {name: '活学活用'}
+        ],
+        component: () => import('@/view/tbzw/paidExperienceCourse/paidCourseList/learnAndUse')
+      },
+      {
         path: '/tbzw_paid_applicationRecord',
         name: 'tbzw_paid_applicationRecord',
         meta: [
@@ -266,6 +352,16 @@ export const tbzwRouter =[
           {name: '开营管理'}
         ],
         component: () => import('@/view/tbzw/openCourseList/openCourseList')
+      },
+      {
+        path: '/tbzw_paid_processData',
+        name: 'tbzw_paid_processData',
+        meta: [
+          {name: '付费体验课'},
+          {name: '开营管理', url: 'tbzw_paid_openCourse'},
+          {name: '过程数据'}
+        ],
+        component: () => import('@/view/tbzw/paidExperienceCourse/processData/processData')
       }
     ]
   },
@@ -338,6 +434,15 @@ export const tbzwRouter =[
           {name: '团购列表'}
         ],
         component: () => import('@/view/tbzw/couponManagement/groupList')
+      },
+      {
+        path: '/tbzw_bookingList',
+        name: 'tbzw_bookingList',
+        meta: [
+          {name: '营销管理'},
+          {name: '预约列表'}
+        ],
+        component: () => import('@/view/tbzw/couponManagement/bookingList')
       }
     ]
   },
@@ -372,6 +477,15 @@ export const tbzwRouter =[
           {name: '用户列表'}
         ],
         component: () => import('@/view/tbzw/user/userList')
+      },
+      {
+        path: '/tbzw_virtualUser',
+        name: 'tbzw_virtualUser',
+        meta: [
+          {name: '用户管理'},
+          {name: '运营马甲  '}
+        ],
+        component: () => import('@/view/tbzw/user/virtualUser')
       }
     ]
   },

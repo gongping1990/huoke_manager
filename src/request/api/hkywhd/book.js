@@ -79,6 +79,12 @@ const book = {
   },//音频
   listAll(params) {
     return axios.get('/fissionprep/book/listAll', {params})
+  },//音频
+  getAllBookData(params) {
+    return axios.get('/fissionprep/book/getAllBookData', {params})
+  },//音频
+  getBookDataDetails(params) {
+    return axios.get('/fissionprep/book/getBookDataDetails', {params})
   },
 
 }
