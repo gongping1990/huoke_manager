@@ -100,10 +100,10 @@ export default {
       } else {
         this.width = 764;
       }
-      type == 1 ? this.init() : this.initTeacher();
+      type == 2 ? this.initTeacher() : this.init();
     },
     init() {
-      if (this.type == 1) {
+      if (this.type !== 2) {
         this.createImage();
         this.setBackgroud();
       }
@@ -312,8 +312,6 @@ export default {
             top: top,
             stroke: graphColor,
             fill: "rgba(255, 255, 255, 0)",
-            originX: "center",
-            originY: "center",
             rx: Math.abs(left - mouseTo.x),
             ry: Math.abs(top - mouseTo.y),
             strokeWidth: graphWidth
