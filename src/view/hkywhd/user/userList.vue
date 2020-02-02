@@ -12,6 +12,16 @@
             </Select>
           </div>
         </Col>
+        <Col :span="5" class="g-t-left">
+          <div class="g-flex-a-j-center">
+            <div class="-search-select-text-two" style="min-width: 80px">是否付费：</div>
+            <Select v-model="searchInfo.payed" @on-change="getList(1)" class="-search-selectOne">
+              <Option value="-1" >全部</Option>
+              <Option value="1" >是</Option>
+              <Option value="2" >否</Option>
+            </Select>
+          </div>
+        </Col>
         <Col :span="6">
           <div class="-search">
             <Select v-model="selectInfo" class="-search-select">
@@ -39,24 +49,21 @@
   import dayjs from 'dayjs'
   import Operation from "iview/src/components/transfer/operation";
   import HkywhdLookUserInfo from "./hkywhdLookUserInfo";
+  import myMinxin from "../../../utils/minxin";
 
   export default {
     name: 'userList2',
     components: {HkywhdLookUserInfo, Operation},
+    mixins:[myMinxin],
     data() {
       return {
         switch1: '',
-        tab: {
-          page: 1,
-          pageSize: 10,
-          currentPage: 1
-        },
         searchInfo: {
-          subscribe: '-1'
+          subscribe: '-1',
+          payed: '-1'
         },
         selectInfo: '1',
         dataList: [],
-        total: 0,
         detailInfo: '',
         isFetching: false,
         isShow: false,
@@ -97,14 +104,16 @@
             align: 'center'
           },
           {
-            title: '创建时间',
-            key: 'creatTime',
-            tooltip: true,
+            title: '是否付费',
+            render: (h, params) => {
+              return h('span', params.row.payed ? '是' : '否')
+            },
             align: 'center'
           },
           {
-            title: '最后登录时间',
-            key: 'lastLoginTime',
+            title: '创建时间',
+            key: 'creatTime',
+            tooltip: true,
             align: 'center'
           },
           {
@@ -152,7 +161,8 @@
         let params = {
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
-          subscribe: this.searchInfo.subscribe != '-1' ? (this.searchInfo.subscribe == '1') : ''
+          subscribe: this.searchInfo.subscribe != '-1' ? (this.searchInfo.subscribe == '1') : '',
+          payed: this.searchInfo.payed != '-1' ? (this.searchInfo.payed == '1') : ''
         }
 
         if (this.selectInfo == '1' && this.searchInfo) {

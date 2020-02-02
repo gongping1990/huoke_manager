@@ -109,6 +109,19 @@
         </div>
       </Modal>
     </Card>
+
+    <Modal
+      class="p-groupList"
+      v-model="isOpenModalDetail"
+      @on-cancel="isOpenModalDetail = false"
+      footer-hide
+      width="800"
+      title="数据详情">
+      <div>开团数据</div>
+      <Table class="-c-tab" :loading="isFetching" :columns="columnsModal" :data="detailList"></Table>
+      <div>参团数据</div>
+      <Table class="-c-tab" :loading="isFetching" :columns="columnsModalTwo" :data="detailListTwo"></Table>
+    </Modal>
   </div>
 </template>
 
@@ -157,15 +170,16 @@
         ],
         radioType: 1,
         dataList: [],
+        detailList: [],
+        detailListTwo: [],
         selectInfo: '1',
         searchInfo: {
           payed: '-1'
         },
         total: 0,
-        totalDetail: 0,
         isFetching: false,
         isOpenModal: false,
-        isOpenModalData: false,
+        isOpenModalDetail: false,
         isSending: false,
         addInfo: {},
         copy_url: '',
@@ -250,7 +264,7 @@
           },
           {
             title: '操作',
-            width: 200,
+            width: 250,
             render: (h, params) => {
               return h('div', [
                 h('Button', {
@@ -259,9 +273,39 @@
                     size: 'small'
                   },
                   style: {
+                    color: '#5444E4',
+
+                  },
+                  on: {
+                    click: () => {
+                      this.openModalDetail(params.row)
+                    }
+                  }
+                }, '数据统计'),
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: '#5444E4',
+
+                  },
+                  on: {
+                    click: () => {
+                      this.copyUrl(params.row)
+                    }
+                  }
+                }, '复制链接'),
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
                     display: params.row.state < 2 ? 'inline-block' : 'none',
                     color: '#5444E4',
-                    marginRight: '5px'
+
                   },
                   on: {
                     click: () => {
@@ -277,7 +321,7 @@
                   style: {
                     display: params.row.state > 1 ? 'none' : 'inline-block',
                     color: 'rgba(218, 55, 75)',
-                    marginRight: '5px'
+
                   },
                   on: {
                     click: () => {
@@ -285,23 +329,82 @@
                     }
                   }
                 }, '结束'),
-                h('Button', {
-                  props: {
-                    type: 'text',
-                    size: 'small'
-                  },
-                  style: {
-                    color: '#5444E4',
-                    marginRight: '5px'
-                  },
-                  on: {
-                    click: () => {
-                      this.copyUrl(params.row)
-                    }
-                  }
-                }, '复制链接')
+
               ])
             }
+          }
+        ],
+        columnsModal: [
+          {
+            title: '开团页PV',
+            key: 'createGroupPagePV',
+            align: 'center'
+          },
+          {
+            title: '开团页UV',
+            key: 'createGroupPageUV',
+            align: 'center'
+          },
+          {
+            title: '开团页分享次数',
+            key: 'createGroupPageShareNum',
+            align: 'center'
+          },
+          {
+            title: '开团下单数',
+            key: 'createGroupPageOrderNum',
+            align: 'center'
+          },
+          {
+            title: '开团成功订单数',
+            key: 'createGroupPageSuccessOrderNum',
+            align: 'center'
+          },
+          {
+            title: '开团付费转化率',
+            render: (h, params)=> {
+              return h('div', `${params.row.createGroupPageConversionPercent*100}%`)
+            },
+            align: 'center'
+          }
+        ],
+        columnsModalTwo: [
+          {
+            title: '团购分享次数',
+            key: 'myGroupPageShareNum',
+            align: 'center'
+          },
+          {
+            title: '页面分享次数',
+            key: 'joinGroupPageShareNum',
+            align: 'center'
+          },
+          {
+            title: '参团页PV',
+            key: 'joinGroupPagePV',
+            align: 'center'
+          },
+          {
+            title: '参团页UV',
+            key: 'joinGroupPageUV',
+            align: 'center'
+          },
+          {
+            title: '参团下单数',
+            key: 'joinGroupPageOrderNum',
+            align: 'center'
+          },
+          {
+            title: '成功订单数',
+            key: 'joinGroupPageSuccessOrderNum',
+            align: 'center'
+          },
+          {
+            title: '付费转化率',
+            render: (h, params)=> {
+              return h('div', `${params.row.joinGroupPageConversionPercent*100}%`)
+            },
+            align: 'center'
           }
         ]
       };
@@ -321,6 +424,10 @@
       this.getList()
     },
     methods: {
+      openModalDetail(data) {
+        this.getCouponData(data)
+        this.isOpenModalDetail = true
+      },
       copyUrl(param) {
         this.copy_url = param.url
         setTimeout(() => {
@@ -352,6 +459,36 @@
       currentChange(val) {
         this.tab.page = val;
         this.getList();
+      },
+      getCouponData(data) {
+        this.isFetching = true
+        this.$api.tbzwGroupConfig.getGroupData({
+          id: data.id,
+        })
+          .then(
+            response => {
+              let info = response.data.resultData
+              this.detailList = [{
+                createGroupPagePV: info.createGroupPagePV,
+                createGroupPageUV: info.createGroupPageUV,
+                createGroupPageShareNum: info.createGroupPageShareNum,
+                createGroupPageOrderNum: info.createGroupPageOrderNum,
+                createGroupPageSuccessOrderNum: info.createGroupPageSuccessOrderNum,
+                createGroupPageConversionPercent: info.createGroupPageConversionPercent
+              }];
+              this.detailListTwo = [{
+                myGroupPageShareNum: info.myGroupPageShareNum,
+                joinGroupPageShareNum: info.joinGroupPageShareNum,
+                joinGroupPagePV: info.joinGroupPagePV,
+                joinGroupPageUV: info.joinGroupPageUV,
+                joinGroupPageOrderNum: info.joinGroupPageOrderNum,
+                joinGroupPageSuccessOrderNum: info.joinGroupPageSuccessOrderNum,
+                joinGroupPageConversionPercent: info.joinGroupPageConversionPercent
+              }];
+            })
+          .finally(() => {
+            this.isFetching = false
+          })
       },
       //分页查询
       getList(num) {

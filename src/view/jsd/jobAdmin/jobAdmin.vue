@@ -68,9 +68,11 @@
         <audio ref="playAudio" :src="playAudioUrl" controls></audio>
       </Modal>
 
-      <job-record-template v-model="isOpenJobRecord" :dataInfo="detailInfo"></job-record-template>
+      <job-record-template v-model="isOpenJobRecord" :dataInfo="recordInfo"></job-record-template>
 
       <look-user-info v-model="isOpenUserInfo" :dataInfo="detailInfo"></look-user-info>
+
+      <job-require-template ref="jobReq" v-model="isOpenJobRequire" :dataInfo="requireInfo" @moveTem="changeTemplate"></job-require-template>
     </Card>
   </div>
 </template>
@@ -84,10 +86,13 @@
   import SearchTemplate from "../../../components/searchTemplate";
   import JobRecordTemplate from "../../../components/jobRecordTemplate";
   import LookUserInfo from "../todayWork/lookUserInfo";
+  import JobRequireTemplate from "../todayWork/jobRequireTemplate";
 
   export default {
     name: 'jobAdmin',
-    components: {LookUserInfo, JobRecordTemplate, SearchTemplate, UploadImgMultiple, DatePickerTemplate, UploadAudio},
+    components: {
+      JobRequireTemplate,
+      LookUserInfo, JobRecordTemplate, SearchTemplate, UploadImgMultiple, DatePickerTemplate, UploadAudio},
     data() {
       return {
         tab: {
@@ -136,9 +141,12 @@
         isOpenModalPlay: false,
         isOpenJobRecord: false,
         isOpenUserInfo: false,
+        isOpenJobRequire: false,
         isEdit: false,
         addInfo: {},
         detailInfo: {},
+        requireInfo: {},
+        recordInfo: {},
         playAudioUrl: '',
         columns: [
           {
@@ -322,7 +330,24 @@
           {
             title: '作业要求',
             key: 'homeworkRequire',
-            tooltip: true,
+            render: (h, params)=>{
+              return h('Button', {
+                props: {
+                  type: 'text',
+                  size: 'small'
+                },
+                style: {
+                  color: '#5444E4',
+                  marginRight: '5px',
+                  cursor: 'pointer'
+                },
+                on: {
+                  click: () => {
+                    this.openRequire(params.row)
+                  }
+                }
+              }, `${params.row.homeworkRequire.substr(0,5)}...`)
+            },
             align: 'center'
           },
           {
@@ -414,7 +439,8 @@
           },
           {
             title: '操作',
-            align: 'left',
+            align: 'center',
+            width: 200,
             render: (h, params) => {
               return h('div', [
                 h('Button', {
@@ -431,7 +457,22 @@
                       this.openJobRecord(params.row)
                     }
                   }
-                }, '作业记录')
+                }, '作业记录'),
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: '#5444E4',
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.changeTemplate(params.row)
+                    }
+                  }
+                }, params.row.replyExample ? '移出优秀模板' : '加入优秀模板')
               ])
             }
           }
@@ -599,6 +640,36 @@
     mounted() {
     },
     methods: {
+      changeTemplate (data) {
+        this.$Modal.confirm({
+          title: '提示',
+          content: !data.replyExample ? '确认要加入优秀批改模板？' : '确认移出优秀批改模板？',
+          onOk: () => {
+            this.$api.jsdJob.tagReplyExample({
+              courseId: data.courseId,
+              workId: data.workId,
+              bol: !data.replyExample,
+            }).then(
+              response => {
+                if (response.data.code == "200") {
+                  this.$Message.success("操作成功");
+                  if (data.isFromChild) {
+                    setTimeout(()=>{
+                      this.$refs.jobReq.getJobLogList()
+                    },0)
+                  }
+                  this.getList();
+                }
+              })
+          }
+        })
+      },
+      openRequire (data) {
+        this.isOpenJobRequire = true
+        this.requireInfo = JSON.parse(JSON.stringify(data))
+        this.requireInfo.appId = this.searchInfo.appId
+        this.requireInfo.isRole = true
+      },
       noRequired(data) {
         this.$Modal.confirm({
           title: '提示',
@@ -664,6 +735,7 @@
             isUserType: true,
             isSituation: true,
             isComment: true,
+            isTeacher: true,
             isFeedback: true
           }
         }
@@ -713,8 +785,8 @@
       },
       openJobRecord(data) {
         this.isOpenJobRecord = true
-        this.detailInfo = JSON.parse(JSON.stringify(data))
-        this.detailInfo.appId = this.searchInfo.appId
+        this.recordInfo = JSON.parse(JSON.stringify(data))
+        this.recordInfo.appId = this.searchInfo.appId
       },
       closeModalPlay() {
         this.$refs.playAudio.load()
@@ -812,7 +884,7 @@
           hmEnd: this.searchInfo.getEndTime ? new Date(this.searchInfo.getEndTime).getTime() : "",
           teacherId: this.searchInfo.teacherId == '-1' ? '' : this.searchInfo.teacherId,
           status: this.radioType == 5 ? '' : this.radioType,
-          praise: this.radioType == 5,
+          praise: this.radioType == 5 ? true : '',
           alloted: true
         }
 

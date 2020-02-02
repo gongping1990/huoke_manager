@@ -109,6 +109,12 @@ const jsdJob = {
   },
   listBuyed(params) {
     return axios.get(`/homework/job/course/listBuyed`, { params })
+  },
+  getHomeWorkLogWapper(params) {
+    return axios.get(`/homework/job/getHomeWorkLogWapper`, { params })
+  },
+  tagReplyExample(params) {
+    return axios.post(`/homework/job/tagReplyExample`, qs.stringify(params))
   }
 }
 

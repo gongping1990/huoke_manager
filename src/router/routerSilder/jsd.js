@@ -30,7 +30,7 @@ export const jsdRouter = [
         name: 'jsd_historicalData',
         meta: [
           {name: '教师批改'},
-          {name: '历史数据'}
+          {name: '数据统计'}
         ],
         component: () => import('@/view/jsd/historicalData/historicalData')
       },
@@ -46,7 +46,7 @@ export const jsdRouter = [
           }
         ],
         component: () => import('@/view/jsd/studentList/studentListOne')
-      },
+      }
     ]
   },
   {

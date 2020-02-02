@@ -15,6 +15,12 @@
                 <span><Icon type="ios-time-outline"/>: {{userInfo.createTime}}</span>
               </div>
               <div class="-r-dev" style="margin-top: 10px">
+                <span>孩子姓名: {{studentInfo.nickname || '暂无'}}</span>
+                <span>孩子性别: {{studentInfo.sex === null ? '暂无' : studentInfo.sex ? '男' : '女'}}</span>
+                <span>在读年级: {{studentInfo.gradeText || '暂无'}}</span>
+                <Button @click="openModalChild" ghost type="primary" style="width: 100px;">完善孩子信息</Button>
+              </div>
+              <div class="-r-dev" style="margin-top: 10px">
                 <span>是否关注: {{userInfo.subscripbe ? '是' : '否'}}</span>
                 <span>是否购买: {{userInfo.buyed ? '是' : '否'}}</span>
                 <span>支付时间: {{userInfo.buyTime || '未购买'}}</span>
@@ -25,7 +31,7 @@
       </Row>
 
       <Row class="-c-tab g-t-left">
-        <Select v-model="searchInfo.appId" @on-change="changeRadio" style="width: 300px">
+        <Select v-model="searchInfo.appId" @on-change="changeRadio()" style="width: 300px">
           <Option v-for="(item,index) in appList" :label="item.name" :value="item.id" :key="index"></Option>
         </Select>
       </Row>
@@ -33,7 +39,7 @@
       <div class="-c-tab">
         <Row>
           <div class="-c-text">上课数据</div>
-          <Table :columns="columns" :data="dataList"></Table>
+          <Table :columns="!dataItem.label ? columns : columnsTwo" :data="dataList"></Table>
         </Row>
       </div>
 
@@ -41,6 +47,35 @@
             @on-change="currentChange"></Page>
     </Card>
     <loading v-if="isFetching"></loading>
+
+    <Modal
+      class="p-userInfo"
+      v-model="isOpenModalChild"
+      @on-cancel="closeModal('addInfo')"
+      width="500"
+      title="完善信息">
+      <Form ref="addInfo" :model="addInfo" :label-width="100">
+        <FormItem label="孩子昵称">
+          <Input type="text" v-model="addInfo.nickname" placeholder="请输入孩子昵称"></Input>
+        </FormItem>
+        <FormItem label="孩子性别" prop="sex">
+          <Radio-group v-model="addInfo.sex">
+            <Radio :label=1>男</Radio>
+            <Radio :label=0>女</Radio>
+          </Radio-group>
+        </FormItem>
+        <FormItem label="在读年级">
+          <Select v-model="addInfo.grade">
+            <Option v-for="(item,index) in gradeList" :label="item.name" :value="item.key" :key="index"></Option>
+          </Select>
+        </FormItem>
+      </Form>
+      <div slot="footer" class="g-flex-j-sa">
+        <Button @click="closeModal('addInfo')" ghost type="primary" style="width: 100px;">取消</Button>
+        <div @click="submitInfo('addInfo')" class="g-primary-btn ">确 认</div>
+      </div>
+    </Modal>
+
   </div>
 </template>
 
@@ -59,16 +94,57 @@
           page: 1,
           pageSize: 10
         },
-        userInfo: '',
-        detailInfo: '',
+        userInfo: {},
+        studentInfo: '',
+        addInfo: {},
         searchInfo: {
           appId: '7'
         },
         dataList: [],
+        dataItem: '',
+        gradeList: [
+          {
+            name: '一年级',
+            key: 2
+          },
+          {
+            name: '二年级',
+            key: 3
+          },
+          {
+            name: '三年级',
+            key: 4
+          },
+          {
+            name: '四年级',
+            key: 5
+          },
+          {
+            name: '五年级',
+            key: 6
+          },
+          {
+            name: '六年级',
+            key: 7
+          },
+          {
+            name: '初中',
+            key: 8
+          },
+          {
+            name: '幼儿园',
+            key: 1
+          },
+          {
+            name: '其他',
+            key: 0
+          }
+        ],
         appList: [],
         total: 0,
         isFetching: false,
         isOpenModal: false,
+        isOpenModalChild: false,
         columns: [
           {
             title: '课时名称',
@@ -98,6 +174,20 @@
             align: 'center'
           }
         ],
+        columnsTwo: [
+          {
+            title: '课时名称',
+            key: 'lessonName',
+            align: 'center'
+          },
+          {
+            title: '是否完成学习',
+            render: (h, params) => {
+              return h('div', params.row.clearanceNewword ? '是' : '否')
+            },
+            align: 'center'
+          }
+        ],
       };
     },
     mounted() {
@@ -105,7 +195,32 @@
     },
     methods: {
       changeRadio () {
-        this.listLessonProgress()
+        this.appList.forEach(item=> {
+          if(item.id === this.searchInfo.appId) {
+            this.dataItem = item
+          }
+        })
+
+        if (this.dataItem.label) {
+          this.listByLessonStudyData()
+        } else {
+          this.listLessonProgress()
+        }
+      },
+      openModalChild() {
+        if (!this.addInfo.id) {
+          this.addInfo = {
+            nickname: '',
+            sex: null,
+            grade: ''
+          }
+        }
+        this.isOpenModalChild = true
+      },
+      closeModal(name) {
+        this.isOpenModalChild = false
+        this.getStudent()
+        this.$refs[name].resetFields()
       },
       openModal() {
         this.isOpenModal = true
@@ -122,6 +237,7 @@
             this.searchInfo.appId = this.appList[0].id
             if(this.$route.query.id || this.userId) {
               this.listLessonProgress()
+              this.getStudent()
             }
           })
       },
@@ -138,6 +254,61 @@
               this.userInfo.learnStartDate = this.userInfo.learnStartDate ? dayjs(+this.userInfo.learnStartDate).format('YYYY-MM-DD') : '暂无'
               this.userInfo.buyedTime =  this.userInfo.buyedTime ? dayjs(+this.userInfo.buyedTime).format('YYYY-MM-DD HH:mm') : '暂无'
             })
+      },
+      listByLessonStudyData() {
+        this.$api.hkywhdHomePage.listByLessonStudyData({
+          userId: this.$route.query.id || this.userId,
+          bookId: this.searchInfo.appId
+        })
+          .then(
+            response => {
+              this.dataList = response.data.resultData.dataList;
+            })
+      },
+      getStudent() {
+        this.$api.tbzwStudent.getStudent({
+          puid: this.$route.query.id || this.userId,
+        })
+          .then(
+            response => {
+              if (response.data.resultData) {
+                this.addInfo = response.data.resultData
+              } else {
+                this.addInfo = {
+                  nickname: '',
+                  sex: null,
+                  grade: '',
+                  gradeText: '',
+                }
+              }
+
+              this.studentInfo = JSON.parse(JSON.stringify(this.addInfo))
+            })
+      },
+      submitInfo(name) {
+        this.isSending = true
+        let params = {
+          puid: this.$route.query.id || this.userId,
+          grade: this.addInfo.grade,
+          sex: this.addInfo.sex,
+          nickname: this.addInfo.nickname
+        }
+        let promiseDate = this.addInfo.id ? this.$api.tbzwStudent.updateStudent({
+          id: this.addInfo.id,
+          ...params
+        }) : this.$api.tbzwStudent.addStudent(params)
+        promiseDate
+          .then(
+            response => {
+              if (response.data.code == '200') {
+                this.$Message.success('提交成功');
+                this.getStudent()
+                this.closeModal(name)
+              }
+            })
+          .finally(() => {
+            this.isSending = false
+          })
       }
     }
   };

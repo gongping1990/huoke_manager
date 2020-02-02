@@ -11,14 +11,16 @@
       :on-error="handleErr">
       <div class="g-course-add-style">
         <span>+</span>
-        <span>上传图片</span>
+        <span>上传本地图片</span>
       </div>
     </Upload>
     <div class="-c-course-wrap" v-if="imgArray.length">
-      <div class="-c-course-item" v-for="(item, index) of imgArray" :key="index">
-        <img :src="item">
-        <div class="-i-del" @click="delImg(item,index)">删除</div>
-      </div>
+      <draggable v-model="imgArray">
+        <div class="-c-course-item" v-for="(item, index) of imgArray" :key="index">
+          <img :src="item">
+          <div class="-i-del" @click="delImg(item,index)">删除</div>
+        </div>
+      </draggable>
     </div>
     <div class="-c-tips">{{option.tipText}}</div>
   </div>
@@ -26,9 +28,11 @@
 
 <script>
   import {getBaseUrl} from '@/libs/index'
+  import draggable from 'vuedraggable'
 
   export default {
     name: 'uploadImgMultiple',
+    components: {draggable},
     props: ['option', 'childData'],
     data() {
       return {
@@ -95,9 +99,9 @@
         display: inline-block;
         position: relative;
         background-color: #EBEBEB;
-        width: 200px;
-        height: 90px;
-        margin: 10px 10px 10px 0;
+        width: 180px;
+        height: 100px;
+        margin: 20px 20px 0 0;
         border: 1px solid #EBEBEB;
         border-radius: 4px;
         padding: 4px;

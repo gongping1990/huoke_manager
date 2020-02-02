@@ -1,5 +1,5 @@
 <template>
-  <div class="p-userInfo">
+  <div ref="modelUserInfo" class="p-userInfo">
     <Card>
       <Row>
         <Col :span="24">
@@ -16,7 +16,7 @@
               </div>
               <div class="-r-dev" style="margin-top: 10px">
                 <span>孩子昵称: {{studentInfo.nickname || '暂无'}}</span>
-                <span>孩子性别: {{studentInfo.sex ? searchInfo.sex === 1 ? '男' : '女' : '暂无'}}</span>
+                <span>孩子性别: {{studentInfo.sex ? '男' : '女'}}</span>
                 <span>与孩子关系: {{studentInfo.relationText || '暂无'}}</span>
                 <span>在读年级: {{studentInfo.gradeText || '暂无'}}</span>
                 <span>所在城市: {{studentInfo.areasText || '暂无'}}</span>
@@ -58,17 +58,19 @@
       <div class="-c-tab">
         <Row>
           <div class="-c-text">上课作业记录</div>
-          <Table :columns="columns" :data="dataList"></Table>
+          <Table class="-c-table" :loading="isFetching" :columns="columns" :data="dataList"></Table>
         </Row>
       </div>
 
-      <Page class="-p-text-right" :total="total" size="small" show-elevator :page-size="tab.pageSize"
-            :current.sync="tab.currentPage"
-            @on-change="currentChange"></Page>
+      <!--<Page class="-p-text-right" :total="total" size="small" show-elevator :page-size="tab.pageSize"-->
+            <!--:current.sync="tab.currentPage"-->
+            <!--@on-change="currentChange"></Page>-->
     </Card>
-    <loading v-if="isFetching"></loading>
+    <!--<loading v-if="isFetching"></loading>-->
 
     <job-record-template v-model="isOpenModal" :dataInfo="detailInfo" :type="2"></job-record-template>
+
+    <class-log v-model="isOpenModalClass" :dataInfo="detailInfo"></class-log>
 
     <Modal
       class="p-userInfo"
@@ -83,7 +85,7 @@
         <FormItem label="孩子性别" prop="sex">
           <Radio-group v-model="addInfo.sex">
             <Radio :label=1>男</Radio>
-            <Radio :label=2>女</Radio>
+            <Radio :label=0>女</Radio>
           </Radio-group>
         </FormItem>
         <FormItem label="与孩子关系">
@@ -133,10 +135,12 @@
   import Loading from "@/components/loading";
   import dayjs from 'dayjs'
   import JobRecordTemplate from "../../../components/jobRecordTemplate";
+  import ClassLog from "../../tbzw/user/classLog";
+  import { formatTime } from '@/libs/index'
 
   export default {
     name: 'tbzwUserInfo',
-    components: {JobRecordTemplate, Loading},
+    components: {ClassLog, JobRecordTemplate, Loading},
     props: ['userId', 'sortNum', 'courseId'],
     data() {
       return {
@@ -235,51 +239,104 @@
         isOpenModalChild: false,
         isSending: false,
         isOpenModalTime: false,
+        isOpenModalClass: false,
         columns: [
+          {
+            title: '排课日期',
+            key: 'schedulDate',
+            tooltip: true,
+            align: 'center'
+          },
           {
             title: '课时名称',
             key: 'lessonName',
+            tooltip: true,
+            align: 'center'
+          },
+          {
+            title: '课时时长',
+            key: 'lessonTime',
+            tooltip: true,
+            align: 'center'
+          },
+          {
+            title: '首次上课时间',
+            key: 'firstStartLearnTime',
+            tooltip: true,
             align: 'center'
           },
           {
             title: '首次完成上课时间',
-            render: (h, params) => {
-              return h('div', params.row.firstLearnTime ? dayjs(+params.row.firstLearnTime).format("YYYY-MM-DD HH:mm") : '暂无')
-            },
+            tooltip: true,
+            key: 'firstLearnTime',
+            align: 'center'
+          },
+          {
+            title: '上课次数',
+            tooltip: true,
+            key: 'learnFrequency',
+            align: 'center'
+          },
+          {
+            title: '累计播放时长',
+            tooltip: true,
+            key: 'allLearnTime',
+            align: 'center'
+          },
+          {
+            title: '次均时长',
+            tooltip: true,
+            key: 'avgearnTime',
             align: 'center'
           },
           {
             title: '最后交作业时间',
-            render: (h, params) => {
-              return h('div', params.row.lastSubmitTime ? dayjs(+params.row.lastSubmitTime).format("YYYY-MM-DD HH:mm") : '暂无')
-            },
+            tooltip: true,
+            key: 'lastSubmitTime',
             align: 'center'
           },
           {
             title: '老师最后批改时间',
-            render: (h, params) => {
-              return h('div', params.row.lastReplyTime ? dayjs(+params.row.lastReplyTime).format("YYYY-MM-DD HH:mm") : '暂无')
-            },
+            tooltip: true,
+            key: 'lastReplyTime',
             align: 'center'
           },
           {
             title: '操作',
             render: (h, params) => {
-              return h('Button', {
-                props: {
-                  type: 'text',
-                  size: 'small'
-                },
-                style: {
-                  color: '#5444E4',
-                  marginRight: '5px'
-                },
-                on: {
-                  click: () => {
-                    this.openModal(params.row)
+              return h('div',[
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: '#5444E4',
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.openModalClass(params.row)
+                    }
                   }
-                }
-              }, '作业记录')
+                }, '上课记录'),
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: '#5444E4',
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.openModal(params.row)
+                    }
+                  }
+                }, '作业记录')
+              ])
+
             },
             align: 'center'
           }
@@ -334,7 +391,13 @@
           this.$Message.info('该用户未购买课程')
         }
       },
+      openModalClass(data) {
+        this.isOpenModalClass = true
+        this.detailInfo = JSON.parse(JSON.stringify(data))
+        this.detailInfo.uid = this.$route.query.id || this.userId
+      },
       currentChange(val) {
+        console.log(val,11)
         this.listLessonProgress(val);
       },
       listBase() {
@@ -351,11 +414,14 @@
             this.appList.length && this.getLearnDTO()
             this.appList.length && this.listLessonProgress()
             localStorage.setItem('isJump', '2')
+            this.$nextTick(()=>{
+              this.$refs.modelUserInfo.scrollTop  = this.$refs.modelUserInfo.clientHeight
+              console.log(this.$refs.modelUserInfo.scrollTop)
+            })
           })
       },
       //分页查询
       getLearnDTO() {
-        this.isFetching = true
         this.$api.jsdJob.getLearnDTO({
           uid: this.$route.query.id || this.userId,
           courseId: this.searchInfo.appId
@@ -367,25 +433,45 @@
               this.userInfo.buyedTime = dataInfo.buyedTime ? dayjs(+dataInfo.buyedTime).format('YYYY-MM-DD HH:mm') : '暂无'
               this.userInfo.createTime = dayjs(+dataInfo.createTime).format('YYYY-MM-DD HH:mm')
             })
-          .finally(() => {
-            this.isFetching = false
-          })
       },
       listLessonProgress(page) {
         if (this.sortNum) {
           this.tab.page = page || Math.ceil(this.sortNum / 10)
+        } else {
+          if (page) {
+            this.tab.currentPage = 1
+          }
         }
+        this.dataList= []
+        this.isFetching = true
         this.$api.jsdJob.listLessonProgress({
           uid: this.$route.query.id || this.userId,
           courseId: this.searchInfo.appId,
-          current: this.tab.page,
-          size: this.tab.pageSize
+          current: page ? page : this.tab.page,
+          size: 10000
         })
           .then(
             response => {
-              this.dataList = response.data.resultData.records;
-              this.total = response.data.resultData.total;
+              let data = response.data.resultData.records
+              data.forEach(item=>{
+                this.dataList.push({
+                  ...item,
+                  schedulDate: item.schedulDate ? dayjs(+item.schedulDate).format("YYYY-MM-DD") : '暂无',
+                  lessonTime: item.lessonTime ? dayjs(item.lessonTime*1000).format('mm:ss') : 0,
+                  allLearnTime: item.allLearnTime ?formatTime(item.allLearnTime*1000) : 0,
+                  avgearnTime: item.avgearnTime ? dayjs(item.avgearnTime*1000).format('mm:ss') : 0,
+                  firstStartLearnTime: item.firstStartLearnTime ? dayjs(+item.firstStartLearnTime).format("YYYY-MM-DD HH:mm") : '暂无',
+                  firstLearnTime: item.firstLearnTime ? dayjs(+item.firstLearnTime).format("YYYY-MM-DD HH:mm") : '暂无',
+                  lastSubmitTime: item.lastSubmitTime ? dayjs(+item.lastSubmitTime).format("YYYY-MM-DD HH:mm") : '暂无',
+                  lastReplyTime: item.lastReplyTime ? dayjs(+item.lastReplyTime).format("YYYY-MM-DD HH:mm") : '暂无',
+                })
+              })
+              // this.total = response.data.resultData.total;
+
             })
+          .finally(()=>{
+            this.isFetching = false
+          })
         this.$forceUpdate()
       },
       getUserInfo() {
@@ -468,6 +554,7 @@
               if (response.data.code == '200') {
                 this.$Message.success('提交成功');
                 this.getLearnDTO()
+                this.listLessonProgress()
                 this.isOpenModalTime = false
               }
             })
@@ -477,6 +564,12 @@
 </script>
 <style lang="less" scoped>
   .p-userInfo {
+    overflow-y: auto;
+    height: 700px;
+
+    .-c-table {
+      min-height: 500px;
+    }
 
     .-p-header {
       display: flex;

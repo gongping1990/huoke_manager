@@ -17,6 +17,9 @@ const tbzwCourse = {
   tbzwCourseUpdate(params) {
     return axios.post('/compositionv2/course/update', qs.stringify(params))
   },
+  listBase(params) {
+    return axios.get('/compositionv2/course/listBase', {params: params})
+  },
   listByMyCourseHasgift(params) {
     return axios.get('/compositionv2/course/listByMyCourseHasgift', {params: params})
   },

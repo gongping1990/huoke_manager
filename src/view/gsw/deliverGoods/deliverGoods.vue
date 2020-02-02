@@ -1,7 +1,15 @@
 <template>
   <div class="p-deliverGoods">
     <Card>
+
       <Row class="g-t-left">
+        <Radio-group v-model="classType" type="button"  @on-change="getList()">
+          <Radio :label=2>古诗词升级版</Radio>
+          <Radio :label=3>古诗词1-6</Radio>
+        </Radio-group>
+      </Row>
+
+      <Row class="g-t-left -c-tab">
         <Radio-group v-model="radioType" type="button" @on-change="getList(1)">
           <Radio :label=0>待发货</Radio>
           <Radio :label=1>已发货</Radio>
@@ -19,10 +27,20 @@
                    @on-click="getList(1)"></Input>
           </div>
         </Col>
+        <Col :span="3" style="padding-left: 20px" v-if="classType===3">
+          <div class="g-flex-a-j-center">
+            <div class="-search-select-text">课程类型：</div>
+            <Select v-model="searchInfo.courseType" @on-change="getList(1)" class="-search-selectOne">
+              <Option value="0">全部</Option>
+              <Option value="1">全册</Option>
+              <Option value="2">单册</Option>
+            </Select>
+          </div>
+        </Col>
         <Col :span="14" class="g-flex-a-j-center -date-search">
           <date-picker-template :dataInfo="dateOption" @changeDate="changeDate"></date-picker-template>
         </Col>
-        <Col :span="5" class="g-flex-a-j-center -p-d-wrap">
+        <Col :span="5" class="g-flex-a-j-center -p-d-wrap" v-if="classType===2">
           <Button type="primary" ghost class="-p-modal-btn -btn" @click="openExcel">导入发货信息</Button>
           <Button type="primary" ghost class="-p-modal-btn -btn" @click="downExcel(2)">导出错误记录</Button>
           <Button type="primary" ghost class="-p-modal-btn" @click="toExcel">导出表格</Button>
@@ -31,7 +49,10 @@
       </Row>
 
       <Table class="-c-tab" :loading="isFetching" :columns="radioType ? columnsUnanswered : columns"
-             :data="dataList"></Table>
+             :data="dataList" v-if="classType === 2"></Table>
+
+      <Table class="-c-tab" :loading="isFetching" :columns="radioType ? columnsUnansweredTwo : columnsTwo"
+             :data="dataList" v-else></Table>
 
       <Page class="g-text-right" :total="total" size="small" show-elevator :page-size="tab.pageSize"
             :current.sync="tab.currentPage"
@@ -64,7 +85,7 @@
     <Modal
       class="p-deliverGoods"
       v-model="isOpenExcel"
-      :mask-closable = "false"
+      :mask-closable="false"
       @on-cancel="isOpenExcel = false"
       width="500"
       title="导入发货信息">
@@ -111,7 +132,8 @@
         searchInfo: {
           nickname: '',
           startTime: '',
-          endTime: ''
+          endTime: '',
+          courseType: '0'
         },
         dateOption: {
           name: '创建时间',
@@ -126,6 +148,7 @@
         dataList: [],
         total: 0,
         radioType: 0,
+        classType: 2,
         isFetching: false,
         isOpenExcel: false,
         isOpenModal: false,
@@ -150,18 +173,73 @@
           },
           {
             title: '收货信息',
-            render: (h,params)=>{
-              return h('div',{
+            render: (h, params) => {
+              return h('div', {
                 style: {
                   'text-align': 'left'
                 }
-              },[
-                h('div',`名称：${params.row.recipient.name}`),
-                h('div',`电话：${params.row.recipient.telephone}`),
-                h('div',`地址：${params.row.recipient.areas}`),
-                h('div',`详情：${params.row.recipient.address}`)
+              }, [
+                h('div', `名称：${params.row.recipient.name}`),
+                h('div', `电话：${params.row.recipient.telephone}`),
+                h('div', `地址：${params.row.recipient.areas}`),
+                h('div', `详情：${params.row.recipient.address}`)
               ])
             },
+            align: 'center'
+          },
+          {
+            title: '创建时间',
+            key: 'sendGmtCreate',
+            align: 'center'
+          },
+          {
+            title: '操作',
+            align: 'center',
+            render: (h, params) => {
+              return h('div', [
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: '#5444E4'
+                  },
+                  on: {
+                    click: () => {
+                      this.openModal(params.row)
+                    }
+                  }
+                }, '发货')
+              ])
+            }
+          }
+        ],
+        columnsTwo: [
+          {
+            title: '用户昵称',
+            key: 'nickName',
+            align: 'center'
+          },
+          {
+            title: '收货信息',
+            render: (h, params) => {
+              return h('div', {
+                style: {
+                  'text-align': 'left'
+                }
+              }, [
+                h('div', `名称：${params.row.recipient.name}`),
+                h('div', `电话：${params.row.recipient.telephone}`),
+                h('div', `地址：${params.row.recipient.areas}`),
+                h('div', `详情：${params.row.recipient.address}`)
+              ])
+            },
+            align: 'center'
+          },
+          {
+            title: '课程信息',
+            key: 'courseName',
             align: 'center'
           },
           {
@@ -200,16 +278,16 @@
           },
           {
             title: '收货信息',
-            render: (h,params)=>{
-              return h('div',{
+            render: (h, params) => {
+              return h('div', {
                 style: {
                   'text-align': 'left'
                 }
-              },[
-                h('div',`名称：${params.row.recipient.name}`),
-                h('div',`电话：${params.row.recipient.telephone}`),
-                h('div',`地址：${params.row.recipient.areas}`),
-                h('div',`详情：${params.row.recipient.address}`)
+              }, [
+                h('div', `名称：${params.row.recipient.name}`),
+                h('div', `电话：${params.row.recipient.telephone}`),
+                h('div', `地址：${params.row.recipient.areas}`),
+                h('div', `详情：${params.row.recipient.address}`)
               ])
             },
             align: 'center'
@@ -221,15 +299,70 @@
           },
           {
             title: '发货信息',
-            render: (h,params)=>{
-              return h('div',{
+            render: (h, params) => {
+              return h('div', {
                 style: {
                   'text-align': 'left'
                 }
-              },[
-                h('div',`发货人：${params.row.sendinfo.sender}`),
-                h('div',`物流单号：${params.row.sendinfo.logisticsOddNum}`),
-                h('div',`物流公司：${params.row.sendinfo.logisticsCompany}`)
+              }, [
+                h('div', `发货人：${params.row.sendinfo.sender}`),
+                h('div', `物流单号：${params.row.sendinfo.logisticsOddNum}`),
+                h('div', `物流公司：${params.row.sendinfo.logisticsCompany}`)
+              ])
+            },
+            align: 'center'
+          },
+          {
+            title: '发货时间',
+            render: (h, params) => {
+              return h('div', dayjs(params.row.sendTime).format("YYYY-MM-DD HH:mm:ss"))
+            },
+            align: 'center'
+          }
+        ],
+        columnsUnansweredTwo: [
+          {
+            title: '用户昵称',
+            key: 'nickName',
+            align: 'center'
+          },
+          {
+            title: '收货信息',
+            render: (h, params) => {
+              return h('div', {
+                style: {
+                  'text-align': 'left'
+                }
+              }, [
+                h('div', `名称：${params.row.recipient.name}`),
+                h('div', `电话：${params.row.recipient.telephone}`),
+                h('div', `地址：${params.row.recipient.areas}`),
+                h('div', `详情：${params.row.recipient.address}`)
+              ])
+            },
+            align: 'center'
+          },
+          {
+            title: '课程信息',
+            key: 'courseName',
+            align: 'center'
+          },
+          {
+            title: '创建时间',
+            key: 'sendGmtCreate',
+            align: 'center'
+          },
+          {
+            title: '发货信息',
+            render: (h, params) => {
+              return h('div', {
+                style: {
+                  'text-align': 'left'
+                }
+              }, [
+                h('div', `发货人：${params.row.sendinfo.sender}`),
+                h('div', `物流单号：${params.row.sendinfo.logisticsOddNum}`),
+                h('div', `物流公司：${params.row.sendinfo.logisticsCompany}`)
               ])
             },
             align: 'center'
@@ -248,16 +381,19 @@
       this.getList()
     },
     methods: {
-      downExcel (num) {
+      changeType() {
+
+      },
+      downExcel(num) {
         let downGoodsExcel
-        if(num === 1) {
+        if (num === 1) {
           downGoodsExcel = `${getBaseUrl()}/poem/goods/downGoodsExcel`
         } else {
           downGoodsExcel = `${getBaseUrl()}/poem/goods/downErrorExcel`
         }
         window.open(downGoodsExcel, '_blank')
       },
-      openExcel () {
+      openExcel() {
         this.downInfo.isSucess = false
         this.isOpenExcel = !this.isOpenExcel
       },
@@ -265,11 +401,13 @@
         let params = {
           send: this.radioType,
           nickName: this.searchInfo.nickname,
+          state: this.searchInfo.courseType,
+          type: this.classType,
           startTime: this.searchInfo.startTime,
           endTime: this.searchInfo.endTime
         }
 
-        let downUrl = `${getBaseUrl()}/poem/goods/downloadExcelByGoods?startTime=${params.startTime}&endTime=${params.endTime}&send=${params.send}&nickName=${params.nickName}`
+        let downUrl = `${getBaseUrl()}/poem/goods/downloadExcelByGoods?startTime=${params.startTime}&endTime=${params.endTime}&send=${params.send}&nickName=${params.nickName}&state=${params.state}&type=${params.type}`
 
         window.open(downUrl, '_blank');
       },
@@ -307,6 +445,8 @@
           size: this.tab.pageSize,
           send: this.radioType,
           nickName: this.searchInfo.nickname,
+          type: this.classType,
+          state: this.searchInfo.courseType,
           startTime: startTime,
           endTime: endTime
         })
@@ -324,7 +464,7 @@
           })
       },
 
-      submitExecl () {
+      submitExecl() {
 
       },
       submitInfo(name) {
@@ -355,7 +495,15 @@
 
 <style lang="less" scoped>
   .p-deliverGoods {
-
+    .-search-select-text {
+      min-width: 70px;
+    }
+    .-search-selectOne {
+      width: 100px;
+      border: 1px solid #dcdee2;
+      border-radius: 4px;
+      margin-right: 20px;
+    }
     .-p-btn-error {
       margin: 16px auto 0;
     }

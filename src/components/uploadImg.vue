@@ -55,6 +55,9 @@
       }
     },
     methods: {
+      init () { //针对深层次的嵌套 导致watch无法监控， 手动控制
+        this.itemUrl = this.childData
+      },
       delImg() {
         this.itemUrl = ''
       },

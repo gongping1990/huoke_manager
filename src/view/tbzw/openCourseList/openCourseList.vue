@@ -39,7 +39,7 @@
           <Form-item label="开营日期" class="ivu-form-item-required">
             <Date-picker style="width: 100%" :options="dateOption" :disabled="isEdit" type="date" placeholder="选择日期"
                          v-model="addInfo.opentime"></Date-picker>
-            <span class="-c-tips">请选择明天及明天以后的时间</span>
+            <span class="-c-tips">此为第一课开课日期，请选择明天及明天以后的时间</span>
           </Form-item>
           <FormItem label="排课天数" class="ivu-form-item-required">
             <div class="p-openCourse-btnWrap">
@@ -63,6 +63,15 @@
               </div>
             </div>
           </FormItem>
+          <FormItem label="销售老师" class="ivu-form-item-required">
+            <Button @click="openUserModal()" ghost type="primary" style="width: 100px;">+添加老师</Button>
+            <div class="p-openCourse-formUser">
+              <div class="-formUser-item" v-for="(item,index) of userImgList" :key="index">
+                <img class="-img" :src="item.avatar"/>
+                <div class="-name">{{item.name}}</div>
+              </div>
+            </div>
+          </FormItem>
         </Form>
         <div slot="footer" class="-p-b-flex">
           <Button @click="closeModal('addInfo')" ghost type="primary" style="width: 100px;">取消</Button>
@@ -70,14 +79,18 @@
         </div>
       </Modal>
     </Card>
+
+    <VirtualTeacherTemplate v-model="isOpenModalUser" :propList="userImgList" :data-item="dataItem" @changeUsers="chioceUsers"></VirtualTeacherTemplate>
   </div>
 </template>
 
 <script>
   import dayjs from 'dayjs'
+  import VirtualTeacherTemplate from "../openCourseList/virtualTeacherTemplate";
 
   export default {
     name: 'openCourse',
+    components: {VirtualTeacherTemplate},
     data() {
       return {
         tab: {
@@ -89,10 +102,13 @@
         courseList: [],
         total: 0,
         radioType: '',
+        dataItem: {},
         isFetching: false,
         isOpenModal: false,
         isSending: false,
+        isOpenModalUser: false,
         isEdit: false,
+        userImgList: [],
         addInfo: {
           rules: [],
           classList: []
@@ -155,10 +171,25 @@
           },
           {
             title: '操作',
-            width: 130,
+            width: 250,
             align: 'center',
             render: (h, params) => {
               return h('div', [
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: '#5444E4',
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.toJump(params.row)
+                    }
+                  }
+                }, '数据统计'),
                 h('Button', {
                   props: {
                     type: 'text',
@@ -174,6 +205,21 @@
                     }
                   }
                 }, '详情'),
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: '#5444E4',
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.openModal(false, params.row)
+                    }
+                  }
+                }, '编辑'),
                 h('Button', {
                   props: {
                     type: 'text',
@@ -199,13 +245,34 @@
       this.getCourseList()
     },
     methods: {
+      openUserModal() {
+        this.isOpenModalUser = true
+        this.dataItem.courseId = this.radioType
+      },
+      chioceUsers(data) {
+        this.userImgList = data
+      },
+      toJump (data) {
+        this.$router.push({
+          name: 'tbzw_paid_processData',
+          query: {
+            courseId: this.radioType,
+            periodsId: data.id
+          }
+        })
+      },
       openModal(bool, data) {
         this.isOpenModal = true
         this.isEdit = bool
+        this.userImgList = []
         this.addInfo = {}
-        if(!bool) {
+        if(!bool && !data) {
           this.getActiveDetails()
         } else {
+          if (new Date(data.opentime).getTime() < new Date().getTime()) {
+            this.isEdit = true
+          }
+
           this.getActiveDetailsByActiveId(data)
         }
 
@@ -256,6 +323,13 @@
               this.addInfo = response.data.resultData;
               this.addInfo.classList = []
               this.addInfo.rules = this.addInfo.rules.split(',')
+              this.addInfo.teachers.forEach(item=> {
+                this.userImgList.push({
+                  id: item.teacherId,
+                  avatar: item.teacherHeadImage,
+                  name: item.teacherName,
+                })
+              })
             })
           .finally(() => {
             this.isFetching = false
@@ -299,10 +373,14 @@
         })
       },
       submitInfo() {
+        this.addInfo.teacherIds = []
+
         if (!this.addInfo.opentime) {
           return this.$Message.error("请选择开营时间");
         } else if (!this.addInfo.rules.length) {
           return this.$Message.error("请选择排课时间");
+        } else if (!this.userImgList.length) {
+          return this.$Message.error("请选择销售老师");
         }
 
         let passContent = this.addInfo.details.every((item) => {
@@ -321,11 +399,18 @@
             opentime: item.opentime
           })
         })
+
+        this.userImgList.forEach(item=> {
+          this.addInfo.teacherIds.push(item.id)
+        })
+
         this.$api.tbzwActiveconfig.editActiveConfig({
+          id: this.addInfo.id,
           opentime: dayjs(this.addInfo.opentime).format("YYYY/MM/DD"),
           courseId: this.addInfo.courseId,
           rules: this.addInfo.rules.toString(),
-          details: this.addInfo.classList
+          details: this.addInfo.classList,
+          teacherIds: this.addInfo.teacherIds
         })
           .then(
             response => {
@@ -346,6 +431,36 @@
 
 <style lang="less" scoped>
   .p-openCourse {
+
+    &-formUser {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-top: 10px;
+
+      .-formUser-item {
+        text-align: center;
+        width: 80px;
+        padding: 10px 10px 0 0;
+        cursor: pointer;
+
+        .-img {
+          cursor: pointer;
+          margin: 0 auto;
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+        }
+
+        .-name {
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          overflow: hidden;
+          height: 20px;
+          line-height: 20px;
+        }
+      }
+    }
 
     &-tabList {
       border: 1px solid #dcdee2;
@@ -377,7 +492,7 @@
       min-width: 80px;
     }
     .-search-selectOne {
-      width: 150px;
+      /*width: 200px;*/
       border: 1px solid #dcdee2;
       border-radius: 4px;
       margin-right: 20px;

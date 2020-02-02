@@ -23,6 +23,10 @@
       <div v-show="radioType === 2" >
         <Form class="g-t-left ivu-form-item-required -c-tab p-teach-form" ref="addInfo" :model="addInfo"
               :label-width="100">
+          <FormItem label="课程原价" prop="oriPrice">
+            <Input type="text" v-model="activeInfo.oriPrice" placeholder="请输入原价价格" :disabled="!isShowEdit"></Input>
+            <span class="-c-tips">* 精确到小数点后2位，如99.99</span>
+          </FormItem>
           <FormItem label="单独购价格" prop="ddgPrice">
             <Input type="text" v-model="activeInfo.ddgPrice" placeholder="请输入单独购价格" :disabled="!isShowEdit"></Input>
             <span class="-c-tips">* 精确到小数点后2位，如99.99</span>
@@ -64,9 +68,9 @@
       class="p-subject"
       v-model="isOpenModal"
       @on-cancel="closeModal('addInfo')"
-      width="350"
+      width="500"
       title="编辑课程">
-      <Form ref="addInfo" :model="addInfo" :rules="ruleValidate" :label-width="70">
+      <Form ref="addInfo" :model="addInfo" :rules="ruleValidate" :label-width="100">
         <FormItem label="课程名称" prop="name">
           <Input type="text" v-model="addInfo.name" placeholder="请输入学科名称"></Input>
         </FormItem>
@@ -90,8 +94,17 @@
             <Option v-for="(item,index) in courseList" :label="item.name" :value="item.id" :key="index"></Option>
           </Select>
         </FormItem>
-        <FormItem label="课程封面">
+        <FormItem label="课时总数" prop="nums">
+          <Input type="text" v-model="addInfo.nums" placeholder="请输入课时总数"></Input>
+        </FormItem>
+        <FormItem label="课程描述" prop="descripte">
+          <Input type="text" v-model="addInfo.descripte" placeholder="请输入课程描述"></Input>
+        </FormItem>
+        <FormItem label="竖版课程封面">
           <upload-img v-model="addInfo.coverImgUrl" :option="uploadOption"></upload-img>
+        </FormItem>
+        <FormItem label="首页课程封面">
+          <upload-img v-model="addInfo.coverPage" :option="uploadOption"></upload-img>
         </FormItem>
 
       </Form>
@@ -191,6 +204,12 @@
           courseId: [
             {required: true, message: '请选择学科', trigger: 'change'}
           ],
+          nums: [
+            {required: true, message: '请输入课时总数', trigger: 'blur'}
+          ],
+          descripte: [
+            {required: true, message: '请输入课时描述', trigger: 'blur'}
+          ]
 
         },
         columns: [
@@ -278,6 +297,7 @@
             render: (h, params)=> {
               return h('div',[
                 h('div', `活动${params.row.open}`),
+                h('div', `原价价格${params.row.oriPrice}`),
                 h('div', `单独购价格${params.row.ddgPrice}`),
                 h('div', `活动价格${params.row.activityPrice}`),
                 h('div', `邀请人数${params.row.invites}`),
@@ -397,6 +417,7 @@
               this.activeInfo.open = this.activeInfo.open ? 1 : 0
               this.activeInfo.activityPrice = (+this.activeInfo.activityPrice/100).toFixed(2)
               this.activeInfo.ddgPrice = (+this.activeInfo.ddgPrice/100).toFixed(2)
+              this.activeInfo.oriPrice = (+this.activeInfo.oriPrice/100).toFixed(2)
             })
           .finally(() => {
 
@@ -458,6 +479,8 @@
       submitInfoActive() {
         if (!this.activeInfo.activityPrice) {
           return this.$Message.error('请输入活动价格')
+        } else if (!this.activeInfo.oriPrice) {
+          return this.$Message.error('请输入原价价格')
         } else if (!this.activeInfo.ddgPrice) {
           return this.$Message.error('请输入单独购价格')
         } else if (!this.activeInfo.invites) {
@@ -469,10 +492,12 @@
         let promiseDate = this.activeInfo.id ? this.$api.hkywhdActivity.uptActivity({
           ...this.activeInfo,
           ddgPrice: this.activeInfo.ddgPrice*100,
+          oriPrice: this.activeInfo.oriPrice*100,
           activityPrice: this.activeInfo.activityPrice*100
         }) : this.$api.hkywhdActivity.saveActivity({
           ...this.activeInfo,
           ddgPrice: this.activeInfo.ddgPrice*100,
+          oriPrice: this.activeInfo.oriPrice*100,
           activityPrice: this.activeInfo.activityPrice*100
         })
         promiseDate

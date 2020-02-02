@@ -12,11 +12,20 @@ const activity = {
   getActivityById(params) {
     return axios.get(`/fissionprep/activity/getActivityById`, {params})
   },
+  getActivityByTbookId(params) {
+    return axios.get(`/fissionprep/activity/getActivityByTbookId`, {params})
+  },
   saveActivity(params) {
     return axios.post(`/fissionprep/activity/saveActivity`, qs.stringify(params))
   },
   uptActivity(params) {
     return axios.post(`/fissionprep/activity/uptActivity`, qs.stringify(params))
+  },
+  saveNewActivit(params) {
+    return axios.post(`/fissionprep/activity/saveNewActivit`, qs.stringify(params))
+  },
+  uptNewActivity(params) {
+    return axios.post(`/fissionprep/activity/uptNewActivity`, qs.stringify(params))
   }
 }
 

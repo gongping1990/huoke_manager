@@ -275,30 +275,31 @@ export const gswRouter =[
     title: '课程管理',
     component: Main,
     children: [
-      {
-        path: '/gsw_courseInfo',
-        name: 'gsw_courseInfo',
-        meta: [
-          {name: '课程管理'},
-          {name: '课程信息'}
-        ],
-        component: () => import('@/view/gsw/courseManagement/courseInfo')
-      },
-      {
-        path: '/gsw_courseContent',
-        name: 'gsw_courseContent',
-        meta: [
-          {name: '课程管理'},
-          {name: '课程内容'}
-        ],
-        component: () => import('@/view/gsw/courseManagement/courseContent')
-      },
+      // {
+      //   path: '/gsw_courseInfo',
+      //   name: 'gsw_courseInfo',
+      //   meta: [
+      //     {name: '课程管理'},
+      //     {name: '课程信息'}
+      //   ],
+      //   component: () => import('@/view/gsw/courseManagement/courseInfo')
+      // },
+      // {
+      //   path: '/gsw_courseContent',
+      //   name: 'gsw_courseContent',
+      //   meta: [
+      //     {name: '课程管理'},
+      //     {name: '课程内容'}
+      //   ],
+      //   component: () => import('@/view/gsw/courseManagement/courseContent')
+      // },
       {
         path: '/gsw_new_courseContent',
         name: 'gsw_new_courseContent',
         meta: [
           {name: '课程管理'},
-          {name: '新课程内容'}
+          {name: '课程列表', url: 'gsw_courseList'},
+          {name: '课程内容'}
         ],
         component: () => import('@/view/gsw/courseManagement/new_courseContent')
       },
@@ -307,7 +308,8 @@ export const gswRouter =[
         name: 'gsw_new_courseInfo',
         meta: [
           {name: '课程管理'},
-          {name: '新课程信息'}
+          {name: '课程列表', url: 'gsw_courseList'},
+          {name: '课程信息'}
         ],
         component: () => import('@/view/gsw/courseManagement/new_courseInfo')
       },
@@ -319,6 +321,24 @@ export const gswRouter =[
           {name: '新课程体验课'}
         ],
         component: () => import('@/view/gsw/courseManagement/experienceClass')
+      },
+      {
+        path: '/gsw_courseList',
+        name: 'gsw_courseList',
+        meta: [
+          {name: '课程管理'},
+          {name: '课程列表'}
+        ],
+        component: () => import('@/view/gsw/courseManagement/courseList')
+      },
+      {
+        path: '/gsw_courseLabel',
+        name: 'gsw_courseLabel',
+        meta: [
+          {name: '课程管理'},
+          {name: '课程标签'}
+        ],
+        component: () => import('@/view/gsw/courseManagement/courseLabel')
       }
     ]
   },

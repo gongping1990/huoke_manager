@@ -13,6 +13,13 @@ import tbzwStudent from "./student";
 import tbzwActiveconfig from "./activeconfig";
 import tbzwGroupConfig from "./groupConfig";
 import tbzwRules from "./rules";
+import tbzwStudyRecordData from "./studyRecordData";
+import tbzwVest from "./vest";
+import tbzwStatistics from "./statistics";
+import tbzwReserveBuy from "./reserveBuy";
+import tbzwDubbing from "./dubbing";
+import tbzwLesson from "./lesson";
+import tbzwSystemconfig from "./systemconfig";
 
 export const tbzwIndex = {
   composition,
@@ -29,5 +36,12 @@ export const tbzwIndex = {
   tbzwStudent,
   tbzwActiveconfig,
   tbzwGroupConfig,
-  tbzwRules
+  tbzwRules,
+  tbzwStudyRecordData,
+  tbzwVest,
+  tbzwStatistics,
+  tbzwReserveBuy,
+  tbzwDubbing,
+  tbzwLesson,
+  tbzwSystemconfig
 }

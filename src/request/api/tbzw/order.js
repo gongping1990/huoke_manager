@@ -17,6 +17,9 @@ const tbzwOrder = {
   createNewInvoice(params) {
     return axios.post("/compositionv2/order/createNewInvoice", qs.stringify(params));
   },
+  refund(params) {
+    return axios.post("/compositionv2/order/refund", qs.stringify(params));
+  },
 };
 
 export default tbzwOrder;
