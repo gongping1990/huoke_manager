@@ -386,6 +386,8 @@
           return this.$Message.error("请选择销售老师");
         } else if (!this.addInfo.offers) {
           return this.$Message.error("请输入班级人数");
+        } else if (this.addInfo.offers < 1) {
+          return this.$Message.error("班级人数必须大于0");
         }
 
         let passContent = this.addInfo.details.every((item) => {
