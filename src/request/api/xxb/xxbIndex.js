@@ -12,6 +12,7 @@ import xxbTextlesson from "./textlesson";
 import xxbHomePage from "./homePage";
 import xxbMaterial from "./material";
 import xxbUserMember from "./userMember";
+import xxbCompose from "./compose";
 
 
 export const xxbIndex = {
@@ -28,5 +29,6 @@ export const xxbIndex = {
   xxbTextlesson,
   xxbHomePage,
   xxbMaterial,
-  xxbUserMember
+  xxbUserMember,
+  xxbCompose
 }

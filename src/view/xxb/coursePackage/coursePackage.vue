@@ -14,36 +14,36 @@
         class="p-coursePackage"
         v-model="isOpenModal"
         @on-cancel="closeModal('addInfo')"
-        width="500"
+        width="600"
         :title="addInfo.id ? '编辑' : '创建'">
         <Form ref="addInfo" :model="addInfo" :rules="ruleValidate" :label-width="90">
           <FormItem label="名称" prop="name">
             <Input type="text" v-model="addInfo.name" placeholder="请输入名称"></Input>
           </FormItem>
-          <FormItem label="课程分类" prop="name">
-            <Select v-model="addInfo.type">
+          <FormItem label="课程分类" prop="courseId">
+            <Select v-model="addInfo.courseId">
               <Option :value="item.id" :label="item.name" v-for="item of courseTypeList" :key="item.id"></Option>
             </Select>
           </FormItem>
-          <FormItem label="排序值" prop="sortnum">
-            <Input type="text" v-model="addInfo.sortnum" placeholder="请输入排序值"></Input>
+          <FormItem label="排序值" prop="sortNum">
+            <Input type="text" v-model="addInfo.sortNum" placeholder="请输入排序值"></Input>
           </FormItem>
-          <FormItem label="原价" prop="sortnum">
-            <Input type="text" v-model="addInfo.sortnum" placeholder="请输入原价"></Input>
+          <FormItem label="原价" prop="orgPrice">
+            <Input type="text" v-model="addInfo.orgPrice" placeholder="请输入原价"></Input>
           </FormItem>
-           <FormItem label="单独购价格" prop="sortnum">
-            <Input type="text" v-model="addInfo.sortnum" placeholder="请输入单独购价格"></Input>
+          <FormItem label="单独购价格" prop="alonePrice">
+            <Input type="text" v-model="addInfo.alonePrice" placeholder="请输入单独购价格"></Input>
           </FormItem>
-           <FormItem label="课程描述" prop="sortnum">
-            <Input type="text" v-model="addInfo.sortnum" placeholder="请输入课程描述"></Input>
+          <FormItem label="课程描述" prop="descripte">
+            <Input type="text" v-model="addInfo.descripte" placeholder="请输入课程描述"></Input>
           </FormItem>
           <Form-item label="课程封面" class="ivu-form-item-required">
-            <upload-img v-model="addInfo.posterUrl" :option="uploadOption"></upload-img>
+            <upload-img v-model="addInfo.coverImg" :option="uploadOption"></upload-img>
           </Form-item>
-          <FormItem label="购买链接" prop="sortnum">
-            <Input type="text" v-model="addInfo.sortnum" placeholder="请输入购买链接"></Input>
+          <FormItem label="购买链接" prop="salesUrl">
+            <Input type="text" v-model="addInfo.salesUrl" placeholder="请输入购买链接"></Input>
           </FormItem>
-          <Form-item label="购买页图片">
+          <Form-item label="购买页图片" class="ivu-form-item-required">
             <upload-img-multiple v-model="addInfo.payImgUrl" :option="uploadOption"></upload-img-multiple>
           </Form-item>
         </Form>
@@ -59,7 +59,7 @@
         @on-cancel="isOpenModalCourse = false"
         width="500"
         title="关联课程">
-        <Form ref="addInfo" :model="courseInfo" :label-width="90">
+        <Form ref="courseInfo" :model="courseInfo" :label-width="90">
           <FormItem label="关联课程" prop="name">
             <div class="g-course-add-style" @click="isOpenModalData=true">
               <span>+</span>
@@ -81,7 +81,7 @@
         </Form>
         <div slot="footer" class="-p-b-flex">
           <Button @click="isOpenModalCourse =false" ghost type="primary" style="width: 100px;">取消</Button>
-          <div @click="submitInfo('addInfo')" class="g-primary-btn "> {{isSending ? '提交中...' : '确 认'}}</div>
+          <div @click="submitModalCourse()" class="g-primary-btn "> {{isSending ? '提交中...' : '确 认'}}</div>
         </div>
       </Modal>
     </Card>
@@ -94,10 +94,11 @@
   import myMinxin from '../../../utils/minxin'
   import UploadImg from "../../../components/uploadImg";
   import Xxb_courseTemplate from "../course/courseTemplate";
+  import UploadImgMultiple from "../../../components/uploadImgMultiple";
 
   export default {
     name: 'bannerList',
-    components: {Xxb_courseTemplate, UploadImg},
+    components: {UploadImgMultiple, Xxb_courseTemplate, UploadImg},
     mixins: [myMinxin],
     data() {
       return {
@@ -122,8 +123,23 @@
           name: [
             {required: true, message: '请输入名称', trigger: 'blur'},
           ],
-          sortnum: [
+          sortNum: [
             {required: true, message: '请输入排序值', trigger: 'blur'},
+          ],
+          alonePrice: [
+            {required: true, message: '请输入单独购价格', trigger: 'blur'},
+          ],
+          courseId: [
+            {required: true, message: '请输入课程分类', trigger: 'change'},
+          ],
+          descripte: [
+            {required: true, message: '请输入课程描述', trigger: 'blur'},
+          ],
+          orgPrice: [
+            {required: true, message: '请输入原价', trigger: 'blur'},
+          ],
+          salesUrl: [
+            {required: true, message: '请输入购买链接', trigger: 'blur'},
           ]
         },
         columns: [
@@ -134,12 +150,12 @@
           },
           {
             title: '排序值',
-            key: 'sortnum',
+            key: 'sortNum',
             align: 'center'
           },
           {
             title: '关联课程',
-            key: 'sortnum',
+            key: 'linkNames',
             align: 'center'
           },
           {
@@ -147,9 +163,9 @@
             render: (h, params) => {
               return h('Tag', {
                 props: {
-                  color: !params.row.disabled ? 'default' : 'success'
+                  color: !params.row.display ? 'default' : 'success'
                 }
-              }, !params.row.disabled ? '已禁用' : '已启用')
+              }, !params.row.display ? '已禁用' : '已启用')
             },
             align: 'center'
           },
@@ -172,7 +188,7 @@
                       this.changeStatus(params.row)
                     }
                   }
-                }, !params.row.disabled ? '启用' : '禁用'),
+                }, !params.row.display ? '启用' : '禁用'),
                 h('Button', {
                   props: {
                     type: 'text',
@@ -241,10 +257,12 @@
         this.getTypeList()
         if (data) {
           this.addInfo = JSON.parse(JSON.stringify(data))
-          this.addInfo.sortnum = this.addInfo.sortnum.toString()
+          this.addInfo.sortNum = this.addInfo.sortNum.toString()
+          this.addInfo.payImgUrl = JSON.parse(this.addInfo.payImgUrl)
         } else {
           this.addInfo = {
-            posterUrl: ''
+            coverImg: '',
+            payImgUrl: ''
           }
         }
       },
@@ -259,7 +277,7 @@
       },
       listSuggestedBook(data) {
         this.courseListModal = []
-        this.$api.xxbTextbook.listSuggestedBook({
+        this.$api.hkywhdTextbook.listSuggestedBook({
           bindBookId: data.id
         })
           .then(response => {
@@ -270,12 +288,24 @@
                 id: item.suggestId
               })
             })
+            this.listBookInfoByCompose(data)
+          })
+      },
+      listBookInfoByCompose(data) {
+        this.courseListModal = []
+        this.$api.xxbCompose.listBookInfoByCompose({
+          composeId: data.id
+        })
+          .then(response => {
+            this.courseListModal= response.data.resultData
+
+            console.log(this.courseListModal,1)
           })
       },
       //分页查询
       getList() {
         this.isFetching = true
-        this.$api.xxbCourse.queryPage({
+        this.$api.xxbCompose.pageCompose({
           current: this.tab.page,
           size: this.tab.pageSize,
         })
@@ -291,7 +321,7 @@
       getTypeList() {
         this.courseTypeList = []
         this.courseTypeListAll = []
-        this.$api.xxbCourse.listAllOn()
+        this.$api.hkywhdCourse.listAllOn()
           .then(response => {
             let dataInfo = response.data.resultData
             dataInfo.forEach(item => {
@@ -307,8 +337,8 @@
           title: '提示',
           content: '确认要删除吗？',
           onOk: () => {
-            this.$api.xxbCourse.removeById({
-              id: param.id
+            this.$api.xxbCompose.removeCompose({
+              composeId: param.id
             }).then(
               response => {
                 if (response.data.code == "200") {
@@ -320,9 +350,8 @@
         })
       },
       changeStatus(data) {
-        this.$api.xxbCourse.setStatus({
-          id: data.id,
-          disabled: !data.disabled
+        this.$api.xxbCompose.display({
+          composeId: data.id
         }).then(
           response => {
             if (response.data.code == "200") {
@@ -332,8 +361,12 @@
           })
       },
       submitInfo(name) {
-        if (this.addInfo.sortnum && (this.addInfo.sortnum < 1 || this.addInfo.sortnum > 99999)) {
+        if (this.addInfo.sortNum && (this.addInfo.sortNum < 1 || this.addInfo.sortNum > 99999)) {
           return this.$Message.error('排序值范围1-99999')
+        } else if (!this.addInfo.coverImg) {
+          return this.$Message.error('请上传课程封面')
+        } else if (!this.addInfo.payImgUrl.length) {
+          return this.$Message.error('请上传购买页图片')
         }
 
         if (this.isSending) return
@@ -341,8 +374,10 @@
         this.$refs[name].validate((valid) => {
           if (valid) {
             this.isSending = true
-            let promiseDate = this.addInfo.id ? this.$api.xxbCourse.update(this.addInfo) : this.$api.xxbCourse.save(this.addInfo)
-            promiseDate
+            this.$api.xxbCompose.saveComposeService({
+              ...this.addInfo,
+              payImgUrl: JSON.stringify(this.addInfo.payImgUrl)
+            })
               .then(
                 response => {
                   if (response.data.code == '200') {
@@ -356,6 +391,36 @@
               })
           }
         })
+      },
+      submitModalCourse () {
+        if (!this.courseListModal.length) {
+          return this.$Message.error('请选择推荐课程')
+        }
+
+        if (this.isSending) return
+
+        this.isSending = true
+        let arrayStorage = []
+
+        this.courseListModal.forEach(item => {
+          arrayStorage.push(item.id)
+        })
+
+        this.$api.xxbCompose.saveLinkBook({
+          composeId: this.dataItem.id,
+          link: arrayStorage.toString()
+        })
+          .then(
+            response => {
+              if (response.data.code == '200') {
+                this.$Message.success('提交成功');
+                this.isOpenModalCourse = false
+                this.getList()
+              }
+            })
+          .finally(() => {
+            this.isSending = false
+          })
       }
     }
   };
