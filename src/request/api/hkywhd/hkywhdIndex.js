@@ -12,6 +12,7 @@ import hkywhdTextlesson from "./textlesson";
 import hkywhdHomePage from "./homePage";
 import hkywhdMaterial from "./material";
 import hkywhdUserMember from "./userMember";
+import hkywhdCompose from "./compose";
 
 
 export const hkywhdIndex = {
@@ -28,5 +29,6 @@ export const hkywhdIndex = {
   hkywhdTextlesson,
   hkywhdHomePage,
   hkywhdMaterial,
-  hkywhdUserMember
+  hkywhdUserMember,
+  hkywhdCompose
 }

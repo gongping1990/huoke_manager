@@ -220,6 +220,15 @@ export const xxbRouter =[
           {name: '课时管理'}
         ],
         component: () => import('@/view/xxb/course/classHourList')
+      },
+      {
+        path: '/xxb_coursePackage',
+        name: 'xxb_coursePackage',
+        meta: [
+          {name: '课程管理'},
+          {name: '课程套餐'}
+        ],
+        component: () => import('@/view/xxb/coursePackage/coursePackage')
       }
     ]
   },
@@ -256,6 +265,15 @@ export const xxbRouter =[
           {name: '同步学习'}
         ],
         component: () => import('@/view/xxb/syncLearn/syncLearnList')
+      },
+      {
+        path: '/xxb_weike',
+        name: 'xxb_weike',
+        meta: [
+          {name: '内容管理'},
+          {name: '微课'}
+        ],
+        component: () => import('@/view/xxb/weike/weike')
       },
     ]
   }

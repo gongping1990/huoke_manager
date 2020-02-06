@@ -191,6 +191,15 @@ export const hkywhdRouter =[
         component: () => import('@/view/hkywhd/course/courseList')
       },
       {
+        path: '/hkywhd_coursePackage',
+        name: 'hkywhd_coursePackage',
+        meta: [
+          {name: '课程管理'},
+          {name: '打包课程'}
+        ],
+        component: () => import('@/view/hkywhd/coursePackage/coursePackage')
+      },
+      {
         path: '/hkywhd_lessonList',
         name: 'hkywhd_lessonList',
         meta: [

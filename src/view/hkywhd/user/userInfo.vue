@@ -195,6 +195,7 @@
     },
     methods: {
       changeRadio () {
+        console.log(this.searchInfo.appId,111)
         this.appList.forEach(item=> {
           if(item.id === this.searchInfo.appId) {
             this.dataItem = item
@@ -237,6 +238,7 @@
             this.searchInfo.appId = this.appList[0].id
             if(this.$route.query.id || this.userId) {
               this.listLessonProgress()
+              this.changeRadio()
               this.getStudent()
             }
           })
