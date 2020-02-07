@@ -259,6 +259,8 @@
           this.addInfo = JSON.parse(JSON.stringify(data))
           this.addInfo.sortNum = this.addInfo.sortNum.toString()
           this.addInfo.payImgUrl = JSON.parse(this.addInfo.payImgUrl)
+          this.addInfo.orgPrice = this.addInfo.orgPrice / 100
+          this.addInfo.alonePrice = this.addInfo.alonePrice / 100
         } else {
           this.addInfo = {
             coverImg: '',
@@ -376,6 +378,8 @@
             this.isSending = true
             this.$api.hkywhdCompose.saveComposeService({
               ...this.addInfo,
+              orgPrice: this.addInfo.orgPrice*100,
+              alonePrice: this.addInfo.alonePrice*100,
               payImgUrl: JSON.stringify(this.addInfo.payImgUrl)
             })
               .then(
