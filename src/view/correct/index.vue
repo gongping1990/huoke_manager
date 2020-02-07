@@ -444,7 +444,11 @@ export default {
               this.imgActiveObj = this.workData.imgArr[this.imgActive];
             });
           }
-        });
+        }, ()=>{
+          this.$Spin.hide();
+        }).finally(()=>{
+        this.$Spin.hide();
+      });
     },
     fullScreen() {
       var el = document.documentElement;
