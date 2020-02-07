@@ -259,6 +259,8 @@
           this.addInfo = JSON.parse(JSON.stringify(data))
           this.addInfo.sortNum = this.addInfo.sortNum.toString()
           this.addInfo.payImgUrl = JSON.parse(this.addInfo.payImgUrl)
+          this.addInfo.orgPrice = this.addInfo.orgPrice / 100
+          this.addInfo.alonePrice = this.addInfo.alonePrice / 100
         } else {
           this.addInfo = {
             coverImg: '',
@@ -321,9 +323,12 @@
       getTypeList() {
         this.courseTypeList = []
         this.courseTypeListAll = []
-        this.$api.hkywhdCourse.listAllOn()
+        this.$api.xxbCourse.queryPage({
+          current: 1,
+          size: 1000
+        })
           .then(response => {
-            let dataInfo = response.data.resultData
+            let dataInfo = response.data.resultData.records
             dataInfo.forEach(item => {
               if (item.disabled) {
                 this.courseTypeList.push(item)
@@ -376,6 +381,8 @@
             this.isSending = true
             this.$api.xxbCompose.saveComposeService({
               ...this.addInfo,
+              orgPrice: this.addInfo.orgPrice*100,
+              alonePrice: this.addInfo.alonePrice*100,
               payImgUrl: JSON.stringify(this.addInfo.payImgUrl)
             })
               .then(
