@@ -259,8 +259,8 @@
           this.addInfo = JSON.parse(JSON.stringify(data))
           this.addInfo.sortNum = this.addInfo.sortNum.toString()
           this.addInfo.payImgUrl = JSON.parse(this.addInfo.payImgUrl)
-          this.addInfo.orgPrice = this.addInfo.orgPrice / 100
-          this.addInfo.alonePrice = this.addInfo.alonePrice / 100
+          this.addInfo.orgPrice = (this.addInfo.orgPrice / 100).toString()
+          this.addInfo.alonePrice = (this.addInfo.alonePrice / 100).toString()
         } else {
           this.addInfo = {
             coverImg: '',
