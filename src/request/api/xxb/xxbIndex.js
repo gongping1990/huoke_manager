@@ -13,6 +13,7 @@ import xxbHomePage from "./homePage";
 import xxbMaterial from "./material";
 import xxbUserMember from "./userMember";
 import xxbCompose from "./compose";
+import xxbYuke from "./yuke";
 
 
 export const xxbIndex = {
@@ -30,5 +31,6 @@ export const xxbIndex = {
   xxbHomePage,
   xxbMaterial,
   xxbUserMember,
-  xxbCompose
+  xxbCompose,
+  xxbYuke
 }
