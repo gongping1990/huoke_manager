@@ -49,8 +49,8 @@
       v-model="isOpenModal"
       @on-cancel="isOpenModal = false"
       width="600"
-      :title="nowStatus === 1 ? '助力记录' : '订单详情'">
-      <Table class="-c-tab" :loading="isFetching" :columns="columnsDetail" :data="dataListDetail" v-if="nowStatus === 1"></Table>
+      :title="nowStatus === 1 ? '人数记录' : '订单详情'">
+      <Table class="-c-tab" :loading="isFetching" :columns="orderInfo.orderType === 1 ? columnsDetail : columnsDetailTwo" :data="dataListDetail" v-if="nowStatus === 1"></Table>
 
       <Form ref="orderInfo" :model="orderInfo" :label-width="90" v-else>
         <div class="-p-o-flex">
@@ -325,6 +325,20 @@
             title: '助力后是否购买',
             render: (h, params)=> {
               return h('div', params.row.buyed ? '是' : '否')
+            },
+            align: 'center'
+          }
+        ],
+        columnsDetailTwo: [
+          {
+            title: '用户昵称',
+            key: 'nickname',
+            align: 'center'
+          },
+          {
+            title: '邀请时间',
+            render: (h, params) => {
+              return h('div', dayjs(+params.row.gmtCreate).format("YYYY-MM-DD HH:mm"))
             },
             align: 'center'
           }
