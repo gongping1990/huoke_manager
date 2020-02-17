@@ -276,7 +276,7 @@
                   },
                   style: {
                     color: '#5444E4',
-                    display: (params.row.orderType == '1' || params.row.orderType == '3') ? 'inline-block' : 'none',
+                    display: (params.row.orderType == '1' || params.row.orderType == '2') ? 'inline-block' : 'none',
                   },
                   on: {
                     click: () => {
