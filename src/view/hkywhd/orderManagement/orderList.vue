@@ -178,6 +178,14 @@
           {
             name: '邀请好友解锁课程',
             id: '1'
+          },
+          {
+            name: '组队领课',
+            id: '2'
+          },
+          {
+            name: '分享免费领课',
+            id: '3'
           }
         ],
         orderType: ['单独购买', '团体拼课', '好友助力','秒杀订单'],
@@ -236,28 +244,6 @@
             align: 'center'
           },
           {
-            title: '分享次数',
-            key: 'shareNum',
-            align: 'center'
-          },
-          {
-            title: '助力人数',
-            render: (h, params) => {
-              return h('span', {
-                style: {
-                  color: '#5444E4',
-                  cursor: 'pointer'
-                },
-                on: {
-                  click: () => {
-                    this.openModal(params.row, 1)
-                  }
-                }
-              }, params.row.invitedUserCount || 0)
-            },
-            align: 'center'
-          },
-          {
             title: '创建时间',
             render: (h, params) => {
               return h('div', dayjs(+params.row.gmtCreate).format("YYYY-MM-DD HH:mm"))
@@ -283,6 +269,21 @@
                     }
                   }
                 }, '订单详情'),
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: '#5444E4',
+                    display: (params.row.orderType == '1' || params.row.orderType == '3') ? 'inline-block' : 'none',
+                  },
+                  on: {
+                    click: () => {
+                      this.openModal(params.row,1)
+                    }
+                  }
+                }, `${params.row.orderType == '1' ? '助力人数' :'邀请人数'}(${params.row.invitedUserCount || 0})`),
                 h('Button', {
                   props: {
                     type: 'text',
