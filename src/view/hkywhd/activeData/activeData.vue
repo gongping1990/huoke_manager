@@ -10,6 +10,7 @@
         </div>
       </Col>
     </Row>
+
     <Card class="p-activeData-top">
       <div class="p-activeData-title">
         <div class="-left">
@@ -32,6 +33,27 @@
             </div>
           </Col>
         </Row>
+      </div>
+    </Card>
+
+    <Card class="p-activeData-top" v-if="selectTypeOne === 2">
+      <div class="p-activeData-title -three">
+        <div class="-left">
+          <img src="../../../assets/images/icon/icon7.png"/>
+          <span>数据漏斗</span>
+        </div>
+        <div class="g-flex-a-j-center">
+          <div class="-search-select-text">日期查询：</div>
+          <Select v-model="selectTypeTwo" class="-search-selectOne" @on-change="changeTimeTwo">
+            <Option label='最近一月' :value="1"></Option>
+            <Option label='自定义' :value="2"></Option>
+          </Select>
+          <date-picker-template v-if="selectTypeTwo===2" :dataInfo="dateOption"
+                                @changeDate="changeDateTwo"></date-picker-template>
+        </div>
+      </div>
+      <div class="-c-tab -p-d-echart">
+        <div ref="echartTwo" class="-p-c-contentTwo"></div>
       </div>
     </Card>
 
@@ -65,12 +87,14 @@
   // 引入柱状图
   import "echarts/lib/chart/bar";
   import "echarts/lib/chart/line";
+  import "echarts/lib/chart/funnel";
   import "echarts/lib/component/title";
   import "echarts/lib/component/legend";
   import "echarts/lib/component/toolbox";
   import "echarts/lib/component/markPoint";
   import "echarts/lib/component/tooltip";
   import "echarts/lib/component/dataZoom";
+
   import DatePickerTemplate from "../../../components/datePickerTemplate";
 
   export default {
@@ -80,6 +104,7 @@
       return {
         radioType: 0,
         selectTypeThree: 1,
+        selectTypeTwo: 1,
         selectTypeOne: 1,
         dateOptionOne: {
           disabledDate(date) {
@@ -95,7 +120,9 @@
         todayInfo: '',
         selectTime: new Date(new Date().getTime() - 24 * 60 * 60 * 1000),
         getStartTimeThree: '',
+        getStartTimeTwo: '',
         getEndTimeThree: '',
+        getEndTimeTwo: '',
         nowList: [],
         titleListOne: [],
         titleListTwo: [],
@@ -126,23 +153,16 @@
       },
       optionSeriesLineOne() {
         let dataList = {
-          firstStartActivityCount: [],
-          shareCount: []
+          shareFreeSuccessCount: []
         }
         for (let item of this.dataInfo) {
-          dataList.firstStartActivityCount.push(item.firstStartActivityCount)
-          dataList.shareCount.push(item.shareCount)
+          dataList.shareFreeSuccessCount.push(item.shareFreeSuccessCount)
         }
         let optionSeriesLine = [
           {
-            name: '分享次数',
-            type: 'line',
-            data: dataList.firstStartActivityCount
-          },
-          {
             name: '领课成功数',
             type: 'line',
-            data: dataList.joinActivityCount
+            data: dataList.shareFreeSuccessCount
           }
         ]
         return optionSeriesLine
@@ -165,28 +185,23 @@
         let optionSeriesLine = [
           {
             name: '页面访问人数',
-            type: 'line',
-            data: dataList.firstStartActivityCount
+            value: dataList.firstStartActivityCount
           },
           {
             name: '参加组队活动人数',
-            type: 'line',
-            data: dataList.joinActivityCount
+            value: dataList.joinActivityCount
           },
           {
             name: '海报分享次数',
-            type: 'line',
-            data: dataList.activitySuccessCount
+            value: dataList.activitySuccessCount
           },
           {
             name: '领课成功数',
-            type: 'line',
-            data: dataList.shareCount
+            value: dataList.shareCount
           },
           {
             name: '公众号新增关注人数',
-            type: 'line',
-            data: dataList.orderHelpOrderCount
+            value: dataList.orderHelpOrderCount
           }
         ]
         return optionSeriesLine
@@ -263,7 +278,7 @@
             break
           case 2:
             this.nowList = this.titleListTwo
-            this.drawLineTwo()
+            this.getGroupFreeData()
             break
           case 3:
             this.nowList = this.titleListThree
@@ -276,10 +291,20 @@
           this.getActivityData()
         }
       },
+      changeTimeTwo () {
+        if(this.selectTypeTwo == 1) {
+          this.getGroupFreeData()
+        }
+      },
       changeDateThree(data) {
         this.getStartTimeThree = data.startTime
         this.getEndTimeThree = data.endTime
         this.getActivityData()
+      },
+      changeDateTwo(data) {
+        this.getStartTimeTwo = data.startTime
+        this.getEndTimeTwo = data.endTime
+        this.getGroupFreeData()
       },
       getActivityData() {
         this.$api.hkywhdActivity.getActivityData({
@@ -295,6 +320,20 @@
           .finally(() => {
             this.isFetching = false
           })
+      },
+      getGroupFreeData() {
+        this.$api.hkywhdActivity.getGroupFreeData({
+          startTime: this.getStartTimeThree && new Date(this.getStartTimeThree).getTime(),
+          startTime1: this.getStartTimeThree && new Date(this.getStartTimeThree).getTime(),
+          endTime: this.getEndTimeThree && new Date(this.getEndTimeThree).getTime(),
+          endTime1: this.getEndTimeThree && new Date(this.getEndTimeThree).getTime()
+        })
+          .then(
+            response => {
+              this.todayInfo = response.data.resultData;
+              this.dataInfo = this.todayInfo.list
+              this.drawLineTwo()
+            })
       },
       drawLineOne() {
         let self = this;
@@ -314,10 +353,6 @@
           },
           legend: {
             data: [
-              {
-                name: '分享次数',
-                icon: 'circle'
-              },
               {
                 name: '领课成功数',
                 icon: 'circle'
@@ -354,22 +389,16 @@
         myChart.hideLoading()
       },
       drawLineTwo() {
-        let self = this;
-        let myChart = echarts.init(this.$refs.echart);
+        let myChart = echarts.init(this.$refs.echartTwo);
         myChart.clear();
         myChart.resize();
         // 绘制图表
         myChart.setOption({
-          tooltip: {
-            trigger: 'axis',
-            axisPointer: {
-              type: 'line'
-            },
-            textStyle: {
-              align: 'left'
-            }
-          },
+          // tooltip: {
+          //   trigger: 'item'
+          // },
           legend: {
+            selectedMode: false,
             data: [
               {
                 name: '页面访问人数',
@@ -392,29 +421,25 @@
                 icon: 'circle'
               }
             ],
-            right: '5%'
           },
-          xAxis: {
-            boundaryGap: false,
-            axisTick: {
-              alignWithLabel: true
+          series: {
+            type: 'funnel',
+            minSize: '0%',
+            maxSize: '100%',
+            gap: 3,
+            emphasis: {
+              label: {
+                fontSize: 20
+              }
             },
-            data: this.dateTypesLine
+            label: {
+              show: true,
+              position: 'center',
+              formatter: `{b}: {c}%`
+            },
+            data: this.optionSeriesLineTwo
           },
-          grid: {
-            left: '6%',
-            top: '13%',
-            right: '5%'
-          },
-          yAxis: {
-            name: '单位（人）'
-          },
-          series: this.optionSeriesLineTwo,
-          dataZoom: [
-            {
-              type: "slider"
-            }
-          ],
+          color: ['#FF6F43', '#FFAB40', '#FFD54F', '#80CBC4']
         })
 
         window.addEventListener("resize", () => {
@@ -498,17 +523,10 @@
       initData() {
         this.titleListOne = [
           {
-            name: '今日分享次数',
-            num: this.todayInfo.firstStartActivityCount,
-            todayName: '累计海报分享次数',
-            todayNum: this.todayInfo.allFirstStartActivityCount
-
-          },
-          {
             name: '今日领课成功数',
-            num: this.todayInfo.shareCount,
+            num: this.todayInfo.shareFreeSuccessCount,
             todayName: '累计领课成功数',
-            todayNum: this.todayInfo.allShareCount
+            todayNum: this.todayInfo.allShareFreeSuccessCount
           }
         ]
         this.titleListTwo = [
@@ -533,15 +551,15 @@
           },
           {
             name: '今日领课成功数',
-            num: this.todayInfo.activitySuccessCount,
+            num: this.todayInfo.newGroupFreeCount,
             todayName: '累计领课成功数',
-            todayNum: this.todayInfo.allActivitySuccessCount
+            todayNum: this.todayInfo.allNewGroupFreeCount
           },
           {
             name: '今日公众号新增关注人数',
-            num: this.todayInfo.orderHelpOrderCount,
+            num: this.todayInfo.subscribeUserCount,
             todayName: '累计公众号新增关注人数',
-            todayNum: this.todayInfo.allOrderHelpOrderCount
+            todayNum: this.todayInfo.allSubscribeUserCount
           }
         ]
         this.titleListThree = [
@@ -728,6 +746,13 @@
       /*background-color: red;*/
       /*overflow: hidden;*/
     }
+
+    .-p-c-contentTwo {
+      margin: 0 auto;
+      width: 600px;
+      height: 331px;
+    }
+
     .-p-d-red {
       color: #fe4758
     }
