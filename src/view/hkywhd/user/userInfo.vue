@@ -195,6 +195,7 @@
     },
     methods: {
       changeRadio () {
+        console.log(this.searchInfo.appId,111)
         this.appList.forEach(item=> {
           if(item.id === this.searchInfo.appId) {
             this.dataItem = item
@@ -231,22 +232,35 @@
       },
       listBase() {
         this.appList = []
-        this.$api.hkywhdBook.listAll()
+        this.$api.hkywhdOrder.listBuyedBook({
+          uid: this.$route.query.id || this.userId
+        })
           .then(response => {
             this.appList = response.data.resultData
-            this.searchInfo.appId = this.appList[0].id
+            this.searchInfo.appId = this.appList.length && this.appList[0].id
+            this.searchInfo.tbookId = this.appList.length && this.appList[0].tbookId
+            this.searchInfo.type = this.appList.length && this.appList[0].type
+
             if(this.$route.query.id || this.userId) {
               this.listLessonProgress()
+              this.changeRadio()
               this.getStudent()
             }
           })
       },
       //分页查询
       listLessonProgress() {
-        this.$api.hkywhdStatistics.getUserLearnStatistics({
+        let params = {
           userId: this.$route.query.id || this.userId,
-          bookId: this.searchInfo.appId
-        })
+        }
+
+        if (this.searchInfo.type) {
+          params.tbookId = this.searchInfo.tbookId
+        } else {
+          params.bookId = this.searchInfo.appId
+        }
+
+        this.$api.hkywhdStatistics.getUserLearnStatistics(params)
           .then(
             response => {
               this.userInfo = response.data.resultData

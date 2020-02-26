@@ -53,7 +53,7 @@
       },
       getList() {
         this.isFetching = true
-        this.$api.jsdKfteacher.list({
+        this.$api.jsdKfteacher.selectTeacher({
           courseId: this.dataItem.courseId
         })
           .then(

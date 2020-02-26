@@ -9,6 +9,7 @@ import {hkywIndex} from './hkyw/hkywIndex'
 import {jsdIndex} from './jsd/jsdIndex'
 import {fxglIndex} from './fxgl/fxglIndex'
 import {hkywhdIndex} from './hkywhd/hkywhdIndex'
+import {xxbIndex} from './xxb/xxbIndex'
 
 export default {
   ...hkxtIndex,
@@ -21,5 +22,6 @@ export default {
   ...hkywIndex,
   ...jsdIndex,
   ...fxglIndex,
-  ...hkywhdIndex
+  ...hkywhdIndex,
+  ...xxbIndex
 }

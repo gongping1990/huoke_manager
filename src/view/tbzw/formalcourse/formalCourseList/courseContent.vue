@@ -80,6 +80,12 @@
         <Form-item label="ipad视频" v-show="modalType===6" class="-c-form-item">
           <upload-video ref="childVideo" v-model="detailInfo.ipadUrl" :option="uploadVideoOption"></upload-video>
         </Form-item>
+        <Form-item label="字源图" v-show="modalType===7" class="-c-form-item">
+          <upload-img v-model="detailInfo.etymology" :option="uploadOption"></upload-img>
+        </Form-item>
+        <Form-item label="演化图" v-show="modalType===7" class="-c-form-item">
+          <upload-img v-model="detailInfo.evolution" :option="uploadOption"></upload-img>
+        </Form-item>
         <Form-item label="笔画动图" v-show="modalType===7" class="-c-form-item">
           <upload-img v-model="detailInfo.strokeImg" :option="uploadOption"></upload-img>
         </Form-item>
@@ -102,7 +108,7 @@
       :title="addInfo.id ? '编辑课时' : '新增课时'">
       <Form :model="addInfo" ref="addInfoAdd" :label-width="120" :rules="ruleValidateAdd">
         <FormItem label="课时类型" prop="category">
-          <Select v-model="addInfo.category" :disabled="addInfo.id!=''">
+          <Select v-model="addInfo.category" :disabled="(addInfo.id!='') || $route.query.type == '3'">
             <Option label="作文课" value="1"></Option>
             <Option label="读写课" value="2"></Option>
             <Option label="写字课" value="3"></Option>
@@ -149,6 +155,9 @@
 
     <learn-content-template v-model="isOpenModalLearn" :data-info="dataItem"
                             @successData="getList"></learn-content-template>
+
+    <audio-content-template v-model="isOpenModalAudio" :data-info="dataItem"
+                            @successData="getList"></audio-content-template>
   </div>
 </template>
 
@@ -161,10 +170,13 @@
   import UploadAudio from "@/components/uploadAudio";
   import ChoiceQuestion from "./choiceQuestion";
   import LearnContentTemplate from "./learnContentTemplate";
+  import AudioContentTemplate from "./audioContentTemplate";
 
   export default {
     name: 'tbzw_forma_courseContent',
-    components: {LearnContentTemplate, ChoiceQuestion, UploadAudio, Operation, UploadVideo, UploadImg, Editor},
+    components: {
+      AudioContentTemplate,
+      LearnContentTemplate, ChoiceQuestion, UploadAudio, Operation, UploadVideo, UploadImg, Editor},
     data() {
       return {
         baseUrl: `${getBaseUrl()}/sch/common/uploadPublicFile`, // 公有 （图片）
@@ -195,7 +207,8 @@
           '5': '作业',
           '6': '视频内容',
           '7': '笔画特写',
-          '8': '书写要点'
+          '8': '书写要点',
+          '9': '批改模板'
         },
         lessonTextObj: {
           '1': '作文课',
@@ -214,6 +227,7 @@
         isOpenModalAdd: false,
         isOpenModalContent: false,
         isOpenModalLearn: false,
+        isOpenModalAudio: false,
         isOpenLevel: false,
         modalType: '',
         addInfo: {
@@ -405,7 +419,22 @@
                       this.openModalLearn(params.row)
                     }
                   }
-                }, '书写要点')
+                }, '书写要点'),
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    display: params.row.category === 3 ? 'inline-block' : 'none',
+                    color: '#5444E4'
+                  },
+                  on: {
+                    click: () => {
+                      this.openModalAudio(params.row)
+                    }
+                  }
+                }, '批改模板')
               ])
             }
           },
@@ -514,6 +543,7 @@
             workImg: '',
             cpi: '',
             coverphoto: '',
+            category: this.$route.query.type == '3' ? this.$route.query.type.toString() : '',
           }
         }
       },
@@ -554,6 +584,10 @@
       },
       openModalLearn(data) {
         this.isOpenModalLearn = true
+        this.dataItem = JSON.parse(JSON.stringify(data))
+      },
+      openModalAudio(data) {
+        this.isOpenModalAudio = true
         this.dataItem = JSON.parse(JSON.stringify(data))
       },
       openModalLearnAndUse(data) {
@@ -857,6 +891,10 @@
       submitStrokeImg() {
         if (!this.detailInfo.strokeImg) {
           return this.$Message.error('请上传笔画特写图片')
+        } else if (!this.detailInfo.etymology) {
+          return this.$Message.error('请上传字源图')
+        } else if (!this.detailInfo.evolution) {
+          return this.$Message.error('请上传演化图')
         } else if (!this.detailInfo.stroke) {
           return this.$Message.error('请输入文字笔画')
         }
@@ -864,6 +902,8 @@
         this.$api.tbzwLesson.saveStrokeImgById({
           lessonId: this.dataItem.id,
           strokeImg: this.detailInfo.strokeImg,
+          evolution: this.detailInfo.evolution,
+          etymology: this.detailInfo.etymology,
           stroke: this.detailInfo.stroke
         })
           .then(response => {

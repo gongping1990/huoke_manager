@@ -96,11 +96,16 @@
           <FormItem label="单独购价格" prop="ddgPrice">
             <Input type="text" v-model="addInfo.ddgPrice" placeholder="请输入单独购价格"></Input>
           </FormItem>
+          <FormItem label="推送文案">
+            <Input type="text" v-model="addInfo.pushMsg" placeholder="请输入推送文案"></Input>
+          </FormItem>
+          <div class="-title-des">邀请好友助力活动</div>
           <FormItem label="是否开启活动">
             <RadioGroup v-model="addInfo.open">
               <Radio :label=1>开启</Radio>
               <Radio :label=0>关闭</Radio>
             </RadioGroup>
+            <p class="-c-tips">活动开启后，用户参加活动，并达到邀请人数时即可解锁剩余课程</p>
           </FormItem>
           <FormItem label="活动价格">
             <Input type="text" v-model="addInfo.activityPrice" placeholder="请输入活动价格"></Input>
@@ -111,8 +116,24 @@
           <FormItem label="解锁课时数">
             <Input type="text" v-model="addInfo.unlockNums" placeholder="请输入解锁课时数"></Input>
           </FormItem>
-          <FormItem label="推送文案">
-            <Input type="text" v-model="addInfo.pushMsg" placeholder="请输入推送文案"></Input>
+          <div class="-title-des">分享免费领课活动</div>
+          <FormItem label="是否开启活动">
+            <RadioGroup v-model="addInfo.openFree">
+              <Radio :label=1>开启</Radio>
+              <Radio :label=0>关闭</Radio>
+            </RadioGroup>
+            <p class="-c-tips">活动开启后，用户在领取免费课程时需要分享后才能领取</p>
+          </FormItem>
+          <div class="-title-des">组队领课活动</div>
+          <FormItem label="是否开启活动">
+            <RadioGroup v-model="addInfo.groupFree">
+              <Radio :label=1>开启</Radio>
+              <Radio :label=0>关闭</Radio>
+            </RadioGroup>
+            <p class="-c-tips">活动开启后，用户参加组队活动，并达到邀请人数时可免费领课</p>
+          </FormItem>
+          <FormItem label="邀请人数">
+            <Input type="text" v-model="addInfo.groupFreeNums" placeholder="请输入邀请人数"></Input>
           </FormItem>
         </Form>
         <Form ref="addInfo" :model="addInfo" :label-width="110" v-if="modalType === 3" class="ivu-form-item-required">
@@ -436,6 +457,8 @@
             this.addInfo = response.data.resultData
             this.addInfo.tbookId = data.id
             this.addInfo.open = this.addInfo.open ? 1 : 0
+            this.addInfo.groupFree = this.addInfo.groupFree ? 1 : 0
+            this.addInfo.openFree = this.addInfo.openFree ? 1 : 0
             this.addInfo.ddgPrice = this.addInfo.ddgPrice / 100
             this.addInfo.oriPrice = this.addInfo.oriPrice / 100
             this.addInfo.activityPrice = this.addInfo.activityPrice / 100
@@ -595,6 +618,8 @@
           return this.$Message.error('请输入邀请人数')
         } else if (this.addInfo.open === 1 && !this.addInfo.unlockNums) {
           return this.$Message.error('请输入解锁课时数')
+        } else if (this.addInfo.groupFree === 1 && !this.addInfo.groupFreeNums) {
+          return this.$Message.error('请输入组队领课邀请人数')
         } else if (!this.addInfo.pushMsg) {
           return this.$Message.error('请输入推送文案')
         }
@@ -609,7 +634,10 @@
           invites: this.addInfo.invites,
           unlockNums: this.addInfo.unlockNums,
           pushMsg: this.addInfo.pushMsg,
-          open: this.addInfo.open === 1
+          groupFreeNums: this.addInfo.groupFreeNums,
+          open: this.addInfo.open === 1,
+          groupFree: this.addInfo.groupFree === 1,
+          openFree: this.addInfo.openFree === 1,
         }
 
         let paramsUrl = this.addInfo.id ? this.$api.hkywhdActivity.uptNewActivity({
@@ -667,6 +695,12 @@
 
 <style lang="less" scoped>
   .p-course {
+
+    .-title-des {
+      padding: 20px 0 10px;
+      font-size: 16px;
+      border-top: 1px dashed #B3B5B8;
+    }
 
     .-search-select-text {
       min-width: 70px;

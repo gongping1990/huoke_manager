@@ -19,6 +19,9 @@ const hkywhdOrder = {
   getOrderHelpUser(params) {
     return axios.get(`/fissionprep/order/getOrderHelpUser`, {params})
   },
+  listBuyedBook(params) {
+    return axios.get(`/fissionprep/order/listBuyedBook`, {params})
+  },
   refund(params) {
     return axios.post("/fissionprep/order/refund", qs.stringify(params));
   },

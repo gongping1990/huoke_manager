@@ -22,6 +22,9 @@ const jsdKfteacher = {
   },
   list(params) {
     return axios.get("/homework/kfteacher/list", {params: params});
+  },
+  selectTeacher(params) {
+    return axios.get("/homework/kfteacher/selectTeacher", {params: params});
   }
 }
 
