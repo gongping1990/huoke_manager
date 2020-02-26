@@ -11,6 +11,7 @@ import { yhzxRouter } from "./routerSilder/yhzx";
 import { jsdRouter } from "./routerSilder/jsd";
 import { fxglRouter } from "./routerSilder/fxgl";
 import { hkywhdRouter } from "./routerSilder/hkywhd";
+import { xxbRouter } from "./routerSilder/xxb";
 // import err404 from '@/pages/404'
 //otherRouter
 // import home from '@/pages/home'
@@ -249,6 +250,7 @@ export const routers = [
   ...yhzxRouter,
   ...jsdRouter,
   ...fxglRouter,
+  ...xxbRouter,
   {
     path: "/correct",
     name: "correct",

@@ -12,6 +12,9 @@ const activity = {
   getActivityById(params) {
     return axios.get(`/fissionprep/activity/getActivityById`, {params})
   },
+  getGroupFreeData(params) {
+    return axios.get(`/fissionprep/activity/getGroupFreeData`, {params})
+  },
   getActivityByTbookId(params) {
     return axios.get(`/fissionprep/activity/getActivityByTbookId`, {params})
   },

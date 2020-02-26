@@ -1,5 +1,5 @@
 <template>
-  <div class="_write">
+  <div class="_write" @mouseup="onMouseup($event, 1)">
     <div class="nav-left">
       <div class="nav-header">勾画工具</div>
       <div class="nav-content">
@@ -9,7 +9,7 @@
               v-for="i in 40"
               :key="i"
               v-if="!(i % 2) && i > 6"
-              draggable
+              :draggable="activeIndex != -1"
               :style="{ width: i + 'px', height: i + 'px' }"
               @dragstart="ondragstart($event, '#FF5959')"
             ></div>
@@ -19,7 +19,7 @@
               v-for="i in 40"
               :key="i"
               v-if="!(i % 2) && i > 6"
-              draggable
+              :draggable="activeIndex != -1"
               :style="{
                 width: i + 'px',
                 height: i + 'px',
@@ -35,7 +35,13 @@
       </div>
     </div>
     <div class="content">
-      <div ref="template" class="template" @drop="ondrop" @dragover="allowDrop">
+      <div
+        ref="template"
+        class="template"
+        :style="{ 'background-image': `url(${workData.workImgSrc})` }"
+        @drop="ondrop"
+        @dragover="allowDrop"
+      >
         <div
           class="template-chart"
           :class="{ show: !isWatch || item.time <= currentTime }"
@@ -50,28 +56,35 @@
           }"
         ></div>
       </div>
-      <div class="content-nav">
+      <div class="content-nav-btn fixed" @click="showMsg2 = true">切换模板</div>
+      <div class="content-nav" v-if="activeIndex > -1">
         <div class="content-nav-btn" @click="showMsg2 = true">切换模板</div>
         <div class="content-control">
           <div class="content-control-progress">
             <span>{{ currentTime | formateTime }}</span>
-            <div class="content-progress">
+            <div
+              ref="progress"
+              class="content-progress"
+              @mousedown="onMousedown"
+              @mousemove="onMousemove"
+              @mouseup="onMouseup"
+            >
               <div
                 class="content-progress-bar"
                 :style="{ width: progress + '%' }"
               ></div>
               <div
                 class="content-progress-point"
-                v-for="(item, i) in timePoint"
+                v-for="(item, i) in templateData.tags"
                 v-if="duration"
-                :key="i"
-                :style="{ left: (item / duration) * 100 + '%' }"
+                :key="i + 'point'"
+                :style="{ left: (item.time / duration) * 100 + '%' }"
               >
                 <Poptip trigger="hover" content="content">
-                  <span @click="setTime(item)"></span>
+                  <span @click.stop="setTime(item.time)"></span>
                   <div slot="content">
                     <p class="content-progress-time">
-                      {{ item | formateTime }}
+                      {{ item.time | formateTime }}
                     </p>
                   </div>
                 </Poptip>
@@ -79,7 +92,7 @@
               <div
                 class="content-progress-bj"
                 v-for="(item, i) in chartList"
-                :key="i"
+                :key="i + 'bj'"
                 :style="{ left: item.progress + '%' }"
               >
                 <Poptip trigger="hover" content="content">
@@ -113,7 +126,9 @@
           <span
             >({{ item.time | formateTime }}) ({{ item.x }},{{ item.y }})
           </span>
-          <div class="chart-icon">{{ i + 1 }}</div>
+          <div class="chart-icon" :style="{ background: item.color }">
+            {{ i + 1 }}
+          </div>
           <i class="nav-edit-icon" @click="onClickEdit(item, i)"></i>
           <Icon
             type="ios-close-circle-outline"
@@ -124,12 +139,12 @@
       </div>
       <div class="nav-footer">
         <div class="nav-btn" @click="onClickWatch">预览</div>
-        <div class="nav-btn suc" @click="showMsg = true">保存</div>
+        <div class="nav-btn suc" @click="onChangeSavePop">保存</div>
       </div>
       <div class="nav-right-icon" @click="showRightNav = !showRightNav">
         <Icon color="#C2C9D7" size="24" type="md-arrow-dropleft" />
       </div>
-      <audio class="audio" ref="audio" :src="audioUrl"></audio>
+      <audio class="audio" ref="audio" :src="templateData.audioUrl"></audio>
     </div>
     <Modal
       v-model="showEdit"
@@ -152,7 +167,7 @@
         <div class="_modal-body">
           <p class="_modal-text">确认保存</p>
           <div class="_modal-footer">
-            <div class="_modal-btn" @click="closePopup">取消</div>
+            <div class="_modal-btn" @click="onSaveCancel">取消</div>
             <div class="_modal-btn suc" @click="onSaveConfirm">确认</div>
           </div>
         </div>
@@ -169,7 +184,13 @@
             <div class="_modal-select">
               <span><i>*</i>语音模板</span>
               <Select v-model="templateVal" style="width:200px">
-                <Option :value="1">模板一</Option>
+                <Option
+                  :value="i"
+                  v-for="(item, i) in templateList"
+                  :key="item.id"
+                >
+                  模板一
+                </Option>
               </Select>
             </div>
             <div class="_modal-checkbox">
@@ -224,14 +245,21 @@ export default {
       currentTime: 0,
       duration: 0,
       editActive: 0,
-      templateVal: "",
+      templateVal: -1,
+      activeIndex: -1,
       elParams: {},
+      workData: {},
       chartList: [],
+      templateList: [],
       timePoint: [5310, 7320, 8900],
       editTime: {
         min: 0,
         sec: 0,
         mil: 0
+      },
+      mouseParams: {
+        start: false,
+        x: 0
       }
     };
   },
@@ -253,10 +281,42 @@ export default {
   computed: {
     progress() {
       let { currentTime, duration } = this;
+      if (!duration) return 0;
       return (currentTime / duration) * 100;
+    },
+    templateData() {
+      if (!this.templateList.length || this.activeIndex == -1) return {};
+      return this.templateList[this.activeIndex];
     }
   },
   methods: {
+    onMousedown(e) {
+      this.mouseParams.start = true;
+      this.audioRef.pause();
+    },
+    onMousemove(e) {
+      let { mouseParams } = this;
+      if (!mouseParams.start) return;
+      this.setProgress(e);
+      // this.mouseParams.x = e.offsetX;
+    },
+    onMouseup(e, type) {
+      let { mouseParams } = this;
+      this.mouseParams.start = false;
+      if (!type) this.setProgress(e, 1);
+    },
+    setProgress(e, type) {
+      let { duration } = this;
+      let { progress } = this.$refs;
+      let { clientX } = e;
+      let { offsetWidth } = progress;
+      let offsetX = clientX - this.getOffset(progress);
+      let _progress = offsetX / offsetWidth;
+      let currentTime = parseInt(duration * _progress);
+      this.currentTime = currentTime;
+      type && this.audioRef.play();
+      this.audioRef.currentTime = this.currentTime / 1000;
+    },
     setTime(time) {
       this.audioRef.currentTime = time / 1000;
       this.audioRef.pause();
@@ -267,16 +327,30 @@ export default {
       this.audioRef.play();
     },
     onChangeTemplateConfirm() {
-      if (!templateVal) {
+      console.log(this.templateVal);
+      if (this.templateVal == -1) {
         this.$Message.error({
           background: true,
           content: "请选择要切换的模板"
         });
         return;
       }
+      if (this.isClear) {
+        this.onClear();
+      }
+      this.activeIndex = this.templateVal;
       this.closePopup();
     },
-    onSaveConfirm() {},
+    onSaveCancel() {
+      this.closePopup();
+    },
+    onChangeSavePop() {
+      this.audioRef.pause();
+      this.showMsg = true;
+    },
+    onSaveConfirm() {
+      this.addTimeTag();
+    },
     onDeleteConfirm() {
       let { editActive } = this;
       this.closePopup();
@@ -288,7 +362,7 @@ export default {
       this.showMsg2 = false;
     },
     onEditcomfirm() {
-      let { chartList, editActive } = this;
+      let { chartList, editActive, editTime } = this;
       let { min, sec, mil } = editTime;
       let _min = min * 60 * 1000;
       let _sec = sec * 1000;
@@ -306,8 +380,9 @@ export default {
       this.showEdit = false;
     },
     onClickEdit(item, i) {
+      console.log(item);
       this.editActive = i;
-      let { min, sec, mil } = item.formatTime.min;
+      let { min, sec, mil } = item.formatTime;
       this.editTime = {
         min,
         sec,
@@ -366,6 +441,7 @@ export default {
       };
 
       this.chartList.push(obj);
+      this.audioRef.play();
       ev.preventDefault();
       // ev.preventDefault();
       // var data = ev.dataTransfer.getData("Text");
@@ -382,10 +458,58 @@ export default {
         offsetLeft += this.getOffset(parent, type);
       }
       return offsetLeft;
+    },
+    addTimeTag() {
+      let tags = this.chartList.map(e => {
+        return {
+          x: (e.x / 1.2).toFixed(2),
+          y: (e.y / 1.2).toFixed(2),
+          time: e.time,
+          color: e.color,
+          width: e.w
+        };
+      });
+      this.$api.tbzwStudy
+        .addTimeTag({
+          tags: JSON.stringify(tags),
+          tmplId: this.templateData.id,
+          wid: this.$route.query.workId
+        })
+        .then(({ data }) => {
+          this.$Message.success({
+            background: true,
+            content: "保存成功！"
+          });
+          this.closePopup();
+        });
+    },
+    getListAudioTmpl() {
+      this.$api.tbzwLesson
+        .listAudioTmpl({
+          lessonId: this.$route.query.id
+        })
+        .then(({ data }) => {
+          this.templateList = data.resultData;
+        });
+    },
+    getViewWork() {
+      this.$api.jsdJob
+        .viewWork({
+          system: this.$route.query.system,
+          workId: this.$route.query.workId
+        })
+        .then(({ data }) => {
+          this.workData = data.resultData;
+        });
+    },
+    onClear() {
+      this.chartList = [];
     }
   },
-
-  created() {},
+  created() {
+    this.getListAudioTmpl();
+    this.getViewWork();
+  },
   mounted() {
     this.templateRef = this.$refs.template;
     this.audioRef = this.$refs.audio;
@@ -398,6 +522,11 @@ export default {
     this.audioRef.onended = () => {
       console.log("end");
       this.ended = true;
+    };
+    this.audioRef.oncanplay = () => {
+      let { audioRef } = this;
+      console.log("oncanplay", audioRef.duration);
+      this.duration = parseInt(audioRef.duration * 1000);
     };
     this.audioRef.ontimeupdate = () => {
       let { audioRef } = this;
@@ -435,6 +564,7 @@ export default {
 }
 
 ._write {
+  position: relative;
   display: flex;
   ._modal {
     display: flex;
@@ -732,7 +862,7 @@ export default {
     .template {
       position: relative;
       margin-top: 80px;
-      width: 375px;
+      width: 380.4px;
       height: 667px;
       background: url("../../assets/images/zuoye.jpeg") no-repeat;
       background-size: 100%;
@@ -781,11 +911,19 @@ export default {
         font-size: 18px;
         font-weight: 500;
         color: rgba(255, 255, 255, 1);
+        &.fixed {
+          top: auto;
+          bottom: 100px;
+          left: 50%;
+          transform: translateX(-50%);
+        }
       }
     }
 
     &-control {
+      position: relative;
       &-progress {
+        position: relative;
         display: flex;
         align-items: center;
         & > span {

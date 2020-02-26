@@ -72,6 +72,9 @@
               </div>
             </div>
           </FormItem>
+          <FormItem label="班级人数" prop="offers" class="ivu-form-item-required">
+            <Input type="text" v-model="addInfo.offers" placeholder="请输入班级人数"></Input>
+          </FormItem>
         </Form>
         <div slot="footer" class="-p-b-flex">
           <Button @click="closeModal('addInfo')" ghost type="primary" style="width: 100px;">取消</Button>
@@ -381,6 +384,10 @@
           return this.$Message.error("请选择排课时间");
         } else if (!this.userImgList.length) {
           return this.$Message.error("请选择销售老师");
+        } else if (!this.addInfo.offers) {
+          return this.$Message.error("请输入班级人数");
+        } else if (this.addInfo.offers < 1) {
+          return this.$Message.error("班级人数必须大于0");
         }
 
         let passContent = this.addInfo.details.every((item) => {
@@ -410,6 +417,7 @@
           courseId: this.addInfo.courseId,
           rules: this.addInfo.rules.toString(),
           details: this.addInfo.classList,
+          offers: this.addInfo.offers,
           teacherIds: this.addInfo.teacherIds
         })
           .then(

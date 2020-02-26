@@ -158,6 +158,7 @@
             <Radio-group v-model="corType">
               <Radio :label="1">线上批改</Radio>
               <Radio :label="2">本地上传</Radio>
+              <Radio :label="3">勾画批改</Radio>
             </Radio-group>
           </FormItem>
           <FormItem
@@ -171,15 +172,41 @@
             <div class="p-todayWork-formItem">
               <div class="g-course-add-style" @click="openPictures">
                 <span>+</span>
-                <span>进入勾画批改</span>
-              </div>
-              <div class="g-course-add-style" @click="openPictures">
-                <span>+</span>
                 <span>进入在线批改</span>
               </div>
               <div class="g-course-add-style" @click="viewWork(addInfo, '1')">
                 <span>+</span>
                 <span>获取批改图片</span>
+              </div>
+            </div>
+
+            <div class="-c-course-wrap" v-if="addInfo.replyImgTmp.length">
+              <div
+                class="-c-course-item"
+                v-for="(item, index) of addInfo.replyImgTmp"
+                :key="index"
+              >
+                <img :src="item" />
+                <div class="-i-del" @click="delImg(item, index)">删除</div>
+              </div>
+            </div>
+          </FormItem>
+          <FormItem
+            label="线上勾画批改"
+            v-if="
+              addInfo.isPassed === 1 &&
+                addInfo.homeworkType === 2 &&
+                corType === 3
+            "
+          >
+            <div class="p-todayWork-formItem">
+              <div class="g-course-add-style" @click="openPictures(1)">
+                <span>+</span>
+                <span>进入勾画批改</span>
+              </div>
+              <div class="g-course-add-style" @click="viewWork(addInfo, '1')">
+                <span>+</span>
+                <span>获取批改数据</span>
               </div>
             </div>
 
@@ -1338,13 +1365,26 @@ export default {
     delImg(item, index) {
       this.addInfo.replyImgTmp.splice(index, 1);
     },
-    openPictures() {
-      window.open(
-        `${getVisitUrl()}/#/correct?system=${this.searchInfo.system}&courseId=${
-          this.addInfo.courseId
-        }&workId=${this.addInfo.workId}`,
-        "_blank"
-      );
+    openPictures(type) {
+      if (type) {
+        window.open(
+          `${getVisitUrl()}/#/writeCorrect?system=${
+            this.searchInfo.system
+          }&courseId=${this.addInfo.courseId}&workId=${
+            this.addInfo.workId
+          }&id=${this.addInfo.lessonId}`,
+          "_blank"
+        );
+      } else {
+        window.open(
+          `${getVisitUrl()}/#/correct?system=${
+            this.searchInfo.system
+          }&courseId=${this.addInfo.courseId}&workId=${
+            this.addInfo.workId
+          }&id=${this.addInfo.lessonId}`,
+          "_blank"
+        );
+      }
     },
     editPictures(data) {
       this.$Modal.confirm({
