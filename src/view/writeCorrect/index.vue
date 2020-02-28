@@ -145,7 +145,7 @@
       <div class="nav-right-icon" @click="showRightNav = !showRightNav">
         <Icon color="#C2C9D7" size="24" type="md-arrow-dropleft" />
       </div>
-      <audio class="audio" ref="audio" :src="templateData.audioUrl"></audio>
+      <audio class="audio" ref="audio" :src="templateData.audioPayUrl"></audio>
     </div>
     <Modal
       v-model="showEdit"
