@@ -306,9 +306,9 @@ export default {
     onMouseup(e, type) {
       let { mouseParams } = this;
       this.mouseParams.start = false;
-      if (!type) this.setProgress(e);
+      if (!type) this.setProgress(e, type);
     },
-    setProgress(e) {
+    setProgress(e, type) {
       let { duration } = this;
       let { progress } = this.$refs;
       let { clientX } = e;
@@ -341,6 +341,23 @@ export default {
         this.onClear();
       }
       this.activeIndex = this.templateVal;
+      if(this.workData.audioTags) {
+        setTimeout(() => {
+          this.chartList = this.workData.audioTags.map(e => {
+
+            return {
+              x: parseInt(e.x * 1.2),
+              y: parseInt(e.y * 1.2),
+              w:e.width,
+              color: e.color,
+              time: e.time,
+              _formatTime: this.formatTime(e.time,),
+              formatTime: this.formatTime(e.time,),
+              progress: (e.time / this.duration) * 100
+            }
+          })
+      }, 500);
+      }
       this.closePopup();
     },
     onSaveCancel() {
@@ -382,7 +399,6 @@ export default {
       this.showEdit = false;
     },
     onClickEdit(item, i) {
-      console.log(item);
       this.editActive = i;
       let { min, sec, mil } = item.formatTime;
       this.editTime = {
@@ -502,6 +518,11 @@ export default {
         })
         .then(({ data }) => {
           this.workData = data.resultData;
+          if(this.workData.audioTags) {
+            this.workData.audioTags = JSON.parse(this.workData.audioTags)
+          }
+
+
         });
     },
     onClear() {
