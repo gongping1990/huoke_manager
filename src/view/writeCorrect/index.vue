@@ -109,13 +109,11 @@
             <span>{{ duration | formateTime }}</span>
           </div>
           <div class="content-control-btn">
-            <div class="content-control-l-arrow"></div>
             <div
               class="content-control-play"
               :class="{ paused: isPaused }"
               @click="onPlay"
             ></div>
-            <div class="content-control-r-arrow"></div>
           </div>
         </div>
       </div>
@@ -308,9 +306,9 @@ export default {
     onMouseup(e, type) {
       let { mouseParams } = this;
       this.mouseParams.start = false;
-      if (!type) this.setProgress(e, 1);
+      if (!type) this.setProgress(e);
     },
-    setProgress(e, type) {
+    setProgress(e) {
       let { duration } = this;
       let { progress } = this.$refs;
       let { clientX } = e;
