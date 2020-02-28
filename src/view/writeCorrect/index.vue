@@ -189,7 +189,7 @@
                   v-for="(item, i) in templateList"
                   :key="item.id"
                 >
-                  模板一
+                  {{item.name}}
                 </Option>
               </Select>
             </div>
