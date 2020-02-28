@@ -84,7 +84,7 @@
                   <span @click.stop="setTime(item.time)"></span>
                   <div slot="content">
                     <p class="content-progress-time">
-                      {{ item.time | formateTime }}
+                      {{ item.name }}
                     </p>
                   </div>
                 </Poptip>
@@ -327,7 +327,6 @@ export default {
       this.audioRef.play();
     },
     onChangeTemplateConfirm() {
-      console.log(this.templateVal);
       if (this.templateVal == -1) {
         this.$Message.error({
           background: true,
@@ -863,7 +862,7 @@ export default {
       position: relative;
       margin-top: 80px;
       width: 380.4px;
-      height: 667px;
+      height: 465.6px;
       background: url("../../assets/images/zuoye.jpeg") no-repeat;
       background-size: 100%;
       background-color: rgba(255, 255, 255, 1);
