@@ -222,6 +222,16 @@
           ></upload-img>
         </Form-item>
         <Form-item
+          label="米子图"
+          v-show="modalType === 7"
+          class="-c-form-item"
+        >
+          <upload-img
+            v-model="detailInfo.meterImg"
+            :option="uploadOption"
+          ></upload-img>
+        </Form-item>
+        <Form-item
           label="笔画文字"
           v-show="modalType === 7"
           class="-c-form-item"
@@ -1168,6 +1178,8 @@ export default {
         return this.$Message.error("请上传字源图");
       } else if (!this.detailInfo.evolution) {
         return this.$Message.error("请上传演化图");
+      } else if (!this.detailInfo.meterImg) {
+        return this.$Message.error("请上传米字图");
       } else if (!this.detailInfo.stroke) {
         return this.$Message.error("请输入文字笔画");
       }
@@ -1176,6 +1188,7 @@ export default {
         .saveStrokeImgById({
           lessonId: this.dataItem.id,
           strokeImg: this.detailInfo.strokeImg,
+          meterImg: this.detailInfo.meterImg,
           evolution: this.detailInfo.evolution,
           etymology: this.detailInfo.etymology,
           stroke: this.detailInfo.stroke
