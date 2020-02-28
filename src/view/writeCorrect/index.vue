@@ -54,6 +54,7 @@
             top: item.y + 'px',
             'border-color': item.color
           }"
+          @click="clickChart(i)"
         ></div>
       </div>
       <div class="content-nav-btn fixed" @click="showMsg2 = true">切换模板</div>
@@ -122,7 +123,7 @@
     <div class="nav-right">
       <div class="nav-header">勾画记录</div>
       <div class="nav-list">
-        <div class="nav-item" v-for="(item, i) in chartList" :key="i">
+        <div class="nav-item" :class="{active: chartIndex == i}" v-for="(item, i) in chartList" :key="i">
           <span
             >({{ item.time | formateTime }}) ({{ item.x }},{{ item.y }})
           </span>
@@ -242,6 +243,7 @@ export default {
       ended: false,
       isPaused: false,
       isClear: false,
+      chartIndex: -1,
       currentTime: 0,
       duration: 0,
       editActive: 0,
@@ -290,6 +292,9 @@ export default {
     }
   },
   methods: {
+    clickChart(i) {
+      this.chartIndex = i
+    },
     onMousedown(e) {
       this.mouseParams.start = true;
       this.audioRef.pause();
@@ -688,6 +693,10 @@ export default {
       height: 29px;
       background: rgba(246, 246, 246, 1);
       border-radius: 10px;
+      &.active {
+        background: #aabaf7;
+        color: #fff;
+      }
       span {
         font-size: 16px;
         font-weight: 500;
