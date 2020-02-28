@@ -1366,7 +1366,7 @@ export default {
       this.addInfo.replyImgTmp.splice(index, 1);
     },
     openPictures(type) {
-      if (type) {
+      if (type == 1) {
         window.open(
           `${getVisitUrl()}/#/writeCorrect?system=${
             this.searchInfo.system
