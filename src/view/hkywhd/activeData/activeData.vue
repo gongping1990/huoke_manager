@@ -213,34 +213,34 @@
         return optionSeriesLine
       },
       optionSeriesFunnelTwo() {
-        let dataList = {
-          uv: [],
-          joinGroupFreeUserCount: [],
-          subscribeUserCount: []
-        }
-        for (let item of this.dataInfo) {
-          dataList.uv.push(item.uv)
-          dataList.joinGroupFreeUserCount.push(item.joinGroupFreeUserCount)
-          dataList.subscribeUserCount.push(item.subscribeUserCount)
-        }
+        // let dataList = {
+        //   uv: [],
+        //   joinGroupFreeUserCount: [],
+        //   subscribeUserCount: []
+        // }
+        // for (let item of this.dataInfo) {
+        //   dataList.uv.push(item.uv)
+        //   dataList.joinGroupFreeUserCount.push(item.joinGroupFreeUserCount)
+        //   dataList.subscribeUserCount.push(item.subscribeUserCount)
+        // }
         let optionSeriesLine = [
           {
             name: '页面访问人数',
-            value: dataList.uv,
+            value: this.todayInfo.allUv,
             color: '#FF6F43',
             text: ''
           },
           {
             name: '参加组队活动人数',
-            value: dataList.joinGroupFreeUserCount,
+            value: this.todayInfo.allJoinGroupFreeUserCount,
             color: '#FFAB40',
-            text: `参加活动比率${(dataList.joinGroupFreeUserCount / dataList.uv).toFixed(2)*100}%`
+            text: `参加活动比率${((this.todayInfo.allJoinGroupFreeUserCount / this.todayInfo.allUv)*100).toFixed(2)}%`
           },
           {
             name: '领课成功数',
-            value: dataList.subscribeUserCount,
+            value: this.todayInfo.allSubscribeUserCount,
             color: '#FFD54F',
-            text: `成功领课比率${(dataList.subscribeUserCount / dataList.joinGroupFreeUserCount).toFixed(2)*100}%`
+            text: `成功领课比率${((this.todayInfo.allSubscribeUserCount / this.todayInfo.allJoinGroupFreeUserCount)*100).toFixed(2)}%`
           }
         ]
         return optionSeriesLine
