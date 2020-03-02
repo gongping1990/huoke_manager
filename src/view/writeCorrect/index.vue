@@ -341,23 +341,7 @@ export default {
         this.onClear();
       }
       this.activeIndex = this.templateVal;
-      if(this.workData.audioTags) {
-        setTimeout(() => {
-          this.chartList = this.workData.audioTags.map(e => {
 
-            return {
-              x: parseInt(e.x * 1.2),
-              y: parseInt(e.y * 1.2),
-              w:e.width,
-              color: e.color,
-              time: e.time,
-              _formatTime: this.formatTime(e.time,),
-              formatTime: this.formatTime(e.time,),
-              progress: (e.time / this.duration) * 100
-            }
-          })
-      }, 500);
-      }
       this.closePopup();
     },
     onSaveCancel() {
@@ -508,6 +492,7 @@ export default {
         })
         .then(({ data }) => {
           this.templateList = data.resultData;
+          this.getViewWork();
         });
     },
     getViewWork() {
@@ -517,10 +502,34 @@ export default {
           workId: this.$route.query.workId
         })
         .then(({ data }) => {
+          let index = this.templateList.findIndex(e => {
+            return e.id == data.resultData.audioTmplId
+          })
           this.workData = data.resultData;
+          if(index != -1) {
+            this.activeIndex = this.templateVal = index
+          }
           if(this.workData.audioTags) {
             this.workData.audioTags = JSON.parse(this.workData.audioTags)
+            if(this.workData.audioTags) {
+                setTimeout(() => {
+                  this.chartList = this.workData.audioTags.map(e => {
+
+                    return {
+                      x: parseInt(e.x * 1.2),
+                      y: parseInt(e.y * 1.2),
+                      w:e.width,
+                      color: e.color,
+                      time: e.time,
+                      _formatTime: this.formatTime(e.time,),
+                      formatTime: this.formatTime(e.time,),
+                      progress: (e.time / this.duration) * 100
+                    }
+                  })
+              }, 1000);
+            }
           }
+
 
 
         });
@@ -531,7 +540,7 @@ export default {
   },
   created() {
     this.getListAudioTmpl();
-    this.getViewWork();
+
   },
   mounted() {
     this.templateRef = this.$refs.template;
