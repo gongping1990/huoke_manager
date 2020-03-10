@@ -13,6 +13,7 @@ import hkywhdHomePage from "./homePage";
 import hkywhdMaterial from "./material";
 import hkywhdUserMember from "./userMember";
 import hkywhdCompose from "./compose";
+import hkywhdTagManage from "./tagManage";
 
 
 export const hkywhdIndex = {
@@ -30,5 +31,6 @@ export const hkywhdIndex = {
   hkywhdHomePage,
   hkywhdMaterial,
   hkywhdUserMember,
-  hkywhdCompose
+  hkywhdCompose,
+  hkywhdTagManage
 }

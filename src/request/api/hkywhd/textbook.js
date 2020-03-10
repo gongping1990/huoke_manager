@@ -32,6 +32,9 @@ const hkywhdTextbook = {
   editSuggestedBook(params) {
     return axios.post('/fissionprep/textbook/editSuggestedBook', params)
   },
+  addBookTag(params) {
+    return axios.post('/fissionprep/textbook/addBookTag', params)
+  },
   lowerShelfTextBook(params) {
     return axios.get('/fissionprep/textbook/lowerShelfTextBook', {params: params})
   }
