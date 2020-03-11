@@ -1,6 +1,13 @@
 <template>
   <div class="p-weike">
     <Card>
+      <Row class="g-t-left">
+        <Radio-group v-model="radioType" type="button" @on-change="getList">
+          <Radio label='1'>语文</Radio>
+          <Radio label='2'>数学</Radio>
+          <Radio label='3'>英语</Radio>
+        </Radio-group>
+      </Row>
 
       <Table class="-c-tab" :loading="isFetching" :columns="columns" :data="dataList"></Table>
 
@@ -28,7 +35,7 @@
     components: {TreeTemplate},
     data() {
       return {
-
+        radioType: '1',
         selectInfo: {
           grade: '1',
           subject: '1',
@@ -135,10 +142,13 @@
         this.dataItem = data
         this.$refs.childTree.getList(data)
       },
-      getList(num) {
+      getList() {
         this.isFetching = true
-        this.$api.xxbYuke.getAllTeachEdtions()
+        this.$api.xxbYuke.getAllTeachEdtions({
+          subject: this.radioType
+        })
           .then(
+
             response => {
               this.dataList = response.data.resultData;
             })
