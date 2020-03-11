@@ -95,7 +95,7 @@
     <Modal
       class="p-coursePackage"
       v-model="isOpenModalGroup"
-      @on-cancel="closeModal()"
+      @on-cancel="isOpenModalGroup = false"
       width="500"
       :title="addInfoGroup.id ? '编辑标签组' : '创建标签组'">
       <Form ref="addInfoGroup" :model="addInfoGroup" :label-width="80" class="ivu-form-item-required">
@@ -114,7 +114,7 @@
         </FormItem>
       </Form>
       <div slot="footer" class="-p-b-flex">
-        <Button @click="closeModal()" ghost type="primary" style="width: 100px;">取消</Button>
+        <Button @click="isOpenModalGroup = false" ghost type="primary" style="width: 100px;">取消</Button>
         <div @click="submitInfoGroup()" class="g-primary-btn "> {{isSending ? '提交中...' : '确 认'}}</div>
       </div>
     </Modal>
@@ -550,6 +550,9 @@
           })
       },
       submitInfoGroup() {
+        if (this.addInfoGroup.type === 1 && !this.addInfoGroup.tagIds.length) {
+          return this.$Message.error('请选择标签')
+        }
         this.$api.hkywhdCompose.addBookComposeTag({
           bookId: this.dataItem.id,
           tagIds: this.addInfoGroup.type ? this.addInfoGroup.tagIds : []

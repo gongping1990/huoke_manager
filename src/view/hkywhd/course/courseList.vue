@@ -814,6 +814,9 @@
           })
       },
       submitInfoGroup() {
+        if (this.addInfoGroup.type === 1 && !this.addInfoGroup.tagIds.length) {
+          return this.$Message.error('请选择标签')
+        }
         this.$api.hkywhdTextbook.addBookTag({
           bookId: this.dataItem.id,
           tagIds: this.addInfoGroup.type ? this.addInfoGroup.tagIds : []
