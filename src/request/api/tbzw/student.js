@@ -10,6 +10,9 @@ const tbzwStudent = {
   },
   updateStudent(params) {
     return axios.post("/umg/student/update", qs.stringify(params));
+  },
+  getUserRoleInfoAndTagVOById(params) {
+    return axios.get("/umg/userRoleInfo/getUserRoleInfoAndTagVOById", {params: params});
   }
 };
 
