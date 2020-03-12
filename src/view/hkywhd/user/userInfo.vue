@@ -25,21 +25,21 @@
               <div v-show="tabType === '1'">
                 <div class="-r-dev" style="margin-top: 30px">
                   <div class="-r-dev-title">基础特征</div>
-                  <span class="-r-dev-role">用户角色: {{studentInfo.nickname || '暂无'}}</span>
+                  <span class="-r-dev-role">用户角色: {{studentInfo.role || '暂无'}}</span>
                 </div>
                 <div class="-r-dev" style="margin-top: 10px">
                   <div class="-r-dev-title">孩子信息</div>
-                  <span class="-r-dev-role">孩子姓名: {{studentInfo.nickname || '暂无'}}</span>
-                  <span class="-r-dev-role">孩子性别: {{studentInfo.sex === null ? '暂无' : studentInfo.sex ? '男' : '女'}}</span>
+                  <!--<span class="-r-dev-role">孩子姓名: {{studentInfo.nickname || '暂无'}}</span>-->
+                  <span class="-r-dev-role">孩子性别: {{studentInfo.gender === '0' ? '暂无' : studentInfo.gender === '1' ? '男' : '女'}}</span>
                   <span class="-r-dev-role">在读年级: {{studentInfo.gradeText || '暂无'}}</span>
-                  <span class="-r-dev-role">所在城市: {{studentInfo.gradeText || '暂无'}}</span>
-                  <span class="-r-dev-role">与孩子关系: {{studentInfo.gradeText || '暂无'}}</span>
-                  <span class="-r-dev-role">是否陪伴孩子身边: {{studentInfo.gradeText || '暂无'}}</span>
+                  <span class="-r-dev-role">所在城市: {{studentInfo.city || '暂无'}}</span>
+                  <span class="-r-dev-role">与孩子关系: {{studentInfo.relationship || '暂无'}}</span>
+                  <span class="-r-dev-role">是否陪伴孩子身边: {{studentInfo.besideChild ? '是' : '否' || '暂无'}}</span>
                   <!--<Button @click="openModalChild" ghost type="primary" style="width: 100px;">完善孩子信息</Button>-->
                 </div>
                 <div class="-r-dev" style="margin-top: 10px">
                   <div class="-r-dev-title">兴趣标签</div>
-                  <Tag>q1111</Tag>
+                  <Tag v-for="(item,index) of studentInfo.tags" :key="index" color="blue">{{item}}</Tag>
                 </div>
                 <!--<div class="-r-dev" style="margin-top: 10px">-->
                   <!--<span>是否关注: {{userInfo.subscripbe ? '是' : '否'}}</span>-->
@@ -303,8 +303,8 @@
             })
       },
       getStudent() {
-        this.$api.tbzwStudent.getStudent({
-          puid: this.$route.query.id || this.userId,
+        this.$api.tbzwStudent.getUserRoleInfoAndTagVOById({
+          userId: this.$route.query.id || this.userId,
         })
           .then(
             response => {
