@@ -266,7 +266,7 @@
         let myChart = echarts.init(this.$refs.echartSex);
         this.userSexList.forEach(item=>{
           item.value = item.count
-          item.name = item.gender === 1 ? `男孩：${item.count}` : item.gender === 2 ? `女孩：${item.count}` : `其他：${item.count}`
+          item.name = item.gender === 1 ? `男孩：${item.count} (${item.percent}%)` : item.gender === 2 ? `女孩：${item.count} (${item.percent}%)` : `其他：${item.count} (${item.percent}%)`
         })
         myChart.showLoading({
           text: '图表加载中...',
@@ -310,7 +310,7 @@
         let myChart = echarts.init(this.$refs.echartGrade);
         this.userGradeList.forEach(item=>{
           item.value = item.count
-          item.name = `${this.gradeText[item.grade]}：${item.count}`
+          item.name = `${this.gradeText[item.grade]}：${item.count} (${item.percent}%)`
         })
         myChart.showLoading({
           text: '图表加载中...',
