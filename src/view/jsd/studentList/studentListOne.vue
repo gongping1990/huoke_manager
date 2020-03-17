@@ -21,6 +21,9 @@
                    @on-click="getList(1)"></Input>
           </div>
         </Col>
+        <Col :span="6" style="float: right;text-align: right;">
+          <Button @click="openModal()" ghost type="primary">订阅消息</Button>
+        </Col>
       </Row>
       <Row class="g-search g-tab">
         <Col :span="6" class="g-t-left">
@@ -84,16 +87,20 @@
     </Card>
 
     <look-user-info v-model="isOpenUserInfo" :dataInfo="detailInfo"></look-user-info>
+
+    <subscription-message-template v-model="isOpenMessage" :dataItem="dataItem"
+                                   :type="2"></subscription-message-template>
   </div>
 </template>
 
 <script>
   import dayjs from 'dayjs'
   import LookUserInfo from "../todayWork/lookUserInfo";
+  import SubscriptionMessageTemplate from "../../../components/subscriptionMessageTemplate";
 
   export default {
     name: 'studentListOne',
-    components: {LookUserInfo},
+    components: {SubscriptionMessageTemplate, LookUserInfo},
     data() {
       return {
         tab: {
@@ -128,9 +135,11 @@
         dataList: [],
         courseList: [],
         detailInfo: {},
+        dataItem: {},
         total: 0,
         isFetching: false,
         isOpenUserInfo: false,
+        isOpenMessage: false,
         columns: [
           {
             title: '用户头像/昵称',
@@ -244,7 +253,16 @@
     mounted() {
       this.listBase()
     },
+    watch: {
+      isOpenMessage(_n) {
+        !_n && this.getList()
+      }
+    },
     methods: {
+      openModal() {
+        // this.dataItem = data
+        this.getUserList()
+      },
       toDetail(param) {
         this.isOpenUserInfo = true
         this.detailInfo = param
@@ -266,6 +284,17 @@
             this.getList()
           })
       },
+      getUserList() {
+        this.isFetching = true
+        this.$api.jsdTeacher.listBindUser()
+          .then(response => {
+            this.dataItem.linkusers = response.data.resultData;
+            this.isOpenMessage = true
+            console.log(this.dataItem)
+          }).finally(() => {
+          this.isFetching = false
+        })
+      },
       //分页查询
       getList(num) {
         if (num) {
@@ -275,7 +304,7 @@
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
           courseId: this.searchInfo.courseId,
-          allCompleted: this.searchInfo.allCompleted === '-1' ? '' : this.searchInfo.allCompleted === '1' ,
+          allCompleted: this.searchInfo.allCompleted === '-1' ? '' : this.searchInfo.allCompleted === '1',
           allHomeworked: this.searchInfo.allHomeworked === '-1' ? '' : this.searchInfo.allHomeworked === '1',
           allLearned: this.searchInfo.allLearned === '-1' ? '' : this.searchInfo.allLearned === '1',
           currentCompleted: this.searchInfo.currentCompleted === '-1' ? '' : this.searchInfo.currentCompleted === '1',

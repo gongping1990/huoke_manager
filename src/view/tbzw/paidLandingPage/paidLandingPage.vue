@@ -18,6 +18,20 @@
             :current.sync="tabDetail.currentPage"
             @on-change="detailCurrentChange"></Page>
     </Modal>
+
+    <Modal
+      class="p-landingPage"
+      v-model="isOpenModalChannel"
+      @on-cancel="isOpenModalChannel = false"
+      footer-hide
+      width="700"
+      title="渠道排行">
+      <Table class="-c-tab" :loading="isFetching" :columns="columnsModalChannel" :data="detailChannelList"></Table>
+
+      <Page class="g-text-right" :total="totalDetailChannel" size="small" show-elevator :page-size="tabDetailChannel.pageSize"
+            :current.sync="tabDetailChannel.currentPage"
+            @on-change="detailCurrentChangeChannel"></Page>
+    </Modal>
   </div>
 </template>
 
@@ -32,13 +46,20 @@
           page: 1,
           pageSize: 10
         },
+        tabDetailChannel: {
+          page: 1,
+          pageSize: 10
+        },
         dataList: [],
         detailList: [],
+        detailChannelList: [],
         pageId: '',
         copy_url: '',
         totalDetail: 0,
+        totalDetailChannel: 0,
         isFetching: false,
         isOpenModal: false,
+        isOpenModalChannel: false,
         herfList: {
           '1': 'http://composition.k12.vip/',
           '2': 'http://composition.k12.vip/one',
@@ -145,6 +166,57 @@
               return h('span', `${(params.row.payConversionPercent*100).toFixed()}%`)
             },
             align: 'center'
+          },
+          {
+            title: '操作',
+            align: 'center',
+            render: (h, params) => {
+              return h('div', [
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: '#5444E4',
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.openModalChannel(params.row)
+                    }
+                  }
+                }, '渠道排行')
+              ])
+            }
+          }
+        ],
+        columnsModalChannel: [
+          {
+            title: '渠道名称',
+            key: 'date',
+            align: 'center'
+          },
+
+          {
+            title: '今日下单数',
+            key: 'pv',
+            align: 'center'
+          },
+          {
+            title: '今日成交数',
+            key: 'uv',
+            align: 'center'
+          },
+          {
+            title: '今日访问量',
+            key: 'orderCount',
+            align: 'center'
+          },
+          {
+            title: '今日转化率',
+            key: 'successOrderCount',
+            align: 'center'
           }
         ]
       };
@@ -153,12 +225,20 @@
       this.getList()
     },
     methods: {
+      openModalChannel() {
+        this.isOpenModalChannel = true
+        this.getChannelList()
+      },
       closeModal() {
         this.isOpenModal = false
       },
       detailCurrentChange(val) {
         this.tabDetail.page = val;
         this.getDetailList();
+      },
+      detailCurrentChangeChannel(val) {
+        this.tabDetail.page = val;
+        this.getChannelList();
       },
       openModal(data) {
         this.pageId = data.page
@@ -174,6 +254,19 @@
         }).then(response => {
           this.detailList = response.data.resultData.records;
           this.totalDetail = response.data.resultData.total;
+        }).finally(()=>{
+          this.isFetching = false
+        })
+      },
+      getChannelList() {
+        this.isFetching = true
+        this.$api.tbzwOrder.getDataDetails({
+          page: this.pageId,
+          current: this.tabDetailChannel.page,
+          size: this.tabDetailChannel.pageSize
+        }).then(response => {
+          this.detailChannelList = response.data.resultData.records;
+          this.totalDetailChannel = response.data.resultData.total;
         }).finally(()=>{
           this.isFetching = false
         })

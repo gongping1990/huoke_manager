@@ -30,6 +30,12 @@ const jsdTeacher = {
   },
   listStudentByPage(params) {
     return axios.get("/homework/teacher/listStudentByPage", {params: params});
+  },
+  listBindUser(params) {
+    return axios.get("/homework/teacher/listBindUser", {params: params});
+  },
+  bindUser(params) {
+    return axios.post("/homework/teacher/bindUser", qs.stringify(params));
   }
 }
 

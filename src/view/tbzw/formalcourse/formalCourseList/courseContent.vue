@@ -1,7 +1,20 @@
 <template>
   <div class="p-gsw-course-list">
     <Card>
-      <div class="g-add-btn" @click="openModal()">
+      <Row class="g-search">
+        <Col :span="5">
+          <div class="-search">
+            <Select v-model="selectInfo" class="-search-select">
+              <Option value="1">课时名称</Option>
+            </Select>
+            <span class="-search-center">|</span>
+            <Input v-model="searchInfo.name" class="-search-input" placeholder="请输入关键字" icon="ios-search"
+                   @on-click="getList(1)"></Input>
+          </div>
+        </Col>
+      </Row>
+
+      <div class="g-add-btn g-add-top" @click="openModal()">
         <Icon class="-btn-icon" color="#fff" type="ios-add" size="24" />
       </div>
 
@@ -382,7 +395,6 @@ export default {
   },
   data() {
     return {
-      baseUrl: `${getBaseUrl()}/sch/common/uploadPublicFile`, // 公有 （图片）
       tab: {
         page: 1,
         currentPage: 1,
@@ -422,6 +434,8 @@ export default {
       teacherList: [],
       iconList: [],
       choiceList: [],
+      selectInfo: '1',
+      searchInfo: {},
       total: 0,
       totalSource: 0,
       levelType: 0,
@@ -907,7 +921,8 @@ export default {
         .getQueryLessonPage({
           courseId: this.$route.query.courseId,
           current: localStorage.nowPage || this.tab.page,
-          size: this.tab.pageSize
+          size: this.tab.pageSize,
+          name: this.searchInfo.name
         })
         .then(response => {
           this.dataList = response.data.resultData.records;
