@@ -5,14 +5,14 @@
         <Col :span="20">
           <div class="-p-header">
             <div class="-p-h-left">
-              <img :src="userInfo.headimgurl"/>
+              <img :src="addInfo.pavatar"/>
             </div>
             <div class="-p-h-right">
-              <div class="-r-name">{{userInfo.nickname}}</div>
+              <div class="-r-name">{{addInfo.pname}}</div>
               <div class="-r-dev">
-                <span>id: {{userInfo.userId}}</span>
-                <span><Icon type="ios-call"/>: {{userInfo.phone || '暂无'}}</span>
-                <span><Icon type="ios-time-outline"/>: {{userInfo.createTime}}</span>
+                <span>id: {{addInfo.puid}}</span>
+                <span><Icon type="ios-call"/>: {{addInfo.phone || '暂无'}}</span>
+                <span><Icon type="ios-time-outline"/>: {{userInfo.createTime || '暂无'}}</span>
               </div>
 
               <div class="-r-btn">
@@ -267,12 +267,14 @@
             if(this.$route.query.id || this.userId) {
               this.listLessonProgress()
               this.changeRadio()
+              this.getUserRoleInfoAndTagVOById()
               this.getStudent()
             }
           })
       },
       //分页查询
       listLessonProgress() {
+        if (!this.appList.length) return
         let params = {
           userId: this.$route.query.id || this.userId,
         }
@@ -302,24 +304,24 @@
               this.dataList = response.data.resultData.dataList;
             })
       },
-      getStudent() {
+      getUserRoleInfoAndTagVOById() {
         this.$api.tbzwStudent.getUserRoleInfoAndTagVOById({
           userId: this.$route.query.id || this.userId,
         })
           .then(
             response => {
+              this.studentInfo = response.data.resultData
+            })
+      },
+      getStudent() {
+        this.$api.tbzwStudent.getStudent({
+          puid: this.$route.query.id || this.userId,
+        })
+          .then(
+            response => {
               if (response.data.resultData) {
                 this.addInfo = response.data.resultData
-              } else {
-                this.addInfo = {
-                  nickname: '',
-                  sex: null,
-                  grade: '',
-                  gradeText: '',
-                }
               }
-
-              this.studentInfo = JSON.parse(JSON.stringify(this.addInfo))
             })
       },
       submitInfo(name) {

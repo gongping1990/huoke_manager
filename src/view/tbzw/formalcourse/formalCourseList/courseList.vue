@@ -93,7 +93,7 @@
                       v-model="secondInfo.studyDate" @on-change="changeDate"></DatePicker>
         </FormItem>
         <FormItem label="课时" class="ivu-form-item-required">
-          <Select v-model="secondInfo.lessonId" placeholder="请选择" @on-change="changeLesson"
+          <Select v-model="secondInfo.lessonId" filterable placeholder="请选择" @on-change="changeLesson"
                   :disabled="(secondInfo.studyDate == null) || (secondInfo.studyDate == '')">
             <Option v-for="item of lessonList"
                     :label="item.name"

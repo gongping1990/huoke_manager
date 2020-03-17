@@ -25,6 +25,9 @@ const jsdKfteacher = {
   },
   selectTeacher(params) {
     return axios.get("/homework/kfteacher/selectTeacher", {params: params});
+  },
+  bindUser(params) {
+    return axios.post("/homework/kfteacher/bindUser", qs.stringify(params));
   }
 }
 
