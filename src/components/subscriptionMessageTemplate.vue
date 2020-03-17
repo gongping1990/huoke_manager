@@ -9,7 +9,7 @@
         <FormItem label="选择用户">
           <Button @click="openUserModal()" ghost type="primary" style="width: 100px;">+添加用户</Button>
           <p class="-c-tips">
-            添加为订阅用户后，这些用户将会在“乐小狮大语文”公众号收到用户的完课消息通知和作业批改消息通知
+            添加为订阅用户后，这些用户将会在“乐小狮大语文”公众号收到用户的完课消息通知<span v-if="type == '1'">和作业批改消息通知</span>
           </p>
         </FormItem>
         <FormItem label="用户列表">
