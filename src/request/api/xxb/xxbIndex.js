@@ -14,6 +14,10 @@ import xxbMaterial from "./material";
 import xxbUserMember from "./userMember";
 import xxbCompose from "./compose";
 import xxbYuke from "./yuke";
+import xxbOperationPosition from "./operationPosition";
+import xxbProvinceCity from "./provinceCity";
+import xxbSection from "./section";
+import xxbSbxArticle from "./sbxArticle";
 
 
 export const xxbIndex = {
@@ -32,5 +36,9 @@ export const xxbIndex = {
   xxbMaterial,
   xxbUserMember,
   xxbCompose,
-  xxbYuke
+  xxbYuke,
+  xxbOperationPosition,
+  xxbProvinceCity,
+  xxbSection,
+  xxbSbxArticle
 }

@@ -21,17 +21,20 @@
       <Form :model="addInfo" :label-width="90" class="ivu-form-item-required">
         <FormItem label="开通省市">
           <Radio-group v-model="addInfo.type">
-            <Radio :label=1>省</Radio>
-            <Radio :label=2>市</Radio>
+            <Radio :label=0>省</Radio>
+            <Radio :label=1>市</Radio>
           </Radio-group>
 
           <div class="p-cityList-list">
-            <Select v-model="addInfo.province" v-if="addInfo.type === 1">
+            <Select v-model="addInfo.provinceId" v-if="addInfo.type === 0" @on-change="changeProvince">
               <Option v-for="(item,index) of areaList" :key="index" :value="item.value" :label="item.label"></Option>
             </Select>
-            <Cascader v-if="addInfo.type === 2" :data="areaList" trigger="hover" change-on-select
+            <Cascader v-if="addInfo.type === 1" :data="areaList" change-on-select @on-change="changeCascader"
                       v-model="addInfo.city"></Cascader>
           </div>
+        </FormItem>
+        <FormItem label="排序值" prop="sort">
+          <InputNumber v-model="addInfo.sort" placeholder="请输入排序值"></InputNumber>
         </FormItem>
       </Form>
       <div slot="footer" class="-p-v-flex">
@@ -67,7 +70,7 @@
             title: '省市名称',
             align: 'center',
             render: (h, param) => {
-              return h('div', param.row.name || param.row.title)
+              return h('div', `${param.row.provinceName} ${param.row.cityName || ''}` )
             }
           },
           {
@@ -77,7 +80,9 @@
           },
           {
             title: '是否热门',
-            key: 'pv',
+            render: (h, param) => {
+              return h('div', param.row.hot ? '是' : '否' )
+            },
             align: 'center'
           },
           {
@@ -99,7 +104,7 @@
                       this.changeHot(params.row)
                     }
                   }
-                }, '设为热门'),
+                }, params.row.hot ? '取消热门' : '设为热门'),
                 h('Button', {
                   props: {
                     type: 'text',
@@ -114,7 +119,7 @@
                       this.changeOpen(params.row)
                     }
                   }
-                }, '取消开通')
+                }, !params.row.display ? '取消开通' : '设为开通')
               ])
             }
           }
@@ -122,11 +127,39 @@
       };
     },
     mounted() {
-      // this.getList()
+      this.areaList.forEach(list=>{
+        list.children.forEach(item=>{
+          item.children.forEach(data=>{
+            data.disabled = true
+          })
+        })
+      })
+      this.getList()
+      console.log(this.areaList)
     },
     methods: {
+      changeCascader (data,selectedData) {
+        if (selectedData.length === 2){
+          this.addInfo.cityId = selectedData[1].value
+          this.addInfo.cityName = selectedData[1].label
+          this.addInfo.provinceId = selectedData[0].value
+          this.addInfo.provinceName = selectedData[0].label
+        }
+      },
+      changeProvince (data) {
+        this.areaList.forEach(item=>{
+          if(data === item.value) {
+            this.addInfo.provinceName = item.label
+          }
+        })
+      },
       openModal() {
         this.isOpenModal = true
+        this.addInfo = {
+          city: [],
+          type:'',
+          sort: null
+        }
       },
       currentChange(val) {
         this.tab.page = val;
@@ -137,7 +170,7 @@
           title: '提示',
           content: `确认要${param.isOpen ? '取消' : '设为'}开通吗？`,
           onOk: () => {
-            this.$api.composition.removeTeacherById({
+            this.$api.xxbProvinceCity.setOrCancelDisplay({
               id: param.id
             }).then(
               response => {
@@ -154,7 +187,7 @@
           title: '提示',
           content: `确认要${param.isOpen ? '取消' : '设为'}热门吗？`,
           onOk: () => {
-            this.$api.composition.removeTeacherById({
+            this.$api.xxbProvinceCity.setOrCancelHot({
               id: param.id
             }).then(
               response => {
@@ -172,41 +205,42 @@
         if (num) {
           this.tab.currentPage = 1
         }
-        this.$api.xxbMaterial[this.detailInfo.urlDetail]({
+        this.$api.xxbProvinceCity.getProvinceCityPage({
           current: num ? num : this.tab.page,
-          size: this.tab.pageSize,
-          categoryName: this.columnInfo.firstName,
-          subject: this.detailInfo.subject,
-          name: this.searchInfo.nickname,
-          subCategoryName: this.columnInfo.isFirst ? '' : this.columnInfo.title
+          size: this.tab.pageSize
         })
           .then(
             response => {
-              if (this.detailInfo.columnNum === '0') {
-                this.dataList = response.data.resultData
-              } else {
-                this.dataList = response.data.resultData.records
-                this.total = response.data.resultData.total
-              }
+              this.dataList = response.data.resultData.records
+              this.total = response.data.resultData.total
             })
           .finally(() => {
             this.isFetching = false
           })
       },
       submitInfo() {
-        if (!this.addInfo.province && this.addInfo.type === 1) {
+
+        if (!this.addInfo.provinceId && this.addInfo.type === 0) {
           return this.$Message.error('请选择需要开通的省')
-        } else if (!this.addInfo.city.length && this.addInfo.type === 2) {
-          return this.$Message.error('请选择需要开通的市')
+        } else if (this.addInfo.city.length < 2 && this.addInfo.type === 1) {
+          return this.$Message.error('请选择需要开通的市或州')
+        } else if (this.addInfo.type === '') {
+          return this.$Message.error('请选择开通的省或市')
+        } else if (!this.addInfo.sort) {
+          return this.$Message.error('请输入排序值')
         }
 
         if (this.isSending) return
 
         this.isSending = true
-        this.$api.xxbBanner.saveBanner({
-          id: this.addInfo.id,
-          url: this.addInfo.url,
-          sortnum: this.addInfo.sortnum
+
+        this.$api.xxbProvinceCity.saveProvinceCity({
+          provinceId: this.addInfo.provinceId,
+          cityId: this.addInfo.cityId,
+          provinceName: this.addInfo.provinceName,
+          cityName: this.addInfo.cityName,
+          sort: this.addInfo.sort,
+          provinceCity: this.addInfo.type
         })
           .then(
             response => {
