@@ -69,7 +69,7 @@
           },
           {
             title: '栏目名称',
-            key: 'courseName',
+            key: 'name',
             align: 'center'
           },
           {
@@ -84,7 +84,7 @@
           },
           {
             title: '收藏人数',
-            key: 'orderNum',
+            key: 'collect',
             align: 'center'
           }
         ]
@@ -139,7 +139,7 @@
         })
           .then(
             response => {
-              // this.dataList = response.data.resultData || [];
+              this.dataList = response.data.resultData || [];
             })
           .finally(() => {
             this.isFetching = false
