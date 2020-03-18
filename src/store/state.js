@@ -9,7 +9,8 @@ const store = {
   isChangeBaseUrl: false,
   nowAdminType: localStorage.nowSystem || '1',
   articeStorage: [],
-  userInfo: ''
+  userInfo: '',
+  contentSearchInfo: {},
 }
 
 export default store

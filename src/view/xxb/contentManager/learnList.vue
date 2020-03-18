@@ -80,7 +80,7 @@
         total: 0,
         searchInfo: {
           cityId: '',
-          subjectType: +localStorage.contentSubjectType || 1
+          subjectType: +this.$store.state.contentSearchInfo.subjectType || 1
         },
         isFetching: false,
         isOpenModal: false,
@@ -206,7 +206,6 @@
             columnName: item1.name
           }
         })
-        // localStorage.setItem('columnList', JSON.stringify(item1.children))
       },
       currentChange(val) {
         this.tab.page = val;
@@ -239,8 +238,7 @@
             response => {
               this.dataList = response.data.resultData.records;
               this.total = response.data.resultData.total;
-              localStorage.setItem('contentCityId',this.searchInfo.cityId)
-              localStorage.setItem('contentSubjectType',this.searchInfo.subjectType)
+              this.$store.commit('storageSearchInfo', this.searchInfo)
             })
           .finally(() => {
             this.isFetching = false
@@ -251,7 +249,7 @@
           .then(
             response => {
               this.cityList = response.data.resultData;
-              this.searchInfo.cityId = localStorage.contentCityId ||  this.cityList[0].id
+              this.searchInfo.cityId = this.$store.state.contentSearchInfo.cityId ||  this.cityList[0].id
               this.getList()
             })
       },
