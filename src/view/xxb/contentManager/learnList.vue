@@ -6,17 +6,17 @@
           <Row class="g-flex-a-j-center -s-radio">
             <div class="-search-select-text">当前选中：</div>
             <Select v-model="searchInfo.cityId" @on-change="getList(1)" class="-search-selectOne">
-              <Option v-for="(item,index) in cityList" :label="item.name" :value="item.id" :key="index"></Option>
+              <Option v-for="(item,index) in cityList" :label=" item.cityName || item.provinceName" :value="item.id" :key="index"></Option>
             </Select>
           </Row>
         </Col>
       </Row>
       <Row class="g-search g-t-left g-tab">
         <Radio-group v-model="searchInfo.subjectType" type="button" @on-change="getList()">
-          <Radio :label=0>幼升小</Radio>
-          <Radio :label=1>小升初</Radio>
-          <Radio :label=2>中考</Radio>
-          <Radio :label=3>高考</Radio>
+          <Radio :label=1>幼升小</Radio>
+          <Radio :label=2>小升初</Radio>
+          <Radio :label=3>中考</Radio>
+          <Radio :label=4>高考</Radio>
         </Radio-group>
       </Row>
       <div class="g-add-btn" @click="openModal()">
@@ -35,19 +35,20 @@
       @on-cancel="closeModal('addInfo')"
       width="500"
       :title="addInfo.id ? '编辑栏目' : '新增栏目'">
-      <Form ref="addInfo" :model="addInfo" :label-width="80">
-        <FormItem label="栏目名称" prop="name" class="ivu-form-item-required">
+      <Form ref="addInfo" :model="addInfo" :label-width="80" class="ivu-form-item-required">
+        <FormItem label="栏目名称">
           <Input type="text" v-model="addInfo.name" placeholder="请输入栏目名称"></Input>
         </FormItem>
-        <FormItem label="排序值" prop="sort" class="ivu-form-item-required">
+        <FormItem label="排序值">
           <Input type="text" v-model="addInfo.sort" placeholder="请输入排序值"></Input>
         </FormItem>
-        <FormItem label="下属分类" class="ivu-form-item-required">
-          <RadioGroup v-model="addInfo.childLevel">
+        <FormItem label="下属分类">
+          <RadioGroup v-model="addInfo.sectionType">
             <Radio label="0">无</Radio>
             <Radio label="1">一级</Radio>
             <!--<Radio label="2">二级</Radio>-->
           </RadioGroup>
+          <p class="g-tips">添加后不可更改</p>
         </FormItem>
       </Form>
       <div slot="footer" class="g-flex-j-sa">
@@ -79,7 +80,7 @@
         total: 0,
         searchInfo: {
           cityId: '',
-          subjectType: 0
+          subjectType: 1
         },
         isFetching: false,
         isOpenModal: false,
@@ -88,20 +89,20 @@
         columns: [
           {
             title: '栏目名称',
-            key: 'title',
+            key: 'name',
             align: 'center'
           },
           {
             title: '排序值',
-            key: 'sortNum',
+            key: 'sort',
             align: 'center'
           },
           {
             title: '下属栏目',
             render: (h,params)=> {
-              return h('div', params.row.childLevel == '0' ? '无' : `${params.row.childLevel}级`)
+              return h('div', params.row.sectionType == '0' ? '无' : `${params.row.sectionType}级`)
             },
-            key: 'creatTime'
+            align: 'center'
           },
           {
             title: '操作',
@@ -121,7 +122,7 @@
                     },
                     style: {
                       color: '#5444E4',
-                      display: params.row.childLevel == '0' ? 'none' : ''
+                      display: params.row.sectionType == '0' ? 'none' : ''
                     },
                     on: {
                       click: () => {
@@ -181,7 +182,7 @@
     },
     computed: {},
     mounted() {
-      this.getList()
+      this.getAllProvinceCity()
     },
     methods: {
       toChild(item) {
@@ -189,8 +190,9 @@
           name: 'xxb_subcolumn',
           query: {
             id: item.id,
-            level: item.childLevel,
-            subject: this.selectInfo
+            level: item.sectionType,
+            category: this.searchInfo.subjectType,
+            provinceCityId: this.searchInfo.cityId,
           }
         })
       },
@@ -198,14 +200,13 @@
         this.$router.push({
           name: 'xxb_articleManager',
           query: {
-            type: '2',
-            level: item1.childLevel,
+            category: this.searchInfo.subjectType,
+            provinceCityId: this.searchInfo.cityId,
             columnId: item1.id,
-            columnName: item1.title
+            columnName: item1.name
           }
         })
-        localStorage.setItem('nowRadioType', this.selectInfo)
-        localStorage.setItem('columnList', JSON.stringify(item1.children))
+        // localStorage.setItem('columnList', JSON.stringify(item1.children))
       },
       currentChange(val) {
         this.tab.page = val;
@@ -215,44 +216,48 @@
         this.isOpenModal = true
         if (data) {
           this.addInfo = JSON.parse(JSON.stringify(data))
-          this.addInfo.sort = this.addInfo.sortNum
-          this.addInfo.name = this.addInfo.title
-          this.addInfo.childLevel = this.addInfo.childLevel.toString()
+          this.addInfo.sectionType = this.addInfo.sectionType.toString()
         } else {
           this.addInfo = {
-            type: '1',
-            img: '',
-            childLevel: '0',
-            subject: this.selectInfo
+            sectionType: '0',
           }
         }
       },
-      closeModal(name) {
+      closeModal() {
         this.isOpenModal = false
       },
-      //分页查询
       getList() {
         this.isFetching = true
-        this.$api.wzjh.columnList({
-          subject: this.selectInfo,
+        this.$api.xxbSection.getSectionPage({
+          category: this.searchInfo.subjectType,
+          provinceCityId: this.searchInfo.cityId,
           current: this.tab.page,
           size: this.tab.pageSize
         })
           .then(
             response => {
-              this.dataList = response.data.resultData;
+              this.dataList = response.data.resultData.records;
               this.total = response.data.resultData.total;
             })
           .finally(() => {
             this.isFetching = false
           })
       },
+      getAllProvinceCity() {
+        this.$api.xxbProvinceCity.getAllProvinceCity()
+          .then(
+            response => {
+              this.cityList = response.data.resultData;
+              this.searchInfo.cityId = this.cityList[0].id
+              this.getList()
+            })
+      },
       delItem(param) {
         this.$Modal.confirm({
           title: '提示',
           content: '确认删除吗？',
           onOk: () => {
-            this.$api.wzjh.articleCategoryDelete({
+            this.$api.xxbSection.delete({
               id: param.id
             }).then(
               response => {
@@ -274,15 +279,13 @@
         }
         this.isSending = true
 
-        this.$api.wzjh.articleCategorySave({
+        this.$api.xxbSection.saveSxbSection({
           id: this.addInfo.id,
-          type: '1',
-          img: this.addInfo.img,
+          category: this.searchInfo.subjectType,
+          provinceCityId: this.searchInfo.cityId,
           name: this.addInfo.name,
-          intro: this.addInfo.intro,
           sort: this.addInfo.sort,
-          childLevel: this.addInfo.childLevel,
-          subject: this.selectInfo
+          sectionType: this.addInfo.sectionType
         })
           .then(
             response => {

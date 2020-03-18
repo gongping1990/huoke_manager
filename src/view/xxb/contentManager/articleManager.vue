@@ -7,7 +7,7 @@
           <Tree :data="treeList" @on-select-change="changeTree" class="-p-a-l-t"></Tree>
         </Col>
         <Col :span="20">
-          <xxb-article-list ref="childMethod" :columnId="columnId" :nodeData="nodeData"></xxb-article-list>
+          <xxb-article-list ref="childMethod" :columnId="detailInfo.columnId" :nodeData="nodeData"></xxb-article-list>
         </Col>
       </div>
     </Card>
@@ -23,29 +23,40 @@
     data() {
       return {
         detailInfo: this.$route.query,
-        columnId: '',
         nodeData: '',
-      }
-    },
-    computed: {
-      treeList() {
-        let list = []
-        list.unshift({
-          title: this.detailInfo.columnName,
-          id: this.detailInfo.columnId,
-          expand: true,
-          selected: true,
-          children: JSON.parse(localStorage.getItem('columnList'))
-        })
-        return list
+        treeList: [],
       }
     },
     mounted() {
-      this.columnId = this.detailInfo.columnId
+      this.getSectionPage()
     },
     methods: {
+      getSectionPage() {
+        this.$api.xxbSection.getSectionPage({
+          current: 1,
+          size: 100000,
+          provinceCityId: this.detailInfo.provinceCityId,
+          category: this.detailInfo.category,
+          sectionId: this.detailInfo.columnId
+        })
+          .then(
+            response => {
+              let list = response.data.resultData.records;
+              list.forEach(item=>{
+                item.title = item.name
+              })
+
+              this.treeList.unshift({
+                title: this.detailInfo.columnName,
+                id: this.detailInfo.columnId,
+                expand: true,
+                selected: true,
+                children: list
+              })
+            })
+      },
       changeTree(data) {
-        this.columnId = data[0].id
+        this.detailInfo.columnId = data[0].id
         this.nodeData = data[0]
 
         setTimeout(() => {

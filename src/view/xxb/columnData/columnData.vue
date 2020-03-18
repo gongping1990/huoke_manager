@@ -6,23 +6,23 @@
           <Row class="g-flex-a-j-center -s-radio">
             <div class="-search-select-text-two">当前选中：</div>
             <Select v-model="searchInfo.cityId" @on-change="getList(1)" class="-search-selectOne">
-              <Option v-for="(item,index) in cityList" :label="item.name" :value="item.id" :key="index"></Option>
+              <Option v-for="(item,index) in cityList" :label=" item.cityName || item.provinceName" :value="item.id" :key="index"></Option>
             </Select>
           </Row>
         </Col>
       </Row>
       <Row class="g-search g-tab g-t-left">
         <Radio-group v-model="searchInfo.subjectType" type="button" @on-change="getList()">
-          <Radio :label=0>幼升小</Radio>
-          <Radio :label=1>小升初</Radio>
-          <Radio :label=2>初升高</Radio>
+          <Radio :label=1>幼升小</Radio>
+          <Radio :label=2>小升初</Radio>
+          <Radio :label=3>初升高</Radio>
         </Radio-group>
       </Row>
 
       <Row class="g-search g-tab g-t-left">
         <Radio-group v-model="searchInfo.columnId" type="button" @on-change="getList()">
-          <Radio :label=1>一级栏目</Radio>
-          <Radio :label=2>二级栏目</Radio>
+          <Radio :label=0>一级栏目</Radio>
+          <Radio :label=1>二级栏目</Radio>
         </Radio-group>
       </Row>
 
@@ -52,7 +52,7 @@
         dataList: [],
         cityList: [],
         searchInfo: {
-          subjectType: 0,
+          subjectType: 1,
           columnId: 0,
           cityId: ''
         },
@@ -91,7 +91,7 @@
       };
     },
     mounted() {
-      this.getList()
+      this.getAllProvinceCity()
     },
     methods: {
       closeModal() {
@@ -105,6 +105,15 @@
         this.dataItem = data
         this.getDetailList()
         this.isOpenModal = true
+      },
+      getAllProvinceCity() {
+        this.$api.xxbProvinceCity.getAllProvinceCity()
+          .then(
+            response => {
+              this.cityList = response.data.resultData;
+              this.searchInfo.cityId = this.cityList[0].id
+              this.getList()
+            })
       },
       getDetailList() {
         this.isFetching = true
@@ -123,10 +132,14 @@
       getList() {
         this.isFetching = true
 
-        this.$api.xxbBook.getAllBookData()
+        this.$api.xxbSxbStatistics.getSectionStatistics({
+          category: this.searchInfo.subjectType,
+          provinceCityId: this.searchInfo.cityId,
+          sectionType: this.searchInfo.columnId,
+        })
           .then(
             response => {
-              this.dataList = response.data.resultData;
+              // this.dataList = response.data.resultData || [];
             })
           .finally(() => {
             this.isFetching = false
