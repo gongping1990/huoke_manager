@@ -18,6 +18,7 @@ import xxbOperationPosition from "./operationPosition";
 import xxbProvinceCity from "./provinceCity";
 import xxbSection from "./section";
 import xxbSbxArticle from "./sbxArticle";
+import xxbSxbStatistics from "./sxbStatistics";
 
 
 export const xxbIndex = {
@@ -40,5 +41,6 @@ export const xxbIndex = {
   xxbOperationPosition,
   xxbProvinceCity,
   xxbSection,
-  xxbSbxArticle
+  xxbSbxArticle,
+  xxbSxbStatistics
 }

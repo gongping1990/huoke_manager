@@ -14,7 +14,7 @@
         <Icon class="-btn-icon" color="#fff" type="ios-add" size="24"/>
       </div>
 
-      <Table class="g-tab" :loading="isFetching" :columns="selectInfo === 3 ? columns : columnsTwo"
+      <Table class="g-tab" :loading="isFetching" :columns="selectInfo !== 3 ? columns : columnsTwo"
              :data="dataList"></Table>
 
       <Page class="g-text-right" :total="total" size="small" show-elevator :page-size="tab.pageSize"
@@ -56,7 +56,7 @@
             <Input type="text" v-model="addInfo.noticeLink" placeholder="请输入链接"></Input>
           </FormItem>
 
-          <div class="p-putIn-itemlist" v-for="(item,index) of addInfo.xxtdList" :key="index" v-if="selectInfo === 3">
+          <div class="p-putIn-itemlist" v-for="(item,index) of addInfo.xxtdList" :key="index" v-if="selectInfo !== 3">
             <FormItem :label="`中部广告位图片${index+1}`">
               <upload-img ref="childImg" v-model="item.imgUrl" :option="uploadOption"></upload-img>
               <span class="-item-del g-cursor g-error" @click="delAd(1,index)">删除</span>
@@ -66,12 +66,12 @@
             </FormItem>
           </div>
           <div class="g-flex-a-j-center">
-            <Button class="g-margin-center" @click="addAd(1)" v-if="selectInfo === 3" ghost type="primary">+ 新增学习天地广告位
+            <Button class="g-margin-center" @click="addAd(1)" v-if="selectInfo !== 3" ghost type="primary">+ 新增学习天地广告位
             </Button>
           </div>
 
           <div class="p-putIn-itemlist" v-for="(item1,index1) of addInfo.homepageList" :key="index1"
-               v-if="selectInfo !== 3">
+               v-if="selectInfo === 3">
             <FormItem :label="`首页广告位图片${index1+1}`">
               <upload-img ref="childImg"  v-model="item1.imgUrl" :option="uploadOption"></upload-img>
               <span class="-item-del g-cursor g-error" @click="delAd(2,index1)">删除</span>
@@ -81,12 +81,12 @@
             </FormItem>
           </div>
           <div class="g-flex-a-j-center">
-            <Button class="g-margin-center" @click="addAd(2)" v-if="selectInfo !== 3" ghost type="primary">+ 新增首页广告位
+            <Button class="g-margin-center" @click="addAd(2)" v-if="selectInfo === 3" ghost type="primary">+ 新增首页广告位
             </Button>
           </div>
 
           <div class="p-putIn-itemlist" v-for="(item2,index2) of addInfo.bottomList" :key="`${index2}-${index2}`"
-               v-if="selectInfo !== 3">
+               v-if="selectInfo === 3">
             <FormItem :label="`底部广告位图片${index2+1}`">
               <upload-img ref="childImg"  v-model="item2.imgUrl" :option="uploadOption"></upload-img>
               <span class="-item-del g-cursor g-error" @click="delAd(3,index2)">删除</span>
@@ -96,7 +96,7 @@
             </FormItem>
           </div>
           <div class="g-flex-a-j-center p-putIn-top">
-            <Button class="g-margin-center" @click="addAd(3)" v-if="selectInfo !== 3" ghost type="primary">+ 新增底部广告位
+            <Button class="g-margin-center" @click="addAd(3)" v-if="selectInfo === 3" ghost type="primary">+ 新增底部广告位
             </Button>
           </div>
 
@@ -113,7 +113,7 @@
         @on-cancel="isOpenModalData = false"
         width="800"
         title="数据详情">
-        <Table class="-c-tab" :loading="isFetching" :columns="selectInfo === 3 ? columnsModal : columnsModalTwo"
+        <Table class="-c-tab" :loading="isFetching" :columns="selectInfo !== 3 ? columnsModal : columnsModalTwo"
                :data="detailList"></Table>
 
         <Page class="g-text-right" :total="totalDetail" size="small" show-elevator :page-size="tabDetail.pageSize"
@@ -295,7 +295,7 @@
             align: 'center'
           },
           {
-            title: '中部广告位点击次数',
+            title: '首页广告位点击次数',
             key: 'homepageClick',
             align: 'center'
           },
