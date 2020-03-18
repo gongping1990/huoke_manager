@@ -12,7 +12,7 @@
         </Col>
       </Row>
       <Row class="g-search g-t-left g-tab">
-        <Radio-group v-model="searchInfo.subjectType" type="button" @on-change="getList()">
+        <Radio-group v-model="searchInfo.subjectType" type="button" @on-change="getList(1)">
           <Radio :label=1>幼升小</Radio>
           <Radio :label=2>小升初</Radio>
           <Radio :label=3>中考</Radio>
@@ -44,8 +44,8 @@
         </FormItem>
         <FormItem label="下属分类">
           <RadioGroup v-model="addInfo.sectionType">
-            <Radio label="0">无</Radio>
-            <Radio label="1">一级</Radio>
+            <Radio label="0" :disabled="addInfo.id !== ''">无</Radio>
+            <Radio label="1" :disabled="addInfo.id !== ''">一级</Radio>
             <!--<Radio label="2">二级</Radio>-->
           </RadioGroup>
           <p class="g-tips">添加后不可更改</p>
@@ -80,7 +80,7 @@
         total: 0,
         searchInfo: {
           cityId: '',
-          subjectType: 1
+          subjectType: +localStorage.contentSubjectType || 1
         },
         isFetching: false,
         isOpenModal: false,
@@ -219,6 +219,7 @@
           this.addInfo.sectionType = this.addInfo.sectionType.toString()
         } else {
           this.addInfo = {
+            id: '',
             sectionType: '0',
           }
         }
@@ -238,6 +239,8 @@
             response => {
               this.dataList = response.data.resultData.records;
               this.total = response.data.resultData.total;
+              localStorage.setItem('contentCityId',this.searchInfo.cityId)
+              localStorage.setItem('contentSubjectType',this.searchInfo.subjectType)
             })
           .finally(() => {
             this.isFetching = false
@@ -248,7 +251,7 @@
           .then(
             response => {
               this.cityList = response.data.resultData;
-              this.searchInfo.cityId = this.cityList[0].id
+              this.searchInfo.cityId = localStorage.contentCityId ||  this.cityList[0].id
               this.getList()
             })
       },
