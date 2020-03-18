@@ -3,9 +3,9 @@
     <Card>
       <Row class="g-search g-t-left">
         <Radio-group v-model="searchInfo.subjectType" type="button" @on-change="getList()">
-          <Radio :label=0>幼升小</Radio>
-          <Radio :label=1>小升初</Radio>
-          <Radio :label=2>初升高</Radio>
+          <Radio :label=1>幼升小</Radio>
+          <Radio :label=2>小升初</Radio>
+          <Radio :label=3>初升高</Radio>
         </Radio-group>
       </Row>
 
@@ -19,19 +19,11 @@
     name: 'cityData',
     data() {
       return {
-        tabDetail: {
-          page: 1,
-          pageSize: 10
-        },
         dataList: [],
         searchInfo: {
-          subjectType: 0
+          subjectType: 1
         },
-        pageId: '',
-        totalDetail: 0,
-        dataItem: {},
         isFetching: false,
-        isOpenModal: false,
         columns: [
           {
             title: '排名',
@@ -41,7 +33,9 @@
           },
           {
             title: '省市名称',
-            key: 'courseName',
+            render: (h, param) => {
+              return h('div', `${param.row.provinceName} ${param.row.cityName || ''}` )
+            },
             align: 'center'
           },
           {
@@ -56,7 +50,7 @@
           },
           {
             title: '收藏人数',
-            key: 'orderNum',
+            key: 'collect',
             align: 'center'
           }
         ]
@@ -66,36 +60,13 @@
       this.getList()
     },
     methods: {
-      closeModal() {
-        this.isOpenModal = false
-      },
-      detailCurrentChange(val) {
-        this.tabDetail.page = val;
-        this.getDetailList();
-      },
-      openModal(data) {
-        this.dataItem = data
-        this.getDetailList()
-        this.isOpenModal = true
-      },
-      getDetailList() {
-        this.isFetching = true
-        this.$api.xxbBook.getBookDataDetails({
-          courseName: this.dataItem.courseName,
-          current: this.tabDetail.page,
-          size: this.tabDetail.pageSize
-        }).then(response => {
-          this.detailList = response.data.resultData.records;
-          this.totalDetail = response.data.resultData.total;
-        }).finally(() => {
-          this.isFetching = false
-        })
-      },
       //分页查询
       getList() {
         this.isFetching = true
 
-        this.$api.xxbBook.getAllBookData()
+        this.$api.xxbSxbStatistics.getProvinceCityStatistics({
+          category: this.searchInfo.subjectType
+        })
           .then(
             response => {
               this.dataList = response.data.resultData;

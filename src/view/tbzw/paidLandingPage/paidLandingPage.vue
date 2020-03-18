@@ -55,6 +55,7 @@
         detailChannelList: [],
         pageId: '',
         copy_url: '',
+        dataItem: '',
         totalDetail: 0,
         totalDetailChannel: 0,
         isFetching: false,
@@ -194,28 +195,31 @@
         columnsModalChannel: [
           {
             title: '渠道名称',
-            key: 'date',
+            key: 'channelName',
             align: 'center'
           },
 
           {
-            title: '今日下单数',
-            key: 'pv',
-            align: 'center'
-          },
-          {
-            title: '今日成交数',
-            key: 'uv',
-            align: 'center'
-          },
-          {
-            title: '今日访问量',
+            title: '下单数',
             key: 'orderCount',
             align: 'center'
           },
           {
-            title: '今日转化率',
+            title: '成交数',
             key: 'successOrderCount',
+            align: 'center'
+          },
+          {
+            title: '访问量',
+            key: 'pv',
+            align: 'center'
+          },
+          {
+            title: '转化率',
+            key: 'conversionRate',
+            render: (h, params) => {
+              return h('span', `${(params.row.conversionRate * 100).toFixed(2)}%`)
+            },
             align: 'center'
           }
         ]
@@ -225,7 +229,8 @@
       this.getList()
     },
     methods: {
-      openModalChannel() {
+      openModalChannel(data) {
+        this.dataItem = data
         this.isOpenModalChannel = true
         this.getChannelList()
       },
@@ -260,8 +265,9 @@
       },
       getChannelList() {
         this.isFetching = true
-        this.$api.tbzwOrder.getDataDetails({
-          page: this.pageId,
+        this.$api.gswInternalChannel.getInternalChannelDataByDate({
+          date: dayjs(this.dataItem.date).format('YYYYMMDD'),
+          sort: 'successOrderCount',
           current: this.tabDetailChannel.page,
           size: this.tabDetailChannel.pageSize
         }).then(response => {

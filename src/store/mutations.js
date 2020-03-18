@@ -13,6 +13,9 @@ const mutations = {
   },
   changeUserInfo (state, payload) {
     state.userInfo = payload
+  },
+  storageSearchInfo (state, payload) {
+    state.contentSearchInfo = payload
   }
 }
 

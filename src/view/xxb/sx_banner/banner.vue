@@ -32,7 +32,7 @@
         v-model="isOpenModal"
         @on-cancel="closeModal('addInfo')"
         width="500"
-        :title="addInfo.id ? '编辑运营位' : '创建运营位'">
+        :title="addInfo.id ? '编辑banner' : '创建banner'">
         <Form ref="addInfo" :model="addInfo" :rules="ruleValidate" :label-width="90">
           <Form-item label="运营位图片" prop="img" class="ivu-form-item-required">
             <upload-img v-model="addInfo.img" :option="uploadOption"></upload-img>
@@ -78,7 +78,7 @@
         @on-cancel="isOpenModalData = false"
         width="500"
         title="添加省市">
-        <Form ref="addInfo" :model="addInfo" :rules="ruleValidate" :label-width="90" class="ivu-form-item-required">
+        <Form :model="addInfo" :label-width="90" class="ivu-form-item-required">
           <Form-item label="应用省市">
             {{dataItem.provinceCount}}省，{{dataItem.cityCount}}市
           </Form-item>

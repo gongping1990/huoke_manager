@@ -78,7 +78,7 @@
         @on-cancel="isOpenModalData = false"
         width="500"
         title="添加省市">
-        <Form ref="addInfo" :model="addInfo" :rules="ruleValidate" :label-width="90" class="ivu-form-item-required">
+        <Form :model="addInfo" :label-width="90" class="ivu-form-item-required">
           <Form-item label="应用省市">
             {{dataItem.provinceCount}}省，{{dataItem.cityCount}}市
           </Form-item>
