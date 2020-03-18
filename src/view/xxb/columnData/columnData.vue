@@ -26,12 +26,12 @@
         </Radio-group>
       </Row>
 
-      <div class="g-search g-tab g-t-left p-columnData-allData">
+      <div class="g-search g-t-left p-columnData-allData">
         <div class="-allData-title">总计</div>
         <div class="-allData-flex">
-          <div>访问量： 233</div>
-          <div>访问用户： 233</div>
-          <div>收藏人次： 233</div>
+          <div>访问量： {{allData.allPv}}</div>
+          <div>访问用户： {{allData.allUv}}</div>
+          <div>收藏人次： {{allData.allCollect}}</div>
         </div>
       </div>
 
@@ -45,7 +45,7 @@
     name: 'columnData',
     data() {
       return {
-
+        allData: {},
         dataList: [],
         cityList: [],
         searchInfo: {
@@ -108,7 +108,8 @@
         })
           .then(
             response => {
-              this.dataList = response.data.resultData || [];
+              this.allData = response.data.resultData
+              this.dataList = this.allData.list || [];
             })
           .finally(() => {
             this.isFetching = false
@@ -121,10 +122,11 @@
 
 <style lang="less" scoped>
   .p-columnData {
+    text-align: left;
 
     &-allData {
-      width: 400px;
-      padding: 10px;
+      display: inline-block;
+      padding: 20px;
       border: 1px solid #dcdee2;
       border-radius: 4px;
 
@@ -138,6 +140,14 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
+
+        div {
+          padding-right: 20px;
+
+          &:last-child {
+            padding: 0;
+          }
+        }
       }
 
     }
