@@ -5,7 +5,7 @@
         <Col :span="24" class="g-flex-a-j-center">
           <Row class="g-flex-a-j-center -s-radio">
             <div class="-search-select-text">当前选中：</div>
-            <Select v-model="searchInfo.cityId" @on-change="getList(1)" class="-search-selectOne">
+            <Select v-model="searchInfo.cityId" @on-change="getList(1)" class="-search-selectOne g-t-left" filterable>
               <Option v-for="(item,index) in cityList" :label=" item.cityName || item.provinceName" :value="item.id" :key="index"></Option>
             </Select>
           </Row>
@@ -313,7 +313,6 @@
       min-width: 80px;
     }
     .-search-selectOne {
-      width: 100px;
       border: 1px solid #dcdee2;
       border-radius: 4px;
       margin-right: 20px;
