@@ -427,7 +427,7 @@
 
         promiseDate.then(response => {
           this.dataDetailList = response.data.resultData.records;
-          this.total = response.data.resultData.total;
+          this.totalDetail = response.data.resultData.total;
         })
           .finally(() => {
             this.isFetching = false
