@@ -199,7 +199,7 @@
           {
             title: '累计转化率',
             render: (h, params) => {
-              return h('span', `${params.row.conversionRate * 100}%`)
+              return h('span', `${(params.row.conversionRate * 100).toFixed(2)}%`)
             },
             align: 'center',
             // sortable: 'custom'
@@ -311,7 +311,7 @@
             title: '转化率',
             key: 'conversionRate',
             render: (h, params) => {
-              return h('span', `${params.row.conversionRate * 100}%`)
+              return h('span', `${(params.row.conversionRate * 100).toFixed(2)}%`)
             },
             align: 'center',
             sortable: 'custom'
