@@ -337,7 +337,7 @@
       },
       changeDateOne(data) {
         this.selectTime = data
-        this.getList(1)
+        this.getDetailList(1)
       },
       changeDateTwo(data) {
         this.getStartTime = data.startTime
