@@ -1,7 +1,7 @@
 import axios from "../../http";
 import qs from "qs";
 
-const gswInternalChannel = {
+const tbzwInternalChannel = {
 
   categoryList(params) {
     return axios.get("/compositionv2/internalChannel/categoryList", {params: params});
@@ -36,4 +36,4 @@ const gswInternalChannel = {
   },
 };
 
-export default gswInternalChannel;
+export default tbzwInternalChannel;

@@ -294,13 +294,13 @@
             title: '成交数',
             key: 'successOrderCount',
             align: 'center',
-            sortable: 'custom'
+            // sortable: 'custom'
           },
           {
             title: '访问量',
             key: 'pv',
             align: 'center',
-            sortable: 'custom'
+            // sortable: 'custom'
           },
           {
             title: '访问用户数',
@@ -314,7 +314,7 @@
               return h('span', `${(params.row.conversionRate * 100).toFixed(2)}%`)
             },
             align: 'center',
-            sortable: 'custom'
+            // sortable: 'custom'
           }
         ],
       };

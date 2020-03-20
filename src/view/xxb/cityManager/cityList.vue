@@ -1,9 +1,12 @@
 <template>
   <div class="p-cityList">
     <Card>
-      <div class="g-add-btn" @click="openModal()">
-        <Icon class="-btn-icon" color="#fff" type="ios-add" size="24"/>
-      </div>
+      <Row class="g-t-left">
+        <Radio-group v-model="searchInfo.display" type="button"  @on-change="getList()">
+          <Radio :label=1>已开通</Radio>
+          <Radio :label=0>未开通</Radio>
+        </Radio-group>
+      </Row>
 
       <Table class="-c-tab" :loading="isFetching" :columns="columns" :data="dataList"></Table>
 
@@ -12,41 +15,40 @@
             @on-change="currentChange"></Page>
     </Card>
 
-    <Modal
-      class="p-cityList"
-      v-model="isOpenModal"
-      @on-cancel="isOpenModal=false"
-      width="500"
-      title="开通省市">
-      <Form :model="addInfo" :label-width="90" class="ivu-form-item-required">
-        <FormItem label="开通省市">
-          <Radio-group v-model="addInfo.type">
-            <Radio :label=0>省</Radio>
-            <Radio :label=1>市</Radio>
-          </Radio-group>
+    <!--<Modal-->
+      <!--class="p-cityList"-->
+      <!--v-model="isOpenModal"-->
+      <!--@on-cancel="isOpenModal=false"-->
+      <!--width="500"-->
+      <!--title="开通省市">-->
+      <!--<Form :model="addInfo" :label-width="90" class="ivu-form-item-required">-->
+        <!--<FormItem label="开通省市">-->
+          <!--<Radio-group v-model="addInfo.type">-->
+            <!--<Radio :label=0>省</Radio>-->
+            <!--<Radio :label=1>市</Radio>-->
+          <!--</Radio-group>-->
 
-          <div class="p-cityList-list">
-            <Select v-model="addInfo.provinceId" v-if="addInfo.type === 0" @on-change="changeProvince">
-              <Option v-for="(item,index) of areaList" :key="index" :value="item.value" :label="item.label"></Option>
-            </Select>
-            <Cascader v-if="addInfo.type === 1" :data="areaList" change-on-select @on-change="changeCascader"
-                      v-model="addInfo.city"></Cascader>
-          </div>
-        </FormItem>
-        <FormItem label="排序值" prop="sort">
-          <InputNumber v-model="addInfo.sort" placeholder="请输入排序值"></InputNumber>
-        </FormItem>
-      </Form>
-      <div slot="footer" class="-p-v-flex">
-        <Button @click="isOpenModal=false" ghost type="primary" style="width: 100px;">取消</Button>
-        <div @click="submitInfo('addInfo')" class="g-primary-btn ">确认</div>
-      </div>
-    </Modal>
+          <!--<div class="p-cityList-list">-->
+            <!--<Select v-model="addInfo.provinceId" v-if="addInfo.type === 0" @on-change="changeProvince">-->
+              <!--<Option v-for="(item,index) of areaList" :key="index" :value="item.value" :label="item.label"></Option>-->
+            <!--</Select>-->
+            <!--<Cascader v-if="addInfo.type === 1" :data="areaList" change-on-select @on-change="changeCascader"-->
+                      <!--v-model="addInfo.city"></Cascader>-->
+          <!--</div>-->
+        <!--</FormItem>-->
+        <!--<FormItem label="排序值" prop="sort">-->
+          <!--<InputNumber v-model="addInfo.sort" placeholder="请输入排序值"></InputNumber>-->
+        <!--</FormItem>-->
+      <!--</Form>-->
+      <!--<div slot="footer" class="-p-v-flex">-->
+        <!--<Button @click="isOpenModal=false" ghost type="primary" style="width: 100px;">取消</Button>-->
+        <!--<div @click="submitInfo('addInfo')" class="g-primary-btn ">确认</div>-->
+      <!--</div>-->
+    <!--</Modal>-->
   </div>
 </template>
 
 <script>
-  import area from '@/libs/area.js'
 
   export default {
     name: 'cityList',
@@ -58,11 +60,10 @@
           pageSize: 10
         },
         dataList: [],
-        addInfo: {
-          city: []
-        },
-        areaList: area.list,
         total: 0,
+        searchInfo: {
+          display: 1
+        },
         isFetching: false,
         isOpenModal: false,
         columns: [
@@ -127,40 +128,40 @@
       };
     },
     mounted() {
-      this.areaList.forEach(list=>{
-        list.children.forEach(item=>{
-          item.children.forEach(data=>{
-            data.disabled = true
-          })
-        })
-      })
+      // this.areaList.forEach(list=>{
+      //   list.children.forEach(item=>{
+      //     item.children.forEach(data=>{
+      //       data.disabled = true
+      //     })
+      //   })
+      // })
       this.getList()
-      console.log(this.areaList)
+      // console.log(this.areaList)
     },
     methods: {
-      changeCascader (data,selectedData) {
-        if (selectedData.length === 2){
-          this.addInfo.cityId = selectedData[1].value
-          this.addInfo.cityName = selectedData[1].label
-          this.addInfo.provinceId = selectedData[0].value
-          this.addInfo.provinceName = selectedData[0].label
-        }
-      },
-      changeProvince (data) {
-        this.areaList.forEach(item=>{
-          if(data === item.value) {
-            this.addInfo.provinceName = item.label
-          }
-        })
-      },
-      openModal() {
-        this.isOpenModal = true
-        this.addInfo = {
-          city: [],
-          type:'',
-          sort: null
-        }
-      },
+      // changeCascader (data,selectedData) {
+      //   if (selectedData.length === 2){
+      //     this.addInfo.cityId = selectedData[1].value
+      //     this.addInfo.cityName = selectedData[1].label
+      //     this.addInfo.provinceId = selectedData[0].value
+      //     this.addInfo.provinceName = selectedData[0].label
+      //   }
+      // },
+      // changeProvince (data) {
+      //   this.areaList.forEach(item=>{
+      //     if(data === item.value) {
+      //       this.addInfo.provinceName = item.label
+      //     }
+      //   })
+      // },
+      // openModal() {
+      //   this.isOpenModal = true
+      //   this.addInfo = {
+      //     city: [],
+      //     type:'',
+      //     sort: null
+      //   }
+      // },
       currentChange(val) {
         this.tab.page = val;
         this.getList();
@@ -207,7 +208,8 @@
         }
         this.$api.xxbProvinceCity.getProvinceCityPage({
           current: num ? num : this.tab.page,
-          size: this.tab.pageSize
+          size: this.tab.pageSize,
+          display: this.searchInfo.display
         })
           .then(
             response => {
@@ -218,42 +220,42 @@
             this.isFetching = false
           })
       },
-      submitInfo() {
-
-        if (!this.addInfo.provinceId && this.addInfo.type === 0) {
-          return this.$Message.error('请选择需要开通的省')
-        } else if (this.addInfo.city.length < 2 && this.addInfo.type === 1) {
-          return this.$Message.error('请选择需要开通的市或州')
-        } else if (this.addInfo.type === '') {
-          return this.$Message.error('请选择开通的省或市')
-        } else if (!this.addInfo.sort) {
-          return this.$Message.error('请输入排序值')
-        }
-
-        if (this.isSending) return
-
-        this.isSending = true
-
-        this.$api.xxbProvinceCity.saveProvinceCity({
-          provinceId: this.addInfo.provinceId,
-          cityId: this.addInfo.cityId,
-          provinceName: this.addInfo.provinceName,
-          cityName: this.addInfo.cityName,
-          sort: this.addInfo.sort,
-          provinceCity: this.addInfo.type
-        })
-          .then(
-            response => {
-              if (response.data.code == '200') {
-                this.$Message.success('提交成功');
-                this.getList()
-                this.isOpenModal = false
-              }
-            })
-          .finally(() => {
-            this.isSending = false
-          })
-      }
+      // submitInfo() {
+      //
+      //   if (!this.addInfo.provinceId && this.addInfo.type === 0) {
+      //     return this.$Message.error('请选择需要开通的省')
+      //   } else if (this.addInfo.city.length < 2 && this.addInfo.type === 1) {
+      //     return this.$Message.error('请选择需要开通的市或州')
+      //   } else if (this.addInfo.type === '') {
+      //     return this.$Message.error('请选择开通的省或市')
+      //   } else if (!this.addInfo.sort) {
+      //     return this.$Message.error('请输入排序值')
+      //   }
+      //
+      //   if (this.isSending) return
+      //
+      //   this.isSending = true
+      //
+      //   this.$api.xxbProvinceCity.saveProvinceCity({
+      //     provinceId: this.addInfo.provinceId,
+      //     cityId: this.addInfo.cityId,
+      //     provinceName: this.addInfo.provinceName,
+      //     cityName: this.addInfo.cityName,
+      //     sort: this.addInfo.sort,
+      //     provinceCity: this.addInfo.type
+      //   })
+      //     .then(
+      //       response => {
+      //         if (response.data.code == '200') {
+      //           this.$Message.success('提交成功');
+      //           this.getList()
+      //           this.isOpenModal = false
+      //         }
+      //       })
+      //     .finally(() => {
+      //       this.isSending = false
+      //     })
+      // }
     }
   };
 </script>

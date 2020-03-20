@@ -265,7 +265,7 @@
       },
       getChannelList() {
         this.isFetching = true
-        this.$api.gswInternalChannel.getInternalChannelDataByDate({
+        this.$api.tbzwInternalChannel.getInternalChannelDataByDate({
           date: dayjs(this.dataItem.date).format('YYYYMMDD'),
           sort: 'successOrderCount',
           current: this.tabDetailChannel.page,
