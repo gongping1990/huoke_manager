@@ -119,7 +119,7 @@
                       this.changeOpen(params.row)
                     }
                   }
-                }, !params.row.display ? '取消开通' : '设为开通')
+                }, params.row.display ? '取消开通' : '设为开通')
               ])
             }
           }
@@ -168,7 +168,7 @@
       changeOpen(param) {
         this.$Modal.confirm({
           title: '提示',
-          content: `确认要${param.isOpen ? '取消' : '设为'}开通吗？`,
+          content: `确认要${param.display ? '取消' : '设为'}开通吗？`,
           onOk: () => {
             this.$api.xxbProvinceCity.setOrCancelDisplay({
               id: param.id
