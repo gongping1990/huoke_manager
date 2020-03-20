@@ -242,7 +242,7 @@
         this.getDetailList();
       },
       detailCurrentChangeChannel(val) {
-        this.tabDetail.page = val;
+        this.tabDetailChannel.page = val;
         this.getChannelList();
       },
       openModal(data) {
