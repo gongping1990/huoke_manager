@@ -24,7 +24,7 @@
       v-model="isOpenModalChannel"
       @on-cancel="isOpenModalChannel = false"
       footer-hide
-      width="700"
+      width="750"
       title="渠道排行">
       <Table class="-c-tab" :loading="isFetching" :columns="columnsModalChannel" :data="detailChannelList"></Table>
 
@@ -212,6 +212,11 @@
           {
             title: '访问量',
             key: 'pv',
+            align: 'center'
+          },
+          {
+            title: '访问用户数',
+            key: 'uv',
             align: 'center'
           },
           {
