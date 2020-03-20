@@ -45,7 +45,9 @@
           <Button type="primary" ghost class="-p-modal-btn -btn" @click="downExcel(2)">导出错误记录</Button>
           <Button type="primary" ghost class="-p-modal-btn" @click="toExcel">导出表格</Button>
         </Col>
-
+        <Col class="g-text-right" :span="2" v-if="classType===3">
+          <Button type="primary" ghost class="-p-modal-btn" @click="toExcel">导出表格</Button>
+        </Col>
       </Row>
 
       <Table class="-c-tab" :loading="isFetching" :columns="radioType ? columnsUnanswered : columns"
@@ -410,6 +412,7 @@
         let downUrl = `${getBaseUrl()}/poem/goods/downloadExcelByGoods?startTime=${params.startTime}&endTime=${params.endTime}&send=${params.send}&nickName=${params.nickName}&state=${params.state}&type=${params.type}`
 
         window.open(downUrl, '_blank');
+        console.log(downUrl)
       },
       changeDate(data) {
         this.searchInfo.startTime = data.startTime
