@@ -82,8 +82,15 @@
           <Form-item label="应用省市">
             {{dataItem.provinceCount}}省，{{dataItem.cityCount}}市
           </Form-item>
+          <Form-item label="是否全选">
+            <Radio-group v-model="addInfo.isAll" @on-change="changeAllCity">
+              <Radio :label=1>是</Radio>
+              <Radio :label=0>否</Radio>
+            </Radio-group>
+          </Form-item>
           <FormItem label="选择省市">
-            <Select v-model="addInfo.cityIds" class="-search-selectOne" multiple filterable>
+            <Select v-model="addInfo.cityIds" class="-search-selectOne" multiple filterable
+                    :disabled="addInfo.isAll === 1">
               <Option v-for="(item,index) in cityList" :label=" item.cityName || item.provinceName" :value="item.id"
                       :key="index"></Option>
             </Select>
@@ -99,8 +106,8 @@
 </template>
 
 <script>
-  import dayjs from 'dayjs'
-  import {getBaseUrl} from '@/libs/index'
+  import dayjs from 'dayjs';
+  import {getBaseUrl} from '@/libs/index';
   import DatePickerTemplate from "../../../components/datePickerTemplate";
   import UploadImg from "../../../components/uploadImg";
 
@@ -184,7 +191,7 @@
                     margin: '10px'
                   }
                 })
-              ])
+              ]);
             },
             width: 100,
             align: 'center'
@@ -202,7 +209,7 @@
           {
             title: '有效期时间',
             render: (h, params) => {
-              return h('span', `${params.row.startTime} - ${params.row.endTime}`)
+              return h('span', `${params.row.startTime} - ${params.row.endTime}`);
             },
             width: 300,
             align: 'center'
@@ -210,7 +217,7 @@
           {
             title: '应用省市',
             render: (h, param) => {
-              return h('div', `${param.row.provinceCount}省，${param.row.cityCount}市`)
+              return h('div', `${param.row.provinceCount}省，${param.row.cityCount}市`);
             },
             align: 'center'
           },
@@ -229,7 +236,7 @@
                   },
                   on: {
                     click: () => {
-                      this.openModalData(params.row)
+                      this.openModalData(params.row);
                     }
                   }
                 }, '应用'),
@@ -243,7 +250,7 @@
                   },
                   on: {
                     click: () => {
-                      this.openModal(params.row)
+                      this.openModal(params.row);
                     }
                   }
                 }, '编辑'),
@@ -257,11 +264,11 @@
                   },
                   on: {
                     click: () => {
-                      this.delItem(params.row)
+                      this.delItem(params.row);
                     }
                   }
                 }, '删除')
-              ])
+              ]);
             }
           }
         ]
@@ -273,71 +280,82 @@
           disabledDate(date) {
             return date && date.valueOf() < new Date(_new).getTime();
           }
-        }
+        };
       }
     },
     mounted() {
-      this.getList()
+      this.getList();
     },
     methods: {
+      changeAllCity() {
+        if (this.addInfo.isAll === 1) {
+          this.addInfo.cityIds = []
+          this.cityList.forEach(item=>{
+            this.addInfo.cityIds.push(item.id)
+          })
+        }
+        this.$forceUpdate()
+      },
       openModal(data) {
-        this.isOpenModal = true
+        this.isOpenModal = true;
         if (data) {
-          this.addInfo = JSON.parse(JSON.stringify(data))
+          this.addInfo = JSON.parse(JSON.stringify(data));
         } else {
           this.addInfo = {
             id: '',
+            isAll: 0,
             startTime: '',
             endTime: '',
             sort: '',
             img: ''
-          }
+          };
         }
       },
       openModalData(data) {
-        this.dataItem = JSON.parse(JSON.stringify(data))
-        this.isOpenModalData = true
+        this.dataItem = JSON.parse(JSON.stringify(data));
+        this.isOpenModalData = true;
         this.addInfo = {
           id: '',
           cityIds: []
-        }
-        this.getAllProvinceCity(data)
+        };
+        this.getAllProvinceCity(data);
       },
       closeModal(name) {
-        this.isOpenModal = false
-        this.$refs[name].resetFields()
+        this.isOpenModal = false;
+        this.$refs[name].resetFields();
       },
       currentChange(val) {
         this.tab.page = val;
         this.getList();
       },
       getDetailList(data) {
-        this.isFetching = true
-        this.addInfo.cityIds = []
+        this.isFetching = true;
+        this.addInfo.cityIds = [];
         this.$api.xxbOperationPosition.getProvinceCityByOperationPositionId({
           id: data.id
         }).then(response => {
-          let array = response.data.resultData
-          array.forEach(item=>{
-            this.addInfo.cityIds.push(item.id)
-          })
+          let array = response.data.resultData;
+          array.forEach(item => {
+            this.addInfo.cityIds.push(item.id);
+          });
+          this.addInfo.isAll = this.addInfo.cityIds.length === this.cityList.length ? 1 : 0
         }).finally(() => {
-          this.isFetching = false
-        })
+          this.isFetching = false;
+        });
       },
       getAllProvinceCity(data) {
         this.$api.xxbProvinceCity.getAllProvinceCity()
           .then(
             response => {
               this.cityList = response.data.resultData;
-              this.getDetailList(data)
-            })
+              this.getDetailList(data);
+            });
       },
       //分页查询
       getList(num) {
-        this.isFetching = true
+        this.isFetching = true;
         if (num) {
-          this.tab.currentPage = 1
+          this.tab.currentPage = 1;
         }
         this.$api.xxbOperationPosition.getOperationPositionPage({
           current: num ? num : this.tab.page,
@@ -352,8 +370,8 @@
               this.total = response.data.resultData.total;
             })
           .finally(() => {
-            this.isFetching = false
-          })
+            this.isFetching = false;
+          });
       },
       delItem(param) {
         this.$Modal.confirm({
@@ -368,21 +386,21 @@
                   this.$Message.success("操作成功");
                   this.getList();
                 }
-              })
+              });
           }
-        })
+        });
       },
       submitInfo(name) {
 
-        if (this.isSending) return
+        if (this.isSending) return;
 
         this.$refs[name].validate((valid) => {
           if (valid) {
             if (!this.addInfo.img) {
-              return this.$Message.error('请上传图片')
+              return this.$Message.error('请上传图片');
             }
 
-            this.isSending = true
+            this.isSending = true;
             this.$api.xxbOperationPosition.saveOperationPosition({
               id: this.addInfo.id,
               endTime: dayjs(this.addInfo.endTime).format("YYYY/MM/DD HH:mm:ss"),
@@ -398,40 +416,47 @@
                 response => {
                   if (response.data.code == '200') {
                     this.$Message.success('提交成功');
-                    this.getList()
-                    this.closeModal(name)
+                    this.getList();
+                    this.closeModal(name);
                   }
                 })
               .finally(() => {
-                this.isSending = false
-              })
+                this.isSending = false;
+              });
           }
-        })
+        });
       },
       submitSetting() {
-        if (this.isSending) return
+        let allCity = []
+        if (this.isSending) return;
 
-        if (!this.addInfo.cityIds.length) {
-          return this.$Message.error('请选择需要应用的省市')
+        if (!this.addInfo.isAll && !this.addInfo.cityIds.length) {
+          return this.$Message.error('请选择需要应用的省市');
         }
 
-        this.isSending = true
+        this.isSending = true;
+
+        if (this.addInfo.isAll) {
+          this.cityList.forEach(item=>{
+            allCity.push(item.id)
+          })
+        }
 
         this.$api.xxbOperationPosition.changeProvinceCityByOperationPositionId({
           id: this.dataItem.id,
-          provinceCityIds: this.addInfo.cityIds
+          provinceCityIds: this.addInfo.isAll ? allCity : this.addInfo.cityIds
         })
           .then(
             response => {
               if (response.data.code == '200') {
                 this.$Message.success('提交成功');
-                this.isOpenModalData = false
-                this.getList()
+                this.isOpenModalData = false;
+                this.getList();
               }
             })
           .finally(() => {
-            this.isSending = false
-          })
+            this.isSending = false;
+          });
       }
     }
   };
