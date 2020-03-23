@@ -2,14 +2,22 @@
   <div class="p-classProgress">
     <Card>
       <Row class="g-search">
+        <Col :span="5" class="g-t-left">
+          <div class="g-flex-a-j-center">
+            <div class="-search-select-text-two">课程名称：</div>
+            <Select v-model="searchInfo.courseId" @on-change="getList(1)" class="-search-selectOne">
+              <Option v-for="item of courseList" :label=item.name :value=item.id :key="item.id"></Option>
+            </Select>
+          </div>
+        </Col>
         <Col :span="5">
           <div class="-search">
             <Select v-model="selectInfo" class="-search-select">
-              <Option value="1">用户昵称</Option>
-              <Option value="2">课程进度</Option>
-              <Option value="3">累计打卡</Option>
-              <Option value="4">最近连续打卡</Option>
-              <Option value="5">最长连续打卡</Option>
+              <!--<Option value="1">用户昵称</Option>-->
+              <!--<Option value="2">课程进度</Option>-->
+              <!--<Option value="3">累计打卡</Option>-->
+              <!--<Option value="4">最近连续打卡</Option>-->
+              <Option value="1">电话号码</Option>
             </Select>
             <span class="-search-center">|</span>
             <Input v-model="searchInfo.public" class="-search-input" placeholder="请输入关键字" icon="ios-search"
@@ -20,7 +28,7 @@
 
       <Table class="-c-tab" :loading="isFetching" :columns="columns" :data="dataList"></Table>
 
-      <Page class="-p-text-right" :total="total" size="small" show-elevator :page-size="tab.pageSize"
+      <Page class="g-text-right" :total="total" size="small" show-elevator :page-size="tab.pageSize"
             :current.sync="tab.currentPage"
             @on-change="currentChange"></Page>
     </Card>
@@ -57,12 +65,15 @@
           pageSize: 10
         },
         dataList: [],
+        courseList: [],
         recordList: [],
         total: 0,
         isFetching: false,
         isOpenModal: false,
         selectInfo: '1',
-        searchInfo: {},
+        searchInfo: {
+          courseId: '-1'
+        },
         addInfo: {},
         columns: [
           {
@@ -82,17 +93,65 @@
           },
           {
             title: '累计打卡',
-            key: 'totalCard',
+            render: (h, params) => {
+              return h('Button', {
+                props: {
+                  type: 'text',
+                  size: 'small'
+                },
+                style: {
+                  color: '#5444E4',
+                  marginRight: '5px'
+                },
+                on: {
+                  click: () => {
+                    this.openModal(params.row)
+                  }
+                }
+              }, params.row.totalCard)
+            },
             align: 'center'
           },
           {
             title: '最近连续打卡',
-            key: 'continueCard',
+            render: (h, params) => {
+              return h('Button', {
+                props: {
+                  type: 'text',
+                  size: 'small'
+                },
+                style: {
+                  color: '#5444E4',
+                  marginRight: '5px'
+                },
+                on: {
+                  click: () => {
+                    this.openModal(params.row)
+                  }
+                }
+              }, params.row.continueCard)
+            },
             align: 'center'
           },
           {
             title: '最长连续打卡',
-            key: 'longerContinueCard',
+            render: (h, params) => {
+              return h('Button', {
+                props: {
+                  type: 'text',
+                  size: 'small'
+                },
+                style: {
+                  color: '#5444E4',
+                  marginRight: '5px'
+                },
+                on: {
+                  click: () => {
+                    this.openModal(params.row)
+                  }
+                }
+              }, params.row.longerContinueCard)
+            },
             align: 'center'
           },
           {
@@ -120,16 +179,32 @@
       };
     },
     mounted() {
-      this.getList()
+      this.getCourseList()
     },
     methods: {
       openModal(data) {
         this.isOpenModal = true
         this.recordList = data.workList
       },
+      getCourseList() {
+        this.$api.tbzwCourse.courseQueryPage({
+          current: 1,
+          size: 1000,
+          type: 1
+        })
+          .then(
+            response => {
+              this.courseList = response.data.resultData.records;
+              this.courseList.unshift({
+                id: '-1',
+                name: '全部'
+              })
+              this.getList()
+            })
+      },
       currentChange(val) {
-        this.tab.page = val;
-        this.getList();
+        this.tab.page = val
+        this.getList()
       },
       //分页查询
       getList(num) {
@@ -139,7 +214,8 @@
         }
         let params = {
           current: num ? num : this.tab.page,
-          size: this.tab.pageSize
+          size: this.tab.pageSize,
+          courseId: this.searchInfo.courseId == '-1' ? '' : this.searchInfo.courseId,
         }
         switch (+this.selectInfo) {
           case 1:
@@ -176,6 +252,17 @@
 
 <style lang="less" scoped>
   .p-classProgress {
+
+    .-search-select-text-two {
+      min-width: 80px;
+    }
+    .-search-selectOne {
+      /*width: 100px;*/
+      border: 1px solid #dcdee2;
+      border-radius: 4px;
+      margin-right: 20px;
+    }
+
     .-c-tips {
       color: #39f
     }
@@ -189,10 +276,6 @@
       display: flex;
       padding: 0 20px;
       justify-content: space-between;
-    }
-
-    .-p-text-right {
-      text-align: right;
     }
 
     .-c-tab {
