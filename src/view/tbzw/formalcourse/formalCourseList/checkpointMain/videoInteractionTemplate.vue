@@ -104,7 +104,7 @@
             name: '顺序填空（题干含图片）'
           },
           {
-            id: '10',
+            id: '8',
             name: '屏幕互动'
           },
           {
@@ -251,10 +251,13 @@
         let multipleSelectionArray = [];
         let choiceDataList = [];
         let choiceSelectList = [];
+        let choiceSelectListSX9 = []; //顺序填空
         let isCheckRightAudio = true;
         let isCheckErrorAudio = true;
         let isCheckSelectRepeat = false; // 检测组词造句选项是否有重复的
+        let isCheckSelectRepeatSX9 = false; // 检测顺序填空选项是否有重复的
         let isCheckSelectNull = false; // 检测组词造句选项是否有空的
+        let isCheckSelectNullSX9 = false; // 检测顺序填空选项是否有空的
         this.choiceList.forEach(item => {
           if (item.answerMinute === '' || item.answerSecond === '' || !item.answerTime) {
             isCheckQuestion = false;
@@ -283,6 +286,7 @@
 
             item.optionJson.forEach(list => {
               choiceSelectList.push(list.links);
+              choiceSelectListSX9.push(list.numLinks);
               multipleSelectionArray.push(list.checked);
             });
             console.log(item.optionJson);
@@ -310,10 +314,18 @@
             return !list;
           });
 
+          isCheckSelectNullSX9 = choiceSelectListSX9.some(list => {
+            return !list;
+          });
+
           if (new Set(choiceSelectList).size !== choiceSelectList.length) {
             isCheckSelectRepeat = true;
           }
-          console.log(multipleSelectionArray,111)
+
+          if (new Set(choiceSelectListSX9).size !== choiceSelectListSX9.length) {
+            isCheckSelectRepeatSX9 = true;
+          }
+
           multipleSelectionArray.forEach(item=>{
             if (item) {
               checkmultipleNum++
@@ -321,7 +333,7 @@
           })
 
         });
-
+        console.log(this.choiceList[0],111)
 
         if (!isCheckName) {
           return this.$Message.error('请输入题目');
@@ -329,15 +341,15 @@
           return this.$Message.error('请新增题目');
         } else if (!isCheckQuestion) {
           return this.$Message.error('请填写完整的答题字段');
-        } else if (!isCheckoptionJsonLength) {
+        } else if (!isCheckoptionJsonLength  && (this.modelChildType !== 1 && this.modelChildType !== 7 && this.modelChildType !== 10 && this.modelChildType !== 11)) {
           return this.$Message.error('请新增选项');
-        } else if (!isCheckOptionBool && (this.modelChildType === 2 || this.modelChildType === 5)) {
+        } else if (!isCheckOptionBool && (this.modelChildType === 2 || this.modelChildType === 5 || this.modelChildType === 8)) {
           return this.$Message.error('请选择一个正确的答案');
         } else if (checkmultipleNum < 2 && (this.modelChildType === 4 || this.modelChildType === 6)) {
           return this.$Message.error('多选至少需要2个正确的答案');
         } else if (!isCheckOptionOK && this.modelChildType !== 1) {
           return this.$Message.error('选项不能有空');
-        } else if (this.choiceList[0].optionJson.length < 2 && this.modelChildType === 2) {
+        } else if (this.choiceList[0].optionJson.length < 2 && (this.modelChildType === 2 || this.modelChildType === 5 || this.modelChildType === 8 || this.modelChildType === 9)) {
           return this.$Message.error('选择题选项不少于2个');
         } else if (this.choiceList[0].optionJson.length < 2 && this.modelChildType === 3) {
           return this.$Message.error('连线题选项不少于4个');
@@ -347,6 +359,14 @@
           return this.$Message.error('请选择相应连线题关联');
         } else if (isCheckSelectRepeat && this.modelChildType === 3) {
           return this.$Message.error('连线题关联不能重复');
+        } else if (!this.choiceList[0].judgementAns && this.modelChildType === 7) {
+          return this.$Message.error('请选择判断题答案');
+        } else if (!this.choiceList[0].gesture && this.modelChildType === 10) {
+          return this.$Message.error('请选择互动类型');
+        } else if (isCheckSelectNullSX9 && this.modelChildType === 9) {
+          return this.$Message.error('请选择相应顺序');
+        } else if (isCheckSelectRepeatSX9 && this.modelChildType === 9) {
+          return this.$Message.error('顺序填空的顺序不能重复');
         }
 
         choiceDataList = JSON.parse(JSON.stringify(this.choiceList));
