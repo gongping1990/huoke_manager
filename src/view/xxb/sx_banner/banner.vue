@@ -34,7 +34,7 @@
         width="500"
         :title="addInfo.id ? '编辑banner' : '创建banner'">
         <Form ref="addInfo" :model="addInfo" :rules="ruleValidate" :label-width="90">
-          <Form-item label="运营位图片" prop="img" class="ivu-form-item-required">
+          <Form-item label="banner图片" prop="img" class="ivu-form-item-required">
             <upload-img v-model="addInfo.img" :option="uploadOption"></upload-img>
           </Form-item>
           <FormItem label="活动名称" prop="name">
