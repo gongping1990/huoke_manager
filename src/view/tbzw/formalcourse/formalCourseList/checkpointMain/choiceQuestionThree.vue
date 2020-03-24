@@ -11,6 +11,10 @@
         <upload-audio class="-input-name" ref="childChoiceAudio" v-model="list.vfUrl"
                       :option="uploadAudioOption"></upload-audio>
       </div>
+      <div class="-name" v-show="type=='7'">
+        <span class="-span">题干图片：</span>
+        <upload-img class="-input-name" v-model="list.imgUrl" :option="uploadOption"></upload-img>
+      </div>
       <div class="-name">
         <span class="-span">答题时间：</span>
         <Input class="-input-name -s-b-width" v-model="list.answerMinute" type="text" placeholder="请输入答题时间（分）"/>分
@@ -26,6 +30,15 @@
         <span class="-span">录音提示：</span>
         <upload-img class="-input-name" v-model="list.imgUrl" :option="uploadOption"></upload-img>
       </div>
+      <div class="-name" v-show="type=='7'">
+        <span class="-span">答案：</span>
+        <Radio-group v-model="list.judgementAns">
+          <Radio :label=1>正确</Radio>
+          <Radio :label=2>错误</Radio>
+          <Radio :label=3>没有正误</Radio>
+        </Radio-group>
+      </div>
+
       <!--publishPoint-->
       <div class="-option-wrap" v-show="list.optionJson.length">
         <div>
@@ -36,13 +49,15 @@
             <span class="-s-width -span">{{type == 3 ? '左' : '选项'}}{{optionLetter[index]}}：</span>
             <upload-img ref="childImg" v-if="type!='1'" v-model="item.value"
                         :option="uploadOption"></upload-img>
-            <Checkbox v-if="type=='2'" v-model="item.checked" class="-s-b-margin"
+            <Checkbox v-if="type=='2' || type == '4' || type == '5' || type == '6'" v-model="item.checked"
+                      class="-s-b-margin"
                       @on-change="changeCheck(list,index)">设为答案
             </Checkbox>
             <div v-if="type=='3'" class="g-flex-a-j-center -s-b-margin">
               <span style="width: 50px">关联：</span>
               <Select v-model="item.links" style="width: 70px">
-                <Option v-for="(item,index) in list.optionJsonTwo" :label="item.name" :value="item.index" :key="index"></Option>
+                <Option v-for="(item,index) in list.optionJsonTwo" :label="item.name" :value="item.index"
+                        :key="index"></Option>
 
               </Select>
             </div>
@@ -54,7 +69,8 @@
           <p class="-name" v-if="type == 3">
             <span class="-span">右侧选项：</span>
           </p>
-          <div v-for="(item,index) of list.optionJsonTwo" :key="`${index}R`" class="-p-item-select-wrap" v-if="type == 3">
+          <div v-for="(item,index) of list.optionJsonTwo" :key="`${index}R`" class="-p-item-select-wrap"
+               v-if="type == 3">
             <span class="-s-width -span">右{{optionLetter[index]}}：</span>
             <upload-img ref="childImg" v-if="type!='1'" v-model="item.value"
                         :option="uploadOption"></upload-img>
@@ -64,7 +80,8 @@
       </div>
 
 
-      <div class="-form-btn g-cursor" v-if="list.optionJson.length < 4 && (type == 2)"
+      <div class="-form-btn g-cursor"
+           v-if="list.optionJson.length < 4 && (type == 2 || type ==4 ||  type ==5 ||  type ==6)"
            @click="addOption(list)">+ 新增选项
       </div>
 
@@ -109,12 +126,12 @@
         },
         optionLetter: ['A', 'B', 'C', 'D', 'E', 'F'],
         numList: [],
-      }
+      };
     },
     methods: {
       init() {
 
-        this.numList = []
+        this.numList = [];
         this.choiceList = this.childList.length ? JSON.parse(JSON.stringify(this.childList)) : [
           {
             subject: '',
@@ -123,34 +140,36 @@
             imgUrl: '',
             vfUrl: ''
           }
-        ]
+        ];
 
         if (this.choiceList.length && this.type != 1) {
           setTimeout(() => {
             this.$refs.childImg && this.$refs.childImg.length && this.$refs.childImg.forEach(item => {
-              item.init()
-            })
-          })
+              item.init();
+            });
+          });
         }
 
         if (this.choiceList.length && this.type === 3) {
-          this.choiceList.forEach(item=>{
-            item.optionJson = item.leftJson || []
-            item.optionJsonTwo = item.rigthJson || []
+          this.choiceList.forEach(item => {
+            item.optionJson = item.leftJson || [];
+            item.optionJsonTwo = item.rigthJson || [];
 
-            item.optionJsonTwo.forEach((data,index)=> {
-              data.name = `右${this.optionLetter[index]}`
-            })
-          })
+            item.optionJsonTwo.forEach((data, index) => {
+              data.name = `右${this.optionLetter[index]}`;
+            });
+          });
         }
 
       },
       changeCheck(list, idx) {
-        list.optionJson.forEach((item, index) => {
-          if (idx !== index) {
-            item.checked = false
-          }
-        })
+        if (this.type == '2' || this.type == '5') {
+          list.optionJson.forEach((item, index) => {
+            if (idx !== index) {
+              item.checked = false;
+            }
+          });
+        }
       },
       addOption(list) {
 
@@ -159,35 +178,35 @@
           check: false,
           link: '',
           index: this.type == 3 ? `L${this.optionLetter[list.optionJson.length]}` : `${this.optionLetter[list.optionJson.length]}`
-        })
+        });
 
-        if(this.type == 3) {
+        if (this.type == 3) {
           list.optionJsonTwo.push({
             value: '',
-            name: `右${this.optionLetter[list.optionJson.length-1]}`,
-            index: `R${this.optionLetter[list.optionJson.length-1]}`
-          })
+            name: `右${this.optionLetter[list.optionJson.length - 1]}`,
+            index: `R${this.optionLetter[list.optionJson.length - 1]}`
+          });
         }
 
         list.optionJson.forEach((item, index) => {
           this.numList.push({
             id: index + 1,
             name: index + 1
-          })
-        })
+          });
+        });
       },
       delOption(list, index) {
-        list.optionJson.splice(index, 1)
-        list.optionJsonTwo.splice(index, 1)
+        list.optionJson.splice(index, 1);
+        list.optionJsonTwo.splice(index, 1);
       },
       submitInfo() {
-        this.$emit('submitChoice', this.choiceList)
+        this.$emit('submitChoice', this.choiceList);
       },
       backCancel() {
-        this.$emit('cancelChoice')
+        this.$emit('cancelChoice');
       }
     }
-  }
+  };
 </script>
 
 <style scoped lang="less">
@@ -198,6 +217,7 @@
     .-name {
       display: flex;
       align-items: center;
+      margin-bottom: 10px;
     }
 
     .-span {
