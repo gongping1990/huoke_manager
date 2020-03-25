@@ -114,44 +114,12 @@
           },
           {
             title: '最近连续打卡',
-            render: (h, params) => {
-              return h('Button', {
-                props: {
-                  type: 'text',
-                  size: 'small'
-                },
-                style: {
-                  color: '#5444E4',
-                  marginRight: '5px'
-                },
-                on: {
-                  click: () => {
-                    this.openModal(params.row)
-                  }
-                }
-              }, params.row.continueCard)
-            },
+            key: 'continueCard',
             align: 'center'
           },
           {
             title: '最长连续打卡',
-            render: (h, params) => {
-              return h('Button', {
-                props: {
-                  type: 'text',
-                  size: 'small'
-                },
-                style: {
-                  color: '#5444E4',
-                  marginRight: '5px'
-                },
-                on: {
-                  click: () => {
-                    this.openModal(params.row)
-                  }
-                }
-              }, params.row.longerContinueCard)
-            },
+            key: 'longerContinueCard',
             align: 'center'
           },
           {
