@@ -3,24 +3,27 @@
     <div v-for="(list,listIndex) of choiceList" :key="listIndex" class="p-choice-wrap">
       <div class="-name">
         <span class="-span">题目：</span>
-        <Input class="-input-name -s-width" v-if="type!=11&&type!=8" v-model="list.subject" type="text" :maxlength="30"
+        <Input class="-input-name -s-width" v-model="list.subject" type="text" :maxlength="30"
                placeholder="请输入题目（最多三十个字）"/>
-        <Input class="-input-name -s-width" v-else v-model="list.subject" type="textarea" :rows="4"
-               placeholder="请输入题目"/>
       </div>
-      <p class="-name -c-tips" v-if="type==11 || type==8">
+      <div class="-name" v-show="type==11 || type==9">
+        <span class="-span">题目内容：</span>
+        <Input class="-input-name -s-width" v-model="list.content" type="textarea" :rows="4"
+               placeholder="请输入题目内容"/>
+      </div>
+      <p class="-name -c-tips" v-if="type==11 || type==9">
         {{type==11? '换行请手动输入‘/n’,需要圈选的文字以‘[]’表示；例如：[北京]好美啊，/n是啊' : '填空题横线请用‘[##]’表示；例如：今天你去[##]了吗？;等同于‘今天你去___了吗？’'}}
       </p>
-      <div class="-name" v-show="type!='10'">
+      <div class="-name" v-show="type!='8'">
         <span class="-span">题干音频：</span>
         <upload-audio class="-input-name" ref="childChoiceAudio" v-model="list.vfUrl"
                       :option="uploadAudioOption"></upload-audio>
       </div>
-      <div class="-name" v-show="type=='7' || type == '9' || type== 8">
+      <div class="-name" v-show="type=='7' || type == '10' || type== 9">
         <span class="-span">题干图片：</span>
-        <upload-img class="-input-name" v-model="list.imgUrl" :option="uploadOption"></upload-img>
+        <upload-img class="-input-name" v-model="list.subjectImg" :option="uploadOption"></upload-img>
       </div>
-      <div class="-name" v-show="type=='10'">
+      <div class="-name" v-show="type=='8'">
         <span class="-span">互动类型：</span>
         <Radio-group v-model="list.gesture">
           <Radio :label=1>举手</Radio>
@@ -44,37 +47,37 @@
       </div>
       <div class="-name" v-show="type=='7'">
         <span class="-span">答案：</span>
-        <Radio-group v-model="list.judgementAns">
+        <Radio-group v-model="list.answer">
           <Radio :label=1>正确</Radio>
           <Radio :label=2>错误</Radio>
-          <Radio :label=3>没有正误</Radio>
+          <Radio :label=0>没有正误</Radio>
         </Radio-group>
       </div>
 
       <!--publishPoint-->
       <div class="-option-wrap" v-show="list.optionJson.length">
-        <div :style="{'width': (type == 9 || type == 8) ? '100%' : ''}">
+        <div :style="{'width': (type == 10 || type == 9) ? '100%' : ''}">
           <p class="-name" v-if="type == 3">
             <span class="-span">左侧选项：</span>
           </p>
           <div v-for="(item,index) of list.optionJson" :key="index" class="-p-item-select-wrap">
             <span class="-s-width -span">{{type == 3 ? '左' : '选项'}}{{optionLetter[index]}}：</span>
-            <upload-img ref="childImg" v-if="type!='1' && type!=8 && type!=9" v-model="item.value"
+            <upload-img ref="childImg" v-if="type!='1' && type!=9 && type!=10" v-model="item.value"
                         :option="uploadOption"></upload-img>
-            <Input class="-input-name -s-width" v-if="type==8 || type==9" v-model="item.value" type="text" :maxlength="30"
+            <Input class="-input-name -s-width" v-if="type==9 || type==10" v-model="item.value" type="text" :maxlength="30"
                    placeholder="请输入选项内容"/>
-            <Checkbox v-if="type=='2' || type == '4' || type == '5' || type == '6' || type== '8'" v-model="item.checked"
+            <Checkbox v-if="type=='2' || type == '4' || type == '5' || type == '6' || type== '9'" v-model="item.checked"
                       class="-s-b-margin"
                       @on-change="changeCheck(list,index)">设为答案
             </Checkbox>
-            <div v-if="type=='3' || type == 9 " class="g-flex-a-j-center -s-b-margin">
-              <span style="width: 50px"> {{type == 9 ? '顺序' : '关联'}}</span>
+            <div v-if="type=='3' || type == 10 " class="g-flex-a-j-center -s-b-margin">
+              <span style="width: 50px"> {{type == 10 ? '顺序' : '关联'}}</span>
               <Select v-model="item.links" style="width: 70px" v-if="type==3">
                 <Option v-for="(item,index) in list.optionJsonTwo" :label="item.name" :value="item.index"
                         :key="index"></Option>
 
               </Select>
-              <Select v-model="item.numLinks" style="width: 70px" v-if="type==9">
+              <Select v-model="item.serial" style="width: 70px" v-if="type==10">
                 <Option v-for="(numItem,numIndex) in numList" :label="numItem.name" :value="numItem.id"
                         :key="numIndex"></Option>
 
@@ -99,7 +102,7 @@
 
 
       <div class="-form-btn g-cursor"
-           v-if="list.optionJson.length < 4 && (type == 2 || type ==4 || type ==5 || type ==6 || type ==8 || type ==9)"
+           v-if="list.optionJson.length < 4 && (type == 2 || type ==4 || type ==5 || type ==6 || type ==9 || type ==10)"
            @click="addOption(list)">+ 新增选项
       </div>
 
@@ -134,6 +137,8 @@
             subject: '',
             optionJson: [],
             imgUrl: '',
+            subjectImg: '',
+            answer: null,
             vfUrl: ''
           }
         ],
@@ -156,6 +161,8 @@
             optionJson: [],
             optionJsonTwo: [],
             imgUrl: '',
+            answer: null,
+            subjectImg: '',
             vfUrl: ''
           }
         ];
@@ -179,9 +186,18 @@
           });
         }
 
+        if (this.choiceList.length && this.type==10) {
+          this.choiceList[0].optionJson.forEach((item, index) => {
+            this.numList.push({
+              id: index + 1,
+              name: index + 1
+            });
+          });
+        }
+
       },
       changeCheck(list, idx) {
-        if (this.type == '2' || this.type == '5' || this.type == '8') {
+        if (this.type == '2' || this.type == '5' || this.type == '9') {
           list.optionJson.forEach((item, index) => {
             if (idx !== index) {
               item.checked = false;
@@ -207,7 +223,7 @@
           });
         }
 
-        if (this.type==9) {
+        if (this.type==10) {
           list.optionJson.forEach((item, index) => {
             this.numList.push({
               id: index + 1,

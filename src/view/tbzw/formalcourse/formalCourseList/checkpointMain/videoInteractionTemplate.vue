@@ -96,11 +96,11 @@
             name: '判断题（题干含图片）'
           },
           {
-            id: '8',
+            id: '9',
             name: '填空题（题干含图片）'
           },
           {
-            id: '9',
+            id: '10',
             name: '顺序填空（题干含图片）'
           },
           {
@@ -115,7 +115,15 @@
         tipObj: {
           '1': require('@/assets/images/guanka/lu1.png'),
           '2': require('@/assets/images/guanka/x1.png'),
-          '3': require('@/assets/images/guanka/l1.png')
+          '3': require('@/assets/images/guanka/l1.png'),
+          '4': require('@/assets/images/guanka/dx.png'),
+          '5': require('@/assets/images/guanka/x1.png'),
+          '6': require('@/assets/images/guanka/dx.png'),
+          '7': require('@/assets/images/guanka/pd.png'),
+          '8': require('@/assets/images/guanka/pm.png'),
+          '9': require('@/assets/images/guanka/tk.png'),
+          '10': require('@/assets/images/guanka/sx.png'),
+          '11': require('@/assets/images/guanka/qx.png')
         },
         dataItem: {},
         addInfo: {},
@@ -286,7 +294,7 @@
 
             item.optionJson.forEach(list => {
               choiceSelectList.push(list.links);
-              choiceSelectListSX9.push(list.numLinks);
+              choiceSelectListSX9.push(list.serial);
               multipleSelectionArray.push(list.checked);
             });
             console.log(item.optionJson);
@@ -339,17 +347,19 @@
           return this.$Message.error('请输入题目');
         } else if (!this.choiceList.length) {
           return this.$Message.error('请新增题目');
+        } else if (!this.choiceList[0].content &&(this.modelChildType === 9 || this.modelChildType === 11) ) {
+          return this.$Message.error('请输入题目内容');
         } else if (!isCheckQuestion) {
           return this.$Message.error('请填写完整的答题字段');
-        } else if (!isCheckoptionJsonLength  && (this.modelChildType !== 1 && this.modelChildType !== 7 && this.modelChildType !== 10 && this.modelChildType !== 11)) {
+        } else if (!isCheckoptionJsonLength  && (this.modelChildType !== 1 && this.modelChildType !== 7 && this.modelChildType !== 8 && this.modelChildType !== 11)) {
           return this.$Message.error('请新增选项');
-        } else if (!isCheckOptionBool && (this.modelChildType === 2 || this.modelChildType === 5 || this.modelChildType === 8)) {
+        } else if (!isCheckOptionBool && (this.modelChildType === 2 || this.modelChildType === 5 || this.modelChildType === 9)) {
           return this.$Message.error('请选择一个正确的答案');
         } else if (checkmultipleNum < 2 && (this.modelChildType === 4 || this.modelChildType === 6)) {
           return this.$Message.error('多选至少需要2个正确的答案');
         } else if (!isCheckOptionOK && this.modelChildType !== 1) {
           return this.$Message.error('选项不能有空');
-        } else if (this.choiceList[0].optionJson.length < 2 && (this.modelChildType === 2 || this.modelChildType === 5 || this.modelChildType === 8 || this.modelChildType === 9)) {
+        } else if (this.choiceList[0].optionJson.length < 2 && (this.modelChildType === 2 || this.modelChildType === 5 || this.modelChildType === 9 || this.modelChildType === 10)) {
           return this.$Message.error('选择题选项不少于2个');
         } else if (this.choiceList[0].optionJson.length < 2 && this.modelChildType === 3) {
           return this.$Message.error('连线题选项不少于4个');
@@ -359,13 +369,13 @@
           return this.$Message.error('请选择相应连线题关联');
         } else if (isCheckSelectRepeat && this.modelChildType === 3) {
           return this.$Message.error('连线题关联不能重复');
-        } else if (!this.choiceList[0].judgementAns && this.modelChildType === 7) {
+        } else if (this.choiceList[0].answer === '' && this.modelChildType === 7) {
           return this.$Message.error('请选择判断题答案');
-        } else if (!this.choiceList[0].gesture && this.modelChildType === 10) {
+        } else if (!this.choiceList[0].gesture && this.modelChildType === 8) {
           return this.$Message.error('请选择互动类型');
-        } else if (isCheckSelectNullSX9 && this.modelChildType === 9) {
+        } else if (isCheckSelectNullSX9 && this.modelChildType === 10) {
           return this.$Message.error('请选择相应顺序');
-        } else if (isCheckSelectRepeatSX9 && this.modelChildType === 9) {
+        } else if (isCheckSelectRepeatSX9 && this.modelChildType === 10) {
           return this.$Message.error('顺序填空的顺序不能重复');
         }
 

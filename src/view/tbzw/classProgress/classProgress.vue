@@ -219,7 +219,7 @@
         }
         switch (+this.selectInfo) {
           case 1:
-            params.nickName = this.searchInfo.public
+            params.phone = this.searchInfo.public
             break
           case 2:
             params.courseProgress = this.searchInfo.public
