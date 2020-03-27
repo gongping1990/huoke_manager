@@ -26,6 +26,9 @@ const hkywhdCompose = {
   },
   display(params) {
     return axios.post(`/fissionprep/compose/display`, qs.stringify(params))
+  },
+  addBookComposeTag(params) {
+    return axios.post(`/fissionprep/compose/addBookComposeTag`, params)
   }
 }
 

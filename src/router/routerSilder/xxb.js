@@ -46,6 +46,32 @@ export const xxbRouter =[
     ]
   },
   {
+    path: '/sx_dataStatistics',
+    name: 'sx_dataStatistics',
+    title: '升学数据统计',
+    component: Main,
+    children: [
+      {
+        path: '/xxb_cityData',
+        name: 'xxb_cityData',
+        meta: [
+          {name: '升学数据统计'},
+          {name: '城市数据'}
+        ],
+        component: () => import('@/view/xxb/cityData/cityData')
+      },
+      {
+        path: '/xxb_columnData',
+        name: 'xxb_columnData',
+        meta: [
+          {name: '升学数据统计'},
+          {name: '栏目数据'}
+        ],
+        component: () => import('@/view/xxb/columnData/columnData')
+      }
+    ]
+  },
+  {
     path: '/orderManager',
     name: 'orderManager',
     title: '订单管理',
@@ -167,6 +193,32 @@ export const xxbRouter =[
     ]
   },
   {
+    path: '/sx_operate',
+    name: 'sx_operate',
+    title: '升学运营管理',
+    component: Main,
+    children: [
+      {
+        path: '/xxb_sxBanner',
+        name: 'xxb_sxBanner',
+        meta: [
+          {name: '升学运营管理'},
+          {name: 'banner管理'}
+        ],
+        component: () => import('@/view/xxb/sx_banner/banner')
+      },
+      {
+        path: '/xxb_operationalManager',
+        name: 'xxb_operationalManager',
+        meta: [
+          {name: '升学运营管理'},
+          {name: '运营位管理'}
+        ],
+        component: () => import('@/view/xxb/operationalManager/operationManager')
+      }
+    ]
+  },
+  {
     path: '/course',
     name: 'course',
     title: '课程管理',
@@ -275,6 +327,52 @@ export const xxbRouter =[
         ],
         component: () => import('@/view/xxb/weike/weike')
       },
+    ]
+  },
+  {
+    path: '/sx_content',
+    name: 'sx_content',
+    title: '升学内容管理',
+    component: Main,
+    children: [
+      {
+        path: '/xxb_cityList',
+        name: 'xxb_cityList',
+        meta: [
+          {name: '升学内容管理'},
+          {name: '城市管理'}
+        ],
+        component: () => import('@/view/xxb/cityManager/cityList')
+      },
+      {
+        path: '/xxb_contentManager',
+        name: 'xxb_contentManager',
+        meta: [
+          {name: '升学内容管理'},
+          {name: '内容管理'}
+        ],
+        component: () => import('@/view/xxb/contentManager/learnList')
+      },
+      {
+        path: '/xxb_subcolumn',
+        name: 'xxb_subcolumn',
+        meta: [
+          {name: '升学内容管理'},
+          {name: '内容管理', url: 'xxb_contentManager'},
+          {name: '子栏目管理'}
+        ],
+        component: () => import('@/view/xxb/contentManager/subcolumn')
+      },
+      {
+        path: '/xxb_articleManager',
+        name: 'xxb_articleManager',
+        meta: [
+          {name: '升学内容管理'},
+          {name: '内容管理', url: 'xxb_contentManager'},
+          {name: '文章管理'}
+        ],
+        component: () => import('@/view/xxb/contentManager/articleManager')
+      }
     ]
   }
 ]

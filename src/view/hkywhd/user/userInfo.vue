@@ -5,38 +5,60 @@
         <Col :span="20">
           <div class="-p-header">
             <div class="-p-h-left">
-              <img :src="userInfo.headimgurl"/>
+              <img :src="addInfo.pavatar"/>
             </div>
             <div class="-p-h-right">
-              <div class="-r-name">{{userInfo.nickname}}</div>
+              <div class="-r-name">{{addInfo.pname}}</div>
               <div class="-r-dev">
-                <span>id: {{userInfo.userId}}</span>
-                <span><Icon type="ios-call"/>: {{userInfo.phone || '暂无'}}</span>
-                <span><Icon type="ios-time-outline"/>: {{userInfo.createTime}}</span>
+                <span>id: {{addInfo.puid}}</span>
+                <span><Icon type="ios-call"/>: {{addInfo.phone || '暂无'}}</span>
+                <span><Icon type="ios-time-outline"/>: {{userInfo.createTime || '暂无'}}</span>
               </div>
-              <div class="-r-dev" style="margin-top: 10px">
-                <span>孩子姓名: {{studentInfo.nickname || '暂无'}}</span>
-                <span>孩子性别: {{studentInfo.sex === null ? '暂无' : studentInfo.sex ? '男' : '女'}}</span>
-                <span>在读年级: {{studentInfo.gradeText || '暂无'}}</span>
-                <Button @click="openModalChild" ghost type="primary" style="width: 100px;">完善孩子信息</Button>
+
+              <div class="-r-btn">
+                <RadioGroup v-model="tabType" type="button">
+                  <Radio label="1">基础信息</Radio>
+                  <Radio label="2">学习数据</Radio>
+                </RadioGroup>
               </div>
-              <div class="-r-dev" style="margin-top: 10px">
-                <span>是否关注: {{userInfo.subscripbe ? '是' : '否'}}</span>
-                <span>是否购买: {{userInfo.buyed ? '是' : '否'}}</span>
-                <span>支付时间: {{userInfo.buyTime || '未购买'}}</span>
+
+              <div v-show="tabType === '1'">
+                <div class="-r-dev" style="margin-top: 30px">
+                  <div class="-r-dev-title">基础特征</div>
+                  <span class="-r-dev-role">用户角色: {{studentInfo.role || '暂无'}}</span>
+                </div>
+                <div class="-r-dev" style="margin-top: 10px">
+                  <div class="-r-dev-title">孩子信息</div>
+                  <!--<span class="-r-dev-role">孩子姓名: {{studentInfo.nickname || '暂无'}}</span>-->
+                  <span class="-r-dev-role">孩子性别: {{studentInfo.gender === '0' ? '暂无' : studentInfo.gender === '1' ? '男' : '女'}}</span>
+                  <span class="-r-dev-role">在读年级: {{studentInfo.gradeText || '暂无'}}</span>
+                  <span class="-r-dev-role">所在城市: {{studentInfo.city || '暂无'}}</span>
+                  <span class="-r-dev-role">与孩子关系: {{studentInfo.relationship || '暂无'}}</span>
+                  <span class="-r-dev-role">是否陪伴孩子身边: {{studentInfo.besideChild ? '是' : '否' || '暂无'}}</span>
+                  <!--<Button @click="openModalChild" ghost type="primary" style="width: 100px;">完善孩子信息</Button>-->
+                </div>
+                <div class="-r-dev" style="margin-top: 10px">
+                  <div class="-r-dev-title">兴趣标签</div>
+                  <Tag v-for="(item,index) of studentInfo.tags" :key="index" color="blue">{{item}}</Tag>
+                </div>
+                <!--<div class="-r-dev" style="margin-top: 10px">-->
+                  <!--<span>是否关注: {{userInfo.subscripbe ? '是' : '否'}}</span>-->
+                  <!--<span>是否购买: {{userInfo.buyed ? '是' : '否'}}</span>-->
+                  <!--<span>支付时间: {{userInfo.buyTime || '未购买'}}</span>-->
+                <!--</div>-->
               </div>
             </div>
           </div>
         </Col>
       </Row>
 
-      <Row class="-c-tab g-t-left">
+      <Row class="-c-tab g-t-left"  v-show="tabType === '2'">
         <Select v-model="searchInfo.appId" @on-change="changeRadio()" style="width: 300px">
           <Option v-for="(item,index) in appList" :label="item.name" :value="item.id" :key="index"></Option>
         </Select>
       </Row>
 
-      <div class="-c-tab">
+      <div class="-c-tab" v-show="tabType === '2'">
         <Row>
           <div class="-c-text">上课数据</div>
           <Table :columns="!dataItem.label ? columns : columnsTwo" :data="dataList"></Table>
@@ -44,7 +66,7 @@
       </div>
 
       <Page class="-p-text-right" :total="total" size="small" show-elevator :page-size="tab.pageSize"
-            @on-change="currentChange"></Page>
+            @on-change="currentChange" v-show="tabType === '2'"></Page>
     </Card>
     <loading v-if="isFetching"></loading>
 
@@ -142,6 +164,7 @@
         ],
         appList: [],
         total: 0,
+        tabType: '1',
         isFetching: false,
         isOpenModal: false,
         isOpenModalChild: false,
@@ -244,12 +267,14 @@
             if(this.$route.query.id || this.userId) {
               this.listLessonProgress()
               this.changeRadio()
+              this.getUserRoleInfoAndTagVOById()
               this.getStudent()
             }
           })
       },
       //分页查询
       listLessonProgress() {
+        if (!this.appList.length) return
         let params = {
           userId: this.$route.query.id || this.userId,
         }
@@ -279,6 +304,15 @@
               this.dataList = response.data.resultData.dataList;
             })
       },
+      getUserRoleInfoAndTagVOById() {
+        this.$api.tbzwStudent.getUserRoleInfoAndTagVOById({
+          userId: this.$route.query.id || this.userId,
+        })
+          .then(
+            response => {
+              this.studentInfo = response.data.resultData
+            })
+      },
       getStudent() {
         this.$api.tbzwStudent.getStudent({
           puid: this.$route.query.id || this.userId,
@@ -287,16 +321,7 @@
             response => {
               if (response.data.resultData) {
                 this.addInfo = response.data.resultData
-              } else {
-                this.addInfo = {
-                  nickname: '',
-                  sex: null,
-                  grade: '',
-                  gradeText: '',
-                }
               }
-
-              this.studentInfo = JSON.parse(JSON.stringify(this.addInfo))
             })
       },
       submitInfo(name) {
@@ -348,6 +373,9 @@
         margin-left: 20px;
         text-align: left;
 
+        .-r-btn {
+          margin-top: 10px;
+        }
         .-r-name {
           font-size: 30px;
           font-weight: bold;
@@ -356,8 +384,16 @@
         .-r-dev {
           color: #b3b5b8;
 
-          span {
-            padding-right: 20px;
+          &-title {
+            font-weight: bold;
+            font-size: 18px;
+            color: #2b2828;
+          }
+
+          &-role {
+            margin-top: 10px;
+            display: block;
+            color: #2b2828;
           }
         }
       }

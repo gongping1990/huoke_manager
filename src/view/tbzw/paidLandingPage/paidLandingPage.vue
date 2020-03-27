@@ -18,6 +18,20 @@
             :current.sync="tabDetail.currentPage"
             @on-change="detailCurrentChange"></Page>
     </Modal>
+
+    <Modal
+      class="p-landingPage"
+      v-model="isOpenModalChannel"
+      @on-cancel="isOpenModalChannel = false"
+      footer-hide
+      width="750"
+      title="渠道排行">
+      <Table class="-c-tab" :loading="isFetching" :columns="columnsModalChannel" :data="detailChannelList"></Table>
+
+      <Page class="g-text-right" :total="totalDetailChannel" size="small" show-elevator :page-size="tabDetailChannel.pageSize"
+            :current.sync="tabDetailChannel.currentPage"
+            @on-change="detailCurrentChangeChannel"></Page>
+    </Modal>
   </div>
 </template>
 
@@ -32,13 +46,21 @@
           page: 1,
           pageSize: 10
         },
+        tabDetailChannel: {
+          page: 1,
+          pageSize: 10
+        },
         dataList: [],
         detailList: [],
+        detailChannelList: [],
         pageId: '',
         copy_url: '',
+        dataItem: '',
         totalDetail: 0,
+        totalDetailChannel: 0,
         isFetching: false,
         isOpenModal: false,
+        isOpenModalChannel: false,
         herfList: {
           '1': 'http://composition.k12.vip/',
           '2': 'http://composition.k12.vip/one',
@@ -145,6 +167,65 @@
               return h('span', `${(params.row.payConversionPercent*100).toFixed()}%`)
             },
             align: 'center'
+          },
+          {
+            title: '操作',
+            align: 'center',
+            render: (h, params) => {
+              return h('div', [
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: '#5444E4',
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.openModalChannel(params.row)
+                    }
+                  }
+                }, '渠道排行')
+              ])
+            }
+          }
+        ],
+        columnsModalChannel: [
+          {
+            title: '渠道名称',
+            key: 'channelName',
+            align: 'center'
+          },
+
+          {
+            title: '下单数',
+            key: 'orderCount',
+            align: 'center'
+          },
+          {
+            title: '成交数',
+            key: 'successOrderCount',
+            align: 'center'
+          },
+          {
+            title: '访问量',
+            key: 'pv',
+            align: 'center'
+          },
+          {
+            title: '访问用户数',
+            key: 'uv',
+            align: 'center'
+          },
+          {
+            title: '转化率',
+            key: 'conversionRate',
+            render: (h, params) => {
+              return h('span', `${(params.row.conversionRate * 100).toFixed(2)}%`)
+            },
+            align: 'center'
           }
         ]
       };
@@ -153,12 +234,21 @@
       this.getList()
     },
     methods: {
+      openModalChannel(data) {
+        this.dataItem = data
+        this.isOpenModalChannel = true
+        this.getChannelList()
+      },
       closeModal() {
         this.isOpenModal = false
       },
       detailCurrentChange(val) {
         this.tabDetail.page = val;
         this.getDetailList();
+      },
+      detailCurrentChangeChannel(val) {
+        this.tabDetailChannel.page = val;
+        this.getChannelList();
       },
       openModal(data) {
         this.pageId = data.page
@@ -174,6 +264,20 @@
         }).then(response => {
           this.detailList = response.data.resultData.records;
           this.totalDetail = response.data.resultData.total;
+        }).finally(()=>{
+          this.isFetching = false
+        })
+      },
+      getChannelList() {
+        this.isFetching = true
+        this.$api.tbzwInternalChannel.getInternalChannelDataByDate({
+          date: dayjs(this.dataItem.date).format('YYYYMMDD'),
+          sort: 'successOrderCount',
+          current: this.tabDetailChannel.page,
+          size: this.tabDetailChannel.pageSize
+        }).then(response => {
+          this.detailChannelList = response.data.resultData.records;
+          this.totalDetailChannel = response.data.resultData.total;
         }).finally(()=>{
           this.isFetching = false
         })

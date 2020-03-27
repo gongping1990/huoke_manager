@@ -199,7 +199,7 @@
           {
             title: '累计转化率',
             render: (h, params) => {
-              return h('span', `${params.row.conversionRate * 100}%`)
+              return h('span', `${(params.row.conversionRate * 100).toFixed(2)}%`)
             },
             align: 'center',
             // sortable: 'custom'
@@ -294,13 +294,13 @@
             title: '成交数',
             key: 'successOrderCount',
             align: 'center',
-            sortable: 'custom'
+            // sortable: 'custom'
           },
           {
             title: '访问量',
             key: 'pv',
             align: 'center',
-            sortable: 'custom'
+            // sortable: 'custom'
           },
           {
             title: '访问用户数',
@@ -311,10 +311,10 @@
             title: '转化率',
             key: 'conversionRate',
             render: (h, params) => {
-              return h('span', `${params.row.conversionRate * 100}%`)
+              return h('span', `${(params.row.conversionRate * 100).toFixed(2)}%`)
             },
             align: 'center',
-            sortable: 'custom'
+            // sortable: 'custom'
           }
         ],
       };
@@ -337,7 +337,7 @@
       },
       changeDateOne(data) {
         this.selectTime = data
-        this.getList(1)
+        this.getDetailList(1)
       },
       changeDateTwo(data) {
         this.getStartTime = data.startTime
@@ -427,7 +427,7 @@
 
         promiseDate.then(response => {
           this.dataDetailList = response.data.resultData.records;
-          this.total = response.data.resultData.total;
+          this.totalDetail = response.data.resultData.total;
         })
           .finally(() => {
             this.isFetching = false

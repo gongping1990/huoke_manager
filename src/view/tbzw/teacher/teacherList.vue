@@ -142,6 +142,8 @@
         <div @click="submitOtherTeacher()" class="g-primary-btn ">确认</div>
       </div>
     </Modal>
+
+    <subscription-message-template v-model="isOpenMessage" :dataItem="dataItem" :type="1"></subscription-message-template>
   </div>
 </template>
 
@@ -149,10 +151,11 @@
   import {getBaseUrl} from '@/libs/index'
   import UploadAudio from "../../../components/uploadAudio";
   import UploadImg from "../../../components/uploadImg";
+  import SubscriptionMessageTemplate from "../../../components/subscriptionMessageTemplate";
 
   export default {
     name: "teacherList",
-    components: {UploadImg, UploadAudio},
+    components: {SubscriptionMessageTemplate, UploadImg, UploadAudio},
     data() {
       return {
         tab: {
@@ -167,7 +170,9 @@
         isOpenModal: false,
         isOpenModalPlay: false,
         isOpenModalConfirm: false,
+        isOpenMessage: false,
         isFetching: false,
+        dataItem: '',
         dataList: [],
         courseList: [],
         formatTeacherList: [],
@@ -339,10 +344,24 @@
           },
           {
             title: '操作',
-            width: 190,
             align: 'center',
             render: (h, params) => {
               return h('div', [
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    display: this.teacherType === 2 ? 'inline-block' : 'none',
+                    color: '#5444E4'
+                  },
+                  on: {
+                    click: () => {
+                      this.openMessage(params.row)
+                    }
+                  }
+                }, '订阅消息'),
                 h('Button', {
                   props: {
                     type: 'text',
@@ -393,10 +412,20 @@
         ],
       }
     },
+    watch : {
+      isOpenMessage (_n) {
+        !_n && this.getList()
+        console.log(111)
+      }
+    },
     mounted() {
       this.getCourseList()
     },
     methods: {
+      openMessage (data) {
+        this.dataItem = data
+        this.isOpenMessage = true
+      },
       changeCourseList(bool) {
         if (this.addInfo.id && bool && this.addInfo.students != 0) {
           this.openConfirm('', 3)
@@ -406,7 +435,7 @@
         this.nowStatus = num
         this.relationshipType = 1
         this.formatTeacherList = []
-        this.dataList.forEach(item=> {
+        this.dataList.forEach(item => {
           if ((item.id !== (data.id || this.addInfo.id)) && !item.disabled) {
             this.formatTeacherList.push(item)
           }
@@ -415,7 +444,7 @@
           this.addInfo = JSON.parse(JSON.stringify(data))
         }
 
-        if(data.students != '0' && !data.disabled) {
+        if (data.students != '0' && !data.disabled) {
           this.isOpenModalConfirm = true
         } else {
           this.delItemTwo(data)
@@ -430,7 +459,7 @@
           if (this.teacherType !== 0) {
             this.addInfo.headImage = this.addInfo.avatar
             this.addInfo.teacherName = this.addInfo.name
-            this.dataList.forEach(item=> {
+            this.dataList.forEach(item => {
               if ((item.id !== this.addInfo.id) && !item.disabled) {
                 this.formatTeacherList.push(item)
               }
@@ -588,16 +617,16 @@
       delItemTwo(param) {
         this.$Modal.confirm({
           title: '提示',
-          content:  this.nowStatus === 1 ? `确认要${param.disabled ? '启用' : '禁用'}该老师吗？` : '确认要删除该老师吗？',
+          content: this.nowStatus === 1 ? `确认要${param.disabled ? '启用' : '禁用'}该老师吗？` : '确认要删除该老师吗？',
           onOk: () => {
             this.changeUrlFn(param)
           }
         })
       },
-      changeUrlFn (param) {
+      changeUrlFn(param) {
         let paramsUrl = ''
 
-        if(this.nowStatus === 1) {
+        if (this.nowStatus === 1) {
           paramsUrl = param.disabled ? this.$api.jsdKfteacher.enable({
             id: param.id
           }) : this.$api.jsdKfteacher.disabled({
@@ -618,7 +647,7 @@
             }
           })
       },
-      submitOtherTeacher () {
+      submitOtherTeacher() {
         if (!this.addInfo.teacherId && this.relationshipType === 1) {
           return this.$Message.error('请选择需要转交的老师')
         }

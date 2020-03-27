@@ -2,6 +2,14 @@
   <div class="p-patchRecord">
     <Card>
       <Row class="g-search">
+        <Col :span="5" class="g-t-left">
+          <div class="g-flex-a-j-center">
+            <div class="-search-select-text-two">课程名称：</div>
+            <Select v-model="searchInfo.courseId" @on-change="getList(1)" class="-search-selectOne">
+              <Option v-for="item of courseList" :label=item.name :value=item.id :key="item.id"></Option>
+            </Select>
+          </div>
+        </Col>
         <Col :span="5">
           <div class="-search">
             <Select v-model="selectInfo" class="-search-select">
@@ -21,7 +29,7 @@
 
       <Table class="-c-tab" :loading="isFetching" :columns="columns" :data="dataList"></Table>
 
-      <Page class="-p-text-right" :total="total" size="small" show-elevator :page-size="tab.pageSize"
+      <Page class="g-text-right" :total="total" size="small" show-elevator :page-size="tab.pageSize"
             :current.sync="tab.currentPage"
             @on-change="currentChange"></Page>
       <Modal
@@ -52,8 +60,8 @@
 </template>
 
 <script>
-  import dayjs from 'dayjs'
-  import {getBaseUrl} from '@/libs/index'
+  import dayjs from 'dayjs';
+  import {getBaseUrl} from '@/libs/index';
   import DatePickerTemplate from "../../../components/datePickerTemplate";
 
   export default {
@@ -67,8 +75,11 @@
           pageSize: 10
         },
         dataList: [],
+        courseList: [],
         selectInfo: '1',
-        searchInfo: {},
+        searchInfo: {
+          courseId: '-1'
+        },
         userInfo: '',
         total: 0,
         isFetching: false,
@@ -81,7 +92,7 @@
             {required: true, message: '请输入手机号码', trigger: 'blur'}
           ],
           date: [
-            {required: true, type:'date', message: '请选择补卡日期', trigger: 'change'},
+            {required: true, type: 'date', message: '请选择补卡日期', trigger: 'change'},
           ]
         },
         columns: [
@@ -106,7 +117,7 @@
                   }
                 }),
                 h('span', params.row.nickname)
-              ])
+              ]);
             }
           },
           {
@@ -126,60 +137,77 @@
       };
     },
     mounted() {
-      this.getList()
+      this.getCourseList();
     },
     methods: {
       currentChange(val) {
         this.tab.page = val;
         this.getList();
       },
+      getCourseList() {
+        this.$api.tbzwCourse.courseQueryPage({
+          current: 1,
+          size: 1000,
+          type: 1
+        })
+          .then(
+            response => {
+              this.courseList = response.data.resultData.records;
+              this.courseList.unshift({
+                id: '-1',
+                name: '全部'
+              })
+              this.getList()
+            })
+      },
       checkPhone() {
         if (!this.addInfo.phone) {
-          return this.$Message.error('请输入手机号码')
+          return this.$Message.error('请输入手机号码');
         }
         this.$api.tbzwStudy.getUserByPhone({
           phone: this.addInfo.phone
         })
           .then(
             response => {
-              if(response.data.resultData) {
+              if (response.data.resultData) {
                 this.userInfo = response.data.resultData;
               } else {
-                this.userInfo = ''
-                this.$Message.error('未查询到该手机号码信息')
+                this.userInfo = '';
+                this.$Message.error('未查询到该手机号码信息');
               }
 
-              this.$forceUpdate()
+              this.$forceUpdate();
             })
           .finally(() => {
-            this.isFetching = false
-          })
+            this.isFetching = false;
+          });
       },
       openModal() {
-        this.isOpenModal = true
-        this.addInfo.date = ''
-        this.userInfo = ''
+        this.isOpenModal = true;
+        this.addInfo.date = '';
+        this.userInfo = '';
       },
       closeModal(name) {
-        this.isOpenModal = false
-        this.$refs[name].resetFields()
+        this.isOpenModal = false;
+        this.$refs[name].resetFields();
       },
 
       //分页查询
       getList(num) {
-        this.isFetching = true
+        this.isFetching = true;
         if (num) {
-          this.tab.currentPage = 1
+          this.tab.currentPage = 1;
         }
         let params = {
           current: num ? num : this.tab.page,
-          size: this.tab.pageSize
-        }
+          size: this.tab.pageSize,
+          courseId: this.searchInfo.courseId == '-1' ? '' : this.searchInfo.courseId,
+        };
 
         if (this.selectInfo == '1' && this.searchInfo) {
-          params.nickName = this.searchInfo.manner
+          params.nickName = this.searchInfo.manner;
         } else if (this.selectInfo == '2' && this.searchInfo) {
-          params.phone = this.searchInfo.manner
+          params.phone = this.searchInfo.manner;
         }
 
         this.$api.tbzwStudy.listRepairCard(params)
@@ -189,11 +217,11 @@
               this.total = response.data.resultData.total;
             })
           .finally(() => {
-            this.isFetching = false
-          })
+            this.isFetching = false;
+          });
       },
       submitInfo(name) {
-        if (this.isSending) return
+        if (this.isSending) return;
         this.$refs[name].validate((valid) => {
           if (valid) {
             this.$api.tbzwStudy.repairCard({
@@ -204,12 +232,12 @@
                 response => {
                   if (response.data.code == '200') {
                     this.$Message.success('提交成功');
-                    this.closeModal(name)
-                    this.getList()
+                    this.closeModal(name);
+                    this.getList();
                   }
-                })
+                });
           }
-        })
+        });
       }
     }
   };
@@ -218,6 +246,16 @@
 
 <style lang="less" scoped>
   .p-patchRecord {
+
+    .-search-select-text-two {
+      min-width: 80px;
+    }
+    .-search-selectOne {
+      /*width: 100px;*/
+      border: 1px solid #dcdee2;
+      border-radius: 4px;
+      margin-right: 20px;
+    }
 
     .-c-tips {
       color: #39f
@@ -233,19 +271,10 @@
       width: 80%;
     }
 
-
     .-p-b-flex {
       display: flex;
       padding: 0 20px;
       justify-content: space-between;
-    }
-
-    .-p-text-right {
-      text-align: right;
-    }
-
-    .-p-modal-btn {
-      vertical-align: bottom;
     }
 
     .-c-tab {

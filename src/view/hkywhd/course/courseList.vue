@@ -71,6 +71,12 @@
           <FormItem label="购买链接" prop="salesUrl">
             <Input type="text" v-model="addInfo.salesUrl" placeholder="请输入购买链接"></Input>
           </FormItem>
+          <FormItem label="适合年龄" class="-c-form-item -c-border">
+            <div class="-p-b-flex" style="width: 300px; padding: 0">
+              <Input class="-s-width" v-model="addInfo.ageStart" placeholder="请输入最小年龄"/>&ensp;-&ensp;
+              <Input class="-s-width" v-model="addInfo.ageEnd" placeholder="请输入最大年龄"/>
+            </div>
+          </FormItem>
           <FormItem label="课程分类" class="ivu-form-item-required">
             <Select v-model="addInfo.courseId">
               <Option v-for="(item,index) in courseTypeList" :label="item.name" :value="item.id" :key="index"></Option>
@@ -161,6 +167,33 @@
           <div @click="submitInfo('addInfo')" class="g-primary-btn "> {{isSending ? '提交中...' : '确 认'}}</div>
         </div>
       </Modal>
+
+      <Modal
+        class="p-course"
+        v-model="isOpenModalGroup"
+        @on-cancel="closeModal()"
+        width="500"
+        :title="addInfoGroup.id ? '编辑标签组' : '创建标签组'">
+        <Form ref="addInfoGroup" :model="addInfoGroup" :label-width="80" class="ivu-form-item-required">
+          <FormItem label="是否添加">
+            <RadioGroup v-model="addInfoGroup.type">
+              <Radio :label=1>添加标签</Radio>
+              <Radio :label=0>不添加标签</Radio>
+            </RadioGroup>
+          </FormItem>
+          <FormItem label="选择标签" v-if="addInfoGroup.type">
+            <Checkbox-group v-model="addInfoGroup.tagIds">
+              <Checkbox :label="item.id" v-for="(item, index) in tagList" :key="index">
+                {{item.name}}
+              </Checkbox>
+            </Checkbox-group>
+          </FormItem>
+        </Form>
+        <div slot="footer" class="-p-b-flex">
+          <Button @click="closeModal()" ghost type="primary" style="width: 100px;">取消</Button>
+          <div @click="submitInfoGroup()" class="g-primary-btn "> {{isSending ? '提交中...' : '确 认'}}</div>
+        </div>
+      </Modal>
     </Card>
   </div>
 </template>
@@ -196,6 +229,7 @@
         courseTypeList: [],
         courseTypeListAll: [],
         courseListModal: [],
+        tagList: [],
         titleText: {
           '1': '编辑课程',
           '2': '活动配置',
@@ -211,8 +245,10 @@
         isFetching: false,
         isOpenModal: false,
         isOpenModalData: false,
+        isOpenModalGroup: false,
         isSending: false,
         addInfo: {},
+        addInfoGroup: {},
         dataItem: {},
         getStartTime: '',
         getEndTime: '',
@@ -250,6 +286,60 @@
           {
             title: '课程分类',
             key: 'courseName',
+            align: 'center'
+          },
+          {
+            title: '兴趣标签',
+            render: (h, params) => {
+              return h('div',
+                {
+                  on: {
+                    click: () => {
+                      this.openModalGroup(params.row);
+                    }
+                  }
+                }, params.row.tagNames.length ? params.row.tagNames.map((item) => {
+                  return h(
+                    'div',
+                    {
+                      style: {
+                        display: 'inline-block',
+                        padding: '0 8px',
+                        margin: '2px 4px 2px 0',
+                        lineHeight: '20px',
+                        background: '#e6f7ff',
+                        border: '1px solid #91d5ff',
+                        cursor: 'pointer',
+                        borderRadius: '2px',
+                        color: '#1890ff',
+                      },
+                      props: {
+                        color: 'blue'
+                      },
+                      on: {
+                        onClick: () => {
+                          this.openModalGroup(params.row);
+                        }
+                      }
+                    },
+                    item
+                  )
+                }) : [
+                  h(
+                    "Button",
+                    {
+                      props: {
+                        type: "text",
+                        size: "small"
+                      },
+                      style: {
+                        color: "#5444E4",
+                      },
+                    },
+                    "添加标签"
+                  )
+                ])
+            },
             align: 'center'
           },
           {
@@ -375,9 +465,30 @@
       };
     },
     mounted() {
+      this.getTags()
       this.listCourseType()
     },
     methods: {
+      openModalGroup(data) {
+        this.dataItem = data
+
+        if (!data.tagNames.length) {
+          this.addInfoGroup = {}
+        } else {
+          this.addInfoGroup = JSON.parse(JSON.stringify(data))
+          // this.addInfoGroup.tagIds = []
+          // this.addInfoGroup.tagNames.forEach(item => {
+          //   this.tagList.forEach(list => {
+          //     if (list.name === item) {
+          //       this.addInfoGroup.tagIds.push(list.id)
+          //     }
+          //   })
+          // })
+        }
+        console.log(this.addInfoGroup.tagIds)
+        this.isOpenModalGroup = true
+        this.addInfoGroup.type = 1
+      },
       checkCourseList(data) {
         this.courseListModal = JSON.parse(JSON.stringify(data))
       },
@@ -423,6 +534,7 @@
       },
       closeModal(name) {
         this.isOpenModal = false
+        this.isOpenModalGroup = false
         // this.$refs[name].resetFields()
       },
       currentChange(val) {
@@ -477,6 +589,17 @@
                 id: item.suggestId
               })
             })
+          })
+      },
+      getTags(data) {
+        this.tagList = []
+        this.$api.hkywhdTagManage.getTags()
+          .then(response => {
+            let tagGroup = response.data.resultData
+            tagGroup.forEach(item => {
+              this.tagList.push(...item.tagList)
+            })
+
           })
       },
       //分页查询
@@ -584,6 +707,8 @@
           payImgUrl: JSON.stringify(this.addInfo.payImgUrl),
           salesUrl: this.addInfo.salesUrl,
           courseId: this.addInfo.courseId,
+          ageStart: this.addInfo.ageStart,
+          ageEnd: this.addInfo.ageEnd,
           display: this.addInfo.display === 1
         }
 
@@ -686,6 +811,20 @@
             })
           .finally(() => {
             this.isSending = false
+          })
+      },
+      submitInfoGroup() {
+        if (this.addInfoGroup.type === 1 && !this.addInfoGroup.tagIds.length) {
+          return this.$Message.error('请选择标签')
+        }
+        this.$api.hkywhdTextbook.addBookTag({
+          bookId: this.dataItem.id,
+          tagIds: this.addInfoGroup.type ? this.addInfoGroup.tagIds : []
+        })
+          .then(response => {
+            this.$Message.success('提交成功');
+            this.getList()
+            this.closeModal()
           })
       }
     }

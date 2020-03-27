@@ -43,6 +43,12 @@
           <FormItem label="购买链接" prop="salesUrl">
             <Input type="text" v-model="addInfo.salesUrl" placeholder="请输入购买链接"></Input>
           </FormItem>
+          <FormItem label="适合年龄" class="-c-form-item -c-border">
+            <div class="-p-b-flex" style="width: 300px; padding: 0">
+              <Input class="-s-width" v-model="addInfo.ageStart" placeholder="请输入最小年龄"/>&ensp;-&ensp;
+              <Input class="-s-width" v-model="addInfo.ageEnd" placeholder="请输入最大年龄"/>
+            </div>
+          </FormItem>
           <Form-item label="购买页图片" class="ivu-form-item-required">
             <upload-img-multiple v-model="addInfo.payImgUrl" :option="uploadOption"></upload-img-multiple>
           </Form-item>
@@ -85,6 +91,34 @@
         </div>
       </Modal>
     </Card>
+
+    <Modal
+      class="p-coursePackage"
+      v-model="isOpenModalGroup"
+      @on-cancel="isOpenModalGroup = false"
+      width="500"
+      :title="addInfoGroup.id ? '编辑标签组' : '创建标签组'">
+      <Form ref="addInfoGroup" :model="addInfoGroup" :label-width="80" class="ivu-form-item-required">
+        <FormItem label="是否添加">
+          <RadioGroup v-model="addInfoGroup.type">
+            <Radio :label=1>添加标签</Radio>
+            <Radio :label=0>不添加标签</Radio>
+          </RadioGroup>
+        </FormItem>
+        <FormItem label="选择标签" v-if="addInfoGroup.type">
+          <Checkbox-group v-model="addInfoGroup.tagIds">
+            <Checkbox :label="item.id" v-for="(item, index) in tagList" :key="index">
+              {{item.name}}
+            </Checkbox>
+          </Checkbox-group>
+        </FormItem>
+      </Form>
+      <div slot="footer" class="-p-b-flex">
+        <Button @click="isOpenModalGroup = false" ghost type="primary" style="width: 100px;">取消</Button>
+        <div @click="submitInfoGroup()" class="g-primary-btn "> {{isSending ? '提交中...' : '确 认'}}</div>
+      </div>
+    </Modal>
+
   </div>
 </template>
 
@@ -110,15 +144,18 @@
         dataList: [],
         courseTypeList: [],
         courseListModal: [],
+        tagList: [],
         dataItem: '',
         total: 0,
         isFetching: false,
         isOpenModal: false,
         isOpenModalCourse: false,
         isOpenModalData: false,
+        isOpenModalGroup: false,
         isSending: false,
         addInfo: {},
         courseInfo: {},
+        addInfoGroup: {},
         ruleValidate: {
           name: [
             {required: true, message: '请输入名称', trigger: 'blur'},
@@ -146,6 +183,60 @@
           {
             title: '名称',
             key: 'name',
+            align: 'center'
+          },
+          {
+            title: '兴趣标签',
+            render: (h, params) => {
+              return h('div',
+                {
+                  on: {
+                    click: () => {
+                      this.openModalGroup(params.row);
+                    }
+                  }
+                }, params.row.tagNames.length ? params.row.tagNames.map((item) => {
+                  return h(
+                    'div',
+                    {
+                      style: {
+                        display: 'inline-block',
+                        padding: '0 8px',
+                        margin: '2px 4px 2px 0',
+                        lineHeight: '20px',
+                        background: '#e6f7ff',
+                        border: '1px solid #91d5ff',
+                        cursor: 'pointer',
+                        borderRadius: '2px',
+                        color: '#1890ff',
+                      },
+                      props: {
+                        color: 'blue'
+                      },
+                      on: {
+                        onClick: () => {
+                          this.openModalGroup(params.row);
+                        }
+                      }
+                    },
+                    item
+                  )
+                }) : [
+                  h(
+                    "Button",
+                    {
+                      props: {
+                        type: "text",
+                        size: "small"
+                      },
+                      style: {
+                        color: "#5444E4",
+                      },
+                    },
+                    "添加标签"
+                  )
+                ])
+            },
             align: 'center'
           },
           {
@@ -238,9 +329,30 @@
       };
     },
     mounted() {
+      this.getTags()
       this.getList()
     },
     methods: {
+      openModalGroup(data) {
+        this.dataItem = data
+
+        if (!data.tagNames.length) {
+          this.addInfoGroup = {}
+        } else {
+          this.addInfoGroup = JSON.parse(JSON.stringify(data))
+          this.addInfoGroup.tagIds = []
+          this.addInfoGroup.tagNames.forEach(item => {
+            this.tagList.forEach(list => {
+              if (list.name === item) {
+                this.addInfoGroup.tagIds.push(list.id)
+              }
+            })
+          })
+        }
+        console.log(this.addInfoGroup.tagIds)
+        this.isOpenModalGroup = true
+        this.addInfoGroup.type = 1
+      },
       checkCourseList(data) {
         this.courseListModal = JSON.parse(JSON.stringify(data))
       },
@@ -276,6 +388,17 @@
       currentChange(val) {
         this.tab.page = val;
         this.getList();
+      },
+      getTags() {
+        this.tagList = []
+        this.$api.hkywhdTagManage.getTags()
+          .then(response => {
+            let tagGroup = response.data.resultData
+            tagGroup.forEach(item => {
+              this.tagList.push(...item.tagList)
+            })
+
+          })
       },
       listSuggestedBook(data) {
         this.courseListModal = []
@@ -424,6 +547,20 @@
             })
           .finally(() => {
             this.isSending = false
+          })
+      },
+      submitInfoGroup() {
+        if (this.addInfoGroup.type === 1 && !this.addInfoGroup.tagIds.length) {
+          return this.$Message.error('请选择标签')
+        }
+        this.$api.hkywhdCompose.addBookComposeTag({
+          bookId: this.dataItem.id,
+          tagIds: this.addInfoGroup.type ? this.addInfoGroup.tagIds : []
+        })
+          .then(response => {
+            this.$Message.success('提交成功');
+            this.getList()
+            this.isOpenModalGroup = false
           })
       }
     }

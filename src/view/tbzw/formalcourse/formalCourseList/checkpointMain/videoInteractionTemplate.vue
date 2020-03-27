@@ -39,9 +39,8 @@
       title="选择题型">
       <div class="p-levelSetting-modal">
         <Radio-group v-model="modelRadioType">
-          <Radio class="-modal-radio" :label=1>录音题</Radio>
-          <Radio class="-modal-radio" :label=2>选择题（选项含图片）</Radio>
-          <Radio class="-modal-radio" :label=3>连线题（选项含图片）</Radio>
+          <Radio class="-modal-radio" v-for="item of radioList" :key="item.id" :label="item.id">{{item.name}}
+          </Radio>
         </Radio-group>
       </div>
       <div slot="footer" class="g-flex-j-sa">
@@ -67,6 +66,52 @@
         baseUrl: `${getBaseUrl()}/sch/common/uploadPublicFile`, // 公有 （图片）
         levelType: 1,
         dataList: [],
+        radioList: [
+          {
+            id: '1',
+            name: '录音题（题干含图片）'
+          },
+          {
+            id: '2',
+            name: '单选题（选项含图片）'
+          },
+          {
+            id: '3',
+            name: '连线题（选项含图片）'
+          },
+          {
+            id: '4',
+            name: '多选题（选项含图片）'
+          },
+          {
+            id: '5',
+            name: '单选拖动（选项含图片）'
+          },
+          {
+            id: '6',
+            name: '多选拖动（选项含图片）'
+          },
+          {
+            id: '7',
+            name: '判断题（题干含图片）'
+          },
+          {
+            id: '8',
+            name: '填空题（题干含图片）'
+          },
+          {
+            id: '9',
+            name: '顺序填空（题干含图片）'
+          },
+          {
+            id: '10',
+            name: '屏幕互动'
+          },
+          {
+            id: '11',
+            name: '段落圈选'
+          }
+        ],
         tipObj: {
           '1': require('@/assets/images/guanka/lu1.png'),
           '2': require('@/assets/images/guanka/x1.png'),
@@ -85,42 +130,43 @@
         isShowFormItem: false
       };
     },
-    mounted() {},
+    mounted() {
+    },
     methods: {
-      updateNavVideo () {
-        this.audioNum = 1
+      updateNavVideo() {
+        this.audioNum = 1;
       },
-      initData (data) {
-        this.queryInfo = data
-        this.audioNum = this.queryInfo.contentUrl ? 1 : 0
-        this.questionNum = this.queryInfo.problemNum
-        this.levelType = 1
-        this.$refs.childTwo.getList(data)
-        this.cancelChoice()
+      initData(data) {
+        this.queryInfo = data;
+        this.audioNum = this.queryInfo.contentUrl ? 1 : 0;
+        this.questionNum = this.queryInfo.problemNum;
+        this.levelType = 1;
+        this.$refs.childTwo.getList(data);
+        this.cancelChoice();
       },
-      changeRadio () {
-        this.levelType === 2 && this.getList()
+      changeRadio() {
+        this.levelType === 2 && this.getList();
       },
       // changeModelType () {
       //   localStorage.setItem('modelChildChoice', this.modelRadioType)
       //
       // },
       toCheckBtn(data) {
-        this.dataItem = JSON.parse(JSON.stringify(data))
-        this.modelChildType = data.type
-        this.modelRadioType = ''
-        this.isEdit = true
-        this.isShowFormItem = true
+        this.dataItem = JSON.parse(JSON.stringify(data));
+        this.modelChildType = data.type;
+        this.modelRadioType = '';
+        this.isEdit = true;
+        this.isShowFormItem = true;
         this.choiceList = [this.dataItem];
         this.choiceList.forEach(list => {
-          list.answerMinute = parseInt(list.answerPoint / 60)
-          list.answerSecond = list.answerPoint % 60
-        })
+          list.answerMinute = parseInt(list.answerPoint / 60);
+          list.answerSecond = list.answerPoint % 60;
+        });
         setTimeout(() => {
-          this.$refs.childOne.init()
-        }, 0)
+          this.$refs.childOne.init();
+        }, 0);
 
-        this.$forceUpdate()
+        this.$forceUpdate();
       },
       delCheckpoint(data) {
         this.$Modal.confirm({
@@ -132,190 +178,202 @@
             }).then(
               response => {
                 if (response.data.code == "200") {
-                  this.$Message.success('删除成功')
-                  this.getList()
-                  this.$emit('updateNav')
+                  this.$Message.success('删除成功');
+                  this.getList();
+                  this.$emit('updateNav');
                 }
-              })
+              });
           }
-        })
+        });
       },
       openModal() {
-        this.isOpenModalRadio = true
-        this.modelRadioType = ''
+        this.isOpenModalRadio = true;
+        this.modelRadioType = '';
       },
       backCancel() {
-        this.isEdit = !this.isEdit
+        this.isEdit = !this.isEdit;
       },
       submitChoice(data) {
-        this.choiceList = data || []
-        this.submitInfo()
+        this.choiceList = data || [];
+        this.submitInfo();
       },
       submitRadio() {
         if (!this.modelRadioType) {
-          return this.$Message.error('请选择题型')
+          return this.$Message.error('请选择题型');
         }
-        this.modelChildType = this.modelRadioType
-        this.isEdit = true
-        this.isShowFormItem = true
-        this.isOpenModalRadio = false
-        this.initChildQuestion()
+        this.modelChildType = +this.modelRadioType;
+        this.isEdit = true;
+        this.isShowFormItem = true;
+        this.isOpenModalRadio = false;
+        this.initChildQuestion();
       },
       initChildQuestion() {
-        this.dataItem = {}
-        this.choiceList = []
+        this.dataItem = {};
+        this.choiceList = [];
         setTimeout(() => {
-          this.$refs.childOne.init()
-        }, 0)
+          this.$refs.childOne.init();
+        }, 0);
       },
-      cancelChoice () {
-        this.isEdit = false
-        this.isShowFormItem = false
-        this.initChildQuestion()
+      cancelChoice() {
+        this.isEdit = false;
+        this.isShowFormItem = false;
+        this.initChildQuestion();
       },
       //分页查询
       getList() {
-        this.isFetching = true
+        this.isFetching = true;
         this.$api.tbzwLesson.listProblem({
           pointId: this.queryInfo.id
         })
           .then(
             response => {
               this.dataList = response.data.resultData;
-              this.questionNum = this.dataList.length
-              this.dataList.forEach(item=>{
-                item.answerMinute = parseInt(item.answerPoint / 60) > 9 ? parseInt(item.answerPoint / 60) : `0${parseInt(item.answerPoint / 60)}`
-                item.answerSecond = (item.answerPoint % 60) > 9 ? item.answerPoint % 60 : `0${item.answerPoint % 60}`
-              })
+              this.questionNum = this.dataList.length;
+              this.dataList.forEach(item => {
+                item.answerMinute = parseInt(item.answerPoint / 60) > 9 ? parseInt(item.answerPoint / 60) : `0${parseInt(item.answerPoint / 60)}`;
+                item.answerSecond = (item.answerPoint % 60) > 9 ? item.answerPoint % 60 : `0${item.answerPoint % 60}`;
+              });
             })
           .finally(() => {
-            this.isFetching = false
-          })
+            this.isFetching = false;
+          });
       },
       submitInfo() {
-        let isCheckQuestion = true
-        let isCheckName = true
-        let isCheckImgUrl = true
-        let isCheckOptionBool = false
-        let isCheckoptionJsonLength = true
-        let isCheckOptionOK = false
-        let checkOptionStatus = []
-        let checkOptionBoolStatus = []
-        let choiceDataList = []
-        let choiceSelectList = []
-        let isCheckRightAudio = true
-        let isCheckErrorAudio = true
-        let isCheckSelectRepeat = false // 检测组词造句选项是否有重复的
-        let isCheckSelectNull = false // 检测组词造句选项是否有空的
+        let isCheckQuestion = true;
+        let isCheckName = true;
+        let isCheckImgUrl = true;
+        let isCheckOptionBool = false;
+        let isCheckoptionJsonLength = true;
+        let isCheckOptionOK = false;
+        let checkmultipleNum = 0;
+        let checkOptionStatus = [];
+        let checkOptionBoolStatus = [];
+        let multipleSelectionArray = [];
+        let choiceDataList = [];
+        let choiceSelectList = [];
+        let isCheckRightAudio = true;
+        let isCheckErrorAudio = true;
+        let isCheckSelectRepeat = false; // 检测组词造句选项是否有重复的
+        let isCheckSelectNull = false; // 检测组词造句选项是否有空的
         this.choiceList.forEach(item => {
           if (item.answerMinute === '' || item.answerSecond === '' || !item.answerTime) {
-            isCheckQuestion = false
+            isCheckQuestion = false;
           }
 
           if (!item.subject) {
-            isCheckName = false
+            isCheckName = false;
           }
 
           if (!item.imgUrl) {
-            isCheckImgUrl = false
+            isCheckImgUrl = false;
           }
 
           if (!item.optionJson.length && this.modelChildType !== 1) {
-            isCheckoptionJsonLength = false
+            isCheckoptionJsonLength = false;
           }
 
           if (item.optionJson.length) {
             isCheckOptionBool = item.optionJson.some(list => {
-              return list.checked == true
-            })
+              return list.checked == true;
+            });
 
             isCheckOptionOK = item.optionJson.every(list => {
-              return list.value != ''
-            })
+              return list.value != '';
+            });
 
             item.optionJson.forEach(list => {
-              choiceSelectList.push(list.links)
-            })
-            console.log(choiceSelectList)
-            checkOptionStatus.push(isCheckOptionOK)
-            checkOptionBoolStatus.push(isCheckOptionBool)
+              choiceSelectList.push(list.links);
+              multipleSelectionArray.push(list.checked);
+            });
+            console.log(item.optionJson);
+            checkOptionStatus.push(isCheckOptionOK);
+            checkOptionBoolStatus.push(isCheckOptionBool);
           }
 
           isCheckOptionBool = checkOptionBoolStatus.every(list => {
-            return list
-          })
+            return list;
+          });
 
           isCheckOptionOK = checkOptionStatus.every(list => {
-            return list
-          })
+            return list;
+          });
 
           if (!item.rightAudio) {
-            isCheckRightAudio = false
+            isCheckRightAudio = false;
           }
 
           if (!item.errorAudio) {
-            isCheckErrorAudio = false
+            isCheckErrorAudio = false;
           }
 
           isCheckSelectNull = choiceSelectList.some(list => {
-            return !list
-          })
+            return !list;
+          });
 
           if (new Set(choiceSelectList).size !== choiceSelectList.length) {
-            isCheckSelectRepeat = true
+            isCheckSelectRepeat = true;
           }
+          console.log(multipleSelectionArray,111)
+          multipleSelectionArray.forEach(item=>{
+            if (item) {
+              checkmultipleNum++
+            }
+          })
 
-        })
+        });
+
 
         if (!isCheckName) {
-          return this.$Message.error('请输入题目')
+          return this.$Message.error('请输入题目');
         } else if (!this.choiceList.length) {
-          return this.$Message.error('请新增题目')
+          return this.$Message.error('请新增题目');
         } else if (!isCheckQuestion) {
-          return this.$Message.error('请填写完整的答题字段')
+          return this.$Message.error('请填写完整的答题字段');
         } else if (!isCheckoptionJsonLength) {
-          return this.$Message.error('请新增选项')
-        } else if (!isCheckOptionBool && this.modelChildType === 2) {
-          return this.$Message.error('请选择一个正确的答案')
+          return this.$Message.error('请新增选项');
+        } else if (!isCheckOptionBool && (this.modelChildType === 2 || this.modelChildType === 5)) {
+          return this.$Message.error('请选择一个正确的答案');
+        } else if (checkmultipleNum < 2 && (this.modelChildType === 4 || this.modelChildType === 6)) {
+          return this.$Message.error('多选至少需要2个正确的答案');
         } else if (!isCheckOptionOK && this.modelChildType !== 1) {
-          return this.$Message.error('选项不能有空')
+          return this.$Message.error('选项不能有空');
         } else if (this.choiceList[0].optionJson.length < 2 && this.modelChildType === 2) {
-          return this.$Message.error('选择题选项不少于2个')
+          return this.$Message.error('选择题选项不少于2个');
         } else if (this.choiceList[0].optionJson.length < 2 && this.modelChildType === 3) {
-          return this.$Message.error('连线题选项不少于4个')
+          return this.$Message.error('连线题选项不少于4个');
         } else if (!isCheckImgUrl && this.modelChildType === 1) {
-          return this.$Message.error('请上传录音提示')
+          return this.$Message.error('请上传录音提示');
         } else if (isCheckSelectNull && this.modelChildType === 3) {
-          return this.$Message.error('请选择相应连线题关联')
+          return this.$Message.error('请选择相应连线题关联');
         } else if (isCheckSelectRepeat && this.modelChildType === 3) {
-          return this.$Message.error('连线题关联不能重复')
+          return this.$Message.error('连线题关联不能重复');
         }
 
-        choiceDataList = JSON.parse(JSON.stringify(this.choiceList))
+        choiceDataList = JSON.parse(JSON.stringify(this.choiceList));
 
         choiceDataList.forEach(item => {
-          item.answerPoint = (+item.answerMinute * 60) + (+item.answerSecond)
-          if (this.modelChildType === 3 ) {
-            item.optionJson = JSON.stringify(item.optionJson.concat(item.optionJsonTwo))
+          item.answerPoint = (+item.answerMinute * 60) + (+item.answerSecond);
+          if (this.modelChildType === 3) {
+            item.optionJson = JSON.stringify(item.optionJson.concat(item.optionJsonTwo));
           } else {
-            item.optionJson = JSON.stringify(item.optionJson)
+            item.optionJson = JSON.stringify(item.optionJson);
           }
-          delete item.answerMinute
-          delete item.answerSecond
-          delete item.duration
-          delete item.authVfUrl
-          delete item.optionJsonTwo
-          delete item.leftJson
-          delete item.rigthJson
+          delete item.answerMinute;
+          delete item.answerSecond;
+          delete item.duration;
+          delete item.authVfUrl;
+          delete item.optionJsonTwo;
+          delete item.leftJson;
+          delete item.rigthJson;
 
-          if (this.modelChildType === 1 ) {
-            delete item.optionJson
+          if (this.modelChildType === 1) {
+            delete item.optionJson;
           }
 
           if (this.modelChildType !== 1) {
-            delete item.imgUrl
+            delete item.imgUrl;
           }
-        })
+        });
 
         this.$api.tbzwLesson.saveProblem({
           id: this.dataItem.id,
@@ -325,12 +383,12 @@
         })
           .then(response => {
             if (response.data.code == '200') {
-              this.initChildQuestion()
-              this.getList()
-              this.$emit('updateNav')
+              this.initChildQuestion();
+              this.getList();
+              this.$emit('updateNav');
               this.$Message.success('操作成功');
             }
-          })
+          });
       },
     }
   };
