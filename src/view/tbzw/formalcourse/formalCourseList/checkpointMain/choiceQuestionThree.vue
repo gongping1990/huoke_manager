@@ -64,7 +64,7 @@
             <span class="-s-width -span">{{type == 3 ? '左' : '选项'}}{{optionLetter[index]}}：</span>
             <upload-img ref="childImg" v-if="type!='1' && type!=9 && type!=10" v-model="item.value"
                         :option="uploadOption"></upload-img>
-            <Input class="-input-name -s-width" v-if="type==9 || type==10" v-model="item.value" type="text" :maxlength="type == '10' ? 15 : 30"
+            <Input class="-input-name -s-width" v-if="type==9 || type==10" v-model="item.value" type="text" :maxlength="15"
                    placeholder="请输入选项内容"/>
             <Checkbox v-if="type=='2' || type == '4' || type == '5' || type == '6' || type== '9'" v-model="item.checked"
                       class="-s-b-margin"
@@ -86,7 +86,7 @@
 
             <span class="-s-width -s-color g-cursor" @click="delOption(list,index)">删除</span>
           </div>
-          <p class="-c-tips" v-if="type==10">单个选项字数不得超过15字，所有选项字数相加不得超过40字</p>
+          <p class="-c-tips" v-if="type==9 || type==10">单个选项字数不得超过15字，所有选项字数相加不得超过40字</p>
         </div>
         <div>
           <p class="-name" v-if="type == 3">
