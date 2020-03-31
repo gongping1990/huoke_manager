@@ -8,7 +8,7 @@
       </div>
       <div class="-name" v-show="type==11 || type==9">
         <span class="-span">题目内容：</span>
-        <Input class="-input-name -s-width" v-model="list.content" type="textarea" :rows="4"
+        <Input class="-input-name -s-width" v-model="list.content" type="textarea" :rows="7"
                placeholder="请输入题目内容"/>
       </div>
       <p class="-name -c-tips" v-if="type==11 || type==9">
