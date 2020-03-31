@@ -93,7 +93,7 @@
                       v-model="secondInfo.studyDate" @on-change="changeDate"></DatePicker>
         </FormItem>
         <FormItem label="课时" class="ivu-form-item-required">
-          <Select v-model="secondInfo.lessonId" filterable placeholder="请选择" @on-change="changeLesson"
+          <Select v-model="secondInfo.lessonId" filterable placeholder="请选择"
                   :disabled="(secondInfo.studyDate == null) || (secondInfo.studyDate == '')">
             <Option v-for="item of lessonList"
                     :label="item.name"
@@ -328,17 +328,18 @@
       changeDate() {
         this.secondInfo.lessonId = ''
       },
-      changeLesson() {
-        let nowDate = dayjs(this.secondInfo.studyDate).format('YYYY-MM-DD')
-        this.lessonList.forEach(item => {
-          if (this.secondInfo.lessonId === item.id && (nowDate === dayjs(item.studyDate).format('YYYY-MM-DD'))) {
-            this.$Message.info({
-              content: `${item.name}在${nowDate}已排课，是否覆盖？覆盖后，不会影响历史时间的排课记录。`,
-              duration: 10
-            })
-          }
-        })
-      },
+      // changeLesson() {
+      //   console.log(this.secondInfo,111)
+      //   let nowDate = dayjs(this.secondInfo.studyDate).format('YYYY-MM-DD')
+      //   this.detailList.forEach(item => {
+      //     if (nowDate === dayjs(item.studyDate).format('YYYY-MM-DD')) {
+      //       this.$Message.info({
+      //         content: `${item.name}在${nowDate}已排课，是否覆盖？覆盖后，不会影响历史时间的排课记录。`,
+      //         duration: 10
+      //       })
+      //     }
+      //   })
+      // },
       changeClassType() {
         if (this.classType === 2) {
           this.listTimeTableRules()
