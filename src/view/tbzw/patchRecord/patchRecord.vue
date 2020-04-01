@@ -198,7 +198,7 @@
         let params = {
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
-          courseId: this.searchInfo.courseId == '-1' ? '' : this.searchInfo.courseId,
+          courseId: this.searchInfo.courseId
         };
 
         if (this.selectInfo == '1' && this.searchInfo) {
@@ -222,6 +222,7 @@
         this.$refs[name].validate((valid) => {
           if (valid) {
             this.$api.tbzwStudy.repairCard({
+              courseId: this.searchInfo.courseId,
               date: dayjs(this.addInfo.date).format('YYYY-MM-DD'),
               phone: this.addInfo.phone
             })
