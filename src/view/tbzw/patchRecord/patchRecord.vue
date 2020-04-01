@@ -153,12 +153,9 @@
           .then(
             response => {
               this.courseList = response.data.resultData.records;
-              this.courseList.unshift({
-                id: '-1',
-                name: '全部'
-              })
-              this.getList()
-            })
+              this.searchInfo.courseId = this.courseList[0].id;
+              this.getList();
+            });
       },
       checkPhone() {
         if (!this.addInfo.phone) {
