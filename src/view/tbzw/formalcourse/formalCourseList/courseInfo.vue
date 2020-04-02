@@ -136,7 +136,7 @@
             <div class="-c-tips">图片尺寸不低于960px*360px 图片大小：500K以内</div>
           </Form-item>
         </Form>
-        <Form v-show="radioType==='2'" ref="addInfo" :model="addInfo" :label-width="80">
+        <Form v-show="radioType==='2'" :model="addInfo" :label-width="80">
           <FormItem label="单独购买帮助信息" v-if="isEdit" prop="aloneInfo">
             <Editor v-model="addInfo.aloneInfo" :uploadImgServer="baseUrl"></Editor>
           </FormItem>
@@ -167,7 +167,7 @@
             </Card>
           </div>
         </Form>
-        <Form v-show="radioType==='3'" ref="addInfo" :model="addInfo" :label-width="90">
+        <Form v-show="radioType==='3'" :model="addInfo" :label-width="90">
           <FormItem label="卡片标题" prop="cardtitle">
             <Input type="text" :disabled="!isEdit" v-model="addInfo.cardtitle" placeholder="请输入卡片标题"></Input>
           </FormItem>
@@ -238,7 +238,7 @@
             <div class="-c-tips">图片尺寸不低于960px*360px 图片大小：500K以内</div>
           </Form-item>
         </Form>
-        <Form v-show="radioType==='4'" ref="addInfo" :model="addInfo" :label-width="90">
+        <Form v-show="radioType==='4'" :model="addInfo" :label-width="90">
           <Form-item label="打卡海报" class="-c-form-item ivu-form-item-required">
             <Upload
               v-if="isEdit"
@@ -250,7 +250,7 @@
               :on-exceeded-size="handleSize"
               :on-error="handleErr">
               <Button ghost type="primary">上传图片</Button>
-            </Upload>
+            </Upload>{{addInfo.cardTemplates}}
             <div class="-c-course-wrap" v-if="addInfo.cardTemplates">
               <div class="-c-course-item">
                 <img :src="addInfo.cardTemplates">
