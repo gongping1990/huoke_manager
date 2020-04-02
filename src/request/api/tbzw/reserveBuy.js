@@ -3,19 +3,19 @@ import qs from "qs";
 
 const tbzwReserveBuy = {
   listByPage(params) {
-    return axios.get('/compositionv2/reserveBuy/listByPage', {params: params})
+    return axios.get('/compositionv3/reserveBuy/listByPage', {params: params})
   },
   getReserveBuyData(params) {
-    return axios.get('/compositionv2/reserveBuy/getReserveBuyData', {params: params})
+    return axios.get('/compositionv3/reserveBuy/getReserveBuyData', {params: params})
   },
   reserveBuyUpdate(params) {
-    return axios.post("/compositionv2/reserveBuy/update", params);
+    return axios.post("/compositionv3/reserveBuy/update", params);
   },
   reserveBuyAdd(params) {
-    return axios.post("/compositionv2/reserveBuy/add", params);
+    return axios.post("/compositionv3/reserveBuy/add", params);
   },
   reserveBuyClose(params) {
-    return axios.post("/compositionv2/reserveBuy/close", qs.stringify(params));
+    return axios.post("/compositionv3/reserveBuy/close", qs.stringify(params));
   },
 };
 

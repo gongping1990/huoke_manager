@@ -333,7 +333,7 @@
           endTime: this.searchInfo.endTime ? new Date(this.searchInfo.endTime).getTime() : ''
         }
 
-        let downUrl = `${getBaseUrl()}/compositionv2/order/downloadExcelByGoods?startTime=${params.startTime}&endTime=${params.endTime}&send=${params.send}&nickName=${params.nickName}&courseId=${params.courseId}`
+        let downUrl = `${getBaseUrl()}/compositionv3/order/downloadExcelByGoods?startTime=${params.startTime}&endTime=${params.endTime}&send=${params.send}&nickName=${params.nickName}&courseId=${params.courseId}`
 
         window.open(downUrl, '_blank');
       },

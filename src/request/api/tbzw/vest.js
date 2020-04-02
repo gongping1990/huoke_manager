@@ -3,10 +3,10 @@ import qs from "qs";
 
 const tbzwVest = {
   pageActiceVest(params) {
-    return axios.get("/compositionv2/vest/pageActiceVest", {params: params});
+    return axios.get("/compositionv3/vest/pageActiceVest", {params: params});
   },
   saveActiveVest(params) {
-    return axios.post("/compositionv2/vest/saveActiveVest", qs.stringify(params));
+    return axios.post("/compositionv3/vest/saveActiveVest", qs.stringify(params));
   }
 };
 

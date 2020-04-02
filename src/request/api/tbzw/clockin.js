@@ -3,7 +3,7 @@ import qs from "qs";
 
 const tbzwClockin = {
   pageClassProgressByList(params) {
-    return axios.post("/compositionv2/clockin/pageClassProgressByList", qs.stringify(params));
+    return axios.post("/compositionv3/clockin/pageClassProgressByList", qs.stringify(params));
   },
 };
 
