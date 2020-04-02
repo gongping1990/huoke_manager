@@ -57,9 +57,9 @@
           @click="clickChart(i)"
         ></div>
       </div>
-      <div class="content-nav-btn fixed" @click="showMsg2 = true">切换模板</div>
+      <div class="content-nav-btn fixed" @click="showMsg2 = true">选择模板</div>
       <div class="content-nav" v-if="activeIndex > -1">
-        <div class="content-nav-btn" @click="showMsg2 = true">切换模板</div>
+        <div class="content-nav-btn" @click="showMsg2 = true">选择模板</div>
         <div class="content-control">
           <div class="content-control-progress">
             <span>{{ currentTime | formateTime }}</span>
@@ -897,9 +897,9 @@ export default {
     background: #f7f9fd;
     .template {
       position: relative;
-      margin-top: 80px;
+      margin-top: 40px;
       width: 380.4px;
-      height: 465.6px;
+      height: 660px;
       background: url("../../assets/images/zuoye.jpeg") no-repeat;
       background-size: 100%;
       background-color: rgba(255, 255, 255, 1);
