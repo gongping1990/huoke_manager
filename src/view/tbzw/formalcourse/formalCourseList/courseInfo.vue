@@ -250,7 +250,7 @@
               :on-exceeded-size="handleSize"
               :on-error="handleErr">
               <Button ghost type="primary">上传图片</Button>
-            </Upload>{{addInfo.cardTemplates}}
+            </Upload>
             <div class="-c-course-wrap" v-if="addInfo.cardTemplates">
               <div class="-c-course-item">
                 <img :src="addInfo.cardTemplates">
