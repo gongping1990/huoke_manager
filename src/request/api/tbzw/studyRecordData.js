@@ -3,25 +3,25 @@ import qs from "qs";
 
 const tbzwStudyRecordData = {
   getConversionData(params) {
-    return axios.get('/compositionv2/studyRecordData/getConversionData', {params: params})
+    return axios.get('/compositionv3/studyRecordData/getConversionData', {params: params})
   },
   getStudyData(params) {
-    return axios.get(`/compositionv2/studyRecordData/getStudyData`, {params: params})
+    return axios.get(`/compositionv3/studyRecordData/getStudyData`, {params: params})
   },
   getUserStudyRecordByLessonId(params) {
-    return axios.get(`/compositionv2/studyRecordData/getUserStudyRecordByLessonId`, {params: params})
+    return axios.get(`/compositionv3/studyRecordData/getUserStudyRecordByLessonId`, {params: params})
   },
   getStudyDataDetails(params) {
-    return axios.get(`/compositionv2/studyRecordData/getStudyDataDetails`, {params: params})
+    return axios.get(`/compositionv3/studyRecordData/getStudyDataDetails`, {params: params})
   },
   getCourseQualityData(params) {
-    return axios.get(`/compositionv2/studyRecordData/getCourseQualityData`, {params: params})
+    return axios.get(`/compositionv3/studyRecordData/getCourseQualityData`, {params: params})
   },
   getCourseQualityOutData(params) {
-    return axios.get(`/compositionv2/studyRecordData/getCourseQualityOutData`, {params: params})
+    return axios.get(`/compositionv3/studyRecordData/getCourseQualityOutData`, {params: params})
   },
   getReserveBuyDataDetails(params) {
-    return axios.get(`/compositionv2/studyRecordData/getReserveBuyDataDetails`, {params: params})
+    return axios.get(`/compositionv3/studyRecordData/getReserveBuyDataDetails`, {params: params})
   }
 };
 

@@ -309,7 +309,7 @@
           ...this.paramsInit()
         }
 
-        let downUrl = `${getBaseUrl()}/compositionv2/order/getOrderExcele?startTime=${params.startTime}&endTime=${params.endTime}&payStatus=${params.payStatus}&nickName=${params.nickname}&id=${params.id}&phone=${params.phone}&type=${params.type}&courseId=${params.courseId=='-1' ? '' : params.courseId}`
+        let downUrl = `${getBaseUrl()}/compositionv3/order/getOrderExcele?startTime=${params.startTime}&endTime=${params.endTime}&payStatus=${params.payStatus}&nickName=${params.nickname}&id=${params.id}&phone=${params.phone}&type=${params.type}&courseId=${params.courseId=='-1' ? '' : params.courseId}`
         console.log(downUrl,'导出路径')
         window.open(downUrl, '_blank');
       },
