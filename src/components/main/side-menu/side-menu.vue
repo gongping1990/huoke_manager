@@ -6,12 +6,12 @@
         <img src="../../../assets/images/share-logo.png"/>
         <div class="-version">1.0</div>
       </div>
-      <div class="-left-li -left-title">
-        当前系统：
-        <span class="-title-name g-cursor" @click="closeModal">
-          {{systemName}} <Icon type="md-swap"/>
-        </span>
-      </div>
+      <!--<div class="-left-li -left-title">-->
+        <!--当前系统：-->
+        <!--<span class="-title-name g-cursor" @click="closeModal">-->
+          <!--{{systemName}} <Icon type="md-swap"/>-->
+        <!--</span>-->
+      <!--</div>-->
       <Submenu :name="list.path" class="-left-li" v-for="(list,index) of sideMenuList" :key="index" v-if="list.checked">
         <template slot="title">
           <Icon :type="list.ico" class="hk-menu-icon"/>
@@ -48,7 +48,7 @@
     computed: {},
     watch: {
       '$store.state.nowAdminType'(_n, _d) {
-        this.getRoleList()
+        this.getList()
         this.systemName = this.systemList[_n].name
         // this.getList()
         this.$router.push('/')
@@ -56,23 +56,23 @@
       }
     },
     mounted() {
-      this.getRoleList()
+      this.getList()
     },
     methods: {
-      getRoleList() {
-        let nowId = this.$store.state.nowAdminType
-        this.$api.admin.listBizSystem()
-          .then(
-            response => {
-              this.systemList = response.data.resultData;
-              this.systemName = this.systemList[nowId].name
-              this.getList()
-            })
-      },
+      // getRoleList() {
+      //   let nowId = this.$store.state.nowAdminType
+      //   this.$api.admin.listBizSystem()
+      //     .then(
+      //       response => {
+      //         this.systemList = response.data.resultData;
+      //         this.systemName = this.systemList[nowId].name
+      //         this.getList()
+      //       })
+      // },
       getList() {
         this.isFetching = true
         this.$api.admin.listByUserPerm({
-          system: this.systemList[this.$store.state.nowAdminType].id
+          system: 7
         })
           .then(
             response => {
