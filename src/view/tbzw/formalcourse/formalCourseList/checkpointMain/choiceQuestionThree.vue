@@ -6,6 +6,7 @@
         <Input class="-input-name -s-width" v-model="list.subject" type="text" :maxlength="30"
                placeholder="请输入题目（最多三十个字）"/>
       </div>
+      <p class="-c-tips" v-if="type==9 || type==8">此字段仅后台可见，用户端不可见</p>
       <div class="-name" v-show="type==11 || type==9">
         <span class="-span">题目内容：</span>
         <Input class="-input-name -s-width" v-model="list.content" type="textarea" :rows="7"
@@ -23,7 +24,7 @@
         <span class="-span">题干图片：</span>
         <upload-img class="-input-name" v-model="list.subjectImg" :option="uploadOption"></upload-img>
       </div>
-      <div class="-name" v-show="type=='8'">
+      <div class="-name" v-show="type=='8'" style="margin-top: 10px">
         <span class="-span">互动类型：</span>
         <Radio-group v-model="list.gesture">
           <Radio :label=1>举手</Radio>
