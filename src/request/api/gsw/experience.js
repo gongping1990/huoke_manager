@@ -3,10 +3,10 @@ import qs from "qs";
 
 const gswExperience = {
   getExperienceConfigList(params) {
-    return axios.post("/poem/experience/getExperienceConfigList", qs.stringify(params));
+    return axios.post("/poem-xym/experience/getExperienceConfigList", qs.stringify(params));
   },
   saveExperienceConfig(params) {
-    return axios.post("/poem/experience/saveExperienceConfig", params);
+    return axios.post("/poem-xym/experience/saveExperienceConfig", params);
   }
 };
 

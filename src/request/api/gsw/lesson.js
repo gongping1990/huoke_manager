@@ -4,11 +4,11 @@ import qs from "qs";
 const gswLesson = {
 
   getLessonDraft(params) {
-    return axios.get("/poem/lesson/getLessonDraft", {params: params});
+    return axios.get("/poem-xym/lesson/getLessonDraft", {params: params});
   },
 
   editLessonDraft(params) {
-    return axios.post("/poem/lesson/editLessonDraft", qs.stringify(params));
+    return axios.post("/poem-xym/lesson/editLessonDraft", qs.stringify(params));
   },
 };
 

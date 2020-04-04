@@ -4,13 +4,13 @@ import qs from "qs";
 const gswCourse = {
 // 获取古诗文用户列表
   queryPage(params) {
-    return axios.get("/poem/course/queryPage", {params: params});
+    return axios.get("/poem-xym/course/queryPage", {params: params});
   },
   getById(params) {
-    return axios.get(`/poem/course/getById/${params}`);
+    return axios.get(`/poem-xym/course/getById/${params}`);
   },
   removeCourseById(params) {
-    return axios.get(`/poem/course/removeCourseById`,{params: params});
+    return axios.get(`/poem-xym/course/removeCourseById`,{params: params});
   }
 };
 
