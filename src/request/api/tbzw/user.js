@@ -12,7 +12,7 @@ const user = {
   },
   // 用户禁用启用
   getUserByPhone(params) {
-    return axios.get("/umg/user/getUserByPhone",{params: params});
+    return axios.get("/xumg/user/getUserByPhone",{params: params});
   }
 };
 
