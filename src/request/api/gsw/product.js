@@ -3,22 +3,22 @@ import qs from "qs";
 
 const gswProduct = {
   versionFinished(params) {
-    return axios.get("/poem/product/finished", {params: params});
+    return axios.get("/poem-xym/product/finished", {params: params});
   },
   addVersion(params) {
-    return axios.post("/poem/product/addVersion", qs.stringify(params));
+    return axios.post("/poem-xym/product/addVersion", qs.stringify(params));
   },
   addRelease(params) {
-    return axios.post("/poem/product/release", qs.stringify(params));
+    return axios.post("/poem-xym/product/release", qs.stringify(params));
   },
   listPackageByProduct(params) {
-    return axios.get("/poem/product/listPackageByProduct", {params: params});
+    return axios.get("/poem-xym/product/listPackageByProduct", {params: params});
   },
   listReleaseByProduct(params) {
-    return axios.get("/poem/product/listReleaseByProduct", {params: params});
+    return axios.get("/poem-xym/product/listReleaseByProduct", {params: params});
   },
   uploadPackage(params) {
-    return axios.get("/poem/product/uploadPackage", {params: params});
+    return axios.get("/poem-xym/product/uploadPackage", {params: params});
   }
 };
 

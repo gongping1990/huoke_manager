@@ -5,19 +5,19 @@ import qs from 'querystring'
 const order = {
   //订单 gsw
   gswOrderList(params) {
-    return axios.get(`/poem/order/orderList`, {params})
+    return axios.get(`/poem-xym/order/orderList`, {params})
   },
   newSourceOrder(params) {
-    return axios.post(`/poem/order/newSourceOrder`, qs.stringify(params))
+    return axios.post(`/poem-xym/order/newSourceOrder`, qs.stringify(params))
   },
   refund(params) {
-    return axios.post(`/poem/order/refund`, qs.stringify(params))
+    return axios.post(`/poem-xym/order/refund`, qs.stringify(params))
   },
   getTotalData(params) {
-    return axios.get("/poem/order/getTotalData", {params: params});
+    return axios.get("/poem-xym/order/getTotalData", {params: params});
   },
   getDataDetails(params) {
-    return axios.get("/poem/order/getDataDetails", {params: params});
+    return axios.get("/poem-xym/order/getDataDetails", {params: params});
   },
 }
 

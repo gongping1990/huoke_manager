@@ -3,10 +3,10 @@ import qs from "qs";
 
 const gswHomepage = {
   pageHomePageCourse(params) {
-    return axios.get('/poem/homepage/pageHomePageCourse', {params: params})
+    return axios.get('/poem-xym/homepage/pageHomePageCourse', {params: params})
   },
   editHomePageCourse(params) {
-    return axios.post("/poem/homepage/editHomePageCourse", qs.stringify(params));
+    return axios.post("/poem-xym/homepage/editHomePageCourse", qs.stringify(params));
   }
 };
 
