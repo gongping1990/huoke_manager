@@ -369,6 +369,8 @@
           return this.$Message.error('请选择相应连线题关联');
         } else if (isCheckSelectRepeat && this.modelChildType === 3) {
           return this.$Message.error('连线题关联不能重复');
+        } else if (this.choiceList[0].judgement === '' && this.modelChildType === 4) {
+          return this.$Message.error('请选择正误判断');
         } else if (this.choiceList[0].answer === '' && this.modelChildType === 7) {
           return this.$Message.error('请选择判断题答案');
         } else if (!this.choiceList[0].gesture && this.modelChildType === 8) {

@@ -20,6 +20,7 @@ import tbzwReserveBuy from "./reserveBuy";
 import tbzwDubbing from "./dubbing";
 import tbzwLesson from "./lesson";
 import tbzwSystemconfig from "./systemconfig";
+import tbzwVermanage from "./vermanage";
 
 export const tbzwIndex = {
   composition,
@@ -43,5 +44,6 @@ export const tbzwIndex = {
   tbzwReserveBuy,
   tbzwDubbing,
   tbzwLesson,
-  tbzwSystemconfig
+  tbzwSystemconfig,
+  tbzwVermanage
 }

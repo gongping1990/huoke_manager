@@ -589,7 +589,7 @@ export default {
                   },
                   style: {
                     display:
-                      params.row.category === 1 ? "inline-block" : "none",
+                      params.row.category === 1 || params.row.category === 2 ? "inline-block" : "none",
                     color: "#5444E4"
                   },
                   on: {
