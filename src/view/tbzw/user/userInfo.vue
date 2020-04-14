@@ -556,6 +556,7 @@
                 this.getLearnDTO()
                 this.listLessonProgress()
                 this.isOpenModalTime = false
+                this.$forceUpdate()
               }
             })
       }
