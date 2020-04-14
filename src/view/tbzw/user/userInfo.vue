@@ -429,6 +429,7 @@
           .then(
             response => {
               let dataInfo = response.data.resultData;
+              this.userInfo = dataInfo
               this.userInfo.learnStartDate = dataInfo.learnStartDate ? dayjs(+dataInfo.learnStartDate).format('YYYY-MM-DD') : '暂无'
               this.userInfo.buyedTime = dataInfo.buyedTime ? dayjs(+dataInfo.buyedTime).format('YYYY-MM-DD HH:mm') : '暂无'
               this.userInfo.createTime = dayjs(+dataInfo.createTime).format('YYYY-MM-DD HH:mm')
