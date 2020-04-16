@@ -548,7 +548,7 @@
         this.$api.tbzwRules.supply({
           activeTime: dayjs(this.addInfo.activeTime).format('YYYY-MM-DD'),
           courseId: this.searchInfo.appId,
-          userId: this.userInfo.userId,
+          userId: this.$route.query.id || this.userId,
         })
           .then(
             response => {
