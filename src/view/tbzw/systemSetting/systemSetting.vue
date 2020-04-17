@@ -1,9 +1,9 @@
 <template>
   <div class="p-active">
     <Card>
-      <div class="g-add-btn" @click="openModal()">
-        <Icon class="-btn-icon" color="#fff" type="ios-add" size="24"/>
-      </div>
+      <!--<div class="g-add-btn" @click="openModal()">-->
+        <!--<Icon class="-btn-icon" color="#fff" type="ios-add" size="24"/>-->
+      <!--</div>-->
 
       <Table class="g-tab" :loading="isFetching" :columns="columns" :data="dataList"></Table>
 
