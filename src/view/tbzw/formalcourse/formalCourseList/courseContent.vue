@@ -15,7 +15,7 @@
       </Row>
 
       <div class="g-add-btn g-add-top" @click="openModal()">
-        <Icon class="-btn-icon" color="#fff" type="ios-add" size="24" />
+        <Icon class="-btn-icon" color="#fff" type="ios-add" size="24"/>
       </div>
 
       <Table
@@ -173,7 +173,7 @@
               v-for="(item, index) of iconList"
               :key="index"
             >
-              <img class="p-gsw-course-list-img" :src="item.url" />
+              <img class="p-gsw-course-list-img" :src="item.url"/>
               <span>{{ item.text }}</span>
             </Option>
           </Select>
@@ -263,7 +263,8 @@
           ghost
           type="primary"
           style="width: 100px;"
-          >取消</Button
+        >取消
+        </Button
         >
         <div @click="submitDetail('detailInfo')" class="g-primary-btn ">
           确认
@@ -319,7 +320,8 @@
           ghost
           type="primary"
           style="width: 100px;"
-          >取消</Button
+        >取消
+        </Button
         >
         <div @click="submitAdd('addInfoAdd')" class="g-primary-btn ">确认</div>
       </div>
@@ -350,7 +352,8 @@
           ghost
           type="primary"
           style="width: 100px;"
-          >取消</Button
+        >取消
+        </Button
         >
         <div @click="submitLevel()" class="g-primary-btn ">确认</div>
       </div>
@@ -371,968 +374,968 @@
 </template>
 
 <script>
-import { getBaseUrl } from "@/libs/index";
-import Editor from "@/components/editor";
-import UploadImg from "@/components/uploadImg";
-import UploadVideo from "@/components/uploadVideo";
-import Operation from "iview/src/components/transfer/operation";
-import UploadAudio from "@/components/uploadAudio";
-import ChoiceQuestion from "./choiceQuestion";
-import LearnContentTemplate from "./learnContentTemplate";
-import AudioContentTemplate from "./audioContentTemplate";
+  import {getBaseUrl} from "@/libs/index";
+  import Editor from "@/components/editor";
+  import UploadImg from "@/components/uploadImg";
+  import UploadVideo from "@/components/uploadVideo";
+  import Operation from "iview/src/components/transfer/operation";
+  import UploadAudio from "@/components/uploadAudio";
+  import ChoiceQuestion from "./choiceQuestion";
+  import LearnContentTemplate from "./learnContentTemplate";
+  import AudioContentTemplate from "./audioContentTemplate";
 
-export default {
-  name: "tbzw_forma_courseContent",
-  components: {
-    AudioContentTemplate,
-    LearnContentTemplate,
-    ChoiceQuestion,
-    UploadAudio,
-    Operation,
-    UploadVideo,
-    UploadImg,
-    Editor
-  },
-  data() {
-    return {
-      tab: {
-        page: 1,
-        currentPage: 1,
-        pageSize: 10
-      },
-      uploadOption: {
-        tipText: "只能上传jpg/png文件，且不超过500kb",
-        size: 500
-      },
-      uploadVideoOption: {
-        tipText: "视频格式：mp4、wmv、rmvb、avi 视频大小：150M以内",
-        size: 153600,
-        format: ["mp4", "wmv", "rmvb", "avi"]
-      },
-      uploadAudioOption: {
-        tipText: "音频格式：mp3、wma、arm 音频大小：150M以内",
-        size: 153600,
-        format: ["mp3", "wma", "arm"]
-      },
-      modalTitleName: {
-        "1": "授课教师",
-        "2": "课前引导",
-        "3": "活学活用",
-        "4": "轻松一答",
-        "5": "作业",
-        "6": "视频内容",
-        "7": "笔画特写",
-        "8": "书写要点",
-        "9": "批改模板"
-      },
-      lessonTextObj: {
-        "1": "作文课",
-        "2": "读写课",
-        "3": "写字课"
-      },
-      dataList: [],
-      teacherList: [],
-      iconList: [],
-      choiceList: [],
-      selectInfo: '1',
-      searchInfo: {},
-      total: 0,
-      totalSource: 0,
-      levelType: 0,
-      isFetching: false,
-      isEdit: false,
-      isOpenModalAdd: false,
-      isOpenModalContent: false,
-      isOpenModalLearn: false,
-      isOpenModalAudio: false,
-      isOpenLevel: false,
-      modalType: "",
-      addInfo: {
-        videoUrl: ""
-      },
-      detailInfo: {
-        guideAudio: "1"
-      },
-      dataItem: "",
-      sortNum: "",
-      ruleValidateAdd: {
-        name: [{ required: true, message: "请输入课时名称", trigger: "blur" }],
-        category: [
-          { required: true, message: "请选择课时类型", trigger: "change" }
+  export default {
+    name: "tbzw_forma_courseContent",
+    components: {
+      AudioContentTemplate,
+      LearnContentTemplate,
+      ChoiceQuestion,
+      UploadAudio,
+      Operation,
+      UploadVideo,
+      UploadImg,
+      Editor
+    },
+    data() {
+      return {
+        tab: {
+          page: 1,
+          currentPage: 1,
+          pageSize: 10
+        },
+        uploadOption: {
+          tipText: "只能上传jpg/png文件，且不超过500kb",
+          size: 500
+        },
+        uploadVideoOption: {
+          tipText: "视频格式：mp4、wmv、rmvb、avi 视频大小：150M以内",
+          size: 153600,
+          format: ["mp4", "wmv", "rmvb", "avi"]
+        },
+        uploadAudioOption: {
+          tipText: "音频格式：mp3、wma、arm 音频大小：150M以内",
+          size: 153600,
+          format: ["mp3", "wma", "arm"]
+        },
+        modalTitleName: {
+          "1": "授课教师",
+          "2": "课前引导",
+          "3": "活学活用",
+          "4": "轻松一答",
+          "5": "作业",
+          "6": "视频内容",
+          "7": "笔画特写",
+          "8": "书写要点",
+          "9": "批改模板"
+        },
+        lessonTextObj: {
+          "1": "作文课",
+          "2": "读写课",
+          "3": "写字课"
+        },
+        dataList: [],
+        teacherList: [],
+        iconList: [],
+        choiceList: [],
+        selectInfo: '1',
+        searchInfo: {},
+        total: 0,
+        totalSource: 0,
+        levelType: 0,
+        isFetching: false,
+        isEdit: false,
+        isOpenModalAdd: false,
+        isOpenModalContent: false,
+        isOpenModalLearn: false,
+        isOpenModalAudio: false,
+        isOpenLevel: false,
+        modalType: "",
+        addInfo: {
+          videoUrl: ""
+        },
+        detailInfo: {
+          guideAudio: "1"
+        },
+        dataItem: "",
+        sortNum: "",
+        ruleValidateAdd: {
+          name: [{required: true, message: "请输入课时名称", trigger: "blur"}],
+          category: [
+            {required: true, message: "请选择课时类型", trigger: "change"}
+          ]
+        },
+        columns: [
+          {
+            title: "课时名称",
+            key: "name",
+            tooltip: true,
+            align: "center"
+          },
+          {
+            title: "类型",
+            render: (h, params) => {
+              return h("div", this.lessonTextObj[params.row.category]);
+            },
+            align: "center"
+          },
+          {
+            title: "排序值",
+            key: "sortnum",
+            align: "center"
+          },
+          {
+            title: "补充内容完整",
+            render: (h, params) => {
+              return h("div", params.row.complete ? "是" : "否");
+            },
+            align: "center"
+          },
+          {
+            title: "是否布置作业",
+            render: (h, params) => {
+              return h("div", params.row.fixupHomework ? "是" : "否");
+            },
+            align: "center"
+          },
+          {
+            title: "补充内容",
+            align: "center",
+            width: 250,
+            render: (h, params) => {
+              return h("div", [
+                h(
+                  "Button",
+                  {
+                    props: {
+                      type: "text",
+                      size: "small"
+                    },
+                    style: {
+                      display:
+                        (params.row.category === 1 || params.row.category === 2) ? "inline-block" : "none",
+                      color: "#5444E4"
+                    },
+                    on: {
+                      click: () => {
+                        this.openModalContent(params.row, 1);
+                      }
+                    }
+                  },
+                  "授课教师"
+                ),
+                h(
+                  "Button",
+                  {
+                    props: {
+                      type: "text",
+                      size: "small"
+                    },
+                    style: {
+                      display:
+                        params.row.category === 1 ? "inline-block" : "none",
+                      color: "#5444E4"
+                    },
+                    on: {
+                      click: () => {
+                        this.openModalContent(params.row, 2);
+                      }
+                    }
+                  },
+                  "课前引导"
+                ),
+                h(
+                  "Button",
+                  {
+                    props: {
+                      type: "text",
+                      size: "small"
+                    },
+                    style: {
+                      display:
+                        params.row.category === 1 ? "inline-block" : "none",
+                      color: "#5444E4"
+                    },
+                    on: {
+                      click: () => {
+                        this.openModalLearnAndUse(params.row);
+                      }
+                    }
+                  },
+                  "活学活用"
+                ),
+                h(
+                  "Button",
+                  {
+                    props: {
+                      type: "text",
+                      size: "small"
+                    },
+                    style: {
+                      display:
+                        params.row.category === 1 ? "inline-block" : "none",
+                      color: "#5444E4"
+                    },
+                    on: {
+                      click: () => {
+                        this.openModalContent(params.row, 4);
+                      }
+                    }
+                  },
+                  "轻松一答"
+                ),
+                h(
+                  "Button",
+                  {
+                    props: {
+                      type: "text",
+                      size: "small"
+                    },
+                    style: {
+                      display:
+                        params.row.category === 1 || params.row.category === 2 ? "inline-block" : "none",
+                      color: "#5444E4"
+                    },
+                    on: {
+                      click: () => {
+                        this.openModalLearn(params.row);
+                      }
+                    }
+                  },
+                  "学习内容"
+                ),
+                h(
+                  "Button",
+                  {
+                    props: {
+                      type: "text",
+                      size: "small"
+                    },
+                    style: {
+                      display:
+                        params.row.category === 1 || params.row.category === 3
+                          ? "inline-block"
+                          : "none",
+                      color: "#5444E4"
+                    },
+                    on: {
+                      click: () => {
+                        this.openModalContent(params.row, 6);
+                      }
+                    }
+                  },
+                  "视频内容"
+                ),
+                h(
+                  "Button",
+                  {
+                    props: {
+                      type: "text",
+                      size: "small"
+                    },
+                    style: {
+                      display:
+                        params.row.category === 2 ? "inline-block" : "none",
+                      color: "#5444E4"
+                    },
+                    on: {
+                      click: () => {
+                        this.checkpoint(params.row);
+                      }
+                    }
+                  },
+                  "关卡设置"
+                ),
+                h(
+                  "Button",
+                  {
+                    props: {
+                      type: "text",
+                      size: "small"
+                    },
+                    style: {
+                      display:
+                        params.row.category === 3 ? "inline-block" : "none",
+                      color: "#5444E4"
+                    },
+                    on: {
+                      click: () => {
+                        this.openModalContent(params.row, 7);
+                      }
+                    }
+                  },
+                  "笔画特写"
+                ),
+                h(
+                  "Button",
+                  {
+                    props: {
+                      type: "text",
+                      size: "small"
+                    },
+                    style: {
+                      display:
+                        params.row.category === 3 ? "inline-block" : "none",
+                      color: "#5444E4"
+                    },
+                    on: {
+                      click: () => {
+                        this.openModalLearn(params.row);
+                      }
+                    }
+                  },
+                  "书写要点"
+                ),
+                h(
+                  "Button",
+                  {
+                    props: {
+                      type: "text",
+                      size: "small"
+                    },
+                    style: {
+                      display:
+                        params.row.category === 3 ? "inline-block" : "none",
+                      color: "#5444E4"
+                    },
+                    on: {
+                      click: () => {
+                        this.openModalAudio(params.row);
+                      }
+                    }
+                  },
+                  "批改模板"
+                )
+              ]);
+            }
+          },
+          {
+            title: "操作",
+            align: "center",
+            width: 200,
+            render: (h, params) => {
+              return h("div", [
+                h(
+                  "Button",
+                  {
+                    props: {
+                      type: "text",
+                      size: "small"
+                    },
+                    style: {
+                      color: "#5444E4"
+                    },
+                    on: {
+                      click: () => {
+                        this.openModalContent(params.row, 5);
+                      }
+                    }
+                  },
+                  "作业"
+                ),
+                h(
+                  "Button",
+                  {
+                    props: {
+                      type: "text",
+                      size: "small"
+                    },
+                    style: {
+                      color: "#5444E4"
+                    },
+                    on: {
+                      click: () => {
+                        this.openModal(params.row);
+                      }
+                    }
+                  },
+                  "编辑"
+                ),
+                h(
+                  "Button",
+                  {
+                    props: {
+                      type: "text",
+                      size: "small"
+                    },
+                    style: {
+                      color: "rgba(218, 55, 75)"
+                    },
+                    on: {
+                      click: () => {
+                        this.delItem(params.row);
+                      }
+                    }
+                  },
+                  "删除"
+                )
+              ]);
+            }
+          }
         ]
-      },
-      columns: [
-        {
-          title: "课时名称",
-          key: "name",
-          tooltip: true,
-          align: "center"
-        },
-        {
-          title: "类型",
-          render: (h, params) => {
-            return h("div", this.lessonTextObj[params.row.category]);
-          },
-          align: "center"
-        },
-        {
-          title: "排序值",
-          key: "sortnum",
-          align: "center"
-        },
-        {
-          title: "补充内容完整",
-          render: (h, params) => {
-            return h("div", params.row.complete ? "是" : "否");
-          },
-          align: "center"
-        },
-        {
-          title: "是否布置作业",
-          render: (h, params) => {
-            return h("div", params.row.fixupHomework ? "是" : "否");
-          },
-          align: "center"
-        },
-        {
-          title: "补充内容",
-          align: "center",
-          width: 250,
-          render: (h, params) => {
-            return h("div", [
-              h(
-                "Button",
-                {
-                  props: {
-                    type: "text",
-                    size: "small"
-                  },
-                  style: {
-                    display:
-                      params.row.category === 1 ? "inline-block" : "none",
-                    color: "#5444E4"
-                  },
-                  on: {
-                    click: () => {
-                      this.openModalContent(params.row, 1);
-                    }
-                  }
-                },
-                "授课教师"
-              ),
-              h(
-                "Button",
-                {
-                  props: {
-                    type: "text",
-                    size: "small"
-                  },
-                  style: {
-                    display:
-                      params.row.category === 1 ? "inline-block" : "none",
-                    color: "#5444E4"
-                  },
-                  on: {
-                    click: () => {
-                      this.openModalContent(params.row, 2);
-                    }
-                  }
-                },
-                "课前引导"
-              ),
-              h(
-                "Button",
-                {
-                  props: {
-                    type: "text",
-                    size: "small"
-                  },
-                  style: {
-                    display:
-                      params.row.category === 1 ? "inline-block" : "none",
-                    color: "#5444E4"
-                  },
-                  on: {
-                    click: () => {
-                      this.openModalLearnAndUse(params.row);
-                    }
-                  }
-                },
-                "活学活用"
-              ),
-              h(
-                "Button",
-                {
-                  props: {
-                    type: "text",
-                    size: "small"
-                  },
-                  style: {
-                    display:
-                      params.row.category === 1 ? "inline-block" : "none",
-                    color: "#5444E4"
-                  },
-                  on: {
-                    click: () => {
-                      this.openModalContent(params.row, 4);
-                    }
-                  }
-                },
-                "轻松一答"
-              ),
-              h(
-                "Button",
-                {
-                  props: {
-                    type: "text",
-                    size: "small"
-                  },
-                  style: {
-                    display:
-                      params.row.category === 1 || params.row.category === 2 ? "inline-block" : "none",
-                    color: "#5444E4"
-                  },
-                  on: {
-                    click: () => {
-                      this.openModalLearn(params.row);
-                    }
-                  }
-                },
-                "学习内容"
-              ),
-              h(
-                "Button",
-                {
-                  props: {
-                    type: "text",
-                    size: "small"
-                  },
-                  style: {
-                    display:
-                      params.row.category === 1 || params.row.category === 3
-                        ? "inline-block"
-                        : "none",
-                    color: "#5444E4"
-                  },
-                  on: {
-                    click: () => {
-                      this.openModalContent(params.row, 6);
-                    }
-                  }
-                },
-                "视频内容"
-              ),
-              h(
-                "Button",
-                {
-                  props: {
-                    type: "text",
-                    size: "small"
-                  },
-                  style: {
-                    display:
-                      params.row.category === 2 ? "inline-block" : "none",
-                    color: "#5444E4"
-                  },
-                  on: {
-                    click: () => {
-                      this.checkpoint(params.row);
-                    }
-                  }
-                },
-                "关卡设置"
-              ),
-              h(
-                "Button",
-                {
-                  props: {
-                    type: "text",
-                    size: "small"
-                  },
-                  style: {
-                    display:
-                      params.row.category === 3 ? "inline-block" : "none",
-                    color: "#5444E4"
-                  },
-                  on: {
-                    click: () => {
-                      this.openModalContent(params.row, 7);
-                    }
-                  }
-                },
-                "笔画特写"
-              ),
-              h(
-                "Button",
-                {
-                  props: {
-                    type: "text",
-                    size: "small"
-                  },
-                  style: {
-                    display:
-                      params.row.category === 3 ? "inline-block" : "none",
-                    color: "#5444E4"
-                  },
-                  on: {
-                    click: () => {
-                      this.openModalLearn(params.row);
-                    }
-                  }
-                },
-                "书写要点"
-              ),
-              h(
-                "Button",
-                {
-                  props: {
-                    type: "text",
-                    size: "small"
-                  },
-                  style: {
-                    display:
-                      params.row.category === 3 ? "inline-block" : "none",
-                    color: "#5444E4"
-                  },
-                  on: {
-                    click: () => {
-                      this.openModalAudio(params.row);
-                    }
-                  }
-                },
-                "批改模板"
-              )
-            ]);
-          }
-        },
-        {
-          title: "操作",
-          align: "center",
-          width: 200,
-          render: (h, params) => {
-            return h("div", [
-              h(
-                "Button",
-                {
-                  props: {
-                    type: "text",
-                    size: "small"
-                  },
-                  style: {
-                    color: "#5444E4"
-                  },
-                  on: {
-                    click: () => {
-                      this.openModalContent(params.row, 5);
-                    }
-                  }
-                },
-                "作业"
-              ),
-              h(
-                "Button",
-                {
-                  props: {
-                    type: "text",
-                    size: "small"
-                  },
-                  style: {
-                    color: "#5444E4"
-                  },
-                  on: {
-                    click: () => {
-                      this.openModal(params.row);
-                    }
-                  }
-                },
-                "编辑"
-              ),
-              h(
-                "Button",
-                {
-                  props: {
-                    type: "text",
-                    size: "small"
-                  },
-                  style: {
-                    color: "rgba(218, 55, 75)"
-                  },
-                  on: {
-                    click: () => {
-                      this.delItem(params.row);
-                    }
-                  }
-                },
-                "删除"
-              )
-            ]);
-          }
+      };
+    },
+    mounted() {
+      this.tab.currentPage = +localStorage.nowPage || 1;
+      this.getList();
+      this.getTeacherList();
+    },
+    methods: {
+      checkpoint(data) {
+        this.dataItem = data;
+        if (!data.createCheckPoint) {
+          this.isOpenLevel = true;
+        } else {
+          this.$router.push({
+            name: "tbzw_checkpointMain",
+            query: {
+              courseId: data.courseId,
+              lessonId: data.id
+            }
+          });
         }
-      ]
-    };
-  },
-  mounted() {
-    this.tab.currentPage = +localStorage.nowPage || 1;
-    this.getList();
-    this.getTeacherList();
-  },
-  methods: {
-    checkpoint(data) {
-      this.dataItem = data;
-      if (!data.createCheckPoint) {
-        this.isOpenLevel = true;
-      } else {
+      },
+      submitLevel() {
         this.$router.push({
           name: "tbzw_checkpointMain",
           query: {
-            courseId: data.courseId,
+            lessonId: this.dataItem.id,
+            courseId: this.dataItem.courseId,
+            type: this.levelType
+          }
+        });
+      },
+      currentChange(val) {
+        this.tab.page = val;
+        localStorage.setItem("nowPage", val);
+        this.getList();
+      },
+      openModal(data) {
+        this.isOpenModalAdd = true;
+        if (data) {
+          this.isEdit = true;
+          this.addInfo = JSON.parse(JSON.stringify(data));
+          this.addInfo.sortnum = +this.addInfo.sortnum;
+          this.addInfo.category = this.addInfo.category.toString();
+        } else {
+          this.isEdit = false;
+          this.addInfo = {
+            id: "",
+            sortnum: null,
+            type: 1,
+            workImg: "",
+            cpi: "",
+            coverphoto: "",
+            category:
+              this.$route.query.type == "3"
+                ? this.$route.query.type.toString()
+                : ""
+          };
+        }
+      },
+      closeModalContent() {
+        if (this.modalType === 2) {
+          setTimeout(() => {
+            this.$refs.childAudio.load();
+          }, 0);
+        } else if (this.modalType === 4) {
+          setTimeout(() => {
+            this.$refs.childChoiceAudio && this.$refs.childChoiceAudio.load();
+          }, 0);
+        }
+        this.isOpenModalContent = false;
+      },
+      openModalContent(data, type) {
+        this.isOpenModalContent = true;
+        this.detailInfo = JSON.parse(JSON.stringify(data));
+        this.$refs.editor &&
+        this.$refs.editor.setHtml(this.detailInfo.readContent);
+        this.dataItem = data;
+        this.modalType = type;
+        this.detailInfo.teacher = this.dataItem.teacherId;
+        this.detailInfo.cpi = +this.dataItem.cpi;
+        this.detailInfo.homeworkType =
+          this.detailInfo.homeworkType ||
+          (this.detailInfo.category === 2 ? 1 : 2);
+        this.detailInfo.homeworkClaim =
+          this.detailInfo.category === 3
+            ? "正确、端正、整洁、行款整齐"
+            : this.detailInfo.homeworkClaim;
+        this.getPresetIcon();
+        switch (this.modalType) {
+          case 4:
+            this.getListByLessonQuestion();
+            break;
+          case 5:
+            // console.log(this.$refs,'ref')
+            this.$nextTick(() => {
+              this.$refs.childImg && this.$refs.childImg.init();
+            });
+            break;
+        }
+      },
+      openModalLearn(data) {
+        this.isOpenModalLearn = true;
+        this.dataItem = JSON.parse(JSON.stringify(data));
+      },
+      openModalAudio(data) {
+        this.isOpenModalAudio = true;
+        this.dataItem = JSON.parse(JSON.stringify(data));
+      },
+      openModalLearnAndUse(data) {
+        this.$router.push({
+          name: "tbzw_formal_learnAndUse",
+          query: {
+            courseId: this.$route.query.courseId,
             lessonId: data.id
           }
         });
-      }
-    },
-    submitLevel() {
-      this.$router.push({
-        name: "tbzw_checkpointMain",
-        query: {
-          lessonId: this.dataItem.id,
-          courseId: this.dataItem.courseId,
-          type: this.levelType
-        }
-      });
-    },
-    currentChange(val) {
-      this.tab.page = val;
-      localStorage.setItem("nowPage", val);
-      this.getList();
-    },
-    openModal(data) {
-      this.isOpenModalAdd = true;
-      if (data) {
-        this.isEdit = true;
-        this.addInfo = JSON.parse(JSON.stringify(data));
-        this.addInfo.sortnum = +this.addInfo.sortnum;
-        this.addInfo.category = this.addInfo.category.toString();
-      } else {
-        this.isEdit = false;
-        this.addInfo = {
-          id: "",
-          sortnum: null,
-          type: 1,
-          workImg: "",
-          cpi: "",
-          coverphoto: "",
-          category:
-            this.$route.query.type == "3"
-              ? this.$route.query.type.toString()
-              : ""
-        };
-      }
-    },
-    closeModalContent() {
-      if (this.modalType === 2) {
-        setTimeout(() => {
-          this.$refs.childAudio.load();
-        }, 0);
-      } else if (this.modalType === 4) {
-        setTimeout(() => {
-          this.$refs.childChoiceAudio && this.$refs.childChoiceAudio.load();
-        }, 0);
-      }
-      this.isOpenModalContent = false;
-    },
-    openModalContent(data, type) {
-      this.isOpenModalContent = true;
-      this.detailInfo = JSON.parse(JSON.stringify(data));
-      this.$refs.editor &&
-        this.$refs.editor.setHtml(this.detailInfo.readContent);
-      this.dataItem = data;
-      this.modalType = type;
-      this.detailInfo.teacher = this.dataItem.teacherId;
-      this.detailInfo.cpi = +this.dataItem.cpi;
-      this.detailInfo.homeworkType =
-        this.detailInfo.homeworkType ||
-        (this.detailInfo.category === 2 ? 1 : 2);
-      this.detailInfo.homeworkClaim =
-        this.detailInfo.category === 3
-          ? "正确、端正、整洁、行款整齐"
-          : this.detailInfo.homeworkClaim;
-      this.getPresetIcon();
-      switch (this.modalType) {
-        case 4:
-          this.getListByLessonQuestion();
-          break;
-        case 5:
-          // console.log(this.$refs,'ref')
-          this.$nextTick(() => {
-            this.$refs.childImg && this.$refs.childImg.init();
-          });
-          break;
-      }
-    },
-    openModalLearn(data) {
-      this.isOpenModalLearn = true;
-      this.dataItem = JSON.parse(JSON.stringify(data));
-    },
-    openModalAudio(data) {
-      this.isOpenModalAudio = true;
-      this.dataItem = JSON.parse(JSON.stringify(data));
-    },
-    openModalLearnAndUse(data) {
-      this.$router.push({
-        name: "tbzw_formal_learnAndUse",
-        query: {
-          courseId: this.$route.query.courseId,
-          lessonId: data.id
-        }
-      });
-    },
-    closeModal(name) {
-      if (this.addInfo.id && this.addInfo.type === 1) {
-        setTimeout(() => {
-          this.$refs.childVideo.load();
-        }, 0);
-      }
-      this.$refs[name].resetFields();
-      this.isOpenModalAdd = false;
-    },
-    delItem(param) {
-      this.$Modal.confirm({
-        title: "提示",
-        content: "确认要删除吗？",
-        onOk: () => {
-          this.$api.composition
-            .removeLessonById({
-              id: param.id
-            })
-            .then(response => {
-              if (response.data.code == "200") {
-                this.$Message.success("操作成功");
-                this.getList();
-              }
-            });
-        }
-      });
-    },
-    //分页查询
-    getList() {
-      this.isFetching = true;
-      this.$api.composition
-        .getQueryLessonPage({
-          courseId: this.$route.query.courseId,
-          current: localStorage.nowPage || this.tab.page,
-          size: this.tab.pageSize,
-          name: this.searchInfo.name
-        })
-        .then(response => {
-          this.dataList = response.data.resultData.records;
-          this.total = response.data.resultData.total;
-        })
-        .finally(() => {
-          this.isFetching = false;
-        });
-    },
-    getPresetIcon() {
-      this.$api.tbzwLesson.getPresetIcon().then(response => {
-        this.iconList = response.data.resultData;
-      });
-    },
-    getTeacherList() {
-      this.$api.composition
-        .getTeacherList({
-          current: this.tab.page,
-          size: 10000
-        })
-        .then(response => {
-          this.teacherList = response.data.resultData.records;
-        });
-    },
-    getListByLessonQuestion() {
-      this.$api.composition
-        .listByLessonQuestion({
-          type: 2,
-          lessonId: this.dataItem.id
-        })
-        .then(response => {
-          this.choiceList = response.data.resultData;
-
-          this.choiceList.forEach(list => {
-            list.answerMinute = parseInt(list.answerPoint / 60);
-            list.answerSecond = list.answerPoint % 60;
-            list.publishMinute = parseInt(list.publishPoint / 60);
-            list.publishSecond = list.publishPoint % 60;
-            // list.optionJson = JSON.parse(list.optionJson)
-          });
+      },
+      closeModal(name) {
+        if (this.addInfo.id && this.addInfo.type === 1) {
           setTimeout(() => {
-            this.$refs.childOne.init();
+            this.$refs.childVideo.load();
           }, 0);
-        });
-    },
-    submitChoice(data) {
-      this.choiceList = data || [];
-    },
-    submitDetail() {
-      switch (this.modalType) {
-        case 1:
-          this.submitTeacher();
-          break;
-        case 2:
-          this.submitUploadGuideAudio();
-          break;
-        case 4:
-          this.submitSaveLessonQuestion();
-          break;
-        case 5:
-          this.saveHomeWork();
-          break;
-        case 6:
-          this.submitVideo();
-          break;
-        case 7:
-          this.submitStrokeImg();
-          break;
-      }
-    },
-    submitTeacher() {
-      if (!this.detailInfo.teacher) {
-        return this.$Message.error("请选择教师");
-      }
-      this.$api.composition
-        .updateLessonTeacher({
-          lessonId: this.dataItem.id,
-          teacherId: this.detailInfo.teacher
-        })
-        .then(response => {
-          if (response.data.code == "200") {
-            this.$Message.success("操作成功");
-            this.getList();
-            this.closeModalContent();
+        }
+        this.$refs[name].resetFields();
+        this.isOpenModalAdd = false;
+      },
+      delItem(param) {
+        this.$Modal.confirm({
+          title: "提示",
+          content: "确认要删除吗？",
+          onOk: () => {
+            this.$api.composition
+              .removeLessonById({
+                id: param.id
+              })
+              .then(response => {
+                if (response.data.code == "200") {
+                  this.$Message.success("操作成功");
+                  this.getList();
+                }
+              });
           }
         });
-    },
-    submitUploadGuideAudio() {
-      if (!this.detailInfo.guideAudio) {
-        return this.$Message.error("请上传引导音频");
-      }
-      this.$api.composition
-        .uploadGuideAudio({
-          lessonId: this.dataItem.id,
-          auideAudio: this.detailInfo.guideAudio
-        })
-        .then(response => {
-          if (response.data.code == "200") {
-            this.$Message.success("操作成功");
-            this.getList();
-            this.closeModalContent();
-            this.isOpenModalAdd = false;
-          }
+      },
+      //分页查询
+      getList() {
+        this.isFetching = true;
+        this.$api.composition
+          .getQueryLessonPage({
+            courseId: this.$route.query.courseId,
+            current: localStorage.nowPage || this.tab.page,
+            size: this.tab.pageSize,
+            name: this.searchInfo.name
+          })
+          .then(response => {
+            this.dataList = response.data.resultData.records;
+            this.total = response.data.resultData.total;
+          })
+          .finally(() => {
+            this.isFetching = false;
+          });
+      },
+      getPresetIcon() {
+        this.$api.tbzwLesson.getPresetIcon().then(response => {
+          this.iconList = response.data.resultData;
         });
-    },
-    submitSaveLessonQuestion() {
-      let isCheckQuestion = true;
-      let isCheckName = true;
-      let isCheckOptionBool = false;
-      let isCheckoptionJsonLength = true;
-      let isCheckOptionOK = false;
-      let checkOptionStatus = [];
-      let checkOptionBoolStatus = [];
-      let choiceDataList = [];
-      let isCheckRightAudio = true;
-      let isCheckErrorAudio = true;
+      },
+      getTeacherList() {
+        this.$api.composition
+          .getTeacherList({
+            current: this.tab.page,
+            size: 10000
+          })
+          .then(response => {
+            this.teacherList = response.data.resultData.records;
+          });
+      },
+      getListByLessonQuestion() {
+        this.$api.composition
+          .listByLessonQuestion({
+            type: 2,
+            lessonId: this.dataItem.id
+          })
+          .then(response => {
+            this.choiceList = response.data.resultData;
 
-      this.choiceList.forEach(item => {
-        if (
-          item.answerMinute === "" ||
-          item.answerSecond === "" ||
-          !item.answerTime ||
-          item.publishMinute === "" ||
-          item.publishSecond === ""
-        ) {
-          isCheckQuestion = false;
+            this.choiceList.forEach(list => {
+              list.answerMinute = parseInt(list.answerPoint / 60);
+              list.answerSecond = list.answerPoint % 60;
+              list.publishMinute = parseInt(list.publishPoint / 60);
+              list.publishSecond = list.publishPoint % 60;
+              // list.optionJson = JSON.parse(list.optionJson)
+            });
+            setTimeout(() => {
+              this.$refs.childOne.init();
+            }, 0);
+          });
+      },
+      submitChoice(data) {
+        this.choiceList = data || [];
+      },
+      submitDetail() {
+        switch (this.modalType) {
+          case 1:
+            this.submitTeacher();
+            break;
+          case 2:
+            this.submitUploadGuideAudio();
+            break;
+          case 4:
+            this.submitSaveLessonQuestion();
+            break;
+          case 5:
+            this.saveHomeWork();
+            break;
+          case 6:
+            this.submitVideo();
+            break;
+          case 7:
+            this.submitStrokeImg();
+            break;
         }
-
-        if (!item.name) {
-          isCheckName = false;
+      },
+      submitTeacher() {
+        if (!this.detailInfo.teacher) {
+          return this.$Message.error("请选择教师");
         }
-
-        if (!item.optionJson.length) {
-          isCheckoptionJsonLength = false;
+        this.$api.composition
+          .updateLessonTeacher({
+            lessonId: this.dataItem.id,
+            teacherId: this.detailInfo.teacher
+          })
+          .then(response => {
+            if (response.data.code == "200") {
+              this.$Message.success("操作成功");
+              this.getList();
+              this.closeModalContent();
+            }
+          });
+      },
+      submitUploadGuideAudio() {
+        if (!this.detailInfo.guideAudio) {
+          return this.$Message.error("请上传引导音频");
         }
+        this.$api.composition
+          .uploadGuideAudio({
+            lessonId: this.dataItem.id,
+            auideAudio: this.detailInfo.guideAudio
+          })
+          .then(response => {
+            if (response.data.code == "200") {
+              this.$Message.success("操作成功");
+              this.getList();
+              this.closeModalContent();
+              this.isOpenModalAdd = false;
+            }
+          });
+      },
+      submitSaveLessonQuestion() {
+        let isCheckQuestion = true;
+        let isCheckName = true;
+        let isCheckOptionBool = false;
+        let isCheckoptionJsonLength = true;
+        let isCheckOptionOK = false;
+        let checkOptionStatus = [];
+        let checkOptionBoolStatus = [];
+        let choiceDataList = [];
+        let isCheckRightAudio = true;
+        let isCheckErrorAudio = true;
 
-        if (item.optionJson.length) {
-          isCheckOptionBool = item.optionJson.some(list => {
-            return list.isChecked == true;
+        this.choiceList.forEach(item => {
+          if (
+            item.answerMinute === "" ||
+            item.answerSecond === "" ||
+            !item.answerTime ||
+            item.publishMinute === "" ||
+            item.publishSecond === ""
+          ) {
+            isCheckQuestion = false;
+          }
+
+          if (!item.name) {
+            isCheckName = false;
+          }
+
+          if (!item.optionJson.length) {
+            isCheckoptionJsonLength = false;
+          }
+
+          if (item.optionJson.length) {
+            isCheckOptionBool = item.optionJson.some(list => {
+              return list.isChecked == true;
+            });
+
+            isCheckOptionOK = item.optionJson.every(list => {
+              return list.value != "";
+            });
+
+            checkOptionStatus.push(isCheckOptionOK);
+            checkOptionBoolStatus.push(isCheckOptionBool);
+          }
+
+          isCheckOptionBool = checkOptionBoolStatus.every(list => {
+            return list;
           });
 
-          isCheckOptionOK = item.optionJson.every(list => {
-            return list.value != "";
+          isCheckOptionOK = checkOptionStatus.every(list => {
+            return list;
           });
 
-          checkOptionStatus.push(isCheckOptionOK);
-          checkOptionBoolStatus.push(isCheckOptionBool);
-        }
+          if (!item.rightAudio) {
+            isCheckRightAudio = false;
+          }
 
-        isCheckOptionBool = checkOptionBoolStatus.every(list => {
-          return list;
-        });
-
-        isCheckOptionOK = checkOptionStatus.every(list => {
-          return list;
-        });
-
-        if (!item.rightAudio) {
-          isCheckRightAudio = false;
-        }
-
-        if (!item.errorAudio) {
-          isCheckErrorAudio = false;
-        }
-      });
-
-      if (!isCheckName) {
-        return this.$Message.error("请输入题目");
-      } else if (!this.choiceList.length) {
-        return this.$Message.error("请新增题目");
-      } else if (!isCheckQuestion && this.modalType == "3") {
-        return this.$Message.error("请填写完整的答题字段");
-      } else if (!isCheckoptionJsonLength) {
-        return this.$Message.error("请新增选项");
-      } else if (!isCheckOptionBool) {
-        return this.$Message.error("请选择一个正确的答案");
-      } else if (!isCheckOptionOK) {
-        return this.$Message.error("选择题不能有空选项");
-      } else if (!isCheckRightAudio && this.modalType == "4") {
-        return this.$Message.error("请上传正确回答音频");
-      } else if (!isCheckErrorAudio && this.modalType == "4") {
-        return this.$Message.error("请上传错误回答音频");
-      }
-
-      choiceDataList = JSON.parse(JSON.stringify(this.choiceList));
-
-      choiceDataList.forEach(item => {
-        item.answerPoint = +item.answerMinute * 60 + +item.answerSecond;
-        item.publishPoint = +item.publishMinute * 60 + +item.publishSecond;
-        item.optionJson = JSON.stringify(item.optionJson);
-        delete item.answerMinute;
-        delete item.answerSecond;
-        delete item.publishMinute;
-        delete item.publishSecond;
-        if (this.modalType === 4) {
-          delete item.qetype;
-        }
-      });
-
-      this.$api.composition
-        .saveLessonQuestion({
-          lessonId: this.dataItem.id,
-          questionList: choiceDataList,
-          type: 2
-        })
-        .then(response => {
-          if (response.data.code == "200") {
-            this.closeModalContent();
-            this.$Message.success("操作成功");
+          if (!item.errorAudio) {
+            isCheckErrorAudio = false;
           }
         });
-    },
-    saveHomeWork() {
-      if (!this.detailInfo.homeworkType) {
-        return this.$Message.error("请选择作业类型");
-      } else if (!this.detailInfo.cpn && this.detailInfo.category === 2) {
-        return this.$Message.error("请输入关卡名称");
-      } else if (!this.detailInfo.cpi && this.detailInfo.category === 2) {
-        return this.$Message.error("请输入关卡图标");
-      }
 
-      this.$api.composition
-        .saveHomeWork({
-          lessonId: this.dataItem.id,
-          homework: this.detailInfo.homework,
-          keyPoint: this.detailInfo.keyPoint,
-          homeworkClaim: this.detailInfo.homeworkClaim,
-          homeWorkType: this.detailInfo.homeworkType,
-          cpn: this.detailInfo.cpn,
-          cpi: this.detailInfo.cpi,
-          workImg: this.detailInfo.workImg
-          // readContent: this.detailInfo.readContent
-        })
-        .then(response => {
+        if (!isCheckName) {
+          return this.$Message.error("请输入题目");
+        } else if (!this.choiceList.length) {
+          return this.$Message.error("请新增题目");
+        } else if (!isCheckQuestion && this.modalType == "3") {
+          return this.$Message.error("请填写完整的答题字段");
+        } else if (!isCheckoptionJsonLength) {
+          return this.$Message.error("请新增选项");
+        } else if (!isCheckOptionBool) {
+          return this.$Message.error("请选择一个正确的答案");
+        } else if (!isCheckOptionOK) {
+          return this.$Message.error("选择题不能有空选项");
+        } else if (!isCheckRightAudio && this.modalType == "4") {
+          return this.$Message.error("请上传正确回答音频");
+        } else if (!isCheckErrorAudio && this.modalType == "4") {
+          return this.$Message.error("请上传错误回答音频");
+        }
+
+        choiceDataList = JSON.parse(JSON.stringify(this.choiceList));
+
+        choiceDataList.forEach(item => {
+          item.answerPoint = +item.answerMinute * 60 + +item.answerSecond;
+          item.publishPoint = +item.publishMinute * 60 + +item.publishSecond;
+          item.optionJson = JSON.stringify(item.optionJson);
+          delete item.answerMinute;
+          delete item.answerSecond;
+          delete item.publishMinute;
+          delete item.publishSecond;
+          if (this.modalType === 4) {
+            delete item.qetype;
+          }
+        });
+
+        this.$api.composition
+          .saveLessonQuestion({
+            lessonId: this.dataItem.id,
+            questionList: choiceDataList,
+            type: 2
+          })
+          .then(response => {
+            if (response.data.code == "200") {
+              this.closeModalContent();
+              this.$Message.success("操作成功");
+            }
+          });
+      },
+      saveHomeWork() {
+        if (!this.detailInfo.homeworkType) {
+          return this.$Message.error("请选择作业类型");
+        } else if (!this.detailInfo.cpn && this.detailInfo.category === 2) {
+          return this.$Message.error("请输入关卡名称");
+        } else if (!this.detailInfo.cpi && this.detailInfo.category === 2) {
+          return this.$Message.error("请输入关卡图标");
+        }
+
+        this.$api.composition
+          .saveHomeWork({
+            lessonId: this.dataItem.id,
+            homework: this.detailInfo.homework,
+            keyPoint: this.detailInfo.keyPoint,
+            homeworkClaim: this.detailInfo.homeworkClaim,
+            homeWorkType: this.detailInfo.homeworkType,
+            cpn: this.detailInfo.cpn,
+            cpi: this.detailInfo.cpi,
+            workImg: this.detailInfo.workImg
+            // readContent: this.detailInfo.readContent
+          })
+          .then(response => {
+            if (response.data.code == "200") {
+              this.$Message.success("操作成功");
+              this.getList();
+              this.closeModalContent();
+              this.isOpenModalAdd = false;
+            }
+          });
+      },
+      submitVideo() {
+        if (!this.detailInfo.videoUrl) {
+          return this.$Message.error("请上传课程视频");
+        }
+
+        this.$api.tbzwLesson
+          .saveLessonVideo({
+            id: this.dataItem.id,
+            tvUrl: this.detailInfo.tvUrl,
+            ipadUrl: this.detailInfo.ipadUrl,
+            videoUrl: this.detailInfo.videoUrl
+          })
+          .then(response => {
+            if (response.data.code == "200") {
+              // this.$Message.success('操作成功');
+              this.getList();
+              this.closeModalContent();
+              this.isOpenModalAdd = false;
+            }
+          });
+      },
+      submitStrokeImg() {
+        if (!this.detailInfo.strokeImg) {
+          return this.$Message.error("请上传笔画特写图片");
+        } else if (!this.detailInfo.etymology) {
+          return this.$Message.error("请上传字源图");
+        } else if (!this.detailInfo.evolution) {
+          return this.$Message.error("请上传演化图");
+        } else if (!this.detailInfo.meterImg) {
+          return this.$Message.error("请上传米字图");
+        } else if (!this.detailInfo.stroke) {
+          return this.$Message.error("请输入文字笔画");
+        }
+
+        this.$api.tbzwLesson
+          .saveStrokeImgById({
+            lessonId: this.dataItem.id,
+            strokeImg: this.detailInfo.strokeImg,
+            meterImg: this.detailInfo.meterImg,
+            evolution: this.detailInfo.evolution,
+            etymology: this.detailInfo.etymology,
+            stroke: this.detailInfo.stroke
+          })
+          .then(response => {
+            if (response.data.code == "200") {
+              this.$Message.success("操作成功");
+              this.getList();
+              this.closeModalContent();
+            }
+          });
+      },
+      submitAdd(name) {
+        if (!this.addInfo.coverphoto) {
+          return this.$Message.error("请上传课程封面");
+        } else if (!this.addInfo.coverphoto) {
+          return this.$Message.error("请上传课程封面");
+        } else if (!this.addInfo.coverphoto) {
+          return this.$Message.error("请上传课程封面");
+        }
+
+        let paramUrl = this.addInfo.id
+          ? this.$api.composition.updateLesson
+          : this.$api.composition.saveLesson;
+        paramUrl({
+          courseId: this.$route.query.courseId,
+          id: this.addInfo.id,
+          name: this.addInfo.name,
+          category: this.addInfo.category,
+          coverphoto: this.addInfo.coverphoto
+        }).then(response => {
           if (response.data.code == "200") {
             this.$Message.success("操作成功");
             this.getList();
-            this.closeModalContent();
+            this.closeModal(name);
             this.isOpenModalAdd = false;
           }
         });
-    },
-    submitVideo() {
-      if (!this.detailInfo.videoUrl) {
-        return this.$Message.error("请上传课程视频");
       }
-
-      this.$api.tbzwLesson
-        .saveLessonVideo({
-          id: this.dataItem.id,
-          tvUrl: this.detailInfo.tvUrl,
-          ipadUrl: this.detailInfo.ipadUrl,
-          videoUrl: this.detailInfo.videoUrl
-        })
-        .then(response => {
-          if (response.data.code == "200") {
-            // this.$Message.success('操作成功');
-            this.getList();
-            this.closeModalContent();
-            this.isOpenModalAdd = false;
-          }
-        });
-    },
-    submitStrokeImg() {
-      if (!this.detailInfo.strokeImg) {
-        return this.$Message.error("请上传笔画特写图片");
-      } else if (!this.detailInfo.etymology) {
-        return this.$Message.error("请上传字源图");
-      } else if (!this.detailInfo.evolution) {
-        return this.$Message.error("请上传演化图");
-      } else if (!this.detailInfo.meterImg) {
-        return this.$Message.error("请上传米字图");
-      } else if (!this.detailInfo.stroke) {
-        return this.$Message.error("请输入文字笔画");
-      }
-
-      this.$api.tbzwLesson
-        .saveStrokeImgById({
-          lessonId: this.dataItem.id,
-          strokeImg: this.detailInfo.strokeImg,
-          meterImg: this.detailInfo.meterImg,
-          evolution: this.detailInfo.evolution,
-          etymology: this.detailInfo.etymology,
-          stroke: this.detailInfo.stroke
-        })
-        .then(response => {
-          if (response.data.code == "200") {
-            this.$Message.success("操作成功");
-            this.getList();
-            this.closeModalContent();
-          }
-        });
-    },
-    submitAdd(name) {
-      if (!this.addInfo.coverphoto) {
-        return this.$Message.error("请上传课程封面");
-      } else if (!this.addInfo.coverphoto) {
-        return this.$Message.error("请上传课程封面");
-      } else if (!this.addInfo.coverphoto) {
-        return this.$Message.error("请上传课程封面");
-      }
-
-      let paramUrl = this.addInfo.id
-        ? this.$api.composition.updateLesson
-        : this.$api.composition.saveLesson;
-      paramUrl({
-        courseId: this.$route.query.courseId,
-        id: this.addInfo.id,
-        name: this.addInfo.name,
-        category: this.addInfo.category,
-        coverphoto: this.addInfo.coverphoto
-      }).then(response => {
-        if (response.data.code == "200") {
-          this.$Message.success("操作成功");
-          this.getList();
-          this.closeModal(name);
-          this.isOpenModalAdd = false;
-        }
-      });
     }
-  }
-};
+  };
 </script>
 
 <style lang="less" scoped>
-.p-gsw-course-list {
-  &-option {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  &-img {
-    width: 50px;
-    height: 50px;
-  }
-
-  .-c-tips {
-    color: #39f;
-  }
-
-  .-c-course-wrap {
-    .-c-course-item {
-      display: inline-block;
-      position: relative;
-      background-color: #ebebeb;
-      width: 200px;
-      height: 90px;
-      margin: 10px 10px 10px 0;
-      border: 1px solid #ebebeb;
-      border-radius: 4px;
-      padding: 4px;
-      overflow: hidden;
-      img {
-        width: 100%;
-        height: 100%;
-      }
-    }
-
-    .-code {
-      width: 100px;
-      height: 100px;
-    }
-    .-item-audio {
+  .p-gsw-course-list {
+    &-option {
       display: flex;
       align-items: center;
-      width: 350px;
+      justify-content: space-between;
+    }
 
-      .-item-icon {
+    &-img {
+      width: 50px;
+      height: 50px;
+    }
+
+    .-c-tips {
+      color: #39f;
+    }
+
+    .-c-course-wrap {
+      .-c-course-item {
+        display: inline-block;
+        position: relative;
+        background-color: #ebebeb;
+        width: 200px;
+        height: 90px;
+        margin: 10px 10px 10px 0;
+        border: 1px solid #ebebeb;
+        border-radius: 4px;
+        padding: 4px;
+        overflow: hidden;
+        img {
+          width: 100%;
+          height: 100%;
+        }
+      }
+
+      .-code {
+        width: 100px;
+        height: 100px;
+      }
+      .-item-audio {
         display: flex;
         align-items: center;
-        justify-content: center;
-        width: 40px;
-        height: 40px;
-        color: #ffffff;
-        background: rgba(255, 237, 116, 1);
+        width: 350px;
+
+        .-item-icon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 40px;
+          height: 40px;
+          color: #ffffff;
+          background: rgba(255, 237, 116, 1);
+        }
+      }
+
+      .-item-video {
+        margin: 10px 0;
       }
     }
 
-    .-item-video {
-      margin: 10px 0;
+    .-t-add-icon {
+      top: 56px;
+    }
+    .-search-select-text {
+      min-width: 70px;
+    }
+    .-search-selectOne {
+      width: 100px;
+      border: 1px solid #dcdee2;
+      border-radius: 4px;
+      margin-right: 20px;
+    }
+
+    .date-time {
+      width: 100%;
+      border: 1px solid #dcdee2;
+      border-radius: 4px;
+      min-width: 155px;
+    }
+
+    .-date-search {
+      margin-left: 20px;
+    }
+
+    .-c-tab {
+      margin: 20px 0;
     }
   }
-
-  .-t-add-icon {
-    top: 56px;
-  }
-  .-search-select-text {
-    min-width: 70px;
-  }
-  .-search-selectOne {
-    width: 100px;
-    border: 1px solid #dcdee2;
-    border-radius: 4px;
-    margin-right: 20px;
-  }
-
-  .date-time {
-    width: 100%;
-    border: 1px solid #dcdee2;
-    border-radius: 4px;
-    min-width: 155px;
-  }
-
-  .-date-search {
-    margin-left: 20px;
-  }
-
-  .-c-tab {
-    margin: 20px 0;
-  }
-}
 </style>
