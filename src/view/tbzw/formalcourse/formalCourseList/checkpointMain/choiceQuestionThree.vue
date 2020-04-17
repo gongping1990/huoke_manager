@@ -54,6 +54,13 @@
           <Radio :label=0>没有正误</Radio>
         </Radio-group>
       </div>
+      <div class="-name" v-show="type=='4'">
+        <span class="-span">正误判断：</span>
+        <Radio-group v-model="list.judgement">
+          <Radio :label=1>全部选对</Radio>
+          <Radio :label=2>部分选对</Radio>
+        </Radio-group>
+      </div>
 
       <!--publishPoint-->
       <div class="-option-wrap" v-show="list.optionJson.length">
@@ -164,6 +171,7 @@
             optionJsonTwo: [],
             imgUrl: '',
             answer: null,
+            judgement: '',
             subjectImg: '',
             vfUrl: ''
           }

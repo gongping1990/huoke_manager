@@ -4,7 +4,7 @@
     v-model="isOpenDetail"
     @on-cancel="closeModal"
     width="750"
-    :title="dataInfo.category === 1 ? '学习内容' : '书写要点'">
+    :title="(dataInfo.category === 1 ||  dataInfo.category === 2 ) ? '学习内容' : '书写要点'">
     <Form :model="addInfo" ref="addInfo" :label-width="80">
       <FormItem label="要点选项" prop="name">
         <div class="p-learnContent-formDataItem" v-for="(item,index) of addInfo.learncontent" :key="index">
@@ -15,12 +15,16 @@
           </div>
           <div @click="delContent(index)" class="item-del g-error g-cursor">删除</div>
         </div>
-        <div class="-c-tips" v-if="dataInfo.category === 1">知识要点将在每课的学情报告中向用户展示</div>
+        <div class="-c-tips" v-if="(dataInfo.category === 1 ||  dataInfo.category === 2 )">知识要点将在每课的学情报告中向用户展示</div>
         <Button @click="addContent('addInfoAdd')" ghost type="primary">+添加要点</Button>
       </FormItem>
-      <FormItem label="重点笔记" v-if="dataInfo.category === 1">
+      <FormItem label="重点笔记" v-if="(dataInfo.category === 1 ||  dataInfo.category === 2 )">
         <upload-img-multiple v-model="addInfo.keynotes" :option="uploadOption"></upload-img-multiple>
         <div class="-c-tips">可将上课视频中重要的板书总结截图下来直接使用，不超过9张，可拖动排序</div>
+      </FormItem>
+      <FormItem label="阅读字数" v-if="dataInfo.category === 2">
+        <Input class="-item-input" type="text" v-model="addInfo.readingWords" placeholder="请输入阅读字数"></Input>
+        <div class="-c-tips">阅读字数将在读写课每课的学情报告中向用户展示</div>
       </FormItem>
     </Form>
 
@@ -58,7 +62,7 @@
     watch: {
       value(_n) {
         this.isOpenDetail = _n
-        if (_n && this.dataInfo.category === 1) {
+        if (_n && (this.dataInfo.category === 1 || this.dataInfo.category === 2)) {
           this.getList()
         } else {
           this.addInfo.lessonId = this.dataInfo.id
@@ -103,6 +107,7 @@
 
         this.$api.tbzwLesson.editLearnContent({
           lessonId: this.addInfo.lessonId,
+          readingWords: this.addInfo.readingWords,
           keynotes: JSON.stringify(this.addInfo.keynotes),
           learncontent: JSON.stringify(this.addInfo.learncontent)
         })

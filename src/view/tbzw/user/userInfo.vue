@@ -429,6 +429,7 @@
           .then(
             response => {
               let dataInfo = response.data.resultData;
+              this.userInfo = dataInfo
               this.userInfo.learnStartDate = dataInfo.learnStartDate ? dayjs(+dataInfo.learnStartDate).format('YYYY-MM-DD') : '暂无'
               this.userInfo.buyedTime = dataInfo.buyedTime ? dayjs(+dataInfo.buyedTime).format('YYYY-MM-DD HH:mm') : '暂无'
               this.userInfo.createTime = dayjs(+dataInfo.createTime).format('YYYY-MM-DD HH:mm')
@@ -547,7 +548,7 @@
         this.$api.tbzwRules.supply({
           activeTime: dayjs(this.addInfo.activeTime).format('YYYY-MM-DD'),
           courseId: this.searchInfo.appId,
-          userId: this.userInfo.userId,
+          userId: this.$route.query.id || this.userId,
         })
           .then(
             response => {
@@ -556,6 +557,7 @@
                 this.getLearnDTO()
                 this.listLessonProgress()
                 this.isOpenModalTime = false
+                this.$forceUpdate()
               }
             })
       }
