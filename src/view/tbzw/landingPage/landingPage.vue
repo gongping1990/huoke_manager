@@ -6,6 +6,7 @@
         <Radio-group v-model="radioType" type="button" @on-change="getList(1)">
           <Radio :label=0>小语轻作文</Radio>
           <Radio :label=1>乐小狮作文</Radio>
+          <Radio :label=3>乐小狮读写</Radio>
         </Radio-group>
       </Row>
       <Table class="-c-tab" :loading="isFetching" :columns="!radioType ? columns : columnsTwo" :data="dataList"></Table>
