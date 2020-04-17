@@ -72,9 +72,9 @@
             align: 'center'
           },
           {
-            title: '马甲状态',
+            title: '审核状态',
             render: (h, param) => {
-              return h('div', param.row.passed ? '已启用' : '已停用');
+              return h('div', param.row.passed ? '审核通过' : '审核未通过');
             },
             align: 'center'
           },
@@ -96,7 +96,7 @@
                       this.editPassedVer(params.row);
                     }
                   }
-                }, params.row.passed ? '停用' : '启用'),
+                }, params.row.passed ? '审核未通过' : '审核通过'),
               ]);
             }
           }
