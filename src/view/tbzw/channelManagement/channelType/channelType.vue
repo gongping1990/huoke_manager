@@ -220,18 +220,30 @@
                 response => {
                   if (response.data.code == '200') {
                     this.$Message.success('提交成功');
-                    if (!this.isChild || !this.isEditChild) {
+                    if (!this.isChild) {
                       this.getList();
                     } else {
-                      this.dataList.forEach(list=>{
-                        if (list.id === this.dataItem.id) {
-                          list.list.forEach(item=>{
-                            if (item.id === this.dataItemChild.id) {
-                              item.name = this.addInfo.name
-                            }
-                          })
-                        }
-                      })
+                      if (this.isEditChild) {
+                        this.dataList.forEach(list=>{
+                          if (list.id === this.dataItem.id) {
+                            list.list.forEach(item=>{
+                              if (item.id === this.dataItemChild.id) {
+                                item.name = this.addInfo.name
+                              }
+                            })
+                          }
+                        })
+                      } else {
+                        this.dataList.forEach(list=>{
+                          if (list.id === this.dataItem.id) {
+                            list.list.unshift({
+                              id: response.data.resultData.id,
+                              name: this.addInfo.name,
+                              gmtCreate: dayjs(new Date()).format('YYYY-MM-DD HH:mm')
+                            })
+                          }
+                        })
+                      }
                     }
                     this.closeModal(name);
                   }
