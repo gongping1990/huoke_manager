@@ -96,11 +96,23 @@
         <FormItem label="渠道名称" prop="name">
           <Input type="text" v-model="addInfo.name" placeholder="请输入渠道名称"></Input>
         </FormItem>
-        <FormItem label="渠道分类" prop="categoryId">
-          <Select v-model="addInfo.categoryId" placeholder="请选择">
-            <Option v-for="item of typeList" :label="item.name" :value="item.id"
+        <FormItem label="一级分类" prop="categoryIdOne" v-show="addInfo.id == ''">
+          <Select v-model="addInfo.categoryIdOne" placeholder="请选择" @on-change="getTypeListModal()">
+            <Option v-for="(item, index) of typeListModal" :label="item.name" :value="item.id"
                     :key="item.id"></Option>
           </Select>
+        </FormItem>
+        <FormItem label="二级分类" prop="categoryId"  v-show="addInfo.id == ''">
+          <Select v-model="addInfo.categoryId" placeholder="请选择">
+            <Option v-for="(item, index) of secondListModal" :label="item.name" :value="item.id"
+                    :key="item.id"></Option>
+          </Select>
+        </FormItem>
+        <FormItem label="一级分类" v-if="addInfo.id!=''">
+          {{addInfo.firstCategoryName}}
+        </FormItem>
+        <FormItem label="二级分类" v-if="addInfo.id!=''">
+          {{addInfo.secondCategoryName}}
         </FormItem>
       </Form>
       <div slot="footer" class="-p-b-flex">
@@ -132,7 +144,9 @@
         dataList: [],
         dataDetailList: [],
         typeList: [],
+        typeListModal: [],
         secondList: [],
+        secondListModal: [],
         searchInfo: {
           typeId: '-1',
           typeIdTwo: '-1'
@@ -163,8 +177,11 @@
           name: [
             {required: true, message: '请输入渠道名称', trigger: 'blur'}
           ],
+          categoryIdOne: [
+            {required: true, message: '请选择一级分类', trigger: 'change'},
+          ],
           categoryId: [
-            {required: true, message: '请输入渠道分类', trigger: 'change'},
+            {required: true, message: '请选择二级分类', trigger: 'change'},
           ]
         },
         columns: [
@@ -382,15 +399,18 @@
         this.searchInfo.goodsId = data.id;
         this.isOpenModal = true;
         this.getDetailList();
-
       },
       openAddModal(data) {
         if (data) {
           this.addInfo = JSON.parse(JSON.stringify(data));
+          this.addInfo.categoryIdOne = '1111'
         } else {
-          this.addInfo = {};
+          this.addInfo = {
+            id: ''
+          };
         }
         this.isOpenAddModal = true;
+        this.getTypeListModal();
       },
       //分页查询
       getList(num) {
@@ -438,6 +458,22 @@
             this.isFetching = false;
           });
       },
+      getTypeListModal() {
+        this.$api.tbzwInternalChannel.getAllChannelCategory({
+          internalChannelCategoryId: this.addInfo.categoryIdOne
+        })
+          .then(
+            response => {
+              if (this.typeListModal.length) {
+                this.secondListModal = response.data.resultData;
+              } else {
+                this.typeListModal = response.data.resultData;
+              }
+            })
+          .finally(() => {
+            this.isFetching = false;
+          });
+      },
       getDetailList(num) {
         this.isFetching = true;
         if (num) {
@@ -467,7 +503,11 @@
       submitInfo(name) {
         this.$refs[name].validate((valid) => {
           if (valid) {
-            this.$api.tbzwInternalChannel.saveChannel(this.addInfo)
+            this.$api.tbzwInternalChannel.saveChannel({
+              id: this.addInfo.id,
+              name: this.addInfo.name,
+              categoryId: this.addInfo.categoryId
+            })
               .then(
                 response => {
                   if (response.data.code == '200') {

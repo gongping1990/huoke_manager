@@ -47,7 +47,7 @@
             <Col :span="8" class="-t-item-text g-t-center">
               <Button type="text" class="-t-theme-color">&emsp;&emsp;&emsp;&emsp;&emsp;</Button>
               <Button type="text" class="-t-theme-color" @click="openChildModal(item2,item1)">编辑</Button>
-              <Button type="text" class="-t-red-color" @click="delItem(item2)">删除</Button>
+              <Button type="text" class="-t-red-color" @click="delItem(item2,item1,index2)">删除</Button>
               <Button type="text" class="-t-theme-color" @click="jumpItem(item2)">查看数据</Button>
             </Col>
           </Col>
@@ -98,10 +98,12 @@
         dataList: [],
         total: 0,
         dataItem: '',
+        dataItemChild: '',
         isFetching: false,
         isOpenModal: false,
         isSending: false,
         isChild: false,
+        isEditChild: false,
         addInfo: {},
         ruleValidate: {
           name: [
@@ -121,10 +123,13 @@
         this.storageInfo = this.dataList;
       },
       openChildModal(data, person) {
+        this.dataItemChild = data
         this.dataItem = person ? person : data
         this.addInfo = person ? JSON.parse(JSON.stringify(data)) : {};
         this.isChild = true;
         this.isOpenModal = true;
+        this.isEditChild = (person !== '')
+        console.log(this.isEditChild)
       },
       openModal(data) {
         this.isChild = false;
@@ -165,7 +170,7 @@
             this.isFetching = false;
           });
       },
-      delItem(param) {
+      delItem(param, person, index) {
         this.$Modal.confirm({
           title: '提示',
           content: '确认要删除吗？',
@@ -176,7 +181,15 @@
               response => {
                 if (response.data.code == "200") {
                   this.$Message.success("操作成功");
-                  this.getList();
+                  this.dataList.forEach(list=>{
+                    if (list.id === person.id) {
+                      list.list.forEach(item=>{
+                        if (item.id === param.id) {
+                          list.list.splice(index,1)
+                        }
+                      })
+                    }
+                  })
                 }
               });
           }
@@ -191,10 +204,9 @@
           }
         });
       },
+
       submitInfo(name) {
-
         if (this.isSending) return;
-
         this.$refs[name].validate((valid) => {
           if (valid) {
             this.isSending = true;
@@ -208,13 +220,15 @@
                 response => {
                   if (response.data.code == '200') {
                     this.$Message.success('提交成功');
-                    if (!this.isChild) {
+                    if (!this.isChild || !this.isEditChild) {
                       this.getList();
                     } else {
                       this.dataList.forEach(list=>{
                         if (list.id === this.dataItem.id) {
                           list.list.forEach(item=>{
-                            item.name = this.addInfo.name
+                            if (item.id === this.dataItemChild.id) {
+                              item.name = this.addInfo.name
+                            }
                           })
                         }
                       })
