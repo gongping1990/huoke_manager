@@ -1,8 +1,28 @@
 <template>
   <div class="p-channelList">
     <input type="text" v-model="copy_url" class="copy-input" ref="copyInput">
+
+
     <Card>
-      <div class="g-add-btn" @click="openAddModal()">
+      <Row class="g-search">
+        <Col :span="5" class="g-t-left">
+          <div class="g-flex-a-j-center">
+            <div class="-search-select-text-two">一级分类：</div>
+            <Select v-model="searchInfo.typeId" @on-change="changeFirst()" class="-search-selectOne">
+              <Option v-for="item of typeList" :label=item.name :value=item.id :key="item.id"></Option>
+            </Select>
+          </div>
+        </Col>
+        <Col :span="5" class="g-t-left">
+          <div class="g-flex-a-j-center">
+            <div class="-search-select-text-two">二级分类：</div>
+            <Select v-model="searchInfo.typeIdTwo" @on-change="changeTwo()" class="-search-selectOne">
+              <Option v-for="item of secondList" :label=item.name :value=item.id :key="item.id"></Option>
+            </Select>
+          </div>
+        </Col>
+      </Row>
+      <div class="g-add-btn g-add-top" @click="openAddModal()">
         <Icon class="-btn-icon" color="#fff" type="ios-add" size="24"/>
       </div>
 
@@ -50,9 +70,9 @@
           </div>
         </Col>
         <!--<Col :span="17" class="g-flex-a-j-center">-->
-         <!---->
-          <!--<date-picker-template v-if="selectType===2" :dataInfo="dateOption"-->
-                                <!--@changeDate="changeDateTwo"></date-picker-template>-->
+        <!---->
+        <!--<date-picker-template v-if="selectType===2" :dataInfo="dateOption"-->
+        <!--@changeDate="changeDateTwo"></date-picker-template>-->
         <!--</Col>-->
       </Row>
 
@@ -76,11 +96,23 @@
         <FormItem label="渠道名称" prop="name">
           <Input type="text" v-model="addInfo.name" placeholder="请输入渠道名称"></Input>
         </FormItem>
-        <FormItem label="渠道分类" prop="categoryId">
-          <Select v-model="addInfo.categoryId" placeholder="请选择">
-            <Option v-for="item of typeList" :label="item.name" :value="item.id"
+        <FormItem label="一级分类" prop="categoryIdOne" v-show="addInfo.id == ''">
+          <Select v-model="addInfo.categoryIdOne" placeholder="请选择" @on-change="getTypeListModal()">
+            <Option v-for="(item, index) of typeListModal" :label="item.name" :value="item.id"
                     :key="item.id"></Option>
           </Select>
+        </FormItem>
+        <FormItem label="二级分类" prop="categoryId"  v-show="addInfo.id == ''">
+          <Select v-model="addInfo.categoryId" placeholder="请选择">
+            <Option v-for="(item, index) of secondListModal" :label="item.name" :value="item.id"
+                    :key="item.id"></Option>
+          </Select>
+        </FormItem>
+        <FormItem label="一级分类" v-if="addInfo.id!=''">
+          {{addInfo.firstCategoryName}}
+        </FormItem>
+        <FormItem label="二级分类" v-if="addInfo.id!=''">
+          {{addInfo.secondCategoryName}}
         </FormItem>
       </Form>
       <div slot="footer" class="-p-b-flex">
@@ -92,8 +124,8 @@
 </template>
 
 <script>
-  import dayjs from 'dayjs'
-  import {getBaseUrl} from "@/libs/index"
+  import dayjs from 'dayjs';
+  import {getBaseUrl} from "@/libs/index";
   import DatePickerTemplate from "@/components/datePickerTemplate";
 
   export default {
@@ -112,7 +144,13 @@
         dataList: [],
         dataDetailList: [],
         typeList: [],
-        searchInfo: {},
+        typeListModal: [],
+        secondList: [],
+        secondListModal: [],
+        searchInfo: {
+          typeId: '-1',
+          typeIdTwo: '-1'
+        },
         addInfo: {},
         selectType: 1,
         modalDetailType: '1',
@@ -139,8 +177,11 @@
           name: [
             {required: true, message: '请输入渠道名称', trigger: 'blur'}
           ],
+          categoryIdOne: [
+            {required: true, message: '请选择一级分类', trigger: 'change'},
+          ],
           categoryId: [
-            {required: true, message: '请输入渠道分类', trigger: 'change'},
+            {required: true, message: '请选择二级分类', trigger: 'change'},
           ]
         },
         columns: [
@@ -150,27 +191,10 @@
             align: 'center'
           },
           {
-            title: '二维码',
-            render: (h, params) => {
-              return h('div', {
-                style: {
-                  'display': 'flex',
-                  'align-items': 'center',
-                }
-              }, [
-                h('img', {
-                  attrs: {
-                    src: params.row.qrcode
-                  },
-                  style: {
-                    width: '40px',
-                    height: '40px',
-                    margin: '10px auto'
-                  }
-                })
-              ])
-            },
-            align: 'center'
+            title: '链接地址',
+            key: 'link',
+            align: 'center',
+            tooltip: true
           },
           {
             title: '累计下单数',
@@ -185,13 +209,13 @@
             // sortable: 'custom'
           },
           {
-            title: '累计访问量',
+            title: '累计PV',
             key: 'pv',
             align: 'center',
             // sortable: 'custom'
           },
           {
-            title: '日均访问量',
+            title: '累计UV',
             key: 'avgPv',
             align: 'center',
             // sortable: 'custom'
@@ -199,7 +223,7 @@
           {
             title: '累计转化率',
             render: (h, params) => {
-              return h('span', `${(params.row.conversionRate * 100).toFixed(2)}%`)
+              return h('span', `${(params.row.conversionRate * 100).toFixed(2)}%`);
             },
             align: 'center',
             // sortable: 'custom'
@@ -221,7 +245,7 @@
                   },
                   on: {
                     click: () => {
-                      this.openAddModal(params.row)
+                      this.openAddModal(params.row);
                     }
                   }
                 }, '编辑'),
@@ -236,7 +260,7 @@
                   },
                   on: {
                     click: () => {
-                      this.openModal(params.row)
+                      this.openModal(params.row);
                     }
                   }
                 }, '查看详情'),
@@ -251,7 +275,7 @@
                   },
                   on: {
                     click: () => {
-                      this.copyUrlFn(params.row)
+                      this.copyUrlFn(params.row);
                     }
                   }
                 }, '复制链接'),
@@ -266,11 +290,11 @@
                   },
                   on: {
                     click: () => {
-                      this.download(params.row)
+                      this.download(params.row);
                     }
                   }
                 }, '下载二维码')
-              ])
+              ]);
             }
           }
         ],
@@ -311,7 +335,7 @@
             title: '转化率',
             key: 'conversionRate',
             render: (h, params) => {
-              return h('span', `${(params.row.conversionRate * 100).toFixed(2)}%`)
+              return h('span', `${(params.row.conversionRate * 100).toFixed(2)}%`);
             },
             align: 'center',
             // sortable: 'custom'
@@ -320,12 +344,20 @@
       };
     },
     mounted() {
-      this.getList()
-      this.getTypeList()
+      this.getList();
+      this.getTypeList();
     },
     methods: {
+      changeFirst() {
+        this.searchInfo.typeIdTwo = '-1';
+        this.getList(1);
+        this.getTypeList();
+      },
+      changeTwo() {
+        this.getList(1);
+      },
       download(data) {
-        window.open(data.qrcode, '_blank')
+        window.open(data.qrcode, '_blank');
       },
       copyUrlFn(row) {
         this.copy_url = row.link;
@@ -336,24 +368,24 @@
         }, 500);
       },
       changeDateOne(data) {
-        this.selectTime = data
-        this.getDetailList(1)
+        this.selectTime = data;
+        this.getDetailList(1);
       },
       changeDateTwo(data) {
-        this.getStartTime = data.startTime
-        this.getEndTime = data.endTime
-        this.getList(1)
+        this.getStartTime = data.startTime;
+        this.getEndTime = data.endTime;
+        this.getList(1);
       },
       changeSort(data) {
-        this.sortInfo = data
-        this.getDetailList(1)
+        this.sortInfo = data;
+        this.getDetailList(1);
       },
       closeModal() {
-        this.isOpenModal = false
+        this.isOpenModal = false;
       },
       closeAddModal(name) {
-        this.isOpenAddModal = false
-        this.$refs[name].resetFields()
+        this.isOpenAddModal = false;
+        this.$refs[name].resetFields();
       },
       currentChange(val) {
         this.tab.page = val;
@@ -364,26 +396,34 @@
         this.getDetailList();
       },
       openModal(data) {
-        this.searchInfo.goodsId = data.id
-        this.isOpenModal = true
-        this.getDetailList()
-
+        this.searchInfo.goodsId = data.id;
+        this.isOpenModal = true;
+        this.getDetailList();
       },
       openAddModal(data) {
         if (data) {
-          this.addInfo = JSON.parse(JSON.stringify(data))
+          this.addInfo = JSON.parse(JSON.stringify(data));
+          this.addInfo.categoryIdOne = '1111'
         } else {
-          this.addInfo = {}
+          this.addInfo = {
+            id: ''
+          };
         }
-        this.isOpenAddModal = true
+        this.isOpenAddModal = true;
+        this.getTypeListModal();
       },
       //分页查询
-      getList() {
-        this.isFetching = true
-
+      getList(num) {
+        this.isFetching = true;
+        if (num) {
+          this.tab.currentPage = 1;
+        }
+        let cId = this.searchInfo.typeIdTwo === '-1' ? this.searchInfo.typeId === '-1' ? '' : this.searchInfo.typeId : this.searchInfo.typeIdTwo;
+        console.log(cId,11)
         this.$api.tbzwInternalChannel.listChannel({
-          current: this.tab.page,
-          size: this.tab.pageSize
+          current: num ? num : this.tab.page,
+          size: this.tab.pageSize,
+          internalChannelCategoryId: cId
         })
           .then(
             response => {
@@ -391,62 +431,93 @@
               this.total = response.data.resultData.total;
             })
           .finally(() => {
-            this.isFetching = false
-          })
+            this.isFetching = false;
+          });
       },
       getTypeList() {
-        this.$api.tbzwInternalChannel.categoryList({
-          current: 1,
-          size: 1000,
+        this.$api.tbzwInternalChannel.getAllChannelCategory({
+          internalChannelCategoryId: this.searchInfo.typeId === '-1' ? '' : this.searchInfo.typeId
         })
           .then(
             response => {
-              this.typeList = response.data.resultData.records;
+              if (this.typeList.length) {
+                this.secondList = response.data.resultData;
+                this.secondList.unshift({
+                  id: '-1',
+                  name: '全部'
+                });
+              } else {
+                this.typeList = response.data.resultData;
+                this.typeList.unshift({
+                  id: '-1',
+                  name: '全部'
+                });
+              }
             })
           .finally(() => {
-            this.isFetching = false
-          })
+            this.isFetching = false;
+          });
+      },
+      getTypeListModal() {
+        this.$api.tbzwInternalChannel.getAllChannelCategory({
+          internalChannelCategoryId: this.addInfo.categoryIdOne
+        })
+          .then(
+            response => {
+              if (this.typeListModal.length) {
+                this.secondListModal = response.data.resultData;
+              } else {
+                this.typeListModal = response.data.resultData;
+              }
+            })
+          .finally(() => {
+            this.isFetching = false;
+          });
       },
       getDetailList(num) {
-        this.isFetching = true
+        this.isFetching = true;
         if (num) {
-          this.tab.currentPage = 1
+          this.tab.currentPage = 1;
         }
         let params = {
           current: num ? num : this.tabDetail.page,
           size: this.tabDetail.pageSize,
           sort: this.sortInfo.key
-        }
+        };
         if (this.modalDetailType === '1') {
-          params.internalChannelId = this.searchInfo.goodsId
+          params.internalChannelId = this.searchInfo.goodsId;
         } else {
-          params.date = dayjs(this.selectTime).format('YYYYMMDD')
+          params.date = dayjs(this.selectTime).format('YYYYMMDD');
         }
 
-        let promiseDate = this.modalDetailType === '1' ? this.$api.tbzwInternalChannel.getInternalChannelData(params) : this.$api.tbzwInternalChannel.getInternalChannelDataByDate(params)
+        let promiseDate = this.modalDetailType === '1' ? this.$api.tbzwInternalChannel.getInternalChannelData(params) : this.$api.tbzwInternalChannel.getInternalChannelDataByDate(params);
 
         promiseDate.then(response => {
           this.dataDetailList = response.data.resultData.records;
           this.totalDetail = response.data.resultData.total;
         })
           .finally(() => {
-            this.isFetching = false
-          })
+            this.isFetching = false;
+          });
       },
       submitInfo(name) {
         this.$refs[name].validate((valid) => {
           if (valid) {
-            this.$api.tbzwInternalChannel.saveChannel(this.addInfo)
+            this.$api.tbzwInternalChannel.saveChannel({
+              id: this.addInfo.id,
+              name: this.addInfo.name,
+              categoryId: this.addInfo.categoryId
+            })
               .then(
                 response => {
                   if (response.data.code == '200') {
                     this.$Message.success('提交成功');
-                    this.getList()
-                    this.closeAddModal(name)
+                    this.getList();
+                    this.closeAddModal(name);
                   }
-                })
+                });
           }
-        })
+        });
       }
     }
   };
@@ -460,11 +531,11 @@
       opacity: 0;
     }
 
-    .-search-select-text {
-      min-width: 70px;
+    .-search-select-text-two {
+      min-width: 80px;
     }
     .-search-selectOne {
-      width: 100px;
+      width: 200px;
       border: 1px solid #dcdee2;
       border-radius: 4px;
       margin-right: 20px;
