@@ -229,6 +229,12 @@
             align: 'center'
           },
           {
+            title: '渠道',
+            key: 'channelName',
+            tooltip: true,
+            align: 'center'
+          },
+          {
             title: '订单状态',
             render: (h, params) => {
               return h('div', this.orderStatus[params.row.payStatus])

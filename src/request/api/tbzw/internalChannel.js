@@ -34,6 +34,12 @@ const tbzwInternalChannel = {
   deleteChannel(params) {
     return axios.post("/compositionv3/internalChannel/delete", qs.stringify(params));
   },
+  getAllChannelCategory(params) {
+    return axios.get("/compositionv3/internalChannel/getAllChannelCategory", {params: params});
+  },
+  getInternalChannelCategoryData(params) {
+    return axios.get("/compositionv3/internalChannel/getInternalChannelCategoryData", {params: params});
+  },
 };
 
 export default tbzwInternalChannel;

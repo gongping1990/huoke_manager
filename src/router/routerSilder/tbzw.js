@@ -505,6 +505,16 @@ export const tbzwRouter =[
         component: () => import('@/view/tbzw/channelManagement/channelType/channelType')
       },
       {
+        path: '/tbzw_channelData',
+        name: 'tbzw_channelData',
+        meta: [
+          {name: '渠道管理'},
+          {name: '渠道分类', url: 'tbzw_channelType'},
+          {name: '渠道数据'}
+        ],
+        component: () => import('@/view/tbzw/channelManagement/channelType/channelData')
+      },
+      {
         path: '/tbzw_channelList',
         name: 'tbzw_channelList',
         meta: [
@@ -512,6 +522,32 @@ export const tbzwRouter =[
           {name: '渠道列表'}
         ],
         component: () => import('@/view/tbzw/channelManagement/channelList/channelList')
+      }
+    ]
+  },
+  {
+    path: '/distribution',
+    name: 'distribution',
+    title: '分销管理',
+    component: Main,
+    children: [
+      {
+        path: '/tbzw_distributionData',
+        name: 'tbzw_distributionData',
+        meta: [
+          {name: '分销管理'},
+          {name: '分销数据'}
+        ],
+        component: () => import('@/view/tbzw/distributionManagement/distributionData/distributionData')
+      },
+      {
+        path: '/tbzw_distributionCourse',
+        name: 'tbzw_distributionCourse',
+        meta: [
+          {name: '分销管理'},
+          {name: '分销课程'}
+        ],
+        component: () => import('@/view/tbzw/distributionManagement/distributionCourse/distributionCourse')
       }
     ]
   }
