@@ -63,9 +63,7 @@
         columns: [
           {
             title: '落地页地址',
-            render: (h, params)=> {
-              return h('div', this.herfList[params.row.page])
-            },
+            key: 'baseLink',
             align: 'center'
           },
 
@@ -90,10 +88,9 @@
             align: 'center'
           },
           {
-            title: '付费转化率',
-            key: 'percentConversion',
+            title: '累计转化率',
             render: (h, params) => {
-              return h('span', `${(params.row.payConversionPercent*100).toFixed()}%`)
+              return h('span', `${(params.row.conversionRate*100).toFixed()}%`)
             },
             align: 'center'
           }
@@ -128,7 +125,7 @@
           {
             title: '付费转化率',
             render: (h, params) => {
-              return h('span', `${(params.row.payConversionPercent*100).toFixed()}%`)
+              return h('span', `${(params.row.conversionRate*100).toFixed()}%`)
             },
             align: 'center'
           },
@@ -236,9 +233,19 @@
         })
           .then(
             response => {
-              this.dataList = response.data.resultData;
-              this.detailList = response.data.resultData.page.records;
-              this.totalDetail = response.data.resultData.page.total;
+              let dataObj = response.data.resultData;
+              this.dataList = [
+                {
+                  orderCount: dataObj.orderCount,
+                  uv: dataObj.uv,
+                  pv: dataObj.pv,
+                  successOrderCount: dataObj.successOrderCount,
+                  conversionRate: dataObj.conversionRate,
+                  baseLink: dataObj.baseLink,
+                }
+              ]
+              this.detailList = dataObj.page.records;
+              this.totalDetail = dataObj.page.total;
             })
           .finally(() => {
             this.isFetching = false
