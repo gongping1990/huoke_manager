@@ -21,6 +21,7 @@ import tbzwDubbing from "./dubbing";
 import tbzwLesson from "./lesson";
 import tbzwSystemconfig from "./systemconfig";
 import tbzwVermanage from "./vermanage";
+import tbzwDistribution from "./distribution";
 
 export const tbzwIndex = {
   composition,
@@ -45,5 +46,6 @@ export const tbzwIndex = {
   tbzwDubbing,
   tbzwLesson,
   tbzwSystemconfig,
-  tbzwVermanage
+  tbzwVermanage,
+  tbzwDistribution
 }
