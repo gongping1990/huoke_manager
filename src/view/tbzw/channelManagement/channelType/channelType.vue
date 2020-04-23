@@ -13,12 +13,12 @@
           <Col :span="8" class="g-t-center">操作</Col>
         </Col>
         <Col :span="24" v-for="(item1,index) of dataList" :key="index" class="-t-item -t-border">
-          <Col :span="4" class="g-flex-a-j-c-center g-t-center">
+          <Col :span="4" class="p-channelType-left g-t-center">
             <div @click="openArrow(item1)" v-if="item1.list.length" class="g-cursor">
               <Icon v-if="!item1.isShowChild" type="md-arrow-dropright" size="20"/>
               <Icon v-else type="md-arrow-dropdown" size="20"/>
             </div>
-            <div >{{item1.name}}</div>
+            <div :class="{'-t-child-padding': !item1.list.length}">{{item1.name}}</div>
           </Col>
           <Col :span="8" class="-t-item-text g-t-center">
             {{item1.baseLink || '-'}}
@@ -261,6 +261,13 @@
 
 <style lang="less" scoped>
   .p-channelType {
+
+    &-left {
+     padding-left: 30px;
+      display: flex;
+      justify-content: left;
+    }
+
     .-c-tips {
       color: #39f
     }
@@ -310,7 +317,7 @@
     }
 
     .-t-child-padding {
-      padding-left: 30px !important;
+      padding-left: 20px !important;
     }
 
     .-t-child-padding-two {
