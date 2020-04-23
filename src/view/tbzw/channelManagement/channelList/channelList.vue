@@ -216,7 +216,7 @@
           },
           {
             title: '累计UV',
-            key: 'avgPv',
+            key: 'uv',
             align: 'center',
             // sortable: 'custom'
           },
