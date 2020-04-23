@@ -66,9 +66,9 @@
           '2': 'http://composition.k12.vip/one',
           '3': 'http://composition.k12.vip/two',
           '6': 'http://composition.k12.vip/five',
-          '7': 'http://composition.k12.vip/tryNew',
+          '7': 'http://composition.k12.vip/try',
           '8': 'http://composition.k12.vip/freeTry',
-          '9': 'http://composition.k12.vip/try',
+          // '9': 'http://composition.k12.vip/try',
           '10': 'http://composition.k12.vip/literacy',
         },
         columns: [
