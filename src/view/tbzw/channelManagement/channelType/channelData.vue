@@ -214,7 +214,8 @@
           date: dayjs(this.dataItem.date).format('YYYYMMDD'),
           sort: 'successOrderCount',
           current: this.tabDetailChannel.page,
-          size: this.tabDetailChannel.pageSize
+          size: this.tabDetailChannel.pageSize,
+          internalChannelCategoryId: this.$route.query.id
         }).then(response => {
           this.detailChannelList = response.data.resultData.records;
           this.totalDetailChannel = response.data.resultData.total;
