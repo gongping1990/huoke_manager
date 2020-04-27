@@ -53,13 +53,6 @@
         totalDetailChannel: 0,
         isFetching: false,
         isOpenModalChannel: false,
-        herfList: {
-          '1': 'http://composition.k12.vip/',
-          '2': 'http://composition.k12.vip/one',
-          '3': 'http://composition.k12.vip/two',
-          '6': 'http://composition.k12.vip/five',
-          '7': 'http://composition.k12.vip/try',
-        },
         columns: [
           {
             title: '落地页地址',

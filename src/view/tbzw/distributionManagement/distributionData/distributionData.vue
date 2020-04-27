@@ -2,7 +2,7 @@
   <div class="p-platformData">
     <Row class="g-search">
       <Col :span="3" class="g-flex-a-j-center -s-radio">
-        <Radio-group v-model="radioType" type="button" @on-change="getDataInfo">
+        <Radio-group v-model="radioType" type="button" @on-change="changeRadio">
           <Radio :label=0>分享数据</Radio>
           <Radio :label=1>收益数据</Radio>
         </Radio-group>
@@ -81,6 +81,7 @@
         isFetching: false,
         dataInfo: '',
         totalInfo: '',
+        allInfo: '',
         selectTime: new Date(new Date().getTime() - 24 * 60 * 60 * 1000),
         getStartTimeThree: '',
         getStartTimeTwo: '',
@@ -96,43 +97,43 @@
       dateTypesLine() {
         let arrayX = []
         for (let item of this.dataInfo) {
-          arrayX.push(item.date)
+          arrayX.push(item.day)
         }
         return arrayX
       },
       optionSeriesLine() {
         let dataList = {
-          franchiseeIntroducePv: [],
-          franchiseeIntroduceUv: [],
-          franchiseeRegisterCount: [],
-          promoterRegisterCount: [],
+          pv: [],
+          uv: [],
+          qrcode: [],
+          shared: [],
         }
         for (let item of this.dataInfo) {
-          dataList.franchiseeIntroducePv.push(item.franchiseeIntroducePv)
-          dataList.franchiseeIntroduceUv.push(item.franchiseeIntroduceUv)
-          dataList.franchiseeRegisterCount.push(item.franchiseeRegisterCount)
-          dataList.promoterRegisterCount.push(item.promoterRegisterCount)
+          dataList.pv.push(item.pv)
+          dataList.uv.push(item.uv)
+          dataList.qrcode.push(item.qrcode)
+          dataList.shared.push(item.shared)
         }
         let optionSeriesLine = [
           {
             name: '活动页PV',
             type: 'line',
-            data: dataList.franchiseeIntroducePv
+            data: dataList.pv
           },
           {
             name: '活动页UV',
             type: 'line',
-            data: dataList.franchiseeIntroduceUv
+            data: dataList.uv
           },
           {
             name: '直接邀请分享次数',
             type: 'line',
-            data: dataList.franchiseeRegisterCount
+            data: dataList.qrcode
           },
           {
             name: '海报保存次数',
             type: 'line',
-            data: dataList.promoterRegisterCount
+            data: dataList.shared
           }
         ]
         return optionSeriesLine
@@ -140,37 +141,37 @@
 
       optionSeriesLineTwo() {
         let dataList = {
-          withdrawCount: [],
-          withdrawUserCount: [],
-          withdrawAmount: [],
-          franchiseeWithdrawCount: [],
+          dayperson: [],
+          daymoney: [],
+          takePerson: [],
+          takeMoney: [],
         }
         for (let item of this.dataInfo) {
-          dataList.withdrawCount.push(item.withdrawCount)
-          dataList.withdrawUserCount.push(item.withdrawUserCount)
-          dataList.withdrawAmount.push(item.withdrawAmount)
-          dataList.franchiseeWithdrawCount.push(item.franchiseeWithdrawCount)
+          dataList.dayperson.push(item.dayperson)
+          dataList.daymoney.push(item.daymoney)
+          dataList.takePerson.push(item.takePerson)
+          dataList.takeMoney.push(item.takeMoney)
         }
         let optionSeriesLineTwo = [
           {
             name: '产生收益（人次）',
             type: 'line',
-            data: dataList.withdrawCount
+            data: dataList.dayperson
           },
           {
             name: '产生收益（元）',
             type: 'line',
-            data: dataList.withdrawUserCount
+            data: dataList.daymoney
           },
           {
             name: '提现（人次）',
             type: 'line',
-            data: dataList.withdrawAmount
+            data: dataList.takePerson
           },
           {
             name: '提现（元）',
             type: 'line',
-            data: dataList.franchiseeWithdrawCount
+            data: dataList.takeMoney
           }
         ]
         return optionSeriesLineTwo
@@ -219,9 +220,14 @@
       }
     },
     mounted() {
-      this.getDataInfo()
+      this.changeRadio()
     },
     methods: {
+      changeRadio () {
+        this.getDataList()
+        this.getDataToday()
+        this.getDataTotal()
+      },
       drawLine() {
         let self = this;
         let myChart = echarts.init(this.$refs.echart);
@@ -281,73 +287,81 @@
 
         this.drawLine()
       },
-      getDataInfo() {
-        let paramsUrl = this.radioType == '1' ? this.$api.fxglDataCenter.getPlatformOutData : this.$api.fxglDataCenter.getPlatformUserData
-        paramsUrl({
-          startTime: this.getStartTimeTwo && new Date(this.getStartTimeTwo).getTime(),
-          startTime1: this.getStartTimeThree && new Date(this.getStartTimeThree).getTime(),
-          endTime: this.getEndTimeTwo && new Date(this.getEndTimeTwo).getTime(),
-          endTime1: this.getEndTimeThree && new Date(this.getEndTimeThree).getTime()
-        }).then(
+      getDataList() {
+        let paramsUrl = this.radioType == '1' ? this.$api.tbzwDistribution.monthEarningsCount : this.$api.tbzwDistribution.monthDistributionCount
+        paramsUrl().then(
           response => {
-            this.totalInfo = response.data.resultData;
-            this.dataInfo = this.totalInfo.list
+            this.dataInfo = response.data.resultData;
             this.getList()
             this.initData()
+          })
+      },
+      getDataToday() {
+        let paramsUrl = this.radioType == '1' ? this.$api.tbzwDistribution.todayEarningsCount : this.$api.tbzwDistribution.todayDistributionCount
+        paramsUrl().then(
+          response => {
+            this.totalInfo = response.data.resultData;
+          })
+      },
+      getDataTotal() {
+        let paramsUrl = this.radioType == '1' ? this.$api.tbzwDistribution.totalEarnings : this.$api.tbzwDistribution.allDistributionCount
+        paramsUrl().then(
+          response => {
+            this.allInfo = response.data.resultData;
           })
       },
       initData() {
         let userData = [
           {
             name: '累计活动页PV',
-            num: this.totalInfo.franchiseeIntroduceTotalPv,
+            num: this.allInfo.pv,
             todayName: '今日活动页PV',
-            todayNum: this.totalInfo.franchiseeIntroducePv
+            todayNum: this.totalInfo.pv
           },
           {
             name: '累计活动页UV',
-            num: this.totalInfo.franchiseeIntroduceTotalUv,
+            num: this.allInfo.uv,
             todayName: '今日活动页UV',
-            todayNum: this.totalInfo.franchiseeIntroduceUv
+            todayNum: this.totalInfo.uv
           },
           {
             name: '累计直接邀请分享次数',
-            num: this.totalInfo.promoterIntroduceTotalPv,
+            num: this.allInfo.shared,
             todayName: '今日直接邀请分享次数',
-            todayNum: this.totalInfo.promoterIntroducePv
+            todayNum: this.totalInfo.shared
           },
           {
             name: '累计海报保存次数',
-            num: this.totalInfo.promoterIntroduceTotalUv,
+            num: this.allInfo.qrcode,
             todayName: '今日海报保存次数',
-            todayNum: this.totalInfo.promoterIntroduceUv
+            todayNum: this.totalInfo.qrcode
           }
         ]
 
         let payData = [
           {
             name: '累计产生收益（人次）',
-            num: '0',
+            num:  this.allInfo.dayperson,
             todayName: '今日产生收益（人次）',
-            todayNum: this.totalInfo.withdrawUserCount
+            todayNum: this.totalInfo.dayperson
           },
           {
             name: '累计产生收益（元）',
-            num: this.totalInfo. franchiseeWithdrawTotalCount,
+            num: this.allInfo.daymoney,
             todayName: '今日产生收益（元）',
-            todayNum: this.totalInfo.franchiseeWithdrawCount
+            todayNum: this.totalInfo.daymoney
           },
           {
             name: '累计提现（人次）',
-            num: this.totalInfo.franchiseeWithdrawTotalAmount,
+            num:  this.allInfo.takePerson,
             todayName: '今日提现（人次）',
-            todayNum: this.totalInfo.franchiseeWithdrawAmount
+            todayNum: this.totalInfo.takePerson
           },
           {
             name: '累计提现（元）',
-            num: '0',
+            num:  this.allInfo.takeMoney,
             todayName: '今日提现（元）',
-            todayNum: this.totalInfo.franchiseeWithdrawUserCount
+            todayNum: this.totalInfo.takeMoney
           },
         ]
 

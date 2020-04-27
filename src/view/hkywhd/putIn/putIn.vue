@@ -158,6 +158,7 @@
         detailList: [],
         managerList: [],
         selectInfo: '1',
+        dataItem: '',
         total: 0,
         totalDetail: 0,
         isFetching: false,
@@ -533,7 +534,8 @@
       },
       openModalData(data) {
         this.isOpenModalData = true
-        this.getDetailList(data)
+        this.dataItem = data
+        this.getDetailList()
       },
       closeModal(name) {
         this.isOpenModal = false
@@ -547,12 +549,12 @@
         this.tab.page = val;
         this.getList();
       },
-      getDetailList(data) {
+      getDetailList() {
         this.isFetching = true
         this.$api.hkywhdInvestmanage.pageWxSubscribeKfMsgData({
           current: this.tabDetail.page,
           size: this.tabDetail.pageSize,
-          investId: data.id
+          investId: this.dataItem.id
         }).then(response => {
           this.detailList = response.data.resultData.records;
           this.totalDetail = response.data.resultData.total;
