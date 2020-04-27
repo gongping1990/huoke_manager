@@ -240,7 +240,12 @@
       openModalChannel(data) {
         this.dataItem = data
         this.isOpenModalChannel = true
-        this.getChannelList()
+        // 写死渠道排行id，对应渠道分类9.9体验课和0元体验课
+        if (data.page == 7) {
+          this.getChannelList('1253251360234414081')
+        } else if (data.page == 8) {
+          this.getChannelList('1253254743926251521')
+        }
       },
       closeModal() {
         this.isOpenModal = false
@@ -251,7 +256,12 @@
       },
       detailCurrentChangeChannel(val) {
         this.tabDetailChannel.page = val;
-        this.getChannelList();
+        // 写死渠道排行id，对应渠道分类9.9体验课和0元体验课
+        if (this.dataItem.page == 7) {
+          this.getChannelList('1253251360234414081')
+        } else if (this.dataItem.page == 8) {
+          this.getChannelList('1253254743926251521')
+        }
       },
       openModal(data) {
         this.pageId = data.page
@@ -271,13 +281,14 @@
           this.isFetching = false
         })
       },
-      getChannelList() {
+      getChannelList(internalChannelCategoryId) {
         this.isFetching = true
         this.$api.tbzwInternalChannel.getInternalChannelDataByDate({
           date: dayjs(this.dataItem.date).format('YYYYMMDD'),
           sort: 'successOrderCount',
           current: this.tabDetailChannel.page,
-          size: this.tabDetailChannel.pageSize
+          size: this.tabDetailChannel.pageSize,
+          internalChannelCategoryId: internalChannelCategoryId
         }).then(response => {
           this.detailChannelList = response.data.resultData.records;
           this.totalDetailChannel = response.data.resultData.total;
