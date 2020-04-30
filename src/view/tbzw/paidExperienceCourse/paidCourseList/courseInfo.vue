@@ -5,6 +5,7 @@
         <Radio-group v-model="radioType" type="button" @on-change="changeRadio()">
           <Radio label="1">基础信息</Radio>
           <Radio label="3">作业分享</Radio>
+          <Radio label="4">打卡分享</Radio>
         </Radio-group>
       </Row>
       <div class="p-course-info-wrap">
@@ -166,6 +167,27 @@
             <div class="-c-tips">图片尺寸不低于960px*360px 图片大小：500K以内</div>
           </Form-item>
         </Form>
+        <Form v-show="radioType==='4'" :model="addInfo" :label-width="90">
+          <Form-item label="打卡海报" class="-c-form-item ivu-form-item-required">
+            <Upload
+              v-if="isEdit"
+              style="display: inline-block"
+              :action="baseUrl"
+              :show-upload-list="false"
+              :max-size="500"
+              :on-success="handleSuccessCardTemplates"
+              :on-exceeded-size="handleSize"
+              :on-error="handleErr">
+              <Button ghost type="primary">上传图片</Button>
+            </Upload>
+            <div class="-c-course-wrap" v-if="addInfo.cardTemplates">
+              <div class="-c-course-item">
+                <img :src="addInfo.cardTemplates">
+              </div>
+            </div>
+            <div class="-c-tips">图片尺寸不低于960px*360px 图片大小：500K以内</div>
+          </Form-item>
+        </Form>
         <div class="-c-flex">
           <Button v-if="isEdit" @click="backCourse('addInfo')" ghost type="primary" class="-c-btn">返 回</Button>
           <div v-if="isEdit" @click="submitInfo('addInfo')" class="g-primary-btn -c-btn">确 认</div>
@@ -198,6 +220,7 @@
           imgurl: "",
           cardimgurl: "",
           shareTemplates: "",
+          cardTemplates: "",
           smalltitle: "",
           wayOfTeach: 1,
           bigtitle: "",
@@ -294,6 +317,12 @@
           this.addInfo.shareTemplates = res.resultData.url
         }
       },
+      handleSuccessCardTemplates(res) {
+        if (res.code === 200) {
+          this.$Message.success('上传成功')
+          this.addInfo.cardTemplates = res.resultData.url
+        }
+      },
       getCourseList() {
         this.$api.tbzwCourse.courseQueryPage({
           current: 1,
@@ -347,6 +376,8 @@
               return this.$Message.error('请上传卡片图片')
             } else if (this.radioType === '3' && !this.addInfo.imgurl) {
               return this.$Message.error('请上传链接配图')
+            } else if (this.radioType === '4' && !this.addInfo.cardTemplates) {
+              return this.$Message.error('请上传打卡海报')
             }
             this.addInfo.linkId = `${this.addInfo.linkId}`
             let paramsUrl = this.addInfo.id ? this.$api.composition.tbzwCourseUpdate : this.$api.composition.tbzwCourseAdd
