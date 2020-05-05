@@ -1,27 +1,11 @@
 <template>
   <div class="p-weike">
     <Card>
-      <Row class="g-t-left">
-        <Col :span="4" class="g-t-left">
-          <div class="g-flex-a-j-center">
-            <div class="-search-select-text">教材版本：</div>
-            <Select v-model="searchInfo.edition" @on-change="getList" class="-search-selectOne">
-              <Option v-for="(item,index) in editionList" :label="item.name" :value="item.id" :key="index"></Option>
-            </Select>
-          </div>
-        </Col>
-        <Col :span="4" class="g-t-left">
-          <div class="g-flex-a-j-center">
-            <div class="-search-select-text">选择年级：</div>
-            <Select v-model="searchInfo.grade" @on-change="getList" class="-search-selectOne">
-              <Option v-for="(item,index) in gradeList" :label="item.name" :value="item.key" :key="index"></Option>
-            </Select>
-          </div>
-        </Col>
-      </Row>
-
       <Table class="-c-tab" :loading="isFetching" :columns="columns" :data="dataList"></Table>
 
+      <Page class="g-text-right" :total="total" size="small" show-elevator :page-size="tab.pageSize"
+            :current.sync="tab.currentPage"
+            @on-change="currentChange"></Page>
     </Card>
 
     <Modal
@@ -46,6 +30,11 @@
     components: {TreeTemplate},
     data() {
       return {
+        tab: {
+          page: 1,
+          currentPage: 1,
+          pageSize: 10
+        },
         radioType: '1',
         searchInfo: {
           grade: '-1',
@@ -96,9 +85,7 @@
         columns: [
           {
             title: '教材名称',
-            render: (h, params) => {
-              return h('div', `${this.subjectList[params.row.subject]}${this.gradeList[params.row.grade - 1].name} (${params.row.semester === 1 ? '上册' : '下册'})`)
-            },
+            key: 'name',
             align: 'center'
           },
           {
@@ -148,20 +135,29 @@
         this.dataItem = data
         this.$refs.childTree.getList(data)
       },
-      getList() {
+      currentChange(val) {
+        this.tab.page = val;
+        this.getList();
+      },
+      getList(num) {
         this.isFetching = true
-        this.$api.xxbYuke.getAllTeachEdtions({
-          subject: this.radioType
+        if (num) {
+          this.tab.currentPage = 1;
+        }
+        this.$api.xxbPoemAdmin.getPoemSubCategoryList({
+          current: num ? num : this.tab.page,
+          size: this.tab.pageSize,
+          poemType: this.$route.query.id
         })
           .then(
-
             response => {
-              this.dataList = response.data.resultData;
+              this.dataList = response.data.resultData.records;
+              this.total = response.data.resultData.total;
             })
           .finally(() => {
             this.isFetching = false
           })
-      },
+      }
     }
   };
 </script>

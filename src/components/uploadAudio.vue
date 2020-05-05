@@ -1,7 +1,6 @@
 <template>
   <div class="p-uploadAudio">
     <Upload
-      v-if="!isDisabled"
       style="display: inline-block"
       :action="baseUrlVa"
       :show-upload-list="false"
@@ -35,7 +34,7 @@
         >
           删除
         </div>
-        <div v-else class="-i-del" @click="propDel">删除</div>
+        <!--<div v-else class="-i-del" @click="propDel">删除2</div>-->
       </div>
     </div>
   </div>
@@ -44,7 +43,7 @@
 <script>
 export default {
   name: "uploadAudio",
-  props: ["option", "childData"],
+  props: ["option", "childData", "showDelIcon"],
   data() {
     return {
       baseUrlVa: `http://hkupload.prod.k12.vip/common/uploadPrivateFile`, //私有地址 （音视频）
@@ -53,7 +52,7 @@ export default {
       audioType: this.option.format,
       backstageDel: this.option.backstageDel || false,
       isFetching: false,
-      isDisabled: false
+      isShowDelIcon: true
     };
   },
   model: {
@@ -67,6 +66,9 @@ export default {
     }
   },
   watch: {
+    showDelIcon (_n, _o) {
+      this.isShowDelIcon = _n
+    },
     childData(_n, _o) {
       this.audioStorageAddress = _n;
       this.getAvUrl(_n);
@@ -77,9 +79,9 @@ export default {
     }
   },
   methods: {
-    propDel() {
-      this.$emit("parentDel");
-    },
+    // propDel() {
+    //   this.$emit("parentDel");
+    // },
     load() {
       this.$refs.media.load();
     },

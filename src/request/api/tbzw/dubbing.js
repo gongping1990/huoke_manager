@@ -4,7 +4,7 @@ import qs from 'qs'
 const tbzwDubbing = {
   // 获取banner列表（朗读）
   listByDubbing(params) {
-    return axios.get('/compositionv3/dubbing/listByDubbing', {params: params})
+    return axios.get('/compositionv3/dubbing/listByDubbingCategory', {params: params})
   },
   removeDubbingById(params) {
     return axios.get('/compositionv3/dubbing/removeDubbingById', {params: params})

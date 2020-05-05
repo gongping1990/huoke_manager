@@ -1,6 +1,14 @@
 <template>
   <div class="p-banner">
     <Card>
+      <Row class="g-search g-t-left">
+        <Radio-group v-model="searchInfo.categoryId" type="button" @on-change="getList()">
+          <Radio :label=0>APP</Radio>
+          <Radio :label=1>乐小狮作文</Radio>
+          <Radio :label=2>乐小狮读写</Radio>
+          <Radio :label=3>乐小狮写字</Radio>
+        </Radio-group>
+      </Row>
       <Row class="g-search -c-tab">
         <Col :span="5">
           <div class="-search">
@@ -144,7 +152,9 @@
         detailList: [],
         bannerId: '',
         selectInfo: '1',
-        searchInfo: {},
+        searchInfo: {
+          categoryId: 1
+        },
         total: 0,
         totalDetail: 0,
         isFetching: false,
@@ -417,6 +427,7 @@
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
           name: this.searchInfo.nickname,
+          category: this.searchInfo.categoryId,
           showTime: this.getStartTime ? dayjs(this.getStartTime).format("YYYY/MM/DD HH:mm:ss") : '',
           hideTime: this.getEndTime ? dayjs(this.getEndTime).format("YYYY/MM/DD HH:mm:ss") : ''
         })
@@ -494,7 +505,8 @@
               smalltitle : this.addInfo.smalltitle,
               url : this.addInfo.url,
               cardimgurl : this.addInfo.cardimgurl,
-              imgurl : this.addInfo.imgurl
+              imgurl : this.addInfo.imgurl,
+              category: this.searchInfo.categoryId
             })
               .then(
                 response => {
@@ -517,8 +529,9 @@
 
 <style lang="less" scoped>
   .p-banner {
+
     .g-add-top {
-      top: 70px;
+      top: 110px;
     }
 
     .-c-tips {

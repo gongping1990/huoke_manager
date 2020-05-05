@@ -28,6 +28,15 @@
             </RadioGroup>
             <div class="-c-tips">* 更改后只对新购用户生效</div>
           </FormItem>
+          <FormItem label="课程版本" class="ivu-form-item-required">
+            <RadioGroup v-model="addInfo.bookType">
+              <Radio :label=0 :disabled="addInfo.id !=''">小语轻作文</Radio>
+              <Radio :label=1 :disabled="addInfo.id !=''">乐小狮作文</Radio>
+              <Radio :label=2 :disabled="addInfo.id !=''">乐小狮读写</Radio>
+              <Radio :label=3 :disabled="addInfo.id !=''">乐小狮写字</Radio>
+            </RadioGroup>
+            <div class="-c-tips">* 添加后不可更改</div>
+          </FormItem>
           <FormItem label="单独购价格" prop="alonePrice">
             <InputNumber  style="width: 100%;" type="text" :disabled="addInfo.id !=''" v-model="addInfo.alonePrice" :min="0"
                          placeholder="请输入单独购价格（元）"></InputNumber>
@@ -306,6 +315,7 @@
           bigtitle: "",
           cardtitle: "",
           href: "",
+          bookType: 0,
         },
         radioType: '1',
         isEdit: true,

@@ -3,10 +3,6 @@
     <Card>
       <Table  :loading="isFetching" :columns="columns" :data="dataList"></Table>
 
-      <Page class="p-gswList-top g-text-right" :total="total" size="small" show-elevator :page-size="tab.pageSize"
-            :current.sync="tab.currentPage"
-            @on-change="currentChange"></Page>
-
       <Modal
         class="p-gswList"
         v-model="isOpenModal"
@@ -18,10 +14,10 @@
             <Input type="text" v-model="addInfo.name" placeholder="请输入类型"></Input>
           </FormItem>
           <Form-item label="封面" class="ivu-form-item-required">
-            <upload-img v-model="addInfo.img" :option="uploadOption"></upload-img>
+            <upload-img v-model="addInfo.cover" :option="uploadOption"></upload-img>
           </Form-item>
-          <FormItem label="播放数量" prop="name">
-            <Input type="text" v-model="addInfo.name" placeholder="请输入播放数量"></Input>
+          <FormItem label="播放数量" prop="baseTime">
+            <Input type="text" v-model="addInfo.baseTime" placeholder="请输入播放数量"></Input>
           </FormItem>
         </Form>
         <div slot="footer" class="-p-b-flex">
@@ -43,11 +39,6 @@
     components: {UploadImg},
     data() {
       return {
-        tab: {
-          page: 1,
-          currentPage: 1,
-          pageSize: 10
-        },
         uploadOption: {
           tipText: '只能上传jpg/png文件，且不超过500kb',
           size: 500
@@ -77,11 +68,10 @@
         },
         ruleValidate: {
           name: [
-            {required: true, message: '请输入活动名称', trigger: 'blur'},
-            {type: 'string', max: 20, message: '活动名称长度为20字', trigger: 'blur'}
+            {required: true, message: '请输入类型', trigger: 'blur'}
           ],
-          address: [
-            {required: true, message: '请选择结束时间', trigger: 'blur'}
+          baseTime: [
+            {required: true, message: '请输入播放次数', trigger: 'blur'}
           ]
         },
         columns: [
@@ -102,7 +92,7 @@
               }, [
                 h('img', {
                   attrs: {
-                    src: params.row.img
+                    src: params.row.cover
                   },
                   style: {
                     width: '50px',
@@ -164,24 +154,16 @@
         this.isOpenModal = false;
         this.$refs[name].resetFields();
       },
-      currentChange(val) {
-        this.tab.page = val;
-        this.getList();
-      },
       //分页查询
       getList(num) {
         this.isFetching = true;
         if (num) {
           this.tab.currentPage = 1;
         }
-        this.$api.xxbBanner.pageBanner({
-          current: num ? num : this.tab.page,
-          size: this.tab.pageSize,
-        })
+        this.$api.xxbPoemAdmin.getCategoryList()
           .then(
             response => {
-              this.dataList = response.data.resultData.records;
-              this.total = response.data.resultData.total;
+              this.dataList = response.data.resultData;
             })
           .finally(() => {
             this.isFetching = false;
@@ -191,7 +173,7 @@
         this.$router.push({
           name: 'xxb_h5_gsw_content',
           query: {
-            id: param.id
+            id: param.poemType
           }
         })
       },
@@ -201,16 +183,15 @@
 
         this.$refs[name].validate((valid) => {
           if (valid) {
-            if (!this.addInfo.img) {
+            if (!this.addInfo.cover) {
               return this.$Message.error('请上传图片');
             }
 
             this.isSending = true;
-            this.$api.xxbOperationPosition.saveOperationPosition({
+            this.$api.xxbPoemAdmin.updatePoemCategoryCover({
               id: this.addInfo.id,
-              address: this.addInfo.address,
-              img: this.addInfo.img,
-              sort: this.addInfo.sort
+              baseTime: this.addInfo.baseTime,
+              cover: this.addInfo.cover
             })
               .then(
                 response => {
