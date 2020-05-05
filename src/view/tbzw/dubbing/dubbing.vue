@@ -30,7 +30,8 @@
 
         <div v-else>
           <div class="-item-list" v-for="(item, index1) of dataItem.vfUrls" :key="index1" >
-            <upload-audio v-model="item.url" :option="uploadAudioOption"
+            <upload-audio v-model="item.url" :option="uploadAudioOptionTwo"
+                          @parentDel="delAudioTwo(index1)"
                           @successAudio="submitInfoTwo(dataItem)"></upload-audio>
           </div>
           <div class="p-dubbing-btn">
@@ -54,6 +55,12 @@
     data() {
       return {
         uploadAudioOption: {
+          tipText: '音频格式：mp3、wma、arm 音频大小：150M以内',
+          size: 153600,
+          format: ['mp3', 'wma', 'arm'],
+          backstageDel: false
+        },
+        uploadAudioOptionTwo: {
           tipText: '音频格式：mp3、wma、arm 音频大小：150M以内',
           size: 153600,
           format: ['mp3', 'wma', 'arm'],
@@ -162,12 +169,9 @@
             this.isFetching = false;
           });
       },
-      // delAudio(list,index) {
-      //   list.splice(index,1)
-      // },
-      delAudioTwo(list, index) {
-        list.vfUrls.splice(index, 1);
-        this.submitInfoTwo(list);
+      delAudioTwo(index) {
+        this.dataItem.vfUrls.splice(index, 1);
+        this.submitInfoTwo(this.dataItem);
       },
       submitInfo(item) {
         if (this.isFetching) return;

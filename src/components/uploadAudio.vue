@@ -27,14 +27,14 @@
           controls="controls"
           preload="auto"
         ></audio>
-        <div
-          v-if="!backstageDel"
-          class="-i-del"
-          @click="audioStorageAddress = ''"
-        >
-          删除
-        </div>
-        <!--<div v-else class="-i-del" @click="propDel">删除2</div>-->
+        <!--<div-->
+          <!--v-if="!backstageDel"-->
+          <!--class="-i-del"-->
+          <!--@click="audioStorageAddress = ''"-->
+        <!--&gt;-->
+          <!--删除-->
+        <!--</div>-->
+        <div v-if="backstageDel" class="-i-del" @click="propDel">删除</div>
       </div>
     </div>
   </div>
@@ -79,9 +79,9 @@ export default {
     }
   },
   methods: {
-    // propDel() {
-    //   this.$emit("parentDel");
-    // },
+    propDel() {
+      this.$emit("parentDel");
+    },
     load() {
       this.$refs.media.load();
     },
