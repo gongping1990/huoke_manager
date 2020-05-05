@@ -3,6 +3,7 @@
     <Card>
       <Row class="g-search g-t-left">
         <Radio-group v-model="searchInfo.categoryId" type="button" @on-change="getList()">
+          <Radio :label=1>app</Radio>
           <Radio :label=3>乐小狮作文</Radio>
           <Radio :label=4>乐小狮读写</Radio>
           <Radio :label=5>乐小狮写字</Radio>
@@ -52,7 +53,7 @@
           pageSize: 10
         },
         searchInfo: {
-          categoryId: 3
+          categoryId: 1
         },
         isOpenModal: false,
         isSending: false,

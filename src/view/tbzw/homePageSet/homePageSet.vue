@@ -277,6 +277,7 @@
               cardtitle: this.addInfo.cardtitle,
               cardimgurl: this.addInfo.cardimgurl,
               bigtitle: this.addInfo.bigtitle,
+              category: this.searchInfo.categoryId,
             })
               .then(
                 response => {
