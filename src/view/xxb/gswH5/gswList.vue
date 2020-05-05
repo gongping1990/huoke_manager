@@ -149,6 +149,7 @@
       openModal(data) {
         this.isOpenModal = true;
         this.addInfo = JSON.parse(JSON.stringify(data));
+        this.addInfo.baseTime = this.addInfo.baseTime.toString()
       },
       closeModal(name) {
         this.isOpenModal = false;
