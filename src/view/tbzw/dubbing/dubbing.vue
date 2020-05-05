@@ -12,28 +12,6 @@
       </Row>
 
       <Table class="g-tab" :loading="isFetching" :columns="columns" :data="audioList"></Table>
-
-      <!--<Form class="-c-form g-t-left ivu-form-item-required" ref="addInfo" :model="addInfo"-->
-      <!--:label-width="120">-->
-      <!--<Form-item :label="item.typeName" prop="turn" class=" -c-form-item " v-for="item of audioList"-->
-      <!--:key="item.id" v-if="!item.toomany">-->
-      <!--<upload-audio v-model="item.vfUrl"-->
-      <!--:option="uploadAudioOption"-->
-      <!--@successAudio="submitInfo(item)"></upload-audio>-->
-      <!--</Form-item>-->
-      <!--<Form-item :label="list.typeName" prop="turn" class=" -c-form-item " v-for="list of audioList"-->
-      <!--:key="list.id" v-if="list.toomany">-->
-      <!--<div class="p-dubbing-item">-->
-      <!--<div class="-item-list" v-for="(item, index1) of list.vfUrls" :key="index1">-->
-      <!--<upload-audio v-model="item.url" :option="uploadAudioOption" @parentDel="delAudioTwo(list,index1)"-->
-      <!--@successAudio="submitInfoTwo(list)"></upload-audio>-->
-      <!--</div>-->
-      <!--<div class="p-dubbing-btn">-->
-      <!--<Button @click="addAudio(list.vfUrls)" class="-btn" ghost type="primary" style="width: 100px;">添加音频</Button>-->
-      <!--</div>-->
-      <!--</div>-->
-      <!--</Form-item>-->
-      <!--</Form>-->
     </Card>
 
     <Modal
