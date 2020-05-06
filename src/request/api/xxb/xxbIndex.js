@@ -12,6 +12,7 @@ import xxbProvinceCity from "./provinceCity";
 import xxbSection from "./section";
 import xxbSbxArticle from "./sbxArticle";
 import xxbSxbStatistics from "./sxbStatistics";
+import xxbWriteAdmin from "./writeAdmin";
 
 
 export const xxbIndex = {
@@ -28,5 +29,6 @@ export const xxbIndex = {
   xxbProvinceCity,
   xxbSection,
   xxbSbxArticle,
-  xxbSxbStatistics
+  xxbSxbStatistics,
+  xxbWriteAdmin
 }
