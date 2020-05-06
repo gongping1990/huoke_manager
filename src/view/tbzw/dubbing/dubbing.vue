@@ -185,7 +185,7 @@
             .then(
               response => {
                 if (response.data.code == '200') {
-                  // this.getList()
+                  this.getList()
                   this.$Message.success('提交成功');
                 }
               })
@@ -210,7 +210,7 @@
             .then(
               response => {
                 if (response.data.code == '200') {
-                  // this.getList()
+                  this.getList()
                   this.$Message.success('提交成功');
                 }
               })
