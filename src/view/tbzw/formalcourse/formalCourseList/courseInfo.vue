@@ -530,6 +530,8 @@
                   this.backCourse(name)
                 }
               })
+          } else {
+            this.$Message.error('请先完善基础信息')
           }
         })
       }
