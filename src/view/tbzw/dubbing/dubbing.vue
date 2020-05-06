@@ -151,7 +151,7 @@
         });
       },
       openModalPlay(data) {
-        this.dataItem = data;
+        this.dataItem = JSON.parse(JSON.stringify(data));
         this.isOpenModalPlay = true;
       },
       getList() {
