@@ -88,6 +88,7 @@ export default {
     beforeUpload(file) {
       let fileType = file.type.split("/");
       let isPass = false;
+      console.log(file.type, fileType,'音频格式')
       isPass = this.audioType.some(item => {
         return item == fileType[fileType.length - 1];
       });
