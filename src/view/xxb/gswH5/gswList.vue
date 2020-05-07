@@ -191,6 +191,7 @@
             this.isSending = true;
             this.$api.xxbPoemAdmin.updatePoemCategoryCover({
               id: this.addInfo.id,
+              name: this.addInfo.name,
               baseTime: this.addInfo.baseTime,
               cover: this.addInfo.cover
             })
