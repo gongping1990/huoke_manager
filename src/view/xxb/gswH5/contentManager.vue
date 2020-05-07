@@ -49,10 +49,6 @@
         isOpenModal: false,
         gradeList: [
           {
-            name: '全部年级',
-            key: '-1'
-          },
-          {
             name: '一年级',
             key: '1'
           },
@@ -75,6 +71,18 @@
           {
             name: '六年级',
             key: '6'
+          },
+          {
+            name: '七年级',
+            key: '7'
+          },
+          {
+            name: '八年级',
+            key: '8'
+          },
+          {
+            name: '九年级',
+            key: '9'
           }
         ],
         subjectList: {
