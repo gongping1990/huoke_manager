@@ -100,7 +100,7 @@
             title: '适用年级 (学期)',
             key: 'gradeText',
             render: (h, params) => {
-              return h('div', params.row.grade ? `grade${this.gradeList[params.row.grade - 1].name} (${params.row.semester === 1 ? '上册' : '下册'})` : '-')
+              return h('div', params.row.grade ? `${this.gradeList[params.row.grade - 1].name} (${params.row.semester === 1 ? '上册' : '下册'})` : '-')
             },
             align: 'center'
           },
