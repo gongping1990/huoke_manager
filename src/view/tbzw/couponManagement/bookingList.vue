@@ -669,7 +669,7 @@
           return item.buyHref && item.money && item.personnum
         })
 
-        if (!passCourse) {
+        if (!passCourse && !this.addInfo.id) {
           return this.$Message.error('请选择关联付费体验课期数')
         } else if (!passDiscountList) {
           return this.$Message.error('优惠信息字段不能为空')

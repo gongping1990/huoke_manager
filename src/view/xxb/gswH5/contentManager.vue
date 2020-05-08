@@ -1,27 +1,11 @@
 <template>
   <div class="p-weike">
     <Card>
-      <Row class="g-t-left">
-        <Col :span="4" class="g-t-left">
-          <div class="g-flex-a-j-center">
-            <div class="-search-select-text">教材版本：</div>
-            <Select v-model="searchInfo.edition" @on-change="getList" class="-search-selectOne">
-              <Option v-for="(item,index) in editionList" :label="item.name" :value="item.id" :key="index"></Option>
-            </Select>
-          </div>
-        </Col>
-        <Col :span="4" class="g-t-left">
-          <div class="g-flex-a-j-center">
-            <div class="-search-select-text">选择年级：</div>
-            <Select v-model="searchInfo.grade" @on-change="getList" class="-search-selectOne">
-              <Option v-for="(item,index) in gradeList" :label="item.name" :value="item.key" :key="index"></Option>
-            </Select>
-          </div>
-        </Col>
-      </Row>
-
       <Table class="-c-tab" :loading="isFetching" :columns="columns" :data="dataList"></Table>
 
+      <Page class="g-text-right" :total="total" size="small" show-elevator :page-size="tab.pageSize"
+            :current.sync="tab.currentPage"
+            @on-change="currentChange"></Page>
     </Card>
 
     <Modal
@@ -30,7 +14,7 @@
       @on-cancel="isOpenModal = false"
       footer-hide
       width="800"
-      title="数据详情">
+      :title="dataItem.name + ' - 课时列表'">
 
       <tree-template ref="childTree" :dataItem="dataItem"></tree-template>
 
@@ -46,6 +30,11 @@
     components: {TreeTemplate},
     data() {
       return {
+        tab: {
+          page: 1,
+          currentPage: 1,
+          pageSize: 10
+        },
         radioType: '1',
         searchInfo: {
           grade: '-1',
@@ -59,10 +48,6 @@
         isFetching: false,
         isOpenModal: false,
         gradeList: [
-          {
-            name: '全部年级',
-            key: '-1'
-          },
           {
             name: '一年级',
             key: '1'
@@ -86,6 +71,18 @@
           {
             name: '六年级',
             key: '6'
+          },
+          {
+            name: '七年级',
+            key: '7'
+          },
+          {
+            name: '八年级',
+            key: '8'
+          },
+          {
+            name: '九年级',
+            key: '9'
           }
         ],
         subjectList: {
@@ -96,21 +93,22 @@
         columns: [
           {
             title: '教材名称',
-            render: (h, params) => {
-              return h('div', `${this.subjectList[params.row.subject]}${this.gradeList[params.row.grade - 1].name} (${params.row.semester === 1 ? '上册' : '下册'})`)
-            },
+            key: 'name',
             align: 'center'
           },
           {
             title: '教材版本',
             key: 'teachEdition',
+            render: (h, params)=>{
+              return h('div', params.row.teachEdition || '-')
+            },
             align: 'center'
           },
           {
             title: '适用年级 (学期)',
             key: 'gradeText',
             render: (h, params) => {
-              return h('div', `${this.gradeList[params.row.grade - 1].name} (${params.row.semester === 1 ? '上册' : '下册'})`)
+              return h('div', params.row.grade ? `${this.gradeList[params.row.grade - 1].name} (${params.row.semester === 1 ? '上册' : '下册'})` : '-')
             },
             align: 'center'
           },
@@ -132,7 +130,7 @@
                       this.toChapter(params.row)
                     }
                   }
-                }, '章节管理')
+                }, '课时列表')
               ])
             }
           }
@@ -148,20 +146,29 @@
         this.dataItem = data
         this.$refs.childTree.getList(data)
       },
-      getList() {
+      currentChange(val) {
+        this.tab.page = val;
+        this.getList();
+      },
+      getList(num) {
         this.isFetching = true
-        this.$api.xxbYuke.getAllTeachEdtions({
-          subject: this.radioType
+        if (num) {
+          this.tab.currentPage = 1;
+        }
+        this.$api.xxbPoemAdmin.getPoemSubCategoryList({
+          current: num ? num : this.tab.page,
+          size: this.tab.pageSize,
+          poemType: this.$route.query.id
         })
           .then(
-
             response => {
-              this.dataList = response.data.resultData;
+              this.dataList = response.data.resultData.records;
+              this.total = response.data.resultData.total;
             })
           .finally(() => {
             this.isFetching = false
           })
-      },
+      }
     }
   };
 </script>

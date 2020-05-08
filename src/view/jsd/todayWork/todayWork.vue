@@ -1773,7 +1773,7 @@ export default {
         return this.$Message.error("请输入不合格评语");
       }
 
-      if (!passContent) {
+      if (!passContent && this.addInfo.isPassed) {
         return this.$Message.error("每一项评分不能超过100分并且不能为空");
       }
 

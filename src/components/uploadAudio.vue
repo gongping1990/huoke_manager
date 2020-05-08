@@ -1,7 +1,6 @@
 <template>
   <div class="p-uploadAudio">
     <Upload
-      v-if="!isDisabled"
       style="display: inline-block"
       :action="baseUrlVa"
       :show-upload-list="false"
@@ -28,14 +27,14 @@
           controls="controls"
           preload="auto"
         ></audio>
-        <div
-          v-if="!backstageDel"
-          class="-i-del"
-          @click="audioStorageAddress = ''"
-        >
-          删除
-        </div>
-        <div v-else class="-i-del" @click="propDel">删除</div>
+        <!--<div-->
+          <!--v-if="!backstageDel"-->
+          <!--class="-i-del"-->
+          <!--@click="audioStorageAddress = ''"-->
+        <!--&gt;-->
+          <!--删除-->
+        <!--</div>-->
+        <div v-if="backstageDel" class="-i-del" @click="propDel">删除</div>
       </div>
     </div>
   </div>
@@ -44,7 +43,7 @@
 <script>
 export default {
   name: "uploadAudio",
-  props: ["option", "childData"],
+  props: ["option", "childData", "showDelIcon"],
   data() {
     return {
       baseUrlVa: `http://hkupload.prod.k12.vip/common/uploadPrivateFile`, //私有地址 （音视频）
@@ -53,7 +52,7 @@ export default {
       audioType: this.option.format,
       backstageDel: this.option.backstageDel || false,
       isFetching: false,
-      isDisabled: false
+      isShowDelIcon: true
     };
   },
   model: {
@@ -67,6 +66,9 @@ export default {
     }
   },
   watch: {
+    showDelIcon (_n, _o) {
+      this.isShowDelIcon = _n
+    },
     childData(_n, _o) {
       this.audioStorageAddress = _n;
       this.getAvUrl(_n);
@@ -86,6 +88,7 @@ export default {
     beforeUpload(file) {
       let fileType = file.type.split("/");
       let isPass = false;
+      console.log(file.type, fileType,'音频格式')
       isPass = this.audioType.some(item => {
         return item == fileType[fileType.length - 1];
       });

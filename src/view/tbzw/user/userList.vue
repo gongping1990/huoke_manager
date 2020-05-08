@@ -2,7 +2,15 @@
   <div class="p-user">
     <Card>
       <Row class="g-search">
-        <Col :span="5" class="g-t-left">
+        <Col :span="4" class="g-t-left">
+          <div class="g-flex-a-j-center">
+            <div class="-search-select-text-two">注册来源：</div>
+            <Select v-model="searchInfo.appId" @on-change="getList(1)" class="-search-selectOne">
+              <Option v-for="item of appList" :label=item.name :value=item.id :key="item.id" ></Option>
+            </Select>
+          </div>
+        </Col>
+        <Col :span="4" class="g-t-left">
           <div class="g-flex-a-j-center">
             <div class="-search-select-text-two">电话号码：</div>
             <Select v-model="searchInfo.hasPhone" @on-change="getList(1)" class="-search-selectOne">
@@ -10,7 +18,7 @@
             </Select>
           </div>
         </Col>
-        <Col :span="5" class="g-t-left">
+        <Col :span="4" class="g-t-left">
           <div class="g-flex-a-j-center">
             <div class="-search-select-text-two">是否付费：</div>
             <Select v-model="searchInfo.payed" @on-change="getList(1)" class="-search-selectOne">
@@ -18,7 +26,7 @@
             </Select>
           </div>
         </Col>
-        <Col :span="5" class="g-t-left">
+        <Col :span="4" class="g-t-left">
           <div class="g-flex-a-j-center">
             <div class="-search-select-text-two">公众号：</div>
             <Select v-model="searchInfo.subscripbe" @on-change="getList(1)" class="-search-selectOne">
@@ -100,6 +108,7 @@
           hasPhone: '-1',
           subscripbe: '-1',
           payed: '-1',
+          appId: '',
         },
         dateOption: {
           disabledDate(date) {
@@ -144,6 +153,7 @@
             name: '是',
           }
         ],
+        appList: [],
         selectInfo: '1',
         courseList: [],
         dataList: [],
@@ -287,7 +297,7 @@
       };
     },
     mounted() {
-      this.getList()
+      this.listUserSource()
     },
     methods: {
       openModal(data) {
@@ -330,6 +340,17 @@
             }
           })
       },
+      listUserSource(params) {
+        this.$api.tbzwUser.listUserSource()
+          .then(
+          response => {
+            if (response.data.code == '200') {
+              this.appList = response.data.resultData
+              this.searchInfo.appId = this.appList[0].id
+              this.getList()
+            }
+          })
+      },
       currentChange(val) {
         this.tab.page = val;
         this.getList();
@@ -352,6 +373,7 @@
         let params = {
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
+          appid: this.searchInfo.appId,
           hasPhone: this.searchInfo.hasPhone != '-1' ? (this.searchInfo.hasPhone == '1') : '',
           subscribe: this.searchInfo.subscripbe != '-1' ? (this.searchInfo.subscripbe == '1') : '',
           payed: this.searchInfo.payed != '-1' ? (this.searchInfo.payed == '1') : ''

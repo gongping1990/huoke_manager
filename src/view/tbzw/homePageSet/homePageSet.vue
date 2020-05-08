@@ -1,7 +1,16 @@
 <template>
   <div class="p-homePageSet">
     <Card>
-      <div class="g-add-btn" @click="openModal()">
+      <Row class="g-search g-t-left">
+        <Radio-group v-model="searchInfo.categoryId" type="button" @on-change="getList()">
+          <Radio :label=0>APP</Radio>
+          <Radio :label=1>乐小狮作文</Radio>
+          <Radio :label=2>乐小狮读写</Radio>
+          <Radio :label=3>乐小狮写字</Radio>
+        </Radio-group>
+      </Row>
+
+      <div class="g-add-btn g-add-top" @click="openModal()">
         <Icon class="-btn-icon" color="#fff" type="ios-add" size="24"/>
       </div>
 
@@ -77,6 +86,9 @@
         uploadOption: {
           tipText: '只能上传jpg/png文件，且不超过500kb',
           size: 500
+        },
+        searchInfo: {
+          categoryId: 1
         },
         dataList: [],
         total: 0,
@@ -227,6 +239,7 @@
         this.$api.tbzwHomepage.pageHomePageCourse({
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
+          category: this.searchInfo.categoryId
         })
           .then(
             response => {
@@ -264,6 +277,7 @@
               cardtitle: this.addInfo.cardtitle,
               cardimgurl: this.addInfo.cardimgurl,
               bigtitle: this.addInfo.bigtitle,
+              category: this.searchInfo.categoryId,
             })
               .then(
                 response => {

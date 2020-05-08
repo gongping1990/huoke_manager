@@ -7,6 +7,7 @@
           <Radio label="2">帮助信息</Radio>
           <Radio label="3">作业分享</Radio>
           <Radio label="4">打卡分享</Radio>
+          <Radio label="5">表扬分享</Radio>
         </Radio-group>
       </Row>
       <div class="p-course-info-wrap">
@@ -26,7 +27,16 @@
               <Radio :label=1 :disabled="addInfo.id !=''">每周系统排课</Radio>
               <Radio :label=2 :disabled="addInfo.id !=''">人工排课</Radio>
             </RadioGroup>
-            <div class="-c-tips">* 更改后只对新购用户生效</div>
+            <div class="-c-tips">* 添加后不可更改</div>
+          </FormItem>
+          <FormItem label="课程版本" class="ivu-form-item-required">
+            <RadioGroup v-model="addInfo.bookType">
+              <Radio :label=0 :disabled="addInfo.id !=''">小语轻作文</Radio>
+              <Radio :label=1 :disabled="addInfo.id !=''">乐小狮作文</Radio>
+              <Radio :label=2 :disabled="addInfo.id !=''">乐小狮读写</Radio>
+              <Radio :label=3 :disabled="addInfo.id !=''">乐小狮写字</Radio>
+            </RadioGroup>
+            <div class="-c-tips">* 添加后不可更改</div>
           </FormItem>
           <FormItem label="单独购价格" prop="alonePrice">
             <InputNumber  style="width: 100%;" type="text" :disabled="addInfo.id !=''" v-model="addInfo.alonePrice" :min="0"
@@ -49,6 +59,10 @@
           <FormItem label="咨询电话" prop="consultPhone">
             <Input style="width: 100%;" type="text" :min="0" :disabled="!isEdit" v-model="addInfo.consultPhone"
                          placeholder="请输入咨询电话"></Input>
+          </FormItem>
+          <FormItem label="短信签名" prop="smsSignature">
+            <Input style="width: 100%;" type="text" :min="0" :disabled="!isEdit" v-model="addInfo.smsSignature"
+                         placeholder="请输入短信签名"></Input>
           </FormItem>
           <FormItem label="实物礼包" class="ivu-form-item-required">
             <RadioGroup v-model="addInfo.hasgift">
@@ -259,6 +273,27 @@
             <div class="-c-tips">图片尺寸不低于960px*360px 图片大小：500K以内</div>
           </Form-item>
         </Form>
+        <Form v-show="radioType==='5'" :model="addInfo" :label-width="90">
+          <Form-item label="表扬海报" class="-c-form-item ivu-form-item-required">
+            <Upload
+              v-if="isEdit"
+              style="display: inline-block"
+              :action="baseUrl"
+              :show-upload-list="false"
+              :max-size="500"
+              :on-success="handleSuccessPraiseTemplates"
+              :on-exceeded-size="handleSize"
+              :on-error="handleErr">
+              <Button ghost type="primary">上传图片</Button>
+            </Upload>
+            <div class="-c-course-wrap" v-if="addInfo.praiseShare">
+              <div class="-c-course-item">
+                <img :src="addInfo.praiseShare">
+              </div>
+            </div>
+            <div class="-c-tips">图片尺寸不低于960px*360px 图片大小：500K以内</div>
+          </Form-item>
+        </Form>
         <div class="-c-flex">
           <Button v-if="isEdit" @click="backCourse('addInfo')" ghost type="primary" class="-c-btn">返 回</Button>
           <div v-if="isEdit" @click="submitInfo('addInfo')" class="g-primary-btn -c-btn">确 认</div>
@@ -291,6 +326,7 @@
           aloneInfo: '',
           groupInfo: '',
           launchInfo: '',
+          smsSignature: '',
           giftShowImg: "",
           coverphoto: "",
           verticalCover: "",
@@ -302,10 +338,12 @@
           cardimgurl: "",
           shareTemplates: "",
           cardTemplates: "",
+          praiseShare: "",
           smalltitle: "",
           bigtitle: "",
           cardtitle: "",
           href: "",
+          bookType: 0,
         },
         radioType: '1',
         isEdit: true,
@@ -334,6 +372,9 @@
           ],
           consultPhone: [
             {required: true, message: '请输入咨询电话', trigger: 'blur'},
+          ],
+          smsSignature: [
+            {required: true, message: '请输入短信签名', trigger: 'blur'},
           ]
         }
       };
@@ -418,6 +459,12 @@
           this.addInfo.cardTemplates = res.resultData.url
         }
       },
+      handleSuccessPraiseTemplates(res) {
+        if (res.code === 200) {
+          this.$Message.success('上传成功')
+          this.addInfo.praiseShare = res.resultData.url
+        }
+      },
       //分页查询
       getList() {
         this.isFetching = true
@@ -472,6 +519,8 @@
               return this.$Message.error('请输入卡片标题')
             } else if (this.radioType === '4' && !this.addInfo.cardTemplates) {
               return this.$Message.error('请上传打卡海报')
+            } else if (this.radioType === '5' && !this.addInfo.praiseShare) {
+              return this.$Message.error('请上传表扬海报')
             }
             let paramsUrl = this.addInfo.id ? this.$api.tbzwCourse.tbzwCourseUpdate : this.$api.tbzwCourse.tbzwCourseAdd
             paramsUrl(this.addInfo)
@@ -481,6 +530,8 @@
                   this.backCourse(name)
                 }
               })
+          } else {
+            this.$Message.error('请先完善基础信息')
           }
         })
       }

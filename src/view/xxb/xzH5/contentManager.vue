@@ -2,6 +2,7 @@
   <div class="p-weike">
     <Card>
       <Table class="-c-tab" :loading="isFetching" :columns="columns" :data="dataList"></Table>
+
     </Card>
 
     <Modal
@@ -10,7 +11,7 @@
       @on-cancel="isOpenModal = false"
       footer-hide
       width="800"
-      title="数据详情">
+      :title="dataItem.name + ' - 课时列表'">
 
       <tree-template ref="childTree" :dataItem="dataItem"></tree-template>
 
@@ -21,23 +22,16 @@
 
 <script>
   import TreeTemplate from "./treeTemplate";
-
   export default {
     name: 'syncLearnList',
     components: {TreeTemplate},
     data() {
       return {
         dataList: [],
-        total: 0,
-        totalDetail: 0,
         dataItem: '',
         isFetching: false,
         isOpenModal: false,
         gradeList: [
-          {
-            name: '全部年级',
-            key: '-1'
-          },
           {
             name: '一年级',
             key: '1'
@@ -63,29 +57,17 @@
             key: '6'
           }
         ],
-        subjectList: {
-          1: '语文',
-          2: '数学',
-          3: '英语'
-        },
         columns: [
           {
             title: '教材名称',
-            render: (h, params) => {
-              return h('div', `${this.subjectList[params.row.subject]}${this.gradeList[params.row.grade - 1].name} (${params.row.semester === 1 ? '上册' : '下册'})`);
-            },
-            align: 'center'
-          },
-          {
-            title: '教材版本',
-            key: 'teachEdition',
+            key: 'name',
             align: 'center'
           },
           {
             title: '适用年级 (学期)',
             key: 'gradeText',
             render: (h, params) => {
-              return h('div', `${this.gradeList[params.row.grade - 1].name} (${params.row.semester === 1 ? '上册' : '下册'})`);
+              return h('div', params.row.grade ? `${this.gradeList[params.row.grade - 1].name} (${params.row.semester === 1 ? '上册' : '下册'})` : '-')
             },
             align: 'center'
           },
@@ -104,38 +86,39 @@
                   },
                   on: {
                     click: () => {
-                      this.toChapter(params.row);
+                      this.toChapter(params.row)
                     }
                   }
-                }, '内容')
-              ]);
+                }, '课时列表')
+              ])
             }
           }
         ]
       };
     },
     mounted() {
-      this.getList();
+      this.getList()
     },
     methods: {
-      toChapter(data) {
-        this.isOpenModal = true;
-        this.dataItem = data;
-        this.$refs.childTree.getList(data);
+      toChapter (data) {
+        this.isOpenModal = true
+        this.dataItem = data
+        this.$refs.childTree.getList(data)
       },
-      getList() {
-        this.isFetching = true;
-        this.$api.xxbYuke.getAllTeachEdtions({
-          subject: this.radioType
-        })
+      getList(num) {
+        this.isFetching = true
+        if (num) {
+          this.tab.currentPage = 1;
+        }
+        this.$api.xxbWriteAdmin.getAllTeachingMaterial()
           .then(
             response => {
               this.dataList = response.data.resultData;
             })
           .finally(() => {
-            this.isFetching = false;
-          });
-      },
+            this.isFetching = false
+          })
+      }
     }
   };
 </script>

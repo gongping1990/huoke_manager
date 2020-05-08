@@ -1,39 +1,46 @@
 <template>
   <div class="p-dubbing">
     <Card>
-      <Row class="g-t-left g-tab">
+      <Row class="g-t-left">
         <Radio-group v-model="radioType" type="button" @on-change="getList">
-          <Radio label='1'>引导提示</Radio>
-          <Radio label='2'>课程答题</Radio>
+          <Radio label='0'>通用</Radio>
+          <Radio label='1'>app</Radio>
+          <Radio label='2'>乐小狮作文</Radio>
+          <Radio label='3'>乐小狮读写</Radio>
+          <Radio label='4'>乐小狮写字</Radio>
         </Radio-group>
       </Row>
 
-      <Form class="-c-form g-t-left ivu-form-item-required" ref="addInfo" :model="addInfo" v-if="radioType === '1'"
-            :label-width="120">
-        <Form-item :label="nameList[item.type]" prop="turn" class=" -c-form-item " v-for="item of audioList"
-                   :key="item.id">
-          <upload-audio v-model="item.vfUrl"
-                        :option="uploadAudioOption"
-                        @parentDel="delAudio(item)"
-                        @successAudio="submitInfo(item)"></upload-audio>
-        </Form-item>
-      </Form>
+      <Table class="g-tab" :loading="isFetching" :columns="columns" :data="audioList"></Table>
+    </Card>
 
-      <div v-if="radioType === '2'" class="g-t-left">
-        <div v-for="(list, index) of audioList" :key="index">
-          <div class="p-dubbing-title">{{list.typeName}}</div>
-          <div class="p-dubbing-item">
-            <div class="-item-list" v-for="(item, index1) of list.vfUrls" :key="index1">
-              <upload-audio v-model="item.url" :option="uploadAudioOption" @parentDel="delAudioTwo(list,index1)"
-                            @successAudio="submitInfoTwo(list)"></upload-audio>
-            </div>
-            <div class="p-dubbing-btn">
-              <Button @click="addAudio(list.vfUrls)" class="-btn" ghost type="primary" style="width: 100px;">添加音频</Button>
-            </div>
+    <Modal
+      class="p-dubbing"
+      v-model="isOpenModalPlay"
+      @on-cancel="closeModalPlay"
+      footer-hide
+      :title="dataItem.typeName"
+    >
+      <div class="p-dubbing-item" >
+        <div v-if="!dataItem.toomany">
+          <upload-audio v-model="dataItem.vfUrl"
+                        :option="uploadAudioOption"
+                        @successAudio="submitInfo(dataItem)"></upload-audio>
+        </div>
+
+        <div v-else>
+          <div class="-item-list" v-for="(item, index1) of dataItem.vfUrls" :key="index1" >
+            <upload-audio v-model="item.url" :option="uploadAudioOptionTwo"
+                          @parentDel="delAudioTwo(index1)"
+                          @successAudio="submitInfoTwo(dataItem)"></upload-audio>
+          </div>
+          <div class="p-dubbing-btn">
+            <Button @click="addAudio(dataItem.vfUrls)" class="-btn" ghost type="primary" style="width: 100px;">添加音频</Button>
           </div>
         </div>
       </div>
-    </Card>
+    </Modal>
+
     <loading v-if="isFetching"></loading>
   </div>
 </template>
@@ -50,42 +57,105 @@
         uploadAudioOption: {
           tipText: '音频格式：mp3、wma、arm 音频大小：150M以内',
           size: 153600,
-          format: ['mp3', 'wma', 'arm'],
+          format: ['mp3', 'wma', 'arm', 'mpeg'],
+          backstageDel: false
+        },
+        uploadAudioOptionTwo: {
+          tipText: '音频格式：mp3、wma、arm 音频大小：150M以内',
+          size: 153600,
+          format: ['mp3', 'wma', 'arm', 'mpeg'],
           backstageDel: true
         },
-        radioType: '1',
-        isShowEdit: false,
+        radioType: '0',
         isSending: false,
         isFetching: false,
-        nameList: {
-          '1': '新用户领课',
-          '2': '提醒上课',
-          '3': '提醒交作业',
-          '4': '引导翻阅同学作业',
-          '5': '初次提醒作业要求',
-          '6': '初次提醒上交作业',
-          '7': '作业提交成功',
-          '8': '提醒查看点评',
-          '9': '查看点评',
-          '10': '完善用户信息',
-        },
+        isOpenModalPlay: false,
         audioList: [],
+        dataItem: '',
         addInfo: {
           enable: 0
-        }
-      }
+        },
+        columns: [
+          {
+            title: '名称',
+            key: 'typeName',
+            align: 'center'
+          },
+          {
+            title: '类型',
+            key: 'typeName',
+            render: (h, params)=>{
+              return h('div', params.row.toomany ? '多个' : '单个')
+            },
+            align: 'center'
+          },
+          {
+            title: '音频',
+            render: (h, params) => {
+              return h(
+                "div",
+                {
+                  style: {
+                    textAlign: "center",
+                    color: "#5444E4",
+                    cursor: "pointer"
+                  },
+                  on: {
+                    click: () => {
+                      this.openModalPlay(params.row);
+                    }
+                  }
+                },
+                "播放音频"
+              );
+            },
+            align: 'center'
+          },
+          {
+            title: '操作',
+            align: 'center',
+            render: (h, params) => {
+              return h('div', [
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    color: '#5444E4',
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.openModalPlay(params.row);
+                    }
+                  }
+                }, '编辑')
+              ]);
+            }
+          }
+        ],
+      };
     },
     mounted() {
-      this.getList()
+      this.getList();
     },
     methods: {
-      addAudio (list) {
+      closeModalPlay() {
+        // this.$refs.playAudio.load();
+        this.isOpenModalPlay = false;
+      },
+      addAudio(list) {
         list.push({
           url: ''
-        })
+        });
+      },
+      openModalPlay(data) {
+        this.dataItem = JSON.parse(JSON.stringify(data));
+        this.isOpenModalPlay = true;
       },
       getList() {
-        this.isFetching = true
+        this.isFetching = true;
         this.$api.tbzwDubbing.listByDubbing({
           category: this.radioType
         })
@@ -96,19 +166,16 @@
               }
             })
           .finally(() => {
-            this.isFetching = false
-          })
+            this.isFetching = false;
+          });
       },
-      delAudio(list,index) {
-        list.splice(index,1)
-      },
-      delAudioTwo(list,index) {
-        list.vfUrls.splice(index,1)
-        this.submitInfoTwo(list)
+      delAudioTwo(index) {
+        this.dataItem.vfUrls.splice(index, 1);
+        this.submitInfoTwo(this.dataItem);
       },
       submitInfo(item) {
-        if (this.isFetching) return
-        this.isFetching = true
+        if (this.isFetching) return;
+        this.isFetching = true;
         setTimeout(() => {
           this.$api.tbzwDubbing.editDubbing({
             category: this.radioType,
@@ -118,22 +185,22 @@
             .then(
               response => {
                 if (response.data.code == '200') {
-                  // this.getList()
+                  this.getList()
                   this.$Message.success('提交成功');
                 }
               })
             .finally(() => {
-              this.isFetching = false
-            })
-        }, 0)
+              this.isFetching = false;
+            });
+        }, 0);
       },
       submitInfoTwo(list) {
-        if (this.isFetching) return
-        this.isFetching = true
-        let  arrayUrl = []
+        if (this.isFetching) return;
+        this.isFetching = true;
+        let arrayUrl = [];
         setTimeout(() => {
-          for(let item of list.vfUrls) {
-            arrayUrl.push(item.url)
+          for (let item of list.vfUrls) {
+            arrayUrl.push(item.url);
           }
           this.$api.tbzwDubbing.editDubbing({
             category: this.radioType,
@@ -143,14 +210,14 @@
             .then(
               response => {
                 if (response.data.code == '200') {
-                  // this.getList()
+                  this.getList()
                   this.$Message.success('提交成功');
                 }
               })
             .finally(() => {
-              this.isFetching = false
-            })
-        }, 0)
+              this.isFetching = false;
+            });
+        }, 0);
       },
     }
   };
@@ -188,6 +255,7 @@
       display: flex;
       flex-wrap: wrap;
       width: 100%;
+      margin-top: 20px;
 
       .-c-form-item {
         display: inline-block;
