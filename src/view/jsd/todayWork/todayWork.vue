@@ -286,6 +286,12 @@
               如果用户的作业还不错，请选择“是”，如果用户的作业不太好甚至不合格，请选择“否”
             </p>
           </FormItem>
+          <FormItem label="首页隐藏" v-if="addInfo.isPassed === 1">
+            <Radio-group v-model="addInfo.hide">
+              <Radio :label="1">是</Radio>
+              <Radio :label="0">否</Radio>
+            </Radio-group>
+          </FormItem>
         </Form>
         <div slot="footer" class="-p-b-flex">
           <Button
@@ -1682,6 +1688,7 @@ export default {
           _self.addInfo = response.data.resultData;
           _self.addInfo.isPassed = _self.radioType != 1 ? 1 : 0;
           _self.addInfo.likeRemind = _self.addInfo.likenum ? 1 : 0;
+          _self.addInfo.hide = _self.addInfo.hide ? 1 : 0;
           _self.addInfo.workImgSrc = _self.addInfo.workImgSrc
             ? _self.addInfo.workImgSrc.split(",")
             : [];
@@ -1789,7 +1796,8 @@ export default {
           replyDuration: this.addInfo.replyDuration,
           evaluate: this.addInfo.scores,
           status: this.addInfo.isPassed == 1 ? "3" : "1",
-          likeRemind: this.addInfo.likeRemind === 1
+          likeRemind: this.addInfo.likeRemind === 1,
+          hide: this.addInfo.hide === 1
         })
         .then(response => {
           if (response.data.code == "200") {
