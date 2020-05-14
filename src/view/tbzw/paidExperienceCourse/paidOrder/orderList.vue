@@ -235,6 +235,13 @@
             align: 'center'
           },
           {
+            title: '购买平台',
+            render: (h, params) => {
+              return h('div', params.row.fromMiniApp ? '小程序' : 'H5')
+            },
+            align: 'center'
+          },
+          {
             title: '订单状态',
             render: (h, params) => {
               return h('div', this.orderStatus[params.row.payStatus])
