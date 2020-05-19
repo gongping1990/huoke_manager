@@ -38,6 +38,8 @@
             <span>是否关注: {{userInfo.subscripbe ? '是' : '否'}}</span>
             <span>是否购买: {{userInfo.buyed ? '是' : '否'}}</span>
             <span>支付时间: {{userInfo.buyedTime || '暂无'}}</span>
+            <span>客服老师: {{userInfo.buyedTime || '暂无'}}</span>
+            <span>作业老师: {{userInfo.buyedTime || '暂无'}}</span>
           </div>
         </div>
         <div class="-p-center-item">
@@ -79,7 +81,7 @@
       @on-cancel="closeModal('addInfo')"
       width="500"
       title="完善信息">
-      <Form ref="addInfo" :model="addInfo" :label-width="100">
+      <Form ref="addInfo" :model="addInfo" :label-width="90">
         <div v-if="childType === 1">
           <FormItem label="孩子昵称">
             <Input type="text" v-model="addInfo.nickname" placeholder="请输入孩子昵称"></Input>
@@ -124,10 +126,22 @@
       title="更改日期">
       <Form ref="addInfo" :model="addInfo" :label-width="100">
         <FormItem label="当前日期">
-          {{addInfo.learnStartDate}}
+          <div v-if="!true">
+            {{addInfo.learnStartDate}}
+          </div>
+          <div v-else>
+            <p>入学年份：1902</p>
+            <p>开学日期：03-89</p>
+          </div>
         </FormItem>
         <FormItem label="更改日期" class="ivu-form-item-required">
-          <Date-picker style="width: 100%" type="date" placeholder="选择更改日期" v-model="addInfo.activeTime"></Date-picker>
+          <div v-if="!true">
+            <Date-picker style="width: 100%" type="date" placeholder="选择更改日期" v-model="addInfo.activeTime"></Date-picker>
+          </div>
+          <div v-else>
+            <p>入学年份：<Date-picker type="year" placeholder="选择入学年份" v-model="addInfo.activeTime"></Date-picker></p>
+            <p>开学日期：19901（<span class="g-tips">选择入学年份后自动填充</span>）</p>
+          </div>
         </FormItem>
       </Form>
       <div slot="footer" class="g-flex-j-sa">

@@ -19,32 +19,51 @@
             <Input type="text" :disabled="!isEdit" v-model="addInfo.courseDescribe" placeholder="请输入课程描述"></Input>
           </FormItem>
           <FormItem label="课时节数" prop="lessonDescribe">
-            <InputNumber type="text" :disabled="!isEdit" v-model="addInfo.lessonDescribe" placeholder="请输入课时节数"></InputNumber>
-          </FormItem>
-          <FormItem label="排课规则" class="ivu-form-item-required">
-            <RadioGroup v-model="addInfo.wayOfTeach">
-              <Radio :label=3 :disabled="addInfo.id !=''">交作业解锁</Radio>
-              <Radio :label=1 :disabled="addInfo.id !=''">每周系统排课</Radio>
-              <Radio :label=2 :disabled="addInfo.id !=''">人工排课</Radio>
-            </RadioGroup>
-            <div class="-c-tips">* 添加后不可更改</div>
+            <InputNumber type="text" :disabled="!isEdit" v-model="addInfo.lessonDescribe"
+                         placeholder="请输入课时节数"></InputNumber>
           </FormItem>
           <FormItem label="课程版本" class="ivu-form-item-required">
             <RadioGroup v-model="addInfo.bookType">
-              <Radio :label=0 :disabled="addInfo.id !=''">小语轻作文</Radio>
+              <Radio :label=0 disabled>小语轻作文</Radio>
               <Radio :label=1 :disabled="addInfo.id !=''">乐小狮作文</Radio>
               <Radio :label=2 :disabled="addInfo.id !=''">乐小狮读写</Radio>
               <Radio :label=3 :disabled="addInfo.id !=''">乐小狮写字</Radio>
             </RadioGroup>
             <div class="-c-tips">* 添加后不可更改</div>
           </FormItem>
+          <FormItem label="排课规则" class="ivu-form-item-required">
+            <RadioGroup v-model="addInfo.wayOfTeach">
+              <Radio :label=3 :disabled="addInfo.id !=''" v-if="addInfo.bookType === 3">交作业解锁</Radio>
+              <Radio :label=1 :disabled="addInfo.id !=''" v-if="addInfo.bookType !== 3">每周系统排课</Radio>
+              <Radio :label=2 :disabled="addInfo.id !=''" v-if="addInfo.bookType !== 3">人工排课</Radio>
+            </RadioGroup>
+            <div class="-c-tips">* 添加后不可更改</div>
+          </FormItem>
+          <FormItem label="课程组" v-if="addInfo.wayOfTeach === 2">
+            <Select v-model="addInfo.courseId">
+              <Option v-for="item of courseGroupList" :label=item.name :value=item.id :key="item.id"></Option>
+            </Select>
+          </FormItem>
+          <FormItem label="关联年级" v-if="addInfo.wayOfTeach === 2">
+            <Select v-model="addInfo.courseId">
+              <Option v-for="item of gradeList" :label=item.name :value=item.id :key="item.id"></Option>
+            </Select>
+          </FormItem>
+          <FormItem label="关联学期" v-if="addInfo.wayOfTeach === 2">
+            <Select v-model="addInfo.courseId">
+              <Option value='1'>上学期</Option>
+              <Option value='2'>下学期</Option>
+            </Select>
+          </FormItem>
           <FormItem label="单独购价格" prop="alonePrice">
-            <InputNumber  style="width: 100%;" type="text" :disabled="addInfo.id !=''" v-model="addInfo.alonePrice" :min="0"
+            <InputNumber style="width: 100%;" type="text" :disabled="addInfo.id !=''" v-model="addInfo.alonePrice"
+                         :min="0"
                          placeholder="请输入单独购价格（元）"></InputNumber>
             <span class="-c-tips">* 精确到小数点后2位，如99.99</span>
           </FormItem>
           <FormItem label="拼课价格" prop="groupPrice">
-            <InputNumber style="width: 100%;" type="text" :disabled="addInfo.id !=''" v-model="addInfo.groupPrice" :min="0"
+            <InputNumber style="width: 100%;" type="text" :disabled="addInfo.id !=''" v-model="addInfo.groupPrice"
+                         :min="0"
                          placeholder="请输入拼课价格（元）"></InputNumber>
             <span class="-c-tips">* 精确到小数点后2位，如99.99</span>
           </FormItem>
@@ -58,11 +77,11 @@
           </FormItem>
           <FormItem label="咨询电话" prop="consultPhone">
             <Input style="width: 100%;" type="text" :min="0" :disabled="!isEdit" v-model="addInfo.consultPhone"
-                         placeholder="请输入咨询电话"></Input>
+                   placeholder="请输入咨询电话"></Input>
           </FormItem>
           <FormItem label="短信签名" prop="smsSignature">
             <Input style="width: 100%;" type="text" :min="0" :disabled="!isEdit" v-model="addInfo.smsSignature"
-                         placeholder="请输入短信签名"></Input>
+                   placeholder="请输入短信签名"></Input>
           </FormItem>
           <FormItem label="实物礼包" class="ivu-form-item-required">
             <RadioGroup v-model="addInfo.hasgift">
@@ -70,7 +89,7 @@
               <Radio label="0">否</Radio>
             </RadioGroup>
           </FormItem>
-          <FormItem label="小程序地址"  class="ivu-form-item-required" v-if="addInfo.hasgift == 1">
+          <FormItem label="小程序地址" class="ivu-form-item-required" v-if="addInfo.hasgift == 1">
             <Input type="text" :disabled="!isEdit" v-model="addInfo.miniUrl" placeholder="请输入小程序地址"></Input>
           </FormItem>
           <Form-item label="实物图片" v-if="addInfo.hasgift==1" class="-c-form-item ivu-form-item-required">
@@ -343,11 +362,38 @@
           bigtitle: "",
           cardtitle: "",
           href: "",
-          bookType: 0,
+          bookType: 1,
         },
         radioType: '1',
         isEdit: true,
         isSending: false,
+        courseGroupList: [],
+        gradeList: [
+          {
+            id: '1',
+            name: '一年级'
+          },
+          {
+            id: '2',
+            name: '二年级'
+          },
+          {
+            id: '3',
+            name: '三年级'
+          },
+          {
+            id: '4',
+            name: '四年级'
+          },
+          {
+            id: '5',
+            name: '五年级'
+          },
+          {
+            id: '6',
+            name: '六年级'
+          }
+        ],
         ruleValidateOne: {
           name: [
             {required: true, message: '请输入课程名称', trigger: 'blur'},
@@ -381,159 +427,165 @@
     },
     mounted() {
       if (this.$route.query.courseId) {
-        this.getList()
+        this.getList();
       }
     },
     methods: {
       changeRadio() {
-        this.closeEdit('addInfo')
+        this.closeEdit('addInfo');
         if (this.$route.query.courseId) {
-          this.getList()
+          this.getList();
         }
       },
       backCourse(name) {
         this.$router.push({
           name: 'tbzw_forma_courseList'
-        })
+        });
         this.$refs[name].resetFields();
       },
       closeEdit(name) {
         this.$refs[name].resetFields();
         if (this.$route.query.courseId) {
-          this.getList()
+          this.getList();
         }
       },
       handleSize() {
-        this.isFetching = false
-        this.$Message.info('文件超过限制')
+        this.isFetching = false;
+        this.$Message.info('文件超过限制');
       },
       handleErr() {
-        this.isFetching = false
-        this.$Message.error('上传失败，请重新上传')
+        this.isFetching = false;
+        this.$Message.error('上传失败，请重新上传');
       },
       handleSuccessCover(res) {
         if (res.code === 200) {
-          this.$Message.success('上传成功')
-          this.addInfo.coverphoto = res.resultData.url
+          this.$Message.success('上传成功');
+          this.addInfo.coverphoto = res.resultData.url;
         }
       },
       handleSuccessQrCode(res) {
         if (res.code === 200) {
-          this.$Message.success('上传成功')
-          this.addInfo.qrCode = res.resultData.url
+          this.$Message.success('上传成功');
+          this.addInfo.qrCode = res.resultData.url;
         }
       },
       handleSuccessVerticalPhoto(res) {
         if (res.code === 200) {
-          this.$Message.success('上传成功')
-          this.addInfo.verticalCover = res.resultData.url
+          this.$Message.success('上传成功');
+          this.addInfo.verticalCover = res.resultData.url;
         }
       },
       handleSuccessGiftShowImg(res) {
         if (res.code === 200) {
-          this.$Message.success('上传成功')
-          this.addInfo.giftShowImg = res.resultData.url
+          this.$Message.success('上传成功');
+          this.addInfo.giftShowImg = res.resultData.url;
         }
       },
       handleSuccessCardimgurl(res) {
         if (res.code === 200) {
-          this.$Message.success('上传成功')
-          this.addInfo.cardimgurl = res.resultData.url
+          this.$Message.success('上传成功');
+          this.addInfo.cardimgurl = res.resultData.url;
         }
       },
       handleSuccessImgurl(res) {
         if (res.code === 200) {
-          this.$Message.success('上传成功')
-          this.addInfo.imgurl = res.resultData.url
+          this.$Message.success('上传成功');
+          this.addInfo.imgurl = res.resultData.url;
         }
       },
       handleSuccessShareTemplates(res) {
         if (res.code === 200) {
-          this.$Message.success('上传成功')
-          this.addInfo.shareTemplates = res.resultData.url
+          this.$Message.success('上传成功');
+          this.addInfo.shareTemplates = res.resultData.url;
         }
       },
       handleSuccessCardTemplates(res) {
         if (res.code === 200) {
-          this.$Message.success('上传成功')
-          this.addInfo.cardTemplates = res.resultData.url
+          this.$Message.success('上传成功');
+          this.addInfo.cardTemplates = res.resultData.url;
         }
       },
       handleSuccessPraiseTemplates(res) {
         if (res.code === 200) {
-          this.$Message.success('上传成功')
-          this.addInfo.praiseShare = res.resultData.url
+          this.$Message.success('上传成功');
+          this.addInfo.praiseShare = res.resultData.url;
         }
       },
       //分页查询
       getList() {
-        this.isFetching = true
+        this.isFetching = true;
         this.$api.tbzwCourse.getById(this.$route.query.courseId)
           .then(
             response => {
-              this.addInfo = response.data.resultData
+              this.addInfo = response.data.resultData;
               if (this.addInfo.id) {
-                this.addInfo.alonePrice = +this.addInfo.alonePrice
-                this.addInfo.groupPrice = +this.addInfo.groupPrice
-                this.addInfo.groupTime = +this.addInfo.groupTime
-                this.addInfo.hasgift = this.addInfo.hasgift ? '1' : '0'
+                this.addInfo.alonePrice = +this.addInfo.alonePrice;
+                this.addInfo.groupPrice = +this.addInfo.groupPrice;
+                this.addInfo.groupTime = +this.addInfo.groupTime;
+                this.addInfo.hasgift = this.addInfo.hasgift ? '1' : '0';
               }
             })
           .finally(() => {
-            this.isFetching = false
-          })
+            this.isFetching = false;
+          });
       },
       submitInfo(name) {
 
         this.$refs[name].validate((valid) => {
           if (valid) {
-            if (!this.addInfo.coverphoto && this.radioType === '1') {
-              return this.$Message.error('请上传封面图片')
+            if (!this.addInfo.miniUrl && this.addInfo.wayOfTeach === 2) {
+              return this.$Message.error('请选择课程组');
+            }  else if (!this.addInfo.miniUrl && this.addInfo.wayOfTeach === 2) {
+              return this.$Message.error('请选择关联年级');
+            }  else if (!this.addInfo.miniUrl && this.addInfo.wayOfTeach === 2) {
+              return this.$Message.error('请选择关联学期');
+            } else if (!this.addInfo.coverphoto && this.radioType === '1') {
+              return this.$Message.error('请上传封面图片');
             } else if (!this.addInfo.qrCode && this.radioType === '1') {
-              return this.$Message.error('请上传咨询图片')
+              return this.$Message.error('请上传咨询图片');
             } else if (!this.addInfo.verticalCover && this.radioType === '1') {
-              return this.$Message.error('请上传竖版封面')
+              return this.$Message.error('请上传竖版封面');
             } else if (!this.addInfo.giftShowImg && this.addInfo.hasgift === '1') {
-              return this.$Message.error('请上传实物图片')
-            }  else if (!this.addInfo.miniUrl && this.addInfo.hasgift === '1') {
-              return this.$Message.error('请输入小程序地址')
+              return this.$Message.error('请上传实物图片');
+            } else if (!this.addInfo.miniUrl && this.addInfo.hasgift === '1') {
+              return this.$Message.error('请输入小程序地址');
             } else if (this.radioType === '2' && (!this.addInfo.aloneInfo || this.addInfo.aloneInfo == '<p><br></p>')) {
-              return this.$Message.error('请输入单独购买帮助信息')
+              return this.$Message.error('请输入单独购买帮助信息');
             } else if (this.radioType === '2' && (!this.addInfo.groupInfo || this.addInfo.groupInfo == '<p><br></p>')) {
-              return this.$Message.error('请输入团购购买帮助信息')
+              return this.$Message.error('请输入团购购买帮助信息');
             } else if (this.radioType === '2' && (!this.addInfo.launchInfo || this.addInfo.launchInfo == '<p><br></p>')) {
-              return this.$Message.error('请输入参加团购帮助信息')
+              return this.$Message.error('请输入参加团购帮助信息');
             } else if (this.radioType === '3' && !this.addInfo.shareTemplates) {
-              return this.$Message.error('请上传分享海报')
+              return this.$Message.error('请上传分享海报');
             } else if (this.radioType === '3' && !this.addInfo.cardimgurl) {
-              return this.$Message.error('请上传卡片图片')
+              return this.$Message.error('请上传卡片图片');
             } else if (this.radioType === '3' && !this.addInfo.imgurl) {
-              return this.$Message.error('请上传链接配图')
+              return this.$Message.error('请上传链接配图');
             } else if (this.radioType === '3' && !this.addInfo.smalltitle) {
-              return this.$Message.error('请输入链接小标题')
+              return this.$Message.error('请输入链接小标题');
             } else if (this.radioType === '3' && !this.addInfo.bigtitle) {
-              return this.$Message.error('请输入链接大标题')
+              return this.$Message.error('请输入链接大标题');
             } else if (this.radioType === '3' && !this.addInfo.href) {
-              return this.$Message.error('请输入回复链接')
+              return this.$Message.error('请输入回复链接');
             } else if (this.radioType === '3' && !this.addInfo.cardtitle) {
-              return this.$Message.error('请输入卡片标题')
+              return this.$Message.error('请输入卡片标题');
             } else if (this.radioType === '4' && !this.addInfo.cardTemplates) {
-              return this.$Message.error('请上传打卡海报')
+              return this.$Message.error('请上传打卡海报');
             } else if (this.radioType === '5' && !this.addInfo.praiseShare) {
-              return this.$Message.error('请上传表扬海报')
+              return this.$Message.error('请上传表扬海报');
             }
-            let paramsUrl = this.addInfo.id ? this.$api.tbzwCourse.tbzwCourseUpdate : this.$api.tbzwCourse.tbzwCourseAdd
+            let paramsUrl = this.addInfo.id ? this.$api.tbzwCourse.tbzwCourseUpdate : this.$api.tbzwCourse.tbzwCourseAdd;
             paramsUrl(this.addInfo)
               .then(response => {
                 if (response.data.code == '200') {
                   this.$Message.success('操作成功');
-                  this.backCourse(name)
+                  this.backCourse(name);
                 }
-              })
+              });
           } else {
-            this.$Message.error('请先完善基础信息')
+            this.$Message.error('请先完善基础信息');
           }
-        })
+        });
       }
     }
   };
