@@ -53,6 +53,16 @@
                          placeholder="请输入小程序单独购买价格（元）"></InputNumber>
             <span class="-c-tips">* 精确到小数点后2位，如99.99</span>
           </FormItem>
+          <FormItem label="小程序单独购买价格">
+            <InputNumber  style="width: 100%;" type="text" :disabled="!isEdit" v-model="addInfo.maAlonePrice" :min="0"
+                         placeholder="请输入小程序单独购买价格（元）"></InputNumber>
+            <span class="-c-tips">* 精确到小数点后2位，如99.99</span>
+          </FormItem>
+          <FormItem label="团购价">
+            <InputNumber  style="width: 100%;" type="text" :disabled="!isEdit" v-model="addInfo.groupPrice" :min="0"
+                         placeholder="请输入小程序单独购买价格（元）"></InputNumber>
+            <span class="-c-tips">* 精确到小数点后2位，如99.99</span>
+          </FormItem>
           <FormItem label="短信签名" prop="smsSignature">
             <Input style="width: 100%;" type="text" :min="0" :disabled="!isEdit" v-model="addInfo.smsSignature"
                    placeholder="请输入短信签名"></Input>
@@ -254,6 +264,7 @@
           courseDescribe: '',
           alonePrice: null,
           maAlonePrice: null,
+          groupPrice: null,
           lessonDescribe: '',
           linkId: '-1',
           type: 2,
@@ -398,6 +409,7 @@
               if (this.addInfo.id) {
                 this.addInfo.alonePrice = +this.addInfo.alonePrice
                 this.addInfo.maAlonePrice = +this.addInfo.maAlonePrice
+                this.addInfo.groupPrice = +this.addInfo.groupPrice
                 this.addInfo.linkId = this.addInfo.linkId.split(',')
               }
             })
