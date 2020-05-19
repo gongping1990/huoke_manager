@@ -268,6 +268,24 @@ export const tbzwRouter =[
           {name: '关卡设置'}
         ],
         component: () => import('@/view/tbzw/formalcourse/formalCourseList/checkpointMain/checkpointMain')
+      },
+      {
+        path: '/tbzw_courseGroup',
+        name: 'tbzw_courseGroup',
+        meta: [
+          {name: '正式课管理'},
+          {name: '课程组'}
+        ],
+        component: () => import('@/view/tbzw/formalcourse/courseGroup/courseGroup')
+      },
+      {
+        path: '/tbzw_formal_openingTime',
+        name: 'tbzw_formal_openingTime',
+        meta: [
+          {name: '正式课管理'},
+          {name: '开课时间管理'}
+        ],
+        component: () => import('@/view/tbzw/formalcourse/formalOpeningTime/formalOpeningTime')
       }
     ]
   },

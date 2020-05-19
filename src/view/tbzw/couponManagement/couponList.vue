@@ -6,6 +6,7 @@
         <Radio-group v-model="radioType" type="button" @on-change="getList(1)">
           <Radio :label=0>小语轻作文</Radio>
           <Radio :label=1>乐小狮作文</Radio>
+          <Radio :label=2>乐小狮作文2.0</Radio>
         </Radio-group>
       </Row>
 
@@ -240,6 +241,14 @@
           },
           {
             title: '优惠券金额',
+            render: (h, params) => {
+              return h('span', (+params.row.couponAmount / 100).toFixed(2))
+            },
+            key: 'couponAmount',
+            align: 'center'
+          },
+          {
+            title: '满减金额',
             render: (h, params) => {
               return h('span', (+params.row.couponAmount / 100).toFixed(2))
             },

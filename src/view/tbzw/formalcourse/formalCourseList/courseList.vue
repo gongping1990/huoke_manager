@@ -214,6 +214,11 @@
             align: 'center'
           },
           {
+            title: '课程组',
+            key: 'ttr',
+            align: 'center'
+          },
+          {
             title: '操作',
             width: 260,
             align: 'center',

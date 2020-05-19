@@ -326,7 +326,7 @@
             align: 'center'
           },
           {
-            title: '落地页面',
+            title: '购买批次',
             render: (h, params) => {
               return h('div', this.orderPageType[params.row.orderPageSource-1])
             },
