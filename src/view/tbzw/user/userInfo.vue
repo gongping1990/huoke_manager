@@ -20,7 +20,8 @@
                 <span>与孩子关系: {{studentInfo.relationText || '暂无'}}</span>
                 <span>在读年级: {{studentInfo.gradeText || '暂无'}}</span>
                 <span>所在城市: {{studentInfo.areasText || '暂无'}}</span>
-                <Button @click="openModalChild" ghost type="primary" style="width: 100px;">完善孩子信息</Button>
+                <Button @click="openModalChild(1)" ghost type="primary" style="width: 100px;">完善孩子信息</Button>
+                <Button @click="openModalChild(2)" ghost type="primary" style="width: 100px;">完善手机号</Button>
               </div>
             </div>
           </div>
@@ -79,28 +80,35 @@
       width="500"
       title="完善信息">
       <Form ref="addInfo" :model="addInfo" :label-width="100">
-        <FormItem label="孩子昵称">
-          <Input type="text" v-model="addInfo.nickname" placeholder="请输入孩子昵称"></Input>
-        </FormItem>
-        <FormItem label="孩子性别" prop="sex">
-          <Radio-group v-model="addInfo.sex">
-            <Radio :label=1>男</Radio>
-            <Radio :label=0>女</Radio>
-          </Radio-group>
-        </FormItem>
-        <FormItem label="与孩子关系">
-          <Select v-model="addInfo.relation">
-            <Option v-for="(item,index) in relationList" :label="item.name" :value="item.key" :key="index"></Option>
-          </Select>
-        </FormItem>
-        <FormItem label="在读年级">
-          <Select v-model="addInfo.grade">
-            <Option v-for="(item,index) in gradeList" :label="item.name" :value="item.key" :key="index"></Option>
-          </Select>
-        </FormItem>
-        <FormItem label="所在城市">
-          <Cascader :data="addressList" v-model="addInfo.areasId" @on-change="changeCascarder"></Cascader>
-        </FormItem>
+        <div v-if="childType === 1">
+          <FormItem label="孩子昵称">
+            <Input type="text" v-model="addInfo.nickname" placeholder="请输入孩子昵称"></Input>
+          </FormItem>
+          <FormItem label="孩子性别" prop="sex">
+            <Radio-group v-model="addInfo.sex">
+              <Radio :label=1>男</Radio>
+              <Radio :label=0>女</Radio>
+            </Radio-group>
+          </FormItem>
+          <FormItem label="与孩子关系">
+            <Select v-model="addInfo.relation">
+              <Option v-for="(item,index) in relationList" :label="item.name" :value="item.key" :key="index"></Option>
+            </Select>
+          </FormItem>
+          <FormItem label="在读年级">
+            <Select v-model="addInfo.grade">
+              <Option v-for="(item,index) in gradeList" :label="item.name" :value="item.key" :key="index"></Option>
+            </Select>
+          </FormItem>
+          <FormItem label="所在城市">
+            <Cascader :data="addressList" v-model="addInfo.areasId" @on-change="changeCascarder"></Cascader>
+          </FormItem>
+        </div>
+        <div v-else>
+          <FormItem label="手机号码">
+            <Input type="text" v-model="addInfo.nickname" placeholder="请输入手机号码"></Input>
+          </FormItem>
+        </div>
       </Form>
       <div slot="footer" class="g-flex-j-sa">
         <Button @click="closeModal('addInfo')" ghost type="primary" style="width: 100px;">取消</Button>
@@ -234,6 +242,7 @@
           }
         ],
         total: 0,
+        childType: '',
         isFetching: false,
         isOpenModal: false,
         isOpenModalChild: false,
@@ -360,14 +369,16 @@
           this.listLessonProgress(1)
         }
       },
-      openModalChild() {
+      openModalChild(type) {
+        this.childType = type
         if (!this.addInfo.id) {
           this.addInfo = {
             nickname: '',
             sex: '',
             relation: '',
             grade: '',
-            areasId: []
+            areasId: [],
+            phone: ''
           }
         }
         this.isOpenModalChild = true

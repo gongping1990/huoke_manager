@@ -53,11 +53,6 @@
                          placeholder="请输入小程序单独购买价格（元）"></InputNumber>
             <span class="-c-tips">* 精确到小数点后2位，如99.99</span>
           </FormItem>
-          <FormItem label="小程序单独购买价格">
-            <InputNumber  style="width: 100%;" type="text" :disabled="!isEdit" v-model="addInfo.maAlonePrice" :min="0"
-                         placeholder="请输入小程序单独购买价格（元）"></InputNumber>
-            <span class="-c-tips">* 精确到小数点后2位，如99.99</span>
-          </FormItem>
           <FormItem label="团购价">
             <InputNumber  style="width: 100%;" type="text" :disabled="!isEdit" v-model="addInfo.groupPrice" :min="0"
                          placeholder="请输入小程序单独购买价格（元）"></InputNumber>
