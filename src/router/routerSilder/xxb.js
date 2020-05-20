@@ -1,6 +1,6 @@
-import Main from '@/view/main'
+import Main from '@/view/main';
 
-export const xxbRouter =[
+export const xxbRouter = [
   {
     path: '/xxb_h5',
     name: 'xxb_h5',
@@ -171,4 +171,30 @@ export const xxbRouter =[
       }
     ]
   },
-]
+  {
+    path: '/zw_h5',
+    name: 'zw_h5',
+    title: '作文H5',
+    component: Main,
+    children: [
+      {
+        path: '/zw_h5_content',
+        name: 'zw_h5_content',
+        meta: [
+          {name: '作文H5'},
+          {name: '内容管理'}
+        ],
+        component: () => import('@/view/xxb/zwH5/contentManager')
+      },
+      {
+        path: '/zw_h5_operate',
+        name: 'zw_h5_operate',
+        meta: [
+          {name: '作文H5'},
+          {name: '运营管理'}
+        ],
+        component: () => import('@/view/xxb/zwH5/operate')
+      }
+    ]
+  },
+];
