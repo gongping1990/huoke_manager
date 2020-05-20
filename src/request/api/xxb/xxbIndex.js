@@ -13,6 +13,7 @@ import xxbSection from "./section";
 import xxbSbxArticle from "./sbxArticle";
 import xxbSxbStatistics from "./sxbStatistics";
 import xxbWriteAdmin from "./writeAdmin";
+import xxbCompositionAdmin from "./compositionAdmin";
 
 
 export const xxbIndex = {
@@ -30,5 +31,6 @@ export const xxbIndex = {
   xxbSection,
   xxbSbxArticle,
   xxbSxbStatistics,
-  xxbWriteAdmin
+  xxbWriteAdmin,
+  xxbCompositionAdmin
 }
