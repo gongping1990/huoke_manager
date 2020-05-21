@@ -137,7 +137,7 @@
           .then(
             response => {
               this.dataList = response.data.resultData.records;
-              this.total = response.data.resultData.total;
+              this.tab.total = response.data.resultData.total;
             })
           .finally(() => {
             this.isFetching = false;
