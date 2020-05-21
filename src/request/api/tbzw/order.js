@@ -20,6 +20,9 @@ const tbzwOrder = {
   refund(params) {
     return axios.post("/compositionv3/order/refund", qs.stringify(params));
   },
+  createGroupOrder(params) {
+    return axios.post("/compositionv3/order/createGroupOrder", params);
+  },
 };
 
 export default tbzwOrder;

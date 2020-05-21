@@ -98,6 +98,11 @@
   align-items: center;
   justify-content: center;
 }
+.g-flex-a-c-j-sb{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 
 .g-text-right {
   text-align: right;

@@ -1,9 +1,9 @@
 <template>
   <div class="p-poptipInputTem">
-    <Poptip placement="right"  @on-popper-show="openShow()">
-      <Button class="p-poptipInputTem-btn" type="text" >{{detailInfo.id}}</Button>
+    <Poptip placement="right" >
+      <Button class="p-poptipInputTem-btn" type="text" >{{detailInfo.price}}</Button>
       <div slot="content">
-        <Input type="text" v-model="priceItem" placeholder="请修改总价"></Input>
+        <Input type="text" v-model="detailInfo.price" placeholder="请修改总价"></Input>
         <div class="p-poptipInputTem-top g-text-right">
           <!--<Button type="text" size="small">取消</Button>-->
           <Button type="info" size="small" @click="submitInfo()">确认</Button>
@@ -19,7 +19,6 @@
     props: ['dataProp'],
     data() {
       return {
-        priceItem: ''
       }
     },
     computed: {
@@ -28,15 +27,11 @@
       }
     },
     methods: {
-      openShow () {
-        this.priceItem = this.detailInfo.id
-        console.log(this.addInfo)
-      },
       submitInfo() {
-        if (!this.priceItem) {
+        if (!this.detailInfo.price) {
           return this.$Message.error('请输入价格')
         }
-        console.log('确认')
+        this.$emit('changeInput', this.detailInfo)
       }
     }
   }

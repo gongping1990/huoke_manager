@@ -40,17 +40,17 @@
             <div class="-c-tips">* 添加后不可更改</div>
           </FormItem>
           <FormItem label="课程组" v-if="addInfo.wayOfTeach === 2">
-            <Select v-model="addInfo.courseId">
+            <Select v-model="addInfo.groupId">
               <Option v-for="item of courseGroupList" :label=item.name :value=item.id :key="item.id"></Option>
             </Select>
           </FormItem>
           <FormItem label="关联年级" v-if="addInfo.wayOfTeach === 2">
-            <Select v-model="addInfo.courseId">
+            <Select v-model="addInfo.grade">
               <Option v-for="item of gradeList" :label=item.name :value=item.id :key="item.id"></Option>
             </Select>
           </FormItem>
           <FormItem label="关联学期" v-if="addInfo.wayOfTeach === 2">
-            <Select v-model="addInfo.courseId">
+            <Select v-model="addInfo.semester">
               <Option value='1'>上学期</Option>
               <Option value='2'>下学期</Option>
             </Select>
@@ -429,6 +429,7 @@
       if (this.$route.query.courseId) {
         this.getList();
       }
+      this.pageByCourseGroup();
     },
     methods: {
       changeRadio() {
@@ -522,6 +523,8 @@
                 this.addInfo.alonePrice = +this.addInfo.alonePrice;
                 this.addInfo.groupPrice = +this.addInfo.groupPrice;
                 this.addInfo.groupTime = +this.addInfo.groupTime;
+                this.addInfo.grade = this.addInfo.grade.toString();
+                this.addInfo.semester = this.addInfo.semester.toString();
                 this.addInfo.hasgift = this.addInfo.hasgift ? '1' : '0';
               }
             })
@@ -529,15 +532,25 @@
             this.isFetching = false;
           });
       },
+      pageByCourseGroup() {
+        this.$api.tbzwGroupConfig.pageByCourseGroup({
+          current: 1,
+          size: 1000,
+        })
+          .then(
+            response => {
+              this.courseGroupList = response.data.resultData.records;
+            })
+      },
       submitInfo(name) {
 
         this.$refs[name].validate((valid) => {
           if (valid) {
-            if (!this.addInfo.miniUrl && this.addInfo.wayOfTeach === 2) {
+            if (!this.addInfo.groupId && this.addInfo.wayOfTeach === 2) {
               return this.$Message.error('请选择课程组');
-            }  else if (!this.addInfo.miniUrl && this.addInfo.wayOfTeach === 2) {
+            }  else if (!this.addInfo.grade && this.addInfo.wayOfTeach === 2) {
               return this.$Message.error('请选择关联年级');
-            }  else if (!this.addInfo.miniUrl && this.addInfo.wayOfTeach === 2) {
+            }  else if (!this.addInfo.semester && this.addInfo.wayOfTeach === 2) {
               return this.$Message.error('请选择关联学期');
             } else if (!this.addInfo.coverphoto && this.radioType === '1') {
               return this.$Message.error('请上传封面图片');

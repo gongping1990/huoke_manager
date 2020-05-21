@@ -23,6 +23,9 @@ const tbzwCourse = {
   listByMyCourseHasgift(params) {
     return axios.get('/compositionv3/course/listByMyCourseHasgift', {params: params})
   },
+  listCategoryCoursesById(params) {
+    return axios.get('/compositionv3/course/listCategoryCoursesById', {params: params})
+  },
 };
 
 export default tbzwCourse;

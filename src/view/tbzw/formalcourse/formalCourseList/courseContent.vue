@@ -12,6 +12,9 @@
                    @on-click="getList(1)"></Input>
           </div>
         </Col>
+        <Col :span="3">
+          <Button @click="openModalCopy()" ghost type="primary" style="width: 100px;">复制课程</Button>
+        </Col>
       </Row>
 
       <div class="g-add-btn g-add-top" @click="openModal()">
@@ -23,6 +26,7 @@
         :loading="isFetching"
         :columns="columns"
         :data="dataList"
+        @on-selection-change=changeSelectList
       ></Table>
 
       <Page
@@ -359,6 +363,26 @@
       </div>
     </Modal>
 
+    <Modal
+      class="p-gsw-course-list"
+      v-model="isOpenCopy"
+      @on-cancel="isOpenCopy = false"
+      width="500"
+      title="复制课时"
+    >
+      <Form :model="addInfo" :label-width="80">
+        <FormItem label="选择课程">
+          <Select v-model="addInfo.courseCopyId">
+            <Option :label="item.name" :value="item.id" v-for="(item, index) of courseList" :key="index"></Option>
+          </Select>
+        </FormItem>
+      </Form>
+      <div slot="footer" class="g-flex-j-sa">
+        <Button @click="isOpenCopy = false" ghost type="primary" style="width: 100px;">取消</Button>
+        <div @click="submitCopy()" class="g-primary-btn ">确认</div>
+      </div>
+    </Modal>
+
     <learn-content-template
       v-model="isOpenModalLearn"
       :data-info="dataItem"
@@ -437,6 +461,7 @@
         teacherList: [],
         iconList: [],
         choiceList: [],
+        courseList: [],
         selectInfo: '1',
         searchInfo: {},
         total: 0,
@@ -449,6 +474,7 @@
         isOpenModalLearn: false,
         isOpenModalAudio: false,
         isOpenLevel: false,
+        isOpenCopy: false,
         modalType: "",
         addInfo: {
           videoUrl: ""
@@ -458,6 +484,7 @@
         },
         dataItem: "",
         sortNum: "",
+        selectChoiceList: [],
         ruleValidateAdd: {
           name: [{required: true, message: "请输入课时名称", trigger: "blur"}],
           category: [
@@ -465,6 +492,11 @@
           ]
         },
         columns: [
+          {
+            type: 'selection',
+            width: 60,
+            align: 'center'
+          },
           {
             title: "课时名称",
             key: "name",
@@ -780,6 +812,16 @@
       this.getTeacherList();
     },
     methods: {
+      changeSelectList(data) {
+        this.selectChoiceList = data;
+      },
+      openModalCopy() {
+        if (!this.selectChoiceList.length) {
+          return this.$Message.error("请选择需要复制的课时");
+        }
+        this.isOpenCopy = true;
+        this.listCategoryCoursesById();
+      },
       checkpoint(data) {
         this.dataItem = data;
         if (!data.createCheckPoint) {
@@ -825,6 +867,7 @@
             workImg: "",
             cpi: "",
             coverphoto: "",
+            courseCopyId: "",
             category:
               this.$route.query.type == "3"
                 ? this.$route.query.type.toString()
@@ -938,6 +981,13 @@
       getPresetIcon() {
         this.$api.tbzwLesson.getPresetIcon().then(response => {
           this.iconList = response.data.resultData;
+        });
+      },
+      listCategoryCoursesById() {
+        this.$api.tbzwCourse.listCategoryCoursesById({
+          courseId: this.$route.query.courseId
+        }).then(response => {
+          this.courseList = response.data.resultData;
         });
       },
       getTeacherList() {
@@ -1243,6 +1293,29 @@
             this.getList();
             this.closeModal(name);
             this.isOpenModalAdd = false;
+          }
+        });
+      },
+      submitCopy(name) {
+        let lessonIds = [];
+        if (!this.addInfo.courseCopyId) {
+          return this.$Message.error("请选择课程");
+        }
+
+        this.selectChoiceList.forEach(item => {
+          lessonIds.push(item.id);
+        });
+
+        this.$api.tbzwLesson.transferLesson({
+          courseId: this.addInfo.courseCopyId,
+          lessonIds: lessonIds
+        }).then(response => {
+          if (response.data.code == "200") {
+            this.$Message.success("操作成功");
+            this.getList();
+            this.selectChoiceList = [];
+            this.addInfo.courseCopyId = '';
+            this.isOpenCopy = false;
           }
         });
       }

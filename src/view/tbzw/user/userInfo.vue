@@ -38,8 +38,8 @@
             <span>是否关注: {{userInfo.subscripbe ? '是' : '否'}}</span>
             <span>是否购买: {{userInfo.buyed ? '是' : '否'}}</span>
             <span>支付时间: {{userInfo.buyedTime || '暂无'}}</span>
-            <span>客服老师: {{userInfo.buyedTime || '暂无'}}</span>
-            <span>作业老师: {{userInfo.buyedTime || '暂无'}}</span>
+            <span>客服老师: {{userInfo.kfteacher || '暂无'}}</span>
+            <span>作业老师: {{userInfo.workteacher || '暂无'}}</span>
           </div>
         </div>
         <div class="-p-center-item">
@@ -108,7 +108,7 @@
         </div>
         <div v-else>
           <FormItem label="手机号码">
-            <Input type="text" v-model="addInfo.nickname" placeholder="请输入手机号码"></Input>
+            <Input type="text" v-model="addInfo.phone" placeholder="请输入手机号码"></Input>
           </FormItem>
         </div>
       </Form>
@@ -546,7 +546,8 @@
           grade: this.addInfo.grade,
           sex: this.addInfo.sex,
           areasText: this.addInfo.areasText,
-          nickname: this.addInfo.nickname
+          nickname: this.addInfo.nickname,
+          phone: this.addInfo.phone
         }
         let promiseDate = this.addInfo.id ? this.$api.tbzwStudent.updateStudent({
           id: this.addInfo.id,

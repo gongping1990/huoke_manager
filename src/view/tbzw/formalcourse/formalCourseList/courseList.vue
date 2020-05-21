@@ -215,7 +215,7 @@
           },
           {
             title: '课程组',
-            key: 'ttr',
+            key: 'groupName',
             align: 'center'
           },
           {

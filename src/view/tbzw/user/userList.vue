@@ -90,36 +90,44 @@
           </FormItem>
         </div>
         <div v-if="addInfo.radioType === '2'">
-          <FormItem label="课程组" prop="courseId" class="ivu-form-item-required">
-            <Select v-model="addInfo.courseId" @on-change="changeCoursePrice">
-              <Option v-for="item of courseList" :label=item.name :value=item.id :key="item.id"></Option>
+          <FormItem label="课程组" class="ivu-form-item-required">
+            <Select v-model="addInfo.groupId" @on-change="listByGroupYear()">
+              <Option v-for="item of courseGroupList" :label=item.name :value=item.id :key="item.id"></Option>
             </Select>
           </FormItem>
-          <FormItem label="入学学年" prop="courseId" class="ivu-form-item-required">
-            <Select v-model="addInfo.courseId" @on-change="changeCoursePrice">
-              <Option v-for="item of courseList" :label=item.name :value=item.id :key="item.id"></Option>
+          <FormItem label="入学学年" class="ivu-form-item-required">
+            <Select v-model="addInfo.year">
+              <Option v-for="item of yearList" :label=item.text :value=item.value :key="item.text"></Option>
             </Select>
           </FormItem>
-          <FormItem label="入学年级" prop="courseId" class="ivu-form-item-required">
-            <Select v-model="addInfo.courseId" @on-change="changeCoursePrice">
+          <FormItem label="入学年级" class="ivu-form-item-required">
+            <Select v-model="addInfo.grade">
               <Option v-for="item of gradeList" :label=item.name :value=item.id :key="item.id"></Option>
             </Select>
           </FormItem>
-          <FormItem label="入学学期" prop="courseId" class="ivu-form-item-required">
-            <Select v-model="addInfo.courseId" @on-change="changeCoursePrice">
+          <FormItem label="入学学期" class="ivu-form-item-required">
+            <Select v-model="addInfo.semester">
               <Option v-for="item of semesterList" :label=item.name :value=item.id :key="item.id"></Option>
             </Select>
           </FormItem>
-          <FormItem label="课程数量" prop="phone" class="ivu-form-item-required">
-            <Input type="text" v-model="addInfo.phone" @on-blur="changeCoursePrice" placeholder="请输入课程数量"></Input>
+          <FormItem label="课程数量" class="ivu-form-item-required">
+            <Input type="text"
+                   v-model="addInfo.buynum"
+                   style="width: 80%"
+                   placeholder="请输入课程数量"></Input>
+            <span class="g-tips g-cursor" @click="getUserBuyCourseInfo" style="margin-left: 10px">获取课程价格</span>
           </FormItem>
-          <FormItem label="课程价格" prop="amount" class="ivu-form-item-required">
-            <Input-number class="g-width" :min="0" :step="1" v-model="addInfo.amount"
-                          placeholder="请输入课程价格（元）"></Input-number>
+          <FormItem label="课程价格" class="ivu-form-item-required">
+            <div class="g-flex-a-c-j-sb" style="margin-bottom: 10px" v-for="(item, index) of priceInfo.courseList" :key="index">
+              <div>{{item.name}}</div>
+              <Input type="text"
+                     v-model="item.price"
+                     style="width: 40%; margin-left: 10px;"
+                     placeholder="请输入课程价格"></Input>
+            </div>
           </FormItem>
-          <FormItem label="开课日期" prop="time" class="ivu-form-item-required">
-            <Date-picker style="width: 100%" type="date" placeholder="选择开课日期" :options="dateOption"
-                         v-model="addInfo.time"></Date-picker>
+          <FormItem label="开课日期">
+            <Date-picker style="width: 100%" type="date" disabled v-model="priceInfo.openTime" disabled></Date-picker>
             <span class="g-tips">* 自动计算</span>
           </FormItem>
         </div>
@@ -233,11 +241,14 @@
           }
         ],
         appList: [],
+        courseGroupList: [],
+        yearList: [],
         selectInfo: '1',
         courseList: [],
         dataList: [],
         total: 0,
         addInfo: {},
+        priceInfo: {},
         isFetching: false,
         isOpenModal: false,
         columns: [
@@ -360,10 +371,25 @@
     },
     mounted() {
       this.listUserSource();
+      this.pageByCourseGroup();
     },
     methods: {
-      changeCoursePrice () {
-        console.log(1)
+      getUserBuyCourseInfo () {
+        if (!this.addInfo.buynum || !this.addInfo.grade || !this.addInfo.groupId || !this.addInfo.semester || !this.addInfo.year ) {
+          return this.$Message.error('请填写相关信息')
+        }
+        this.$api.tbzwOpenTime.getUserBuyCourseInfo({
+          buynum: this.addInfo.buynum,
+          grade: this.addInfo.grade,
+          groupId: this.addInfo.groupId,
+          semester: this.addInfo.semester,
+          year: this.addInfo.year
+        }).then(
+          response => {
+            if (response.data.code == '200') {
+              this.priceInfo = response.data.resultData;
+            }
+          });
       },
       openModal(data) {
         this.getCourseList();
@@ -406,6 +432,26 @@
               this.getList();
             }
           });
+      },
+      pageByCourseGroup() {
+        this.$api.tbzwGroupConfig.pageByCourseGroup({
+          current: 1,
+          size: 1000,
+        })
+          .then(
+            response => {
+              this.courseGroupList = response.data.resultData.records;
+            });
+      },
+      listByGroupYear() {
+        this.addInfo.year = ''
+        this.$api.tbzwOpenTime.listByGroupYear({
+          groupId: this.addInfo.groupId,
+        })
+          .then(
+            response => {
+              this.yearList = response.data.resultData;
+            });
       },
       listUserSource(params) {
         this.$api.tbzwUser.listUserSource()
@@ -476,27 +522,41 @@
           } else if (!this.addInfo.remarks) {
             return this.$Message.error('请输入备注');
           }
-        } else {
-
         }
 
 
-        this.$api.tbzwOrder.newManualOpenOrder({
-          userId: this.addInfo.userId,
-          courseId: this.addInfo.courseId,
-          amount: this.addInfo.amount * 100,
-          remarks: this.addInfo.remarks,
-          time: dayjs(this.addInfo.time).format('YYYY-MM-DD'),
-          phone: this.addInfo.phone
-        })
-          .then(
-            response => {
-              if (response.data.code == '200') {
-                this.$Message.success('提交成功');
-                this.getList();
-                this.closeModal(name);
-              }
-            });
+        if (this.addInfo.radioType === '1' ) {
+          this.$api.tbzwOrder.newManualOpenOrder({
+            userId: this.addInfo.userId,
+            courseId: this.addInfo.courseId,
+            amount: this.addInfo.amount * 100,
+            remarks: this.addInfo.remarks,
+            time: dayjs(this.addInfo.time).format('YYYY-MM-DD'),
+            phone: this.addInfo.phone
+          })
+            .then(
+              response => {
+                if (response.data.code == '200') {
+                  this.$Message.success('提交成功');
+                  this.getList();
+                  this.closeModal(name);
+                }
+              });
+        } else {
+          this.$api.tbzwOrder.createGroupOrder({
+            groupId: this.addInfo.groupId,
+            userId: this.addInfo.userId,
+            courseList: this.priceInfo.courseList
+          })
+            .then(
+              response => {
+                if (response.data.code == '200') {
+                  this.$Message.success('提交成功');
+                  this.getList();
+                  this.closeModal(name);
+                }
+              });
+        }
       }
     }
   };

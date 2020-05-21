@@ -14,6 +14,18 @@ const tbzwGroupConfig = {
   save(params) {
     return axios.post("/compositionv3/groupConfig/save", qs.stringify(params));
   },
+  editCourseGroup(params) {
+    return axios.post("/compositionv3/group/editCourseGroup", qs.stringify(params));
+  },
+  editOffer(params) {
+    return axios.post("/compositionv3/group/editOffer", params);
+  },
+  pageByCourseGroup(params) {
+    return axios.get("/compositionv3/group/pageByCourseGroup", {params: params});
+  },
+  removeCourseGroupById(params) {
+    return axios.get("/compositionv3/group/removeCourseGroupById", {params: params});
+  },
 };
 
 export default tbzwGroupConfig;

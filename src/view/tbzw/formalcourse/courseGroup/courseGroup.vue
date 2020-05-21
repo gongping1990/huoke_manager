@@ -34,7 +34,7 @@
         width="500"
         footer-hide
         title="连报价格">
-        <Table :loading="isFetching" :columns="columnsPrice" :data="dataList"></Table>
+        <Table :loading="isFetching" :columns="columnsPrice" :data="priceList"></Table>
       </Modal>
     </Card>
   </div>
@@ -61,6 +61,7 @@
         isSending: false,
         isOpenModalPrice: false,
         addInfo: {},
+        dataItem: {},
         ruleValidate: {
           name: [
             {required: true, message: '请输入课程组名称', trigger: 'blur'},
@@ -69,12 +70,12 @@
         columns: [
           {
             title: '课程组名称',
-            key: 'typeName',
+            key: 'name',
             align: 'center'
           },
           {
             title: '包含课程',
-            key: 'typeName',
+            key: 'include',
             align: 'center'
           },
           {
@@ -134,7 +135,7 @@
         columnsPrice: [
           {
             title: '连报数量',
-            key: 'typeName',
+            key: 'total',
             align: 'center'
           },
           {
@@ -149,8 +150,13 @@
                   style: {
                     color: '#5444E4',
                     marginRight: '5px'
+                  },
+                  on: {
+                    changeInput: (data)=>{
+                      this.submitPrice(data)
+                    }
                   }
-                })
+                }, params.row.price)
               ]);
             }
           }
@@ -171,7 +177,8 @@
       },
       openModalPrice(data) {
         this.isOpenModalPrice = true;
-        this.addInfo = JSON.parse(JSON.stringify(data));
+        this.dataItem = JSON.parse(JSON.stringify(data));
+        this.priceList = this.dataItem.offers
       },
       closeModal(name) {
         this.isOpenModal = false;
@@ -184,7 +191,7 @@
       //分页查询
       getList() {
         this.isFetching = true;
-        this.$api.tbzwInternalChannel.categoryList({
+        this.$api.tbzwGroupConfig.pageByCourseGroup({
           current: this.tab.page,
           size: this.tab.pageSize,
         })
@@ -202,12 +209,13 @@
           title: '提示',
           content: '确认要删除吗？',
           onOk: () => {
-            this.$api.tbzwInternalChannel.deleteCategory({
+            this.$api.tbzwGroupConfig.removeCourseGroupById({
               id: param.id
             }).then(
               response => {
                 if (response.data.code == "200") {
                   this.$Message.success("操作成功");
+                  this.getList();
                 }
               });
           }
@@ -218,7 +226,7 @@
         this.$refs[name].validate((valid) => {
           if (valid) {
             this.isSending = true;
-            this.$api.tbzwInternalChannel.saveCategory({
+            this.$api.tbzwGroupConfig.editCourseGroup({
               id: this.addInfo.id,
               name: this.addInfo.name
             })
@@ -226,6 +234,7 @@
                 response => {
                   if (response.data.code == '200') {
                     this.$Message.success('提交成功');
+                    this.getList()
                     this.closeModal(name);
                   }
                 })
@@ -234,6 +243,24 @@
               });
           }
         });
+      },
+      submitPrice (data) {
+        this.dataItem.offers.forEach(item=>{
+          if (item.total === data.total) {
+            item.price = data.price
+          }
+        })
+
+        this.$api.tbzwGroupConfig.editOffer({
+          id: this.dataItem.id,
+          offers: this.dataItem.offers
+        }).then(
+          response => {
+            if (response.data.code == "200") {
+              this.$Message.success("操作成功");
+              this.getList();
+            }
+          });
       }
     }
   };

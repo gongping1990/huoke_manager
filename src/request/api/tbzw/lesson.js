@@ -98,6 +98,12 @@ const tbzwLesson = {
       qs.stringify(params)
     );
   },
+  transferLesson(params) {
+    return axios.post(
+      "/compositionv3/lesson/transferLesson",
+      params
+    );
+  },
   editAudioTmpl(params) {
     return axios.post("/compositionv3/lesson/editAudioTmpl", params, {
       headers: { "Content-Type": "application/json" }

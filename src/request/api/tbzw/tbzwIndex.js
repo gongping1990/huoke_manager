@@ -22,6 +22,7 @@ import tbzwLesson from "./lesson";
 import tbzwSystemconfig from "./systemconfig";
 import tbzwVermanage from "./vermanage";
 import tbzwDistribution from "./distribution";
+import tbzwOpenTime from "./openTime";
 
 export const tbzwIndex = {
   composition,
@@ -47,5 +48,6 @@ export const tbzwIndex = {
   tbzwLesson,
   tbzwSystemconfig,
   tbzwVermanage,
-  tbzwDistribution
+  tbzwDistribution,
+  tbzwOpenTime
 }
