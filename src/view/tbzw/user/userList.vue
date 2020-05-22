@@ -388,6 +388,9 @@
           response => {
             if (response.data.code == '200') {
               this.priceInfo = response.data.resultData;
+              this.priceInfo.courseList.forEach(item=>{
+                item.price = item.price / 100
+              })
             }
           });
       },
@@ -543,10 +546,16 @@
                 }
               });
         } else {
+
+          let arrayList = JSON.parse(JSON.stringify(this.priceInfo.courseList))
+          arrayList.forEach(item=>{
+            item.price = item.price * 100
+          })
+
           this.$api.tbzwOrder.createGroupOrder({
             groupId: this.addInfo.groupId,
             userId: this.addInfo.userId,
-            courseList: this.priceInfo.courseList
+            courseList: arrayList
           })
             .then(
               response => {

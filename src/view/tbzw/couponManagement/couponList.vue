@@ -250,7 +250,7 @@
           {
             title: '满减金额',
             render: (h, params) => {
-              return h('span', (+params.row.couponAmount / 100).toFixed(2))
+              return h('span', (+params.row.fullReductionAmount / 100).toFixed(2))
             },
             key: 'couponAmount',
             align: 'center'
