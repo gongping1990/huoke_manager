@@ -513,7 +513,7 @@
           couponName: this.searchInfo.nickname,
           type: this.searchInfo.payed,
           couponType: [1,3,4][this.radioType],
-          newCourseCoupon: this.radioType === 1
+          newCourseCoupon: this.radioType !== 0
         })
           .then(
             response => {
