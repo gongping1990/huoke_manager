@@ -339,6 +339,7 @@
           courseDescribe: '',
           alonePrice: 999,
           groupPrice: 999,
+          groupTime: null,
           lessonDescribe: null,
           consultPhone: '',
           formTime: null,
@@ -523,8 +524,8 @@
                 this.addInfo.alonePrice = +this.addInfo.alonePrice;
                 this.addInfo.groupPrice = +this.addInfo.groupPrice;
                 this.addInfo.groupTime = +this.addInfo.groupTime;
-                this.addInfo.grade = this.addInfo.grade.toString();
-                this.addInfo.semester = this.addInfo.semester.toString();
+                this.addInfo.grade = this.addInfo.grade && this.addInfo.grade.toString();
+                this.addInfo.semester = this.addInfo.semester && this.addInfo.semester.toString();
                 this.addInfo.hasgift = this.addInfo.hasgift ? '1' : '0';
               }
             })
