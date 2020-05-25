@@ -512,6 +512,7 @@
           size: this.tab.pageSize,
           couponName: this.searchInfo.nickname,
           type: this.searchInfo.payed,
+          couponType: [1,3,4][this.radioType],
           newCourseCoupon: this.radioType === 1
         })
           .then(
