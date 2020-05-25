@@ -64,6 +64,11 @@
                           placeholder="请输入优惠券面额（元）"></Input-number>
             <span class="-c-tips">* 精确到小数点后2位，如99.99</span>
           </FormItem>
+          <FormItem label="满减金额" prop="fullReductionAmount">
+            <Input-number class="g-width" :min="0" :step="1" v-model="addInfo.fullReductionAmount" :disabled="addInfo.id!=''"
+                          placeholder="请输入满减金额（元）"></Input-number>
+            <span class="-c-tips">* 精确到小数点后2位，如99.99</span>
+          </FormItem>
           <FormItem label="发行量" prop="couponNum">
             <Input-number class="g-width" :max="1000000" :min="0" :step="1" v-model="addInfo.couponNum"
                           placeholder="请输入发行量"></Input-number>
@@ -90,7 +95,8 @@
             <Row>
               <Col span="11">
                 <Form-item prop="receiveStartDate">
-                  <Date-picker style="width: 100%" type="datetime" placeholder="选择开始日期" :disabled="addInfo.id!=''"  @on-change="changeStartClick"
+                  <Date-picker style="width: 100%" type="datetime" placeholder="选择开始日期" :disabled="addInfo.id!=''"
+                               @on-change="changeStartClick"
                                v-model="addInfo.receiveStartDate" :options="dateStartOption"></Date-picker>
                 </Form-item>
               </Col>
@@ -135,8 +141,8 @@
 </template>
 
 <script>
-  import dayjs from 'dayjs'
-  import {getBaseUrl} from '@/libs/index'
+  import dayjs from 'dayjs';
+  import {getBaseUrl} from '@/libs/index';
   import DatePickerTemplate from "../../../components/datePickerTemplate";
   import UploadImg from "../../../components/uploadImg";
   import CouponLogTemplate from "./couponLogTemplate";
@@ -219,6 +225,9 @@
           couponAmount: [
             {required: true, type: 'number', message: '请输入优惠券金额', trigger: 'blur'},
           ],
+          fullReductionAmount: [
+            {required: true, type: 'number', message: '请输入满减金额', trigger: 'blur'},
+          ],
           couponNum: [
             {required: true, type: 'number', message: '请输入优惠券发行量', trigger: 'blur'},
           ],
@@ -242,7 +251,7 @@
           {
             title: '优惠券金额',
             render: (h, params) => {
-              return h('span', (+params.row.couponAmount / 100).toFixed(2))
+              return h('span', (+params.row.couponAmount / 100).toFixed(2));
             },
             key: 'couponAmount',
             align: 'center'
@@ -250,15 +259,14 @@
           {
             title: '满减金额',
             render: (h, params) => {
-              return h('span', (+params.row.fullReductionAmount / 100).toFixed(2))
+              return h('span', (+params.row.fullReductionAmount / 100).toFixed(2));
             },
-            key: 'couponAmount',
             align: 'center'
           },
           {
             title: '领取时间',
             render: (h, params) => {
-              return h('span', `${params.row.receiveStartDate} - ${params.row.receiveEndDate}`)
+              return h('span', `${params.row.receiveStartDate} - ${params.row.receiveEndDate}`);
             },
             width: 160,
             align: 'center'
@@ -266,7 +274,7 @@
           {
             title: '有效期时间',
             render: (h, params) => {
-              return h('span', `${params.row.expiryStartDate} - ${params.row.expiryEndDate}`)
+              return h('span', `${params.row.expiryStartDate} - ${params.row.expiryEndDate}`);
             },
             width: 160,
             align: 'center'
@@ -278,42 +286,42 @@
           },
           {
             title: '已领取',
-            render: (h,p)=> {
-              return h('div',{
+            render: (h, p) => {
+              return h('div', {
                 style: {
                   cursor: 'pointer',
                   color: '#5444E4'
                 },
                 on: {
                   click: () => {
-                    this.openModalLog(p.row,1)
+                    this.openModalLog(p.row, 1);
                   }
                 }
-              }, p.row.receives)
+              }, p.row.receives);
             },
             align: 'center'
           },
           {
             title: '已使用',
-            render: (h,p)=> {
-              return h('div',{
+            render: (h, p) => {
+              return h('div', {
                 style: {
                   cursor: 'pointer',
                   color: '#5444E4'
                 },
                 on: {
                   click: () => {
-                    this.openModalLog(p.row,2)
+                    this.openModalLog(p.row, 2);
                   }
                 }
-              }, p.row.uses)
+              }, p.row.uses);
             },
             align: 'center'
           },
           {
             title: '领取状态',
             render: (h, params) => {
-              return h('div', this.statusList[params.row.type])
+              return h('div', this.statusList[params.row.type]);
             }
           },
           {
@@ -331,7 +339,7 @@
                   },
                   on: {
                     click: () => {
-                      this.openModalDetail(params.row)
+                      this.openModalDetail(params.row);
                     }
                   }
                 }, '数据统计'),
@@ -345,7 +353,7 @@
                   },
                   on: {
                     click: () => {
-                      this.copyUrl(params.row)
+                      this.copyUrl(params.row);
                     }
                   }
                 }, '复制链接'),
@@ -360,7 +368,7 @@
                   },
                   on: {
                     click: () => {
-                      this.openModal(params.row)
+                      this.openModal(params.row);
                     }
                   }
                 }, '编辑'),
@@ -375,53 +383,53 @@
                   },
                   on: {
                     click: () => {
-                      this.endItem(params.row)
+                      this.endItem(params.row);
                     }
                   }
                 }, '结束')
-              ])
+              ]);
             }
           }
         ],
         columnsModal: [
-         {
-           title: '领取页面PV',
-           key: 'pv',
-           align: 'center'
-         },
-         {
-           title: '领取页面UV',
-           key: 'uv',
-           align: 'center'
-         },
-         {
-           title: '页面分享次数',
-           key: 'shareNum',
-           align: 'center'
-         },
-         {
-           title: '领取人数',
-           key: 'getNum',
-           align: 'center'
-         },
-         {
-           title: '下单人数',
-           key: 'orderNum',
-           align: 'center'
-         },
-         {
-           title: '成功订单数',
-           key: 'successOrderNum',
-           align: 'center'
-         },
-         {
-           title: '付费转化率',
-           render: (h, params)=> {
-             return h('div', `${params.row.payPercent*100}%`)
-           },
-           align: 'center'
-         }
-       ]
+          {
+            title: '领取页面PV',
+            key: 'pv',
+            align: 'center'
+          },
+          {
+            title: '领取页面UV',
+            key: 'uv',
+            align: 'center'
+          },
+          {
+            title: '页面分享次数',
+            key: 'shareNum',
+            align: 'center'
+          },
+          {
+            title: '领取人数',
+            key: 'getNum',
+            align: 'center'
+          },
+          {
+            title: '下单人数',
+            key: 'orderNum',
+            align: 'center'
+          },
+          {
+            title: '成功订单数',
+            key: 'successOrderNum',
+            align: 'center'
+          },
+          {
+            title: '付费转化率',
+            render: (h, params) => {
+              return h('div', `${params.row.payPercent * 100}%`);
+            },
+            align: 'center'
+          }
+        ]
       };
     },
     watch: {
@@ -430,48 +438,48 @@
           disabledDate(date) {
             return date && date.valueOf() < new Date(_new).getTime();
           }
-        }
+        };
       }
     },
     computed: {
       applicableCourseList() {
-        let list = []
+        let list = [];
         if (this.radioType === 0) {
-          list = ['小语轻作文']
+          list = ['小语轻作文'];
         } else {
-          list = ['乐小狮作文高段', '乐小狮作文中段', '乐小狮作文低段']
+          list = ['乐小狮作文高段', '乐小狮作文中段', '乐小狮作文低段'];
         }
-        return list
+        return list;
       }
     },
     mounted() {
-      this.getList()
+      this.getList();
     },
     methods: {
-      openModalLog (data) {
-        this.dataItem = data.id
-        this.isOpenModalLog = true
+      openModalLog(data) {
+        this.dataItem = data.id;
+        this.isOpenModalLog = true;
       },
       openModalDetail(data) {
-        this.dataItem = data
-        this.isOpenModalDetail = true
-        this.getCouponData()
+        this.dataItem = data;
+        this.isOpenModalDetail = true;
+        this.getCouponData();
       },
-      changeStartClick () {
-        let data1 = new Date(this.addInfo.receiveStartDate).getTime()
-        let data2 = new Date(this.addInfo.receiveEndDate).getTime()
-        let data3 = new Date(this.addInfo.expiryEndDate).getTime()
+      changeStartClick() {
+        let data1 = new Date(this.addInfo.receiveStartDate).getTime();
+        let data2 = new Date(this.addInfo.receiveEndDate).getTime();
+        let data3 = new Date(this.addInfo.expiryEndDate).getTime();
 
         if (data1 > data2) {
-          this.addInfo.receiveEndDate = ''
+          this.addInfo.receiveEndDate = '';
         }
 
         if (data1 > data3) {
-          this.addInfo.expiryEndDate = ''
+          this.addInfo.expiryEndDate = '';
         }
       },
       copyUrl(param) {
-        this.copy_url = param.couponUrl
+        this.copy_url = param.couponUrl;
         setTimeout(() => {
           this.$refs.copyInput.select();
           document.execCommand("copy");
@@ -479,23 +487,25 @@
         }, 500);
       },
       openModal(data) {
-        this.isOpenModal = true
+        this.isOpenModal = true;
         if (data) {
-          this.addInfo = JSON.parse(JSON.stringify(data))
-          this.addInfo.couponAmount = +this.addInfo.couponAmount / 100
-          this.addInfo.couponNum = +this.addInfo.couponNum
+          this.addInfo = JSON.parse(JSON.stringify(data));
+          this.addInfo.couponAmount = +this.addInfo.couponAmount / 100;
+          this.addInfo.fullReductionAmount = +this.addInfo.fullReductionAmount / 100;
+          this.addInfo.couponNum = +this.addInfo.couponNum;
         } else {
           this.addInfo = {
             id: '',
             couponAmount: null,
+            fullReductionAmount: null,
             couponNum: null,
             playbill: ''
-          }
+          };
         }
       },
       closeModal(name) {
-        this.isOpenModal = false
-        this.$refs[name].resetFields()
+        this.isOpenModal = false;
+        this.$refs[name].resetFields();
       },
       currentChange(val) {
         this.tab.page = val;
@@ -503,16 +513,16 @@
       },
       //分页查询
       getList(num) {
-        this.isFetching = true
+        this.isFetching = true;
         if (num) {
-          this.tab.currentPage = 1
+          this.tab.currentPage = 1;
         }
         this.$api.tbzwCoupon.pageCouponConfig({
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
           couponName: this.searchInfo.nickname,
           type: this.searchInfo.payed,
-          couponType: [1,3,4][this.radioType],
+          couponType: [1, 3, 4][this.radioType],
           newCourseCoupon: this.radioType !== 0
         })
           .then(
@@ -521,11 +531,11 @@
               this.total = response.data.resultData.total;
             })
           .finally(() => {
-            this.isFetching = false
-          })
+            this.isFetching = false;
+          });
       },
       getCouponData() {
-        this.isFetching = true
+        this.isFetching = true;
         this.$api.tbzwCoupon.getCouponData({
           id: this.dataItem.id,
         })
@@ -534,8 +544,8 @@
               this.detailList = [response.data.resultData];
             })
           .finally(() => {
-            this.isFetching = false
-          })
+            this.isFetching = false;
+          });
       },
       endItem(param) {
         this.$Modal.confirm({
@@ -550,23 +560,24 @@
                   this.$Message.success("操作成功");
                   this.getList();
                 }
-              })
+              });
           }
-        })
+        });
       },
       submitInfo(name) {
 
-        if (this.isSending) return
+        if (this.isSending) return;
 
         this.$refs[name].validate((valid) => {
           if (valid) {
             if (new Date(this.addInfo.expiryEndDate).getTime() < new Date(this.addInfo.receiveEndDate).getTime()) {
-              return this.$Message.error('有效期时间不能小于领取时间')
+              return this.$Message.error('有效期时间不能小于领取时间');
             }
-            this.isSending = true
+            this.isSending = true;
             this.$api.tbzwCoupon.editCouponConfig({
               id: this.addInfo.id,
               type: this.radioType === 0 ? 1 : 3,
+              couponType: [1, 3, 4][this.radioType],
               expiryStartDate: dayjs(this.addInfo.receiveStartDate).format("YYYY/MM/DD HH:mm:ss"),
               expiryEndDate: dayjs(this.addInfo.expiryEndDate).format("YYYY/MM/DD HH:mm:ss"),
               receiveStartDate: dayjs(this.addInfo.receiveStartDate).format("YYYY/MM/DD HH:mm:ss"),
@@ -574,6 +585,7 @@
               couponName: this.addInfo.couponName,
               couponNum: this.addInfo.couponNum,
               couponAmount: this.addInfo.couponAmount * 100,
+              fullReductionAmount: this.addInfo.fullReductionAmount * 100,
               bigTitle: this.addInfo.bigTitle,
               playbill: this.addInfo.playbill,
               title: this.addInfo.title
@@ -582,15 +594,15 @@
                 response => {
                   if (response.data.code == '200') {
                     this.$Message.success('提交成功');
-                    this.getList()
-                    this.closeModal(name)
+                    this.getList();
+                    this.closeModal(name);
                   }
                 })
               .finally(() => {
-                this.isSending = false
-              })
+                this.isSending = false;
+              });
           }
-        })
+        });
       }
     }
   };
@@ -600,7 +612,7 @@
 <style lang="less" scoped>
   .p-couponList {
 
-    &-formItemWrap{
+    &-formItemWrap {
       display: flex;
 
       .-item-name {
