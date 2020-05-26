@@ -89,7 +89,7 @@
       :title="secondInfo.id ? '编辑人工排课' : '新增人工排课'">
       <Form ref="addInfo" :model="secondInfo" :label-width="50">
         <FormItem label="日期" class="ivu-form-item-required">
-          <DatePicker type="date" placeholder="请选择" :options="dateStartOption" style="width: 200px"
+          <DatePicker type="date" placeholder="请选择" style="width: 200px"
                       v-model="secondInfo.studyDate" @on-change="changeDate"></DatePicker>
         </FormItem>
         <FormItem label="课时" class="ivu-form-item-required">
@@ -111,7 +111,7 @@
 </template>
 
 <script>
-  import dayjs from 'dayjs'
+  import dayjs from 'dayjs';
 
   export default {
     name: 'tbzw_forma_courseList',
@@ -205,7 +205,7 @@
                     margin: '10px'
                   }
                 })
-              ])
+              ]);
             }
           },
           {
@@ -235,7 +235,7 @@
                   },
                   on: {
                     click: () => {
-                      this.openEdit(params.row, 2)
+                      this.openEdit(params.row, 2);
                     }
                   }
                 }, '排课设置'),
@@ -250,7 +250,7 @@
                   },
                   on: {
                     click: () => {
-                      this.toCourseContent(params.row)
+                      this.toCourseContent(params.row);
                     }
                   }
                 }, '课时内容'),
@@ -265,11 +265,11 @@
                   },
                   on: {
                     click: () => {
-                      this.openModal(params.row)
+                      this.openModal(params.row);
                     }
                   }
                 }, '编辑')
-              ])
+              ]);
             }
           }
         ],
@@ -286,25 +286,9 @@
           },
           {
             title: '操作',
-            width: 260,
             align: 'center',
             render: (h, params) => {
               return h('div', [
-                h('Button', {
-                  props: {
-                    type: 'text',
-                    size: 'small'
-                  },
-                  style: {
-                    color: '#5444E4',
-                    marginRight: '5px'
-                  },
-                  on: {
-                    click: () => {
-                      this.openModalSecond(params.row)
-                    }
-                  }
-                }, '编辑'),
                 h('Button', {
                   props: {
                     type: 'text',
@@ -316,22 +300,22 @@
                   },
                   on: {
                     click: () => {
-                      this.delItem(params.row)
+                      this.delItem(params.row);
                     }
                   }
                 }, '删除')
-              ])
+              ]);
             }
           }
         ],
       };
     },
     mounted() {
-      this.getList()
+      this.getList();
     },
     methods: {
       changeDate() {
-        this.secondInfo.lessonId = ''
+        this.secondInfo.lessonId = '';
       },
       // changeLesson() {
       //   console.log(this.secondInfo,111)
@@ -347,7 +331,7 @@
       // },
       changeClassType() {
         if (this.classType === 2) {
-          this.listTimeTableRules()
+          this.listTimeTableRules();
         }
       },
       toCourseContent(data) {
@@ -357,8 +341,8 @@
             courseId: data ? data.id : '',
             type: data.wayOfTeach
           }
-        })
-        localStorage.setItem('nowPage', 1)
+        });
+        localStorage.setItem('nowPage', 1);
       },
       openModal(data) {
         this.$router.push({
@@ -366,33 +350,29 @@
           query: {
             courseId: data ? data.id : ''
           }
-        })
+        });
       },
       openEdit(data) {
-        this.checkWeeks = []
-        this.isOpenModal = true
-        this.addInfo = JSON.parse(JSON.stringify(data))
-        this.storageInfo = JSON.parse(JSON.stringify(data))
-        this.classType = this.addInfo.wayOfTeach
+        this.checkWeeks = [];
+        this.isOpenModal = true;
+        this.addInfo = JSON.parse(JSON.stringify(data));
+        this.storageInfo = JSON.parse(JSON.stringify(data));
+        this.classType = this.addInfo.wayOfTeach;
         if (this.classType === 1) {
           this.addInfo.rules.forEach(item => {
-            this.checkWeeks.push(item.toString())
-          })
+            this.checkWeeks.push(item.toString());
+          });
         }
-        this.changeClassType()
-        console.log(this.checkWeeks)
+        this.changeClassType();
+        console.log(this.checkWeeks);
       },
       openModalSecond(data) {
-        this.isOpenAddModal = true
-        if (data) {
-          this.secondInfo = data && JSON.parse(JSON.stringify(data))
-        } else {
-          this.secondInfo = {}
-        }
-        this.getQueryLessonPage()
+        this.isOpenAddModal = true;
+        this.secondInfo = {};
+        this.getQueryLessonPage();
       },
       closeModal() {
-        this.isOpenModal = false
+        this.isOpenModal = false;
       },
       currentChange(val) {
         this.tab.page = val;
@@ -412,15 +392,15 @@
                   this.$Message.success("操作成功");
                   this.listTimeTableRules();
                 }
-              })
+              });
           }
-        })
+        });
       },
       //分页查询
       getList(num) {
-        this.isFetching = true
+        this.isFetching = true;
         if (num) {
-          this.tab.currentPage = 1
+          this.tab.currentPage = 1;
         }
         this.$api.tbzwCourse.courseQueryPage({
           current: num ? num : this.tab.page,
@@ -433,8 +413,8 @@
               this.total = response.data.resultData.total;
             })
           .finally(() => {
-            this.isFetching = false
-          })
+            this.isFetching = false;
+          });
       },
       listTimeTableRules() {
         this.$api.tbzwRules.listTimeTableRules({
@@ -445,7 +425,7 @@
           .then(
             response => {
               this.detailList = response.data.resultData;
-            })
+            });
       },
       getQueryLessonPage() {
         this.$api.composition.getQueryLessonPage({
@@ -456,7 +436,7 @@
           .then(
             response => {
               this.lessonList = response.data.resultData.records;
-            })
+            });
       },
       submitInfo() {
         if (this.classType === 1) {
@@ -470,18 +450,18 @@
               response => {
                 if (response.data.code == '200') {
                   this.$Message.success('提交成功');
-                  this.getList()
-                  this.closeModal()
+                  this.getList();
+                  this.closeModal();
                 }
               })
             .finally(() => {
-              this.isSending = false
-            })
+              this.isSending = false;
+            });
         } else if (this.classType === 2) {
           if (!this.secondInfo.studyDate) {
-            return this.$Message.error('请选择日期')
+            return this.$Message.error('请选择日期');
           } else if (!this.secondInfo.lessonId) {
-            return this.$Message.error('请选择课时')
+            return this.$Message.error('请选择课时');
           }
           this.$api.tbzwRules.editTimeTableRules({
             lessonId: this.secondInfo.lessonId,
@@ -492,16 +472,16 @@
               response => {
                 if (response.data.code == '200') {
                   this.$Message.success('提交成功');
-                  this.listTimeTableRules()
-                  this.isOpenAddModal = false
+                  this.listTimeTableRules();
+                  this.isOpenAddModal = false;
                 }
               })
             .finally(() => {
-              this.isSending = false
-            })
+              this.isSending = false;
+            });
         } else if (this.classType === 3) {
           if (!this.addInfo.dayToUnlock) {
-            return this.$Message.error('请输入最大解锁课时数')
+            return this.$Message.error('请输入最大解锁课时数');
           }
           this.$api.tbzwRules.editSubmitWorkRules({
             courseId: this.addInfo.id,
@@ -511,13 +491,13 @@
               response => {
                 if (response.data.code == '200') {
                   this.$Message.success('提交成功');
-                  this.getList()
-                  this.closeModal()
+                  this.getList();
+                  this.closeModal();
                 }
               })
             .finally(() => {
-              this.isSending = false
-            })
+              this.isSending = false;
+            });
         }
       }
     }
