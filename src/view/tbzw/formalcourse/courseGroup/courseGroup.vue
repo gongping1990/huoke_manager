@@ -32,9 +32,21 @@
         v-model="isOpenModalPrice"
         @on-cancel="isOpenModalPrice = false"
         width="500"
-        footer-hide
         title="连报价格">
-        <Table :loading="isFetching" :columns="columnsPrice" :data="priceList"></Table>
+        <Form :label-width="100">
+          <div v-for="(item, index) of priceList" :key="index">
+            <FormItem label='连报数量'>
+              {{item.total}}
+            </FormItem>
+            <FormItem label='连报价格'>
+              <Input type="text" v-model="item.price" placeholder="请输入连报价格"></Input>
+            </FormItem>
+          </div>
+        </Form>
+        <div slot="footer" class="-p-b-flex">
+          <Button @click="isOpenModalPrice = false" ghost type="primary" style="width: 100px;">取消</Button>
+          <div @click="submitPrice()" class="g-primary-btn "> {{isSending ? '提交中...' : '确 认'}}</div>
+        </div>
       </Modal>
     </Card>
   </div>
@@ -42,11 +54,9 @@
 
 <script>
   import dayjs from 'dayjs';
-  import PoptipInputTem from "./poptipInputTem";
 
   export default {
     name: 'gsw_channelType',
-    components: {PoptipInputTem},
     data() {
       return {
         tab: {
@@ -124,7 +134,7 @@
                   },
                   on: {
                     click: () => {
-                      this.delItem(params.row)
+                      this.delItem(params.row);
                     }
                   }
                 }, '删除'),
@@ -152,8 +162,8 @@
                     marginRight: '5px'
                   },
                   on: {
-                    changeInput: (data)=>{
-                      this.submitPrice(data)
+                    changeInput: (data) => {
+                      this.submitPrice(data);
                     }
                   }
                 }, params.row.price)
@@ -178,7 +188,10 @@
       openModalPrice(data) {
         this.isOpenModalPrice = true;
         this.dataItem = JSON.parse(JSON.stringify(data));
-        this.priceList = this.dataItem.offers
+        this.priceList = this.dataItem.offers;
+        this.priceList.map(item=>{
+          return item.price = item.price / 100
+        })
       },
       closeModal(name) {
         this.isOpenModal = false;
@@ -234,7 +247,7 @@
                 response => {
                   if (response.data.code == '200') {
                     this.$Message.success('提交成功');
-                    this.getList()
+                    this.getList();
                     this.closeModal(name);
                   }
                 })
@@ -244,20 +257,29 @@
           }
         });
       },
-      submitPrice (data) {
-        this.dataItem.offers.forEach(item=>{
-          if (item.total === data.total) {
-            item.price = data.price
-          }
+      submitPrice() {
+        let pass = true
+
+        pass = this.priceList.every(item=>{
+          return item.price !== ''
         })
+
+        if (!pass) {
+          return this.$Message.error('请输入连报价格')
+        }
+
+        this.priceList.forEach(item => {
+          item.price = item.price * 100
+        });
 
         this.$api.tbzwGroupConfig.editOffer({
           id: this.dataItem.id,
-          offers: this.dataItem.offers
+          offers: this.priceList
         }).then(
           response => {
             if (response.data.code == "200") {
               this.$Message.success("操作成功");
+              this.isOpenModalPrice = false
               this.getList();
             }
           });
@@ -271,7 +293,7 @@
   .p-courseGroup {
 
     &-left {
-     padding-left: 30px;
+      padding-left: 30px;
       display: flex;
       justify-content: left;
     }
