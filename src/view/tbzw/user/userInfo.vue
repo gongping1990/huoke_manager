@@ -126,13 +126,7 @@
       title="更改日期">
       <Form ref="addInfo" :model="addInfo" :label-width="100">
         <FormItem label="当前日期">
-          <div v-if="!isGroup">
-            {{addInfo.learnStartDate}}
-          </div>
-          <div v-else>
-            <p>入学年份：{{userInfo.learnStartYear}}</p>
-            <p>开学日期：{{userInfo.learnStartDay}}</p>
-          </div>
+          {{addInfo.learnStartDate}}
         </FormItem>
         <FormItem label="更改日期" class="ivu-form-item-required">
           <div v-if="!isGroup">
@@ -140,12 +134,10 @@
                          v-model="addInfo.activeTime"></Date-picker>
           </div>
           <div v-else>
-            <p>入学年份：
-              <Select v-model="addInfo.activeTime" @on-change="changeDate" style="display: inline-block; width: 80%">
-                <Option v-for="(item,index) in groupYearList" :label="item.startTime" :value="item.startTime" :key="index"></Option>
-              </Select>
-            </p>
-            <p>开学日期：{{addInfo.openDate || '未选择'}}（<span class="g-tips">选择入学年份后自动填充</span>）</p>
+            <Radio-group v-model="addInfo.activeTime">
+              <Radio v-for="(item,index) in groupYearList" :label="item.startTime" :value="item.startTime" :key="index">
+              </Radio>
+            </Radio-group>
           </div>
         </FormItem>
       </Form>
@@ -379,13 +371,6 @@
       }
     },
     methods: {
-      changeDate () {
-        this.groupYearList.forEach(item=>{
-          if (this.addInfo.activeTime === item.startTime) {
-            this.addInfo.openDate = item.openDate
-          }
-        })
-      },
       changeCascarder(value, selectedData) {
         this.addInfo.areasText = selectedData[2].__label;
       },
@@ -430,7 +415,7 @@
             }
           });
           if (this.isGroup) {
-            this.listOpenTimeByCourseId()
+            this.listOpenTimeByCourseId();
           }
           this.isOpenModalTime = true;
           this.addInfo = JSON.parse(JSON.stringify(data));
@@ -478,8 +463,6 @@
               let dataInfo = response.data.resultData;
               this.userInfo = dataInfo;
               this.userInfo.learnStartDate = dataInfo.learnStartDate ? dayjs(+dataInfo.learnStartDate).format('YYYY-MM-DD') : '暂无';
-              this.userInfo.learnStartYear = dataInfo.learnStartDate ? dayjs(new Date(dataInfo.learnStartDate)).format('YYYY') : '暂无';
-              this.userInfo.learnStartDay = dataInfo.learnStartDate ? dayjs(new Date(dataInfo.learnStartDate)).format('MM-DD') : '暂无';
               this.userInfo.buyedTime = dataInfo.buyedTime ? dayjs(+dataInfo.buyedTime).format('YYYY-MM-DD HH:mm') : '暂无';
               this.userInfo.createTime = dayjs(+dataInfo.createTime).format('YYYY-MM-DD HH:mm');
             });
