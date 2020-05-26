@@ -26,6 +26,9 @@ const tbzwCourse = {
   listCategoryCoursesById(params) {
     return axios.get('/compositionv3/course/listCategoryCoursesById', {params: params})
   },
+  listNoGroupCourse(params) {
+    return axios.get('/compositionv3/course/listNoGroupCourse', {params: params})
+  },
 };
 
 export default tbzwCourse;

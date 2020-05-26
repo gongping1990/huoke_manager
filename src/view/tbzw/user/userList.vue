@@ -119,7 +119,7 @@
           </FormItem>
           <FormItem label="课程价格" class="ivu-form-item-required">
             <div class="g-flex-a-c-j-sb" style="margin-bottom: 10px" v-for="(item, index) of priceInfo.courseList" :key="index">
-              <div>{{item.name}}</div>
+              <div>{{item.name}} ({{item.buyed ? '已购买' : '未购买'}})</div>
               <Input type="text"
                      v-model="item.price"
                      style="width: 40%; margin-left: 10px;"
@@ -379,6 +379,7 @@
           return this.$Message.error('请填写相关信息')
         }
         this.$api.tbzwOpenTime.getUserBuyCourseInfo({
+          userId: this.addInfo.userId,
           buynum: this.addInfo.buynum,
           grade: this.addInfo.grade,
           groupId: this.addInfo.groupId,
@@ -472,14 +473,10 @@
         this.getList();
       },
       getCourseList() {
-        this.$api.tbzwCourse.courseQueryPage({
-          current: 1,
-          size: 1000,
-          type: 1
-        })
+        this.$api.tbzwCourse.listNoGroupCourse()
           .then(
             response => {
-              this.courseList = response.data.resultData.records;
+              this.courseList = response.data.resultData;
             });
       },
       getList(num) {
@@ -543,14 +540,24 @@
                   this.$Message.success('提交成功');
                   this.getList();
                   this.closeModal(name);
+                  this.priceInfo.courseList = []
                 }
               });
         } else {
 
+          let isPass = true
           let arrayList = JSON.parse(JSON.stringify(this.priceInfo.courseList))
           arrayList.forEach(item=>{
             item.price = item.price * 100
           })
+
+          isPass = arrayList.every(item=>{
+            return item.buyed === false
+          })
+
+          if (!isPass) {
+            return this.$Message.error('开通课程里已包含有购买课程，无法开通课程组')
+          }
 
           this.$api.tbzwOrder.createGroupOrder({
             groupId: this.addInfo.groupId,
