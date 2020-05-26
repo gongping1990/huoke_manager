@@ -11,6 +11,9 @@ const tbzwOpenTime = {
   listByGroupYear(params) {
     return axios.get('/compositionv3/opentime/listByGroupYear', {params: params})
   },
+  listOpenTimeByCourseId(params) {
+    return axios.get('/compositionv3/opentime/listOpenTimeByCourseId', {params: params})
+  },
   getUserBuyCourseInfo(params) {
     return axios.post("/compositionv3/opentime/getUserBuyCourseInfo", qs.stringify(params));
   },

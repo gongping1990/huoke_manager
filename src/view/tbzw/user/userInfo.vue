@@ -46,7 +46,7 @@
           <div class="-c-text">学习数据</div>
           <div>
             <span class="g-blue g-cursor" @click="openModalTime(userInfo)">开课日期: {{userInfo.learnStartDate || '暂无'}}
-              <Icon type="ios-create" />
+              <Icon type="ios-create"/>
             </span>
             <span>课程进度: {{userInfo.learnProgress || 0}}</span>
             <span>交作业课时数: {{userInfo.homeworkLesson || 0}}</span>
@@ -66,8 +66,8 @@
       </div>
 
       <!--<Page class="-p-text-right" :total="total" size="small" show-elevator :page-size="tab.pageSize"-->
-            <!--:current.sync="tab.currentPage"-->
-            <!--@on-change="currentChange"></Page>-->
+      <!--:current.sync="tab.currentPage"-->
+      <!--@on-change="currentChange"></Page>-->
     </Card>
     <!--<loading v-if="isFetching"></loading>-->
 
@@ -126,21 +126,26 @@
       title="更改日期">
       <Form ref="addInfo" :model="addInfo" :label-width="100">
         <FormItem label="当前日期">
-          <div v-if="!true">
+          <div v-if="!isGroup">
             {{addInfo.learnStartDate}}
           </div>
           <div v-else>
-            <p>入学年份：1902</p>
-            <p>开学日期：03-89</p>
+            <p>入学年份：{{userInfo.learnStartYear}}</p>
+            <p>开学日期：{{userInfo.learnStartDay}}</p>
           </div>
         </FormItem>
         <FormItem label="更改日期" class="ivu-form-item-required">
-          <div v-if="!true">
-            <Date-picker style="width: 100%" type="date" placeholder="选择更改日期" v-model="addInfo.activeTime"></Date-picker>
+          <div v-if="!isGroup">
+            <Date-picker style="width: 100%" type="date" placeholder="选择更改日期"
+                         v-model="addInfo.activeTime"></Date-picker>
           </div>
           <div v-else>
-            <p>入学年份：<Date-picker type="year" placeholder="选择入学年份" v-model="addInfo.activeTime"></Date-picker></p>
-            <p>开学日期：19901（<span class="g-tips">选择入学年份后自动填充</span>）</p>
+            <p>入学年份：
+              <Select v-model="addInfo.activeTime" @on-change="changeDate" style="display: inline-block; width: 80%">
+                <Option v-for="(item,index) in groupYearList" :label="item.startTime" :value="item.startTime" :key="index"></Option>
+              </Select>
+            </p>
+            <p>开学日期：{{addInfo.openDate || '未选择'}}（<span class="g-tips">选择入学年份后自动填充</span>）</p>
           </div>
         </FormItem>
       </Form>
@@ -153,12 +158,12 @@
 </template>
 
 <script>
-  import areaList from '@/libs/area'
+  import areaList from '@/libs/area';
   import Loading from "@/components/loading";
-  import dayjs from 'dayjs'
+  import dayjs from 'dayjs';
   import JobRecordTemplate from "../../../components/jobRecordTemplate";
   import ClassLog from "../../tbzw/user/classLog";
-  import { formatTime } from '@/libs/index'
+  import {formatTime} from '@/libs/index';
 
   export default {
     name: 'tbzwUserInfo',
@@ -187,6 +192,7 @@
         addressList: areaList.list,
         dataList: [],
         appList: [],
+        groupYearList: [],
         relationList: [
           {
             key: 1,
@@ -258,6 +264,7 @@
         total: 0,
         childType: '',
         isFetching: false,
+        isGroup: false,
         isOpenModal: false,
         isOpenModalChild: false,
         isSending: false,
@@ -327,7 +334,7 @@
           {
             title: '操作',
             render: (h, params) => {
-              return h('div',[
+              return h('div', [
                 h('Button', {
                   props: {
                     type: 'text',
@@ -339,7 +346,7 @@
                   },
                   on: {
                     click: () => {
-                      this.openModalClass(params.row)
+                      this.openModalClass(params.row);
                     }
                   }
                 }, '上课记录'),
@@ -354,11 +361,11 @@
                   },
                   on: {
                     click: () => {
-                      this.openModal(params.row)
+                      this.openModal(params.row);
                     }
                   }
                 }, '作业记录')
-              ])
+              ]);
 
             },
             align: 'center'
@@ -368,23 +375,30 @@
     },
     mounted() {
       if (this.$route.query.id || this.userId) {
-        this.listBase()
+        this.listBase();
       }
     },
     methods: {
+      changeDate () {
+        this.groupYearList.forEach(item=>{
+          if (this.addInfo.activeTime === item.startTime) {
+            this.addInfo.openDate = item.openDate
+          }
+        })
+      },
       changeCascarder(value, selectedData) {
-        this.addInfo.areasText = selectedData[2].__label
+        this.addInfo.areasText = selectedData[2].__label;
       },
       changeRadio() {
-        this.searchInfo.appId = this.searchInfo.appId || this.courseId
-        if((localStorage.isJump !== '1') && this.searchInfo.appId) {
-          this.tab.currentPage = 1
-          this.getLearnDTO()
-          this.listLessonProgress(1)
+        this.searchInfo.appId = this.searchInfo.appId || this.courseId;
+        if ((localStorage.isJump !== '1') && this.searchInfo.appId) {
+          this.tab.currentPage = 1;
+          this.getLearnDTO();
+          this.listLessonProgress(1);
         }
       },
       openModalChild(type) {
-        this.childType = type
+        this.childType = type;
         if (!this.addInfo.id) {
           this.addInfo = {
             nickname: '',
@@ -393,57 +407,65 @@
             grade: '',
             areasId: [],
             phone: ''
-          }
+          };
         }
-        this.isOpenModalChild = true
+        this.isOpenModalChild = true;
       },
       closeModal(name) {
-        this.isOpenModalChild = false
-        this.getStudent()
-        this.$refs[name].resetFields()
+        this.isOpenModalChild = false;
+        this.getStudent();
+        this.$refs[name].resetFields();
       },
       openModal(data) {
-        this.isOpenModal = true
-        this.detailInfo = JSON.parse(JSON.stringify(data))
-        this.detailInfo.appId = this.searchInfo.appId
-        this.detailInfo.uid = this.$route.query.id || this.userId
+        this.isOpenModal = true;
+        this.detailInfo = JSON.parse(JSON.stringify(data));
+        this.detailInfo.appId = this.searchInfo.appId;
+        this.detailInfo.uid = this.$route.query.id || this.userId;
       },
       openModalTime(data) {
         if (this.appList.length) {
-          this.isOpenModalTime = true
-          this.addInfo = JSON.parse(JSON.stringify(data))
+          this.appList.forEach(item => {
+            if (item.id === this.searchInfo.appId) {
+              this.isGroup = item.hasgroup;
+            }
+          });
+          if (this.isGroup) {
+            this.listOpenTimeByCourseId()
+          }
+          this.isOpenModalTime = true;
+          this.addInfo = JSON.parse(JSON.stringify(data));
         } else {
-          this.$Message.info('该用户未购买课程')
+          this.$Message.info('该用户未购买课程');
         }
       },
       openModalClass(data) {
-        this.isOpenModalClass = true
-        this.detailInfo = JSON.parse(JSON.stringify(data))
-        this.detailInfo.uid = this.$route.query.id || this.userId
+        this.isOpenModalClass = true;
+        this.detailInfo = JSON.parse(JSON.stringify(data));
+        this.detailInfo.uid = this.$route.query.id || this.userId;
       },
       currentChange(val) {
-        console.log(val,11)
+        console.log(val, 11);
         this.listLessonProgress(val);
       },
       listBase() {
-        this.appList = []
-        this.tab.currentPage = this.sortNum ? Math.ceil(this.sortNum / 10) : 1
+        this.appList = [];
+        this.tab.currentPage = this.sortNum ? Math.ceil(this.sortNum / 10) : 1;
         this.$api.jsdJob.listBuyed({
           uid: this.$route.query.id || this.userId
         })
           .then(response => {
-            this.appList = response.data.resultData
-            this.searchInfo.appId = this.courseId || (this.appList.length && this.appList[0].id)
-            this.getUserInfo()
-            this.getStudent()
-            this.appList.length && this.getLearnDTO()
-            this.appList.length && this.listLessonProgress()
-            localStorage.setItem('isJump', '2')
-            this.$nextTick(()=>{
-              this.$refs.modelUserInfo.scrollTop  = this.$refs.modelUserInfo.clientHeight
-              console.log(this.$refs.modelUserInfo.scrollTop)
-            })
-          })
+            this.appList = response.data.resultData;
+            this.searchInfo.appId = this.courseId || (this.appList.length && this.appList[0].id);
+            this.getUserInfo();
+            this.getStudent();
+            this.appList.length && this.getLearnDTO();
+            this.appList.length && this.listLessonProgress();
+            localStorage.setItem('isJump', '2');
+            this.$nextTick(() => {
+              this.$refs.modelUserInfo.scrollTop = this.$refs.modelUserInfo.clientHeight;
+              console.log(this.$refs.modelUserInfo.scrollTop);
+            });
+          });
       },
       //分页查询
       getLearnDTO() {
@@ -454,22 +476,24 @@
           .then(
             response => {
               let dataInfo = response.data.resultData;
-              this.userInfo = dataInfo
-              this.userInfo.learnStartDate = dataInfo.learnStartDate ? dayjs(+dataInfo.learnStartDate).format('YYYY-MM-DD') : '暂无'
-              this.userInfo.buyedTime = dataInfo.buyedTime ? dayjs(+dataInfo.buyedTime).format('YYYY-MM-DD HH:mm') : '暂无'
-              this.userInfo.createTime = dayjs(+dataInfo.createTime).format('YYYY-MM-DD HH:mm')
-            })
+              this.userInfo = dataInfo;
+              this.userInfo.learnStartDate = dataInfo.learnStartDate ? dayjs(+dataInfo.learnStartDate).format('YYYY-MM-DD') : '暂无';
+              this.userInfo.learnStartYear = dataInfo.learnStartDate ? dayjs(new Date(dataInfo.learnStartDate)).format('YYYY') : '暂无';
+              this.userInfo.learnStartDay = dataInfo.learnStartDate ? dayjs(new Date(dataInfo.learnStartDate)).format('MM-DD') : '暂无';
+              this.userInfo.buyedTime = dataInfo.buyedTime ? dayjs(+dataInfo.buyedTime).format('YYYY-MM-DD HH:mm') : '暂无';
+              this.userInfo.createTime = dayjs(+dataInfo.createTime).format('YYYY-MM-DD HH:mm');
+            });
       },
       listLessonProgress(page) {
         if (this.sortNum) {
-          this.tab.page = page || Math.ceil(this.sortNum / 10)
+          this.tab.page = page || Math.ceil(this.sortNum / 10);
         } else {
           if (page) {
-            this.tab.currentPage = 1
+            this.tab.currentPage = 1;
           }
         }
-        this.dataList= []
-        this.isFetching = true
+        this.dataList = [];
+        this.isFetching = true;
         this.$api.jsdJob.listLessonProgress({
           uid: this.$route.query.id || this.userId,
           courseId: this.searchInfo.appId,
@@ -478,27 +502,27 @@
         })
           .then(
             response => {
-              let data = response.data.resultData.records
-              data.forEach(item=>{
+              let data = response.data.resultData.records;
+              data.forEach(item => {
                 this.dataList.push({
                   ...item,
                   schedulDate: item.schedulDate ? dayjs(+item.schedulDate).format("YYYY-MM-DD") : '暂无',
-                  lessonTime: item.lessonTime ? dayjs(item.lessonTime*1000).format('mm:ss') : 0,
-                  allLearnTime: item.allLearnTime ?formatTime(item.allLearnTime*1000) : 0,
-                  avgearnTime: item.avgearnTime ? dayjs(item.avgearnTime*1000).format('mm:ss') : 0,
+                  lessonTime: item.lessonTime ? dayjs(item.lessonTime * 1000).format('mm:ss') : 0,
+                  allLearnTime: item.allLearnTime ? formatTime(item.allLearnTime * 1000) : 0,
+                  avgearnTime: item.avgearnTime ? dayjs(item.avgearnTime * 1000).format('mm:ss') : 0,
                   firstStartLearnTime: item.firstStartLearnTime ? dayjs(+item.firstStartLearnTime).format("YYYY-MM-DD HH:mm") : '暂无',
                   firstLearnTime: item.firstLearnTime ? dayjs(+item.firstLearnTime).format("YYYY-MM-DD HH:mm") : '暂无',
                   lastSubmitTime: item.lastSubmitTime ? dayjs(+item.lastSubmitTime).format("YYYY-MM-DD HH:mm") : '暂无',
                   lastReplyTime: item.lastReplyTime ? dayjs(+item.lastReplyTime).format("YYYY-MM-DD HH:mm") : '暂无',
-                })
-              })
+                });
+              });
               // this.total = response.data.resultData.total;
 
             })
-          .finally(()=>{
-            this.isFetching = false
-          })
-        this.$forceUpdate()
+          .finally(() => {
+            this.isFetching = false;
+          });
+        this.$forceUpdate();
       },
       getUserInfo() {
         this.$api.admin.getUserInfo({
@@ -507,7 +531,17 @@
           .then(
             response => {
               this.userInfo = response.data.resultData;
-            })
+            });
+      },
+      //获取课程组年份
+      listOpenTimeByCourseId() {
+        this.$api.tbzwOpenTime.listOpenTimeByCourseId({
+          courseId: this.searchInfo.appId
+        })
+          .then(
+            response => {
+              this.groupYearList = response.data.resultData;
+            });
       },
       getStudent() {
         this.$api.tbzwStudent.getStudent({
@@ -516,11 +550,11 @@
           .then(
             response => {
               if (response.data.resultData) {
-                this.addInfo = response.data.resultData
+                this.addInfo = response.data.resultData;
                 if (this.addInfo.areasId) {
-                  this.addInfo.areasId = this.addInfo.areasId.split(',')
+                  this.addInfo.areasId = this.addInfo.areasId.split(',');
                 } else {
-                  this.addInfo.areasId = []
+                  this.addInfo.areasId = [];
                 }
               } else {
                 this.addInfo = {
@@ -531,14 +565,14 @@
                   gradeText: '',
                   areasIdText: '',
                   areasId: []
-                }
+                };
               }
 
-              this.studentInfo = JSON.parse(JSON.stringify(this.addInfo))
-            })
+              this.studentInfo = JSON.parse(JSON.stringify(this.addInfo));
+            });
       },
       submitInfo(name) {
-        this.isSending = true
+        this.isSending = true;
         let params = {
           puid: this.$route.query.id || this.userId,
           areasId: `${this.addInfo.areasId}`,
@@ -548,27 +582,27 @@
           areasText: this.addInfo.areasText,
           nickname: this.addInfo.nickname,
           phone: this.addInfo.phone
-        }
+        };
         let promiseDate = this.addInfo.id ? this.$api.tbzwStudent.updateStudent({
           id: this.addInfo.id,
           ...params
-        }) : this.$api.tbzwStudent.addStudent(params)
+        }) : this.$api.tbzwStudent.addStudent(params);
         promiseDate
           .then(
             response => {
               if (response.data.code == '200') {
                 this.$Message.success('提交成功');
-                this.getStudent()
-                this.closeModal(name)
+                this.getStudent();
+                this.closeModal(name);
               }
             })
           .finally(() => {
-            this.isSending = false
-          })
+            this.isSending = false;
+          });
       },
       submitTime() {
         if (!this.addInfo.activeTime) {
-          return this.$Message.error('请选择开课时间')
+          return this.$Message.error('请选择开课时间');
         }
 
         this.$api.tbzwRules.supply({
@@ -580,12 +614,12 @@
             response => {
               if (response.data.code == '200') {
                 this.$Message.success('提交成功');
-                this.getLearnDTO()
-                this.listLessonProgress()
-                this.isOpenModalTime = false
-                this.$forceUpdate()
+                this.getLearnDTO();
+                this.listLessonProgress();
+                this.isOpenModalTime = false;
+                this.$forceUpdate();
               }
-            })
+            });
       }
     }
   };
