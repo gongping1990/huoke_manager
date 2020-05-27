@@ -43,6 +43,15 @@
           <FormItem label="排序值" prop="sortnum">
             <Input type="text" v-model="addInfo.sortnum" placeholder="请输入排序值"></Input>
           </FormItem>
+          <FormItem label="跳转类型" prop="sortnum">
+            <RadioGroup v-model="addInfo.jumpType">
+              <Radio label="1">内部跳转</Radio>
+              <Radio label="2">外部跳转</Radio>
+            </RadioGroup>
+          </FormItem>
+          <FormItem label="appID" v-if="addInfo.jumpType==='2'">
+            <Input type="text" v-model="addInfo.appid" placeholder="请输入链接地址"></Input>
+          </FormItem>
           <FormItem label="链接地址" prop="href">
             <Input type="text" v-model="addInfo.href" placeholder="请输入链接地址"></Input>
           </FormItem>
@@ -92,7 +101,7 @@
 </template>
 
 <script>
-  import dayjs from 'dayjs'
+  import dayjs from 'dayjs';
   import DatePickerTemplate from "@/components/datePickerTemplate";
   import UploadImg from "../../../../components/uploadImg";
 
@@ -148,7 +157,8 @@
         columns: [
           {
             title: '名称',
-            key: 'name'
+            key: 'name',
+            align: 'center'
           },
           {
             title: '图片',
@@ -165,10 +175,11 @@
                   },
                   style: {
                     width: '100px',
+                    height: '50px',
                     margin: '10px'
                   }
                 })
-              ])
+              ]);
             },
             width: 200,
             align: 'center'
@@ -184,28 +195,28 @@
                 },
                 on: {
                   click: () => {
-                    this.openModalSort(params.row)
+                    this.openModalSort(params.row);
                   }
                 }
-              }, params.row.sortnum)
+              }, params.row.sortnum);
             },
             align: 'center'
           },
           {
             title: '链接地址',
-            key: 'href'
+            key: 'href',
+            align: 'center'
           },
           {
             title: '有效期时间',
             render: (h, params) => {
-              return h('span', `${dayjs(params.row.beginTime).format('YYYY-MM-DD HH:mm:ss')} - ${dayjs(params.row.endTime).format('YYYY-MM-DD HH:mm:ss')}`)
+              return h('span', `${dayjs(params.row.beginTime).format('YYYY-MM-DD HH:mm:ss')} - ${dayjs(params.row.endTime).format('YYYY-MM-DD HH:mm:ss')}`);
             },
             width: 300,
             align: 'center'
           },
           {
             title: '操作',
-            width: 190,
             align: 'center',
             render: (h, params) => {
               return h('div', [
@@ -220,7 +231,7 @@
                   },
                   on: {
                     click: () => {
-                      this.openModal(params.row)
+                      this.openModal(params.row);
                     }
                   }
                 }, '编辑'),
@@ -235,11 +246,11 @@
                   },
                   on: {
                     click: () => {
-                      this.delItem(params.row)
+                      this.delItem(params.row);
                     }
                   }
                 }, '删除')
-              ])
+              ]);
             }
           }
         ],
@@ -251,48 +262,53 @@
           disabledDate(date) {
             return date && date.valueOf() < new Date(_new).getTime();
           }
-        }
+        };
       }
     },
     mounted() {
-      this.getList()
+      this.getList();
     },
     methods: {
-      changeStartClick (date) {
-        let s = new Date(date).getTime()
-        let e = new Date(this.getEndTime).getTime()
+      changeStartClick(date) {
+        let s = new Date(date).getTime();
+        let e = new Date(this.getEndTime).getTime();
         if (s > e) {
-          this.getEndTime = ''
+          this.getEndTime = '';
         }
       },
-      changeDate (data) {
-        this.searchInfo.fromDate = data.startTime
-        this.searchInfo.toDate = data.endTime
-        this.getList(1)
+      changeDate(data) {
+        this.searchInfo.fromDate = data.startTime;
+        this.searchInfo.toDate = data.endTime;
+        this.getList(1);
       },
       openModal(data) {
-        this.isOpenModal = true
+        this.isOpenModal = true;
         if (data) {
-          this.addInfo = JSON.parse(JSON.stringify(data))
-          this.getStartTime = new Date(this.addInfo.beginTime)
-          this.getEndTime = new Date(this.addInfo.endTime)
-          this.addInfo.sortnum = this.addInfo.sortnum.toString()
-        } else {
-          this.getStartTime = ''
-          this.getEndTime = ''
+          let datas = JSON.parse(JSON.stringify(data));
           this.addInfo = {
-            url: ''
-          }
+            ...datas,
+            jumpType: datas.inhref ? '1' : '2'
+          };
+          this.getStartTime = new Date(this.addInfo.beginTime);
+          this.getEndTime = new Date(this.addInfo.endTime);
+          this.addInfo.sortnum = this.addInfo.sortnum.toString();
+        } else {
+          this.getStartTime = '';
+          this.getEndTime = '';
+          this.addInfo = {
+            url: '',
+            jumpType: '1'
+          };
         }
       },
       openModalSort(data) {
-        this.isOpenModalSort = true
-        this.addInfo = JSON.parse(JSON.stringify(data))
-        this.sortNum = this.addInfo.sortnum
+        this.isOpenModalSort = true;
+        this.addInfo = JSON.parse(JSON.stringify(data));
+        this.sortNum = this.addInfo.sortnum;
       },
       closeModal(name) {
-        this.isOpenModal = false
-        this.$refs[name].resetFields()
+        this.isOpenModal = false;
+        this.$refs[name].resetFields();
       },
       currentChange(val) {
         this.tab.page = val;
@@ -300,16 +316,16 @@
       },
       //分页查询
       getList(num) {
-        this.isFetching = true
-        if(num) {
-          this.tab.currentPage = 1
+        this.isFetching = true;
+        if (num) {
+          this.tab.currentPage = 1;
         }
         this.$api.zlkBanner.zlkBannerList({
           current: num ? num : this.tab.page,
           size: this.tab.pageSize,
-          name: this.searchInfo.nickname|| '',
+          name: this.searchInfo.nickname || '',
           beginTime: this.searchInfo.fromDate ? new Date(this.searchInfo.fromDate).getTime() : '',
-          endTime:  this.searchInfo.toDate  ? new Date(this.searchInfo.toDate).getTime() : ''
+          endTime: this.searchInfo.toDate ? new Date(this.searchInfo.toDate).getTime() : ''
         })
           .then(
             response => {
@@ -317,8 +333,8 @@
               this.total = response.data.resultData.total;
             })
           .finally(() => {
-            this.isFetching = false
-          })
+            this.isFetching = false;
+          });
       },
       delItem(param) {
         this.$Modal.confirm({
@@ -333,46 +349,50 @@
                   this.$Message.success("操作成功");
                   this.getList();
                 }
-              })
+              });
           }
-        })
+        });
       },
       submitInfo(name) {
         if (!this.addInfo.url) {
-          return this.$Message.error('请上传banner图片')
+          return this.$Message.error('请上传banner图片');
         } else if (this.addInfo.sortnum && (this.addInfo.sortnum < 1 || this.addInfo.sortnum > 99999)) {
-          return this.$Message.error('排序值范围1-99999')
+          return this.$Message.error('排序值范围1-99999');
         } else if (!this.getStartTime) {
-          return this.$Message.error('请输入开始时间')
+          return this.$Message.error('请输入开始时间');
         } else if (!this.getEndTime) {
-          return this.$Message.error('请输入结束时间')
+          return this.$Message.error('请输入结束时间');
+        } else if (this.addInfo.jumpType === '2' && !this.addInfo.appid) {
+          return this.$Message.error('请输入appID');
         }
 
-        if (this.isSending) return
-        this.addInfo.beginTime = new Date(this.getStartTime).getTime()
-        this.addInfo.endTime = new Date(this.getEndTime).getTime()
+        if (this.isSending) return;
+        this.addInfo.beginTime = new Date(this.getStartTime).getTime();
+        this.addInfo.endTime = new Date(this.getEndTime).getTime();
+        this.addInfo.inhref = this.addInfo.jumpType === '1';
+        delete this.addInfo.jumpType;
         this.$refs[name].validate((valid) => {
           if (valid) {
-            this.isSending = true
-            let promiseDate = this.addInfo.id ? this.$api.zlkBanner.zlkUpdateBanner(this.addInfo) : this.$api.zlkBanner.zlkAddBanner(this.addInfo)
+            this.isSending = true;
+            let promiseDate = this.addInfo.id ? this.$api.zlkBanner.zlkUpdateBanner(this.addInfo) : this.$api.zlkBanner.zlkAddBanner(this.addInfo);
             promiseDate
               .then(
                 response => {
                   if (response.data.code == '200') {
                     this.$Message.success('提交成功');
-                    this.getList()
-                    this.closeModal(name)
+                    this.getList();
+                    this.closeModal(name);
                   }
                 })
               .finally(() => {
-                this.isSending = false
-              })
+                this.isSending = false;
+              });
           }
-        })
+        });
       },
       submitSort() {
         if (!this.sortNum) {
-          return this.$Message.error('请输入排序值')
+          return this.$Message.error('请输入排序值');
         }
         this.$api.materia.updateSortNumBanner({
           id: this.addInfo.id,
@@ -380,10 +400,10 @@
         }).then(response => {
           if (response.data.code == '200') {
             this.$Message.success('修改成功');
-            this.getList()
-            this.isOpenModalSort = false
+            this.getList();
+            this.isOpenModalSort = false;
           }
-        })
+        });
       }
     }
   };
