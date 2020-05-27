@@ -416,6 +416,7 @@
       },
       closeModal(name) {
         this.isOpenModal = false;
+        this.priceInfo.courseList = []
       },
       toDetail(param) {
         this.$router.push({
@@ -540,7 +541,7 @@
                   this.$Message.success('提交成功');
                   this.getList();
                   this.closeModal(name);
-                  this.priceInfo.courseList = []
+
                 }
               });
         } else {
