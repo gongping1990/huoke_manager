@@ -99,6 +99,10 @@ const admin = {
   // 修改其他管理员信息
   listByUserPerm(params) {
     return axios.get("umg/admin/menu/listByUserPerm",{params});
+  },
+  // 更改手机号码
+  updateUserPhone(params) {
+    return axios.post("umg/user/updateUserPhone",qs.stringify(params));
   }
 };
 

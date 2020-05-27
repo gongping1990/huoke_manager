@@ -393,6 +393,8 @@
             areasId: [],
             phone: ''
           };
+        } else {
+          this.addInfo.phone = this.userInfo.phone
         }
         this.isOpenModalChild = true;
       },
@@ -556,6 +558,9 @@
       },
       submitInfo(name) {
         this.isSending = true;
+        if (this.childType === 2) {
+          return this.submitUserPhone(name)
+        }
         let params = {
           puid: this.$route.query.id || this.userId,
           areasId: `${this.addInfo.areasId}`,
@@ -601,6 +606,24 @@
                 this.listLessonProgress();
                 this.isOpenModalTime = false;
                 this.$forceUpdate();
+              }
+            });
+      },
+      submitUserPhone(name) {
+        if (!this.addInfo.phone) {
+          return this.$Message.error('请输入电话号码');
+        }
+
+        this.$api.admin.updateUserPhone({
+          phone: this.addInfo.phone,
+          userId: this.$route.query.id || this.userId,
+        })
+          .then(
+            response => {
+              if (response.data.code == '200') {
+                this.$Message.success('提交成功');
+                this.getLearnDTO();
+                this.closeModal(name);
               }
             });
       }
