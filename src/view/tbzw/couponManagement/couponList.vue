@@ -45,7 +45,7 @@
         class="p-couponList"
         v-model="isOpenModal"
         @on-cancel="closeModal('addInfo')"
-        width="600"
+        width="700"
         :title="addInfo.id ? '编辑优惠券' : '创建优惠券'">
         <Form ref="addInfo" :model="addInfo" :rules="ruleValidate" :label-width="90">
           <FormItem label="注意" class="-c-tips">
