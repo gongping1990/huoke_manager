@@ -622,7 +622,7 @@
             response => {
               if (response.data.code == '200') {
                 this.$Message.success('提交成功');
-                this.getLearnDTO();
+                this.userInfo.phone = this.addInfo.phone;
                 this.closeModal(name);
               }
             });
