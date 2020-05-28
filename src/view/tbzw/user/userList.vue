@@ -90,6 +90,9 @@
           </FormItem>
         </div>
         <div v-if="addInfo.radioType === '2'">
+          <FormItem label="电话号码">
+            <Input type="text" v-model="addInfo.phone" placeholder="请输入电话号码"></Input>
+          </FormItem>
           <FormItem label="课程组" class="ivu-form-item-required">
             <Select v-model="addInfo.groupId" @on-change="listByGroupYear()">
               <Option v-for="item of courseGroupList" :label=item.name :value=item.id :key="item.id"></Option>
@@ -403,7 +406,7 @@
             ...JSON.parse(JSON.stringify(data)),
             radioType: '1',
             amount: null,
-            isPhone: this.addInfo.phone !== null
+            isPhone: data.phone !== null
           };
           console.log(this.addInfo);
         } else {
@@ -563,6 +566,7 @@
           this.$api.tbzwOrder.createGroupOrder({
             groupId: this.addInfo.groupId,
             userId: this.addInfo.userId,
+            phone: this.addInfo.phone,
             courseList: arrayList
           })
             .then(
