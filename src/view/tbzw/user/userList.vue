@@ -91,7 +91,7 @@
         </div>
         <div v-if="addInfo.radioType === '2'">
           <FormItem label="电话号码">
-            <Input type="text" v-model="addInfo.phone" placeholder="请输入电话号码"></Input>
+            <Input type="text" v-model="addInfo.phone" :disabled="addInfo.isPhone" placeholder="请输入电话号码"></Input>
           </FormItem>
           <FormItem label="课程组" class="ivu-form-item-required">
             <Select v-model="addInfo.groupId" @on-change="listByGroupYear()">
