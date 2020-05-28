@@ -45,7 +45,7 @@
         class="p-couponList"
         v-model="isOpenModal"
         @on-cancel="closeModal('addInfo')"
-        width="700"
+        width="600"
         :title="addInfo.id ? '编辑优惠券' : '创建优惠券'">
         <Form ref="addInfo" :model="addInfo" :rules="ruleValidate" :label-width="90">
           <FormItem label="注意" class="-c-tips">
@@ -446,6 +446,8 @@
         let list = [];
         if (this.radioType === 0) {
           list = ['小语轻作文'];
+        } else if (this.radioType === 1) {
+          list = ['乐小狮作文高段', '乐小狮作文中段', '乐小狮作文低段'];
         } else {
           list = ['乐小狮作文一至六年级通用'];
         }
