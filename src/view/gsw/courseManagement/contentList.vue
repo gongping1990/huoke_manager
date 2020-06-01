@@ -92,7 +92,7 @@
         baseUrl: `${getBaseUrl()}/sch/common/uploadPublicFile`, // 公有 （图片）
         baseUrlVa: `${getBaseUrl()}/sch/common/uploadPrivateFile`, //私有地址 （音视频）
         dataList: [],
-        audioType: ['mp3', 'wma', 'arm'],
+        audioType: ['mp3', 'wma', 'arm', 'mpeg'],
         isFetching: false,
         isOpenModal: false,
         isOpenModalItem: false,

@@ -42,7 +42,7 @@
     data() {
       return {
         baseUrlVa: `${getBaseUrl()}/sch/common/uploadPrivateFile`, //私有地址 （音视频）
-        audioType: ['mp3', 'wma', 'arm'],
+        audioType: ['mp3', 'wma', 'arm', 'mpeg'],
         isShowEditor: false,
         isSending: false,
         isFetching: false,

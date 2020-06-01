@@ -173,7 +173,7 @@
         anyAnswer: '',
         optionLetter: ['A', 'B', 'C', 'D', 'E'],
         optionList: [],
-        audioType: ['mp3', 'wma', 'arm'],
+        audioType: ['mp3', 'wma', 'arm', 'mpeg'],
         addInfo: {
           lessonId: this.$route.query.lessonId,
           contentType: this.type,

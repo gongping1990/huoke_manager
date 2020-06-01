@@ -133,7 +133,7 @@
         uploadAudioOption: {
           tipText: '音频格式：mp3、wma、arm 音频大小：150M以内',
           size: 153600,
-          format: ['mp3', 'wma', 'arm']
+          format: ['mp3', 'wma', 'arm', 'mpeg']
         },
         modalTitleName: {
           '1': '授课教师',

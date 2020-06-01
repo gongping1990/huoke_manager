@@ -93,7 +93,7 @@
         isFetching: false,
         addInfo: {},
         playUrl: '',
-        audioType: ['mp3', 'wma', 'arm'],
+        audioType: ['mp3', 'wma', 'arm', 'mpeg'],
         videoType: ['mp4', 'wmv', 'rmvb', 'avi'],
         baseUrl: `${getBaseUrl()}/sch/common/uploadPublicFile`, // 公有 （图片）
         baseUrlVa: `http://hkupload.prod.k12.vip/common/uploadPrivateFile`, //私有地址 （音视频）

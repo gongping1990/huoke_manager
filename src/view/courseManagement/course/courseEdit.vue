@@ -247,7 +247,7 @@
         atlasImgUrl: [], //图册
         ageType: 1,
         dataTypeList: [],
-        audioType: ['mp3', 'wma', 'arm'],
+        audioType: ['mp3', 'wma', 'arm', 'mpeg'],
         videoType: ['mp4', 'wmv', 'rmvb', 'avi'],
         addInfo: {
           name: '', //名称·
