@@ -5,7 +5,7 @@
       <Row class="g-search">
         <Col :span="3" class="g-t-left">
           <div class="g-flex-a-j-center">
-            <div class="-search-select-text">支付状态：</div>
+            <div class="-search-select-text">状态：</div>
             <Select v-model="searchInfo.status" @on-change="selectChange" class="-search-selectOne">
               <Option v-for="(item,index) in orderStatusList" :label="item.name" :value="item.id" :key="index"></Option>
             </Select>
