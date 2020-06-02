@@ -233,7 +233,7 @@
     methods: {
       toStudent (data) {
         this.$router.push({
-          name: 'tbzw_studentListTwo',
+          name: 'jsd_kfStudentListTwo',
           query: {
             name: data.nickname,
             teacherId: data.id

@@ -195,7 +195,70 @@ export const jsdRouter = [
           }
         ],
         component: () => import('@/view/jsd/kfTeacher/kfTeacher')
+      },
+      {
+        path: '/jsd_kfStudentListTwo',
+        name: 'jsd_kfStudentListTwo',
+        meta: [
+          {
+            name: '管理人员'
+          },
+          {
+            name: '教师管理', url: 'jsd_kfTeacher'
+          },
+          {
+            name: '学生列表'
+          }
+        ],
+        component: () => import('@/view/jsd/kfTeacher/kfStudentListTwo')
+      },
+    ]
+  },
+  {
+    path: '/kfTeacher',
+    name: 'kfTeacher',
+    title: '客服老师',
+    component: Main,
+    children: [
+      {
+        path: '/jsd_kfReturn',
+        name: 'jsd_kfReturn',
+        meta: [
+          {
+            name: '客服老师'
+          },
+          {
+            name: '今日工作'
+          }
+        ],
+        component: () => import('@/view/jsd/correctionConfig/correctionConfig')
+      },
+      {
+        path: '/jsd_kfData',
+        name: 'jsd_kfData',
+        meta: [
+          {
+            name: '客服老师'
+          },
+          {
+            name: '数据统计'
+          }
+        ],
+        component: () => import('@/view/jsd/correctionRecord/correctionRecord')
+      },
+      {
+        path: '/jsd_kfStudentListOne',
+        name: 'jsd_kfStudentListOne',
+        meta: [
+          {
+            name: '客服老师'
+          },
+          {
+            name: '学生列表'
+          }
+        ],
+        component: () => import('@/view/jsd/kfTeacher/kfStudentListTwo')
       }
     ]
-  }
+  },
 ]

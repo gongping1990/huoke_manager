@@ -1,7 +1,16 @@
 <template>
   <div class="p-forma-courseList">
     <Card>
-      <div class="g-add-btn" @click="openModal()">
+      <Row class="g-search g-t-left">
+        <Radio-group v-model="searchInfo.categoryId" type="button" @on-change="getList()">
+          <Radio :label=3>乐小狮作文</Radio>
+          <Radio :label=4>乐小狮读写</Radio>
+          <Radio :label=5>乐小狮写字</Radio>
+          <Radio :label=1>小语轻作文</Radio>
+        </Radio-group>
+      </Row>
+
+      <div class="g-add-btn g-add-top" @click="openModal()">
         <Icon class="-btn-icon" color="#fff" type="ios-add" size="24"/>
       </div>
 
@@ -126,6 +135,9 @@
           '1': '每周系统排课',
           '2': '人工排课',
           '3': '交作业解锁'
+        },
+        searchInfo: {
+          categoryId: 3
         },
         dataList: [],
         detailList: [],
