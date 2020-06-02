@@ -109,7 +109,7 @@
           ...this.paramsInit()
         };
 
-        let downUrl = `${getBaseUrl()}/poem/order/getOrderExcele?gmtCreateStart=${params.gmtCreateStart}&gmtCreateEnd=${params.gmtCreateEnd}&nickname=${params.nickname}&phone=${params.phone}`;
+        let downUrl = `${getBaseUrl()}/poem-xym/courseCode/exportList?gmtCreateStart=${params.gmtCreateStart}&gmtCreateEnd=${params.gmtCreateEnd}&nickname=${params.nickname}&phone=${params.phone}`;
         console.log(downUrl, '导出路径');
         window.open(downUrl, '_blank');
       },

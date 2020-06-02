@@ -187,7 +187,7 @@
           ...this.paramsInit()
         };
 
-        let downUrl = `${getBaseUrl()}/poem/order/getOrderExcele?startTime=${params.startTime}&endTime=${params.endTime}&payStatus=${params.payStatus}`;
+        let downUrl = `${getBaseUrl()}/poem-xym/courseCode/exportCourseCodeUseRecord?gmtCreateStart=${params.gmtCreateStart}&gmtCreateEnd=${params.gmtCreateEnd}&used=${params.used}`;
         console.log(downUrl, '导出路径');
         window.open(downUrl, '_blank');
       },
