@@ -10,7 +10,15 @@
             </Select>
           </div>
         </Col>
-        <Col :span="6">
+        <Col :span="3" class="g-t-left">
+          <div class="g-flex-a-j-center">
+            <div class="-search-select-text">订单类型：</div>
+            <Select v-model="searchInfo.orderMode" @on-change="selectChange" class="-search-selectOne">
+              <Option v-for="(item,index) in orderListTwo" :label="item.name" :value="item.id" :key="index"></Option>
+            </Select>
+          </div>
+        </Col>
+        <Col :span="5">
           <div class="-search">
             <Select v-model="selectInfo" class="-search-select">
               <Option value="0">订单号</Option>
@@ -22,7 +30,7 @@
                    @on-click="selectChange"></Input>
           </div>
         </Col>
-        <Col :span="10" style="margin-left: 10px" class="g-flex-a-j-center">
+        <Col :span="8" style="margin-left: 10px" class="g-flex-a-j-center">
           <date-picker-template :dataInfo="dateOption" @changeDate="changeDate"></date-picker-template>
         </Col>
         <div class="g-text-right">
@@ -116,7 +124,7 @@
         },
         searchInfo: {
           status: '-1',
-          type: '-1',
+          orderMode: '-1',
           antistop: ''
         },
         selectInfo: '0',
@@ -159,7 +167,29 @@
             id: '20'
           }
         ],
-        orderType: ['单独购买', '开团购买', '跟团购买', '手动开通', '打包购买'],
+        orderListTwo: [
+          {
+            name: '全部',
+            id: '-1'
+          },
+          {
+            name: '单独购买',
+            id: '1'
+          },
+          {
+            name: '跟团购买',
+            id: '3'
+          },
+          {
+            name: '打包购买',
+            id: '5'
+          },
+          {
+            name: '课程兑换',
+            id: '6'
+          }
+        ],
+        orderType: ['单独购买', '开团购买', '跟团购买', '手动开通', '打包购买', '课程兑换'],
         orderPageType: ['玖桔成都', '社群', '公众号投放'],
         dataList: [],
         dateOption: {
@@ -275,7 +305,7 @@
                     size: 'small'
                   },
                   style: {
-                    display: (params.row.payStatus == '10' || params.row.payStatus == '14') ? 'inline-block' : 'none',
+                    display: ((params.row.payStatus == '10' || params.row.payStatus == '14') && params.row.orderMode !== 6) ? 'inline-block' : 'none',
                     color: '#5444E4'
                   },
                   on: {
@@ -342,6 +372,7 @@
           current: this.tab.page,
           size: this.tab.pageSize,
           payStatus: this.searchInfo.status,
+          orderMode: this.searchInfo.orderMode,
           startTime: this.getStartTime ? new Date(this.getStartTime).getTime() : "",
           endTime: this.getEndTime ? new Date(this.getEndTime).getTime() : ""
         }
