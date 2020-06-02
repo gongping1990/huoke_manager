@@ -46,19 +46,6 @@ export const jsdRouter = [
           }
         ],
         component: () => import('@/view/jsd/studentList/studentListOne')
-      },
-      {
-        path: '/jsd_returnPlan',
-        name: 'jsd_returnPlan',
-        meta: [
-          {
-            name: '管理人员'
-          },
-          {
-            name: '回访计划'
-          }
-        ],
-        component: () => import('@/view/jsd/returnPlan/returnPlan')
       }
     ]
   },
@@ -183,7 +170,32 @@ export const jsdRouter = [
         ],
         component: () => import('@/view/jsd/studentList/studentListTwo')
       },
-
+      {
+        path: '/jsd_returnPlan',
+        name: 'jsd_returnPlan',
+        meta: [
+          {
+            name: '管理人员'
+          },
+          {
+            name: '回访计划'
+          }
+        ],
+        component: () => import('@/view/jsd/returnPlan/returnPlan')
+      },
+      {
+        path: '/jsd_kfTeacher',
+        name: 'jsd_kfTeacher',
+        meta: [
+          {
+            name: '管理人员'
+          },
+          {
+            name: '客服老师'
+          }
+        ],
+        component: () => import('@/view/jsd/kfTeacher/kfTeacher')
+      }
     ]
   }
 ]
