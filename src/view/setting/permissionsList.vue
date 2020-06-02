@@ -2,17 +2,17 @@
   <div class="p-permissionsList">
 
     <Card>
-      <Row class="g-search g-t-left g-flex-a-j-center">
-        <div class="-search-select-text">选择系统：</div>
-        <Select v-model="radioType" @on-change="getList()" class="-search-selectOne">
-          <Option v-for="item of systemList" :label=item.name :value=item.id :key="item.id"></Option>
-        </Select>
+      <!--<Row class="g-search g-t-left g-flex-a-j-center">-->
+        <!--<div class="-search-select-text">选择系统：</div>-->
+        <!--<Select v-model="radioType" @on-change="getList()" class="-search-selectOne">-->
+          <!--<Option v-for="item of systemList" :label=item.name :value=item.id :key="item.id"></Option>-->
+        <!--</Select>-->
         <!--<RadioGroup v-model="radioType" @on-change="getList" type="button">-->
           <!--<Radio :label="item.id" v-for="(item,index) of systemList" :key="index">{{item.name}}</Radio>-->
         <!--</RadioGroup>-->
-      </Row>
+      <!--</Row>-->
 
-      <div class="g-add-btn g-add-top" @click="openModal('', '',true, 0)">
+      <div class="g-add-btn" @click="openModal('', '',true, 0)">
         <Icon class="-btn-icon" color="#fff" type="ios-add" size="24"/>
       </div>
 
@@ -125,7 +125,7 @@
         storageInfo: [],
         dataList: [],
         systemList: [],
-        radioType: 1,
+        radioType: 14,
       }
     },
     mounted() {

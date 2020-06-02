@@ -453,5 +453,40 @@ export const gswRouter =[
         component: () => import('@/view/gsw/channelManagement/channelList/channelList')
       }
     ]
+  },
+  {
+    path: '/exchangeManagement',
+    name: 'exchangeManagement',
+    title: '课程兑换管理',
+    component: Main,
+    children: [
+      {
+        path: '/gsw_exchangeCode',
+        name: 'gsw_exchangeCode',
+        meta: [
+          {name: '课程兑换管理'},
+          {name: '兑换码'}
+        ],
+        component: () => import('@/view/gsw/exchangeManagement/exchangeCode')
+      },
+      {
+        path: '/gsw_exchangeRecord',
+        name: 'gsw_exchangeRecord',
+        meta: [
+          {name: '课程兑换管理'},
+          {name: '兑换记录'}
+        ],
+        component: () => import('@/view/gsw/exchangeManagement/exchangeRecord')
+      },
+      {
+        path: '/gsw_exchangeData',
+        name: 'gsw_exchangeData',
+        meta: [
+          {name: '课程兑换管理'},
+          {name: '数据统计'}
+        ],
+        component: () => import('@/view/gsw/exchangeManagement/exchangeData')
+      }
+    ]
   }
 ]

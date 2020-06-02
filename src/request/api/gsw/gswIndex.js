@@ -17,6 +17,7 @@ import gswHomepage from "./homepage";
 import gswTags from "./tags";
 import gswCourse from "./course";
 import gswLesson from "./lesson";
+import gswCourseCode from "./courseCode";
 
 export const gswIndex = {
   poem,
@@ -37,5 +38,6 @@ export const gswIndex = {
   gswHomepage,
   gswTags,
   gswCourse,
-  gswLesson
+  gswLesson,
+  gswCourseCode
 }

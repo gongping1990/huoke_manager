@@ -5,9 +5,9 @@
     @on-cancel="closeModal('addInfo')"
     width="900"
     title="设置权限">
-    <RadioGroup v-model="radioType" @on-change="getList" type="button">
-      <Radio :label="item.id" v-for="(item,index) of systemList" :key="index">{{item.name}}</Radio>
-    </RadioGroup>
+    <!--<RadioGroup v-model="radioType" @on-change="getList" type="button">-->
+      <!--<Radio :label="item.id" v-for="(item,index) of systemList" :key="index">{{item.name}}</Radio>-->
+    <!--</RadioGroup>-->
 
     <div class="p-permission-tree -c-tab" v-for="(list,index) of dataList" :key="index">
       <div class="-name">{{list.name}}</div>
@@ -36,7 +36,7 @@
     props: ['roleId'],
     data() {
       return {
-        radioType: 1,
+        radioType: 14,
         dataList: [],
         systemList: [],
         checkCourseIds: [],
@@ -46,7 +46,7 @@
     },
     mounted() {
       this.getList()
-      this.getRoleList()
+      // this.getRoleList()
     },
     methods: {
       changeChecked (data) {

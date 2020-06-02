@@ -7,10 +7,10 @@
         <div class="-version">1.0</div>
       </div>
       <!--<div class="-left-li -left-title">-->
-        <!--当前系统：-->
-        <!--<span class="-title-name g-cursor" @click="closeModal">-->
-          <!--{{systemName}} <Icon type="md-swap"/>-->
-        <!--</span>-->
+      <!--当前系统：-->
+      <!--<span class="-title-name g-cursor" @click="closeModal">-->
+      <!--{{systemName}} <Icon type="md-swap"/>-->
+      <!--</span>-->
       <!--</div>-->
       <Submenu :name="list.path" class="-left-li" v-for="(list,index) of sideMenuList" :key="index" v-if="list.checked">
         <template slot="title">
@@ -42,21 +42,27 @@
         isOpenModal: false,
         systemList: [],
         sideMenuList: [],
-        systemName: ''
-      }
+        systemName: '',
+        userInfo: {}
+      };
     },
     computed: {},
-    watch: {
-      '$store.state.nowAdminType'(_n, _d) {
-        this.getList()
-        this.systemName = this.systemList[_n].name
-        // this.getList()
-        this.$router.push('/')
-        this.$forceUpdate()
-      }
-    },
+    // watch: {
+    //   '$store.state.nowAdminType'(_n, _d) {
+    //     this.getList();
+    //     this.systemName = this.systemList[_n].name;
+    //     // this.getList()
+    //     this.$router.push('/');
+    //     this.$forceUpdate();
+    //   }
+    // },
     mounted() {
-      this.getList()
+      this.userInfo = JSON.parse(localStorage.userInfo)
+      if (this.userInfo.roleCodes[0] === 'admin') {
+        this.getSettingList();
+      } else {
+        this.getList()
+      }
     },
     methods: {
       // getRoleList() {
@@ -70,34 +76,45 @@
       //       })
       // },
       getList() {
-        this.isFetching = true
         this.$api.admin.listByUserPerm({
-          system: 7
+          system: 14
         })
           .then(
             response => {
-              this.sideMenuList = response.data.resultData
+              this.sideMenuList = this.sideMenuList.concat(response.data.resultData);
+              console.log(this.sideMenuList,1111)
               this.$nextTick(() => {
                 if (this.$refs.sideMenu) {
                   this.$refs.sideMenu.updateOpened();
-                  this.$refs.sideMenu.updateActiveName()
+                  this.$refs.sideMenu.updateActiveName();
                 }
               });
             })
+      },
+      getSettingList() {
+        this.isFetching = true;
+        this.$api.admin.listByUserPerm({
+          system: 0
+        })
+          .then(
+            response => {
+              this.sideMenuList = response.data.resultData;
+              this.getList()
+            })
           .finally(() => {
-            this.isFetching = false
-          })
+            this.isFetching = false;
+          });
       },
       closeModal() {
-        this.isOpenModal = !this.isOpenModal
+        this.isOpenModal = !this.isOpenModal;
       },
       selectMenu(name) {
         this.$router.push({
           name: name
-        })
+        });
       }
     }
-  }
+  };
 </script>
 <style lang="less">
   .side-menu-wrapper {
