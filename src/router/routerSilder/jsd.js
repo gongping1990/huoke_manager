@@ -46,6 +46,19 @@ export const jsdRouter = [
           }
         ],
         component: () => import('@/view/jsd/studentList/studentListOne')
+      },
+      {
+        path: '/jsd_returnPlan',
+        name: 'jsd_returnPlan',
+        meta: [
+          {
+            name: '管理人员'
+          },
+          {
+            name: '回访计划'
+          }
+        ],
+        component: () => import('@/view/jsd/returnPlan/returnPlan')
       }
     ]
   },
