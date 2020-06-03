@@ -76,7 +76,7 @@
             align: 'center'
           },
           {
-            title: '创建时间',
+            title: '兑换时间',
             render: (h, params) => {
               return h('div', dayjs(+params.row.gmtCreate).format("YYYY-MM-DD HH:mm:ss"));
             },
