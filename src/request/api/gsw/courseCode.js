@@ -14,6 +14,9 @@ const gswCourseCode = {
   },
   getCourseCodeUseRecord(params) {
     return axios.get(`/poem-xym/courseCode/getCourseCodeUseRecord`,{params: params});
+  },
+  getStatistics(params) {
+    return axios.get(`/poem-xym/courseCode/getStatistics`,{params: params});
   }
 };
 

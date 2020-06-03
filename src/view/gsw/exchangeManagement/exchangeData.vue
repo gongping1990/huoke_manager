@@ -6,6 +6,15 @@
           <img src="../../../assets/images/icon/icon6.png"/>
           <span>数据统计</span>
         </div>
+        <div class="g-flex-a-j-center">
+          <div class="-search-select-text">日期查询：</div>
+          <Select v-model="selectTypeTwo" class="-search-selectOne" @on-change="changeTimeTwo">
+            <Option label='最近一月' :value="1"></Option>
+            <Option label='自定义' :value="2"></Option>
+          </Select>
+          <date-picker-template v-if="selectTypeTwo===2" :dataInfo="dateOption"
+                                @changeDate="changeDateTwo"></date-picker-template>
+        </div>
       </div>
       <div>
         <Row class="p-activeData-flex" :gutter="10" style="margin-top: 20px">
@@ -49,9 +58,9 @@
 </template>
 
 <script>
-  import {thousandFormatter} from '@/libs/index'
+  import {thousandFormatter, firstdate, lastdate} from '@/libs/index';
   import echarts from "echarts/lib/echarts";
-  import dayjs from 'dayjs'
+  import dayjs from 'dayjs';
   // 引入柱状图
   import "echarts/lib/chart/bar";
   import "echarts/lib/chart/line";
@@ -69,6 +78,7 @@
     data() {
       return {
         selectTypeThree: 1,
+        selectTypeTwo: 1,
         dateOptionOne: {
           disabledDate(date) {
             return date && date.valueOf() > (new Date().getTime() - 24 * 60 * 60 * 1000);
@@ -83,78 +93,93 @@
         todayInfo: '',
         selectTime: new Date(new Date().getTime() - 24 * 60 * 60 * 1000),
         getStartTimeThree: '',
+        getStartTimeTwo: '',
         getEndTimeThree: '',
+        getEndTimeTwo: '',
         titleListThree: []
-      }
+      };
     },
     computed: {
       dateTypesLine() {
-        let arrayX = []
+        let arrayX = [];
         for (let item of this.dataInfo) {
-          arrayX.push(item.date)
+          arrayX.push(item.date);
         }
-        return arrayX
+        return arrayX;
       },
       optionSeriesLine() {
         let dataList = {
-          firstStartActivityCount: [],
-          shareCount: [],
-          joinActivityCount: []
-        }
+          generateCount: [],
+          usedCount: [],
+          notUseCount: []
+        };
         for (let item of this.dataInfo) {
-          dataList.firstStartActivityCount.push(item.firstStartActivityCount)
-          dataList.shareCount.push(item.shareCount)
-          dataList.joinActivityCount.push(item.joinActivityCount)
+          dataList.generateCount.push(item.generateCount);
+          dataList.usedCount.push(item.usedCount);
+          dataList.notUseCount.push(item.notUseCount);
         }
         let optionSeriesLine = [
           {
             name: '兑换码生成数量',
             type: 'line',
-            data: dataList.firstStartActivityCount
+            data: dataList.generateCount
           },
           {
             name: '兑换码已使用数量',
             type: 'line',
-            data: dataList.joinActivityCount
+            data: dataList.usedCount
           },
           {
             name: '兑换码待使用数量',
             type: 'line',
-            data: dataList.activitySuccessCount
+            data: dataList.notUseCount
           }
-        ]
-        return optionSeriesLine
+        ];
+        return optionSeriesLine;
       },
     },
     mounted() {
-      this.getActivityData()
+      this.getActivityData();
     },
     methods: {
-      changeTimeThree () {
-        if(this.selectTypeThree == 1) {
-          this.getActivityData()
+      changeTimeThree() {
+        if (this.selectTypeThree == 1) {
+          this.getActivityData();
+        }
+      },
+      changeTimeTwo() {
+        if (this.selectTypeTwo == 1) {
+          this.getActivityData();
         }
       },
       changeDateThree(data) {
-        this.getStartTimeThree = data.startTime
-        this.getEndTimeThree = data.endTime
-        this.getActivityData()
+        this.getStartTimeThree = data.startTime;
+        this.getEndTimeThree = data.endTime;
+        this.getActivityData();
+      },
+      changeDateTwo(data) {
+        this.getStartTimeTwo = data.startTime;
+        this.getEndTimeTwo = data.endTime;
+        this.getActivityData();
       },
       getActivityData() {
-        this.$api.xxbActivity.getActivityData({
-          startTime: this.getStartTimeThree && new Date(this.getStartTimeThree).getTime(),
-          endTime: this.getEndTimeThree && new Date(this.getEndTimeThree).getTime()
+        console.log(firstdate().toString(), lastdate(),1)
+        this.$api.gswCourseCode.getStatistics({
+          startTime:  new Date(this.selectTypeTwo == '1' ? firstdate() : this.getStartTimeTwo).getTime(),
+          endTime: new Date(this.selectTypeTwo == '1' ? lastdate(): this.getEndTimeTwo).getTime(),
+          startTime2: new Date(this.selectTypeThree == '1' ? firstdate() : this.getStartTimeThree).getTime(),
+          endTime2: new Date(this.selectTypeThree == '1' ? lastdate() : this.getEndTimeThree).getTime()
         })
           .then(
             response => {
               this.todayInfo = response.data.resultData;
-              this.dataInfo = this.todayInfo.list
-              this.getList()
-              this.initData()
+              this.dataInfo = this.todayInfo.list;
+              this.getList();
+              this.initData();
             })
           .finally(() => {
-            this.isFetching = false
-          })
+            this.isFetching = false;
+          });
       },
       drawLine() {
         let self = this;
@@ -210,12 +235,12 @@
               type: "slider"
             }
           ],
-        })
+        });
 
         window.addEventListener("resize", () => {
           myChart.resize();
         });
-        myChart.hideLoading()
+        myChart.hideLoading();
       },
       getList() {
         let myChart = echarts.init(this.$refs.echart);
@@ -224,35 +249,35 @@
           color: '#20a0ff',
           textColor: '#000',
           zlevel: 0
-        })
+        });
 
-        this.drawLine()
+        this.drawLine();
       },
       initData() {
         this.titleListThree = [
           {
             name: '今日兑换码生成数量',
-            num: this.todayInfo.firstStartActivityCount,
+            num: this.todayInfo.generateCount,
             todayName: '累计兑换码生成数量',
-            todayNum: this.todayInfo.allFirstStartActivityCount
+            todayNum: this.todayInfo.allGenerateCount
 
           },
           {
             name: '今日兑换码已使用数量',
-            num: this.todayInfo.shareCount,
+            num: this.todayInfo.usedCount,
             todayName: '累计兑换码已使用数量',
-            todayNum: this.todayInfo.allShareCount
+            todayNum: this.todayInfo.allUsedCount
           },
           {
             name: '今日兑换码待使用数量',
-            num: this.todayInfo.joinActivityCount,
+            num: this.todayInfo.notUseCount,
             todayName: '累计兑换码待使用数量',
-            todayNum: this.todayInfo.allJoinActivityCount
+            todayNum: this.todayInfo.allNotUseCount
           }
-        ]
+        ];
       }
     }
-  }
+  };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
@@ -263,7 +288,7 @@
 
       .-three {
         padding-bottom: 28px;
-        border-bottom: 1px solid rgba(232,232,232,1);
+        border-bottom: 1px solid rgba(232, 232, 232, 1);
       }
     }
 
@@ -275,14 +300,14 @@
       .-left {
         display: flex;
         align-items: center;
-        font-size:18px;
-        font-weight:400;
-        color:rgba(23,34,62,1);
-        line-height:25px;
+        font-size: 18px;
+        font-weight: 400;
+        color: rgba(23, 34, 62, 1);
+        line-height: 25px;
 
         img {
-          width:28px;
-          height:28px;
+          width: 28px;
+          height: 28px;
           margin-right: 10px;
         }
       }
@@ -293,17 +318,17 @@
       flex-flow: wrap;
 
       .-card-wrap {
-        background:rgba(255,255,255,1);
-        border-radius:4px;
-        border:1px solid rgba(232,232,232,1);
+        background: rgba(255, 255, 255, 1);
+        border-radius: 4px;
+        border: 1px solid rgba(232, 232, 232, 1);
 
         .-col-name {
-          padding: 18px 0 18px 15px ;
+          padding: 18px 0 18px 15px;
           min-width: 100px;
           border-bottom: 1px solid #E9EAEC;
-          font-size:16px;
-          font-weight:500;
-          color:rgba(23,34,62,1);
+          font-size: 16px;
+          font-weight: 500;
+          color: rgba(23, 34, 62, 1);
         }
 
         .-col-down {
@@ -311,18 +336,18 @@
           padding-bottom: 12px;
           border-bottom: 1px solid #E9EAEC;
           font-weight: bold;
-          color:rgba(128,134,149,1);
-          font-size:36px;
+          color: rgba(128, 134, 149, 1);
+          font-size: 36px;
         }
 
         .-col-today {
           display: flex;
           justify-content: space-between;
           padding: 15px;
-          font-size:15px;
-          font-weight:400;
-          color:rgba(81,89,110,1);
-          line-height:21px;
+          font-size: 15px;
+          font-weight: 400;
+          color: rgba(81, 89, 110, 1);
+          line-height: 21px;
 
           &-width {
             max-width: 60%;
@@ -332,10 +357,10 @@
           }
 
           &-color {
-            font-size:18px;
-            font-weight:600;
-            color:rgba(255,156,105,1);
-            line-height:25px;
+            font-size: 18px;
+            font-weight: 600;
+            color: rgba(255, 156, 105, 1);
+            line-height: 25px;
           }
         }
       }
