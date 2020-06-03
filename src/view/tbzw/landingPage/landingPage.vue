@@ -49,9 +49,9 @@
         isOpenModal: false,
         herfList: {
           '1': 'http://composition.k12.vip/',
-          '2': 'http://composition.k12.vip/one',
-          '3': 'http://composition.k12.vip/two',
-          '6': 'http://composition.k12.vip/five',
+          // '2': 'http://composition.k12.vip/one',
+          // '3': 'http://composition.k12.vip/two',
+          // '6': 'http://composition.k12.vip/five',
           '7': 'http://composition.k12.vip/try',
           '8': 'http://composition.k12.vip/freeTry',
           // '9': 'http://composition.k12.vip/try',

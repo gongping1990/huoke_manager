@@ -2,7 +2,15 @@
   <div class="p-openCourse">
     <Card>
       <Row class="g-search">
-        <Col :span="24" class="g-flex-a-j-center">
+        <Col :span="4" class="g-t-left">
+          <div class="g-flex-a-j-center -s-radio">
+            <div class="-search-select-text-two">课程类型：</div>
+            <Select v-model="searchInfo.category" @on-change="getList(1)" class="-search-selectOne">
+              <Option v-for="(item,index) in courseTypeList" :label="item.name" :value="item.id" :key="index"></Option>
+            </Select>
+          </div>
+        </Col>
+        <Col :span="4" class="g-flex-a-j-center">
           <Row class="g-flex-a-j-center -s-radio">
             <div class="-search-select-text-two">课程名称：</div>
             <Select v-model="radioType" @on-change="getList(1)" class="-search-selectOne">
@@ -106,12 +114,33 @@
         total: 0,
         radioType: '',
         dataItem: {},
+        searchInfo: {
+          category: '3'
+        },
         isFetching: false,
         isOpenModal: false,
         isSending: false,
         isOpenModalUser: false,
         isEdit: false,
         userImgList: [],
+        courseTypeList: [
+          {
+            name: '乐小狮作文',
+            id: '0'
+          },
+          {
+            name: '乐小狮读写',
+            id: '1'
+          },
+          {
+            name: '乐小狮写字',
+            id: '2'
+          },
+          {
+            name: '小语轻作文',
+            id: '3'
+          }
+        ],
         addInfo: {
           rules: [],
           classList: []

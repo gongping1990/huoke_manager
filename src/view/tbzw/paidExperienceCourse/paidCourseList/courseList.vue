@@ -1,7 +1,16 @@
 <template>
   <div class="p-paid-courseList">
     <Card>
-      <div class="g-add-btn" @click="openModal()">
+      <Row class="g-search g-t-left">
+        <Radio-group v-model="searchInfo.categoryId" type="button" @on-change="getList()">
+          <Radio :label=3>乐小狮作文</Radio>
+          <Radio :label=4>乐小狮读写</Radio>
+          <Radio :label=5>乐小狮写字</Radio>
+          <Radio :label=1>小语轻作文</Radio>
+        </Radio-group>
+      </Row>
+
+      <div class="g-add-btn g-add-top" @click="openModal()">
         <Icon class="-btn-icon" color="#fff" type="ios-add" size="24"/>
       </div>
 
@@ -30,6 +39,9 @@
         total: 0,
         isFetching: false,
         addInfo: {},
+        searchInfo: {
+          categoryId: 3
+        },
         columns: [
           {
             title: '课程名称',

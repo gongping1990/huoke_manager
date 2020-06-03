@@ -143,19 +143,42 @@
       </div>
     </Modal>
 
-    <subscription-message-template v-model="isOpenMessage" :dataItem="dataItem" :type="1"></subscription-message-template>
+    <Modal
+      class="p-teacherList"
+      v-model="isOpenModalAccount "
+      @on-cancel="isOpenModalAccount = false"
+      title="绑定教师端账号">
+      <Form :model="addInfo" :label-width="40">
+        <FormItem label="账号">
+          <Input type="text" v-model="addInfo.version" placeholder="请输入账号"></Input>
+        </FormItem>
+        <FormItem label="密码">
+          <Input type="text" v-model="addInfo.version" placeholder="请输入密码"></Input>
+        </FormItem>
+      </Form>
+      <div slot="footer" class="-p-v-flex">
+        <Button @click="isOpenModalAccount = false" ghost type="primary" style="width: 100px;">取消</Button>
+        <div @click="submitAccount()" class="g-primary-btn ">确认</div>
+      </div>
+    </Modal>
+
+    <subscription-message-template v-model="isOpenMessage" :dataItem="dataItem"
+                                   :type="1"></subscription-message-template>
+
+    <transfer-student-list  v-model="isOpenModalStudent" :dataItem="dataItem"></transfer-student-list>
   </div>
 </template>
 
 <script>
-  import {getBaseUrl} from '@/libs/index'
+  import {getBaseUrl} from '@/libs/index';
   import UploadAudio from "../../../components/uploadAudio";
   import UploadImg from "../../../components/uploadImg";
   import SubscriptionMessageTemplate from "../../../components/subscriptionMessageTemplate";
+  import TransferStudentList from "./transferStudentList";
 
   export default {
     name: "teacherList",
-    components: {SubscriptionMessageTemplate, UploadImg, UploadAudio},
+    components: {TransferStudentList, SubscriptionMessageTemplate, UploadImg, UploadAudio},
     data() {
       return {
         tab: {
@@ -171,6 +194,8 @@
         isOpenModalPlay: false,
         isOpenModalConfirm: false,
         isOpenMessage: false,
+        isOpenModalAccount: false,
+        isOpenModalStudent: false,
         isFetching: false,
         dataItem: '',
         dataList: [],
@@ -216,7 +241,7 @@
                   }
                 }),
                 h('span', params.row.teacherName)
-              ])
+              ]);
             }
           },
           {
@@ -229,10 +254,10 @@
                 },
                 on: {
                   click: () => {
-                    this.openModalPlay(params.row)
+                    this.openModalPlay(params.row);
                   }
                 }
-              }, '播放音频')
+              }, '播放音频');
             },
             align: 'center'
           },
@@ -253,7 +278,7 @@
                   },
                   on: {
                     click: () => {
-                      this.openModal(params.row)
+                      this.openModal(params.row);
                     }
                   }
                 }, '编辑'),
@@ -268,11 +293,11 @@
                   },
                   on: {
                     click: () => {
-                      this.delItem(params.row)
+                      this.delItem(params.row);
                     }
                   }
                 }, '删除')
-              ])
+              ]);
             }
           }
         ],
@@ -298,7 +323,7 @@
                   }
                 }),
                 h('span', params.row.name)
-              ])
+              ]);
             }
           },
           {
@@ -313,7 +338,7 @@
                   height: '36px',
                   margin: '10px'
                 }
-              })
+              });
             },
             align: 'center'
           },
@@ -328,8 +353,20 @@
             align: 'center'
           },
           {
-            title: '绑定学生',
-            key: 'students',
+            title: '已绑定学生',
+            render: (h, params) => {
+              return h('span', {
+                style: {
+                  color: '#5444E4',
+                  cursor: 'pointer'
+                },
+                on: {
+                  click: () => {
+                    this.toStudent(params.row)
+                  }
+                }
+              }, params.row.students)
+            },
             align: 'center'
           },
           {
@@ -339,7 +376,7 @@
                 props: {
                   color: params.row.disabled ? 'default' : 'success'
                 }
-              }, params.row.disabled ? '已禁用' : '已启用')
+              }, params.row.disabled ? '已禁用' : '已启用');
             }
           },
           {
@@ -358,7 +395,7 @@
                   },
                   on: {
                     click: () => {
-                      this.openMessage(params.row)
+                      this.openMessage(params.row);
                     }
                   }
                 }, '订阅消息'),
@@ -372,10 +409,26 @@
                   },
                   on: {
                     click: () => {
-                      this.openConfirm(params.row, 1)
+                      this.openConfirm(params.row, 1);
                     }
                   }
                 }, params.row.disabled ? '启用' : '禁用'),
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    display: this.teacherType === 1 ? 'inline-block' : 'none',
+                    color: '#5444E4',
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.openModalAccount(params.row);
+                    }
+                  }
+                }, '账号'),
                 h('Button', {
                   props: {
                     type: 'text',
@@ -387,7 +440,7 @@
                   },
                   on: {
                     click: () => {
-                      this.openModal(params.row)
+                      this.openModal(params.row);
                     }
                   }
                 }, '编辑'),
@@ -402,124 +455,131 @@
                   },
                   on: {
                     click: () => {
-                      this.openConfirm(params.row, 2)
+                      this.openConfirm(params.row, 2);
                     }
                   }
                 }, '删除')
-              ])
+              ]);
             }
           }
         ],
-      }
+      };
     },
-    watch : {
-      isOpenMessage (_n) {
-        !_n && this.getList()
-        console.log(111)
+    watch: {
+      isOpenMessage(_n) {
+        !_n && this.getList();
+        console.log(111);
       }
     },
     mounted() {
-      this.getCourseList()
+      this.getCourseList();
     },
     methods: {
-      openMessage (data) {
-        this.dataItem = data
-        this.isOpenMessage = true
+      toStudent (data) {
+        this.dataItem = data;
+        this.isOpenModalStudent = true;
+      },
+      openMessage(data) {
+        this.dataItem = data;
+        this.isOpenMessage = true;
       },
       changeCourseList(bool) {
         if (this.addInfo.id && bool && this.addInfo.students != 0) {
-          this.openConfirm('', 3)
+          this.openConfirm('', 3);
         }
       },
       openConfirm(data, num) {
-        this.nowStatus = num
-        this.relationshipType = 1
-        this.formatTeacherList = []
+        this.nowStatus = num;
+        this.relationshipType = 1;
+        this.formatTeacherList = [];
         this.dataList.forEach(item => {
           if ((item.id !== (data.id || this.addInfo.id)) && !item.disabled) {
-            this.formatTeacherList.push(item)
+            this.formatTeacherList.push(item);
           }
-        })
+        });
         if (this.nowStatus !== 3) {
-          this.addInfo = JSON.parse(JSON.stringify(data))
+          this.addInfo = JSON.parse(JSON.stringify(data));
         }
 
         if (data.students != '0' && !data.disabled) {
-          this.isOpenModalConfirm = true
+          this.isOpenModalConfirm = true;
         } else {
-          this.delItemTwo(data)
+          this.delItemTwo(data);
         }
       },
+      openModalAccount (data) {
+        this.isOpenModalAccount = true;
+      },
       openModal(data) {
-        this.isOpenModal = true
-        this.formatTeacherList = []
+        this.isOpenModal = true;
+        this.formatTeacherList = [];
         if (data) {
-          this.textType = '1'
-          this.addInfo = JSON.parse(JSON.stringify(data))
+          this.textType = '1';
+          this.addInfo = JSON.parse(JSON.stringify(data));
           if (this.teacherType !== 0) {
-            this.addInfo.headImage = this.addInfo.avatar
-            this.addInfo.teacherName = this.addInfo.name
+            this.addInfo.headImage = this.addInfo.avatar;
+            this.addInfo.teacherName = this.addInfo.name;
             this.dataList.forEach(item => {
               if ((item.id !== this.addInfo.id) && !item.disabled) {
-                this.formatTeacherList.push(item)
+                this.formatTeacherList.push(item);
               }
-            })
+            });
           }
         } else {
-          this.textType = '0'
-          this.addInfo = {}
+          this.textType = '0';
+          this.addInfo = {};
           if (this.teacherType !== 0) {
-            this.addInfo.courseId = this.courseType
+            this.addInfo.courseId = this.courseType;
           }
         }
       },
       closeModal() {
         if (this.addInfo.id) {
           setTimeout(() => {
-            this.$refs.childAudio.loadAuido()
-          }, 0)
+            this.$refs.childAudio.loadAuido();
+          }, 0);
         }
-        this.isOpenModal = false
+        this.isOpenModal = false;
       },
       openModalPlay(data) {
-        this.addInfo = JSON.parse(JSON.stringify(data))
-        this.isOpenModalPlay = true
+        this.addInfo = JSON.parse(JSON.stringify(data));
+        this.isOpenModalPlay = true;
       },
       closeModalPlay() {
-        this.$refs.playAudio.load()
-        this.isOpenModalPlay = false
+        this.$refs.playAudio.load();
+        this.isOpenModalPlay = false;
       },
       submitInfo() {
         if (!this.addInfo.headImage) {
-          return this.$Message.error('请上传头像')
+          return this.$Message.error('请上传头像');
         } else if (!this.addInfo.teacherName) {
-          return this.$Message.error('请输入教师名称')
+          return this.$Message.error('请输入教师名称');
         } else if (!this.addInfo.voiceUrl && this.teacherType === 0) {
-          return this.$Message.error('请输入随堂检测音频')
+          return this.$Message.error('请输入随堂检测音频');
         } else if (!this.addInfo.wxno && this.teacherType !== 0) {
-          return this.$Message.error('请输入微信号')
+          return this.$Message.error('请输入微信号');
         } else if (!this.addInfo.ercode && this.teacherType !== 0) {
-          return this.$Message.error('请上传教师二维码')
+          return this.$Message.error('请上传教师二维码');
         } else if (!this.addInfo.courseId && this.teacherType !== 0) {
-          return this.$Message.error('请选择所属课程')
+          return this.$Message.error('请选择所属课程');
         } else if (!this.addInfo.cardTitle && this.teacherType !== 0) {
-          return this.$Message.error('请输入卡片标题')
+          return this.$Message.error('请输入卡片标题');
         } else if (!this.addInfo.cardImg && this.teacherType !== 0) {
-          return this.$Message.error('请上传卡片图片')
+          return this.$Message.error('请上传卡片图片');
         } else if (!this.addInfo.hrefMainTitle && this.teacherType !== 0) {
-          return this.$Message.error('请输入链接大标题')
+          return this.$Message.error('请输入链接大标题');
         } else if (!this.addInfo.hrefSubTitle && this.teacherType !== 0) {
-          return this.$Message.error('请输入链接小标题')
+          return this.$Message.error('请输入链接小标题');
         } else if (!this.addInfo.hrefImg && this.teacherType !== 0) {
-          return this.$Message.error('请上传链接配图')
+          return this.$Message.error('请上传链接配图');
         }
 
-        let paramUrl = ''
+        let paramUrl = '';
         let paramData = {
           headImage: this.addInfo.headImage,
           teacherName: this.addInfo.teacherName,
           voiceUrl: this.addInfo.voiceUrl
-        }
+        };
         let paramDataTwo = {
           avatar: this.addInfo.headImage,
           name: this.addInfo.teacherName,
@@ -532,29 +592,29 @@
           hrefMainTitle: this.addInfo.hrefMainTitle,
           hrefSubTitle: this.addInfo.hrefSubTitle,
           hrefImg: this.addInfo.hrefImg,
-        }
+        };
 
         if (this.teacherType === 0) {
           paramUrl = this.addInfo.id ? this.$api.composition.updateTeacher({
             id: this.addInfo.id,
             ...paramData
-          }) : this.$api.composition.saveTeacher(paramData)
+          }) : this.$api.composition.saveTeacher(paramData);
         } else {
           paramUrl = this.addInfo.id ? this.$api.jsdKfteacher.edit({
             id: this.addInfo.id,
             ...paramDataTwo
-          }) : this.$api.jsdKfteacher.add(paramDataTwo)
+          }) : this.$api.jsdKfteacher.add(paramDataTwo);
         }
 
         paramUrl
           .then(response => {
             if (response.data.code == '200') {
               this.$Message.success('操作成功');
-              this.getList()
-              this.closeModal()
-              this.isOpenModal = false
+              this.getList();
+              this.closeModal();
+              this.isOpenModal = false;
             }
-          })
+          });
       },
       currentChange(val) {
         this.tab.page = val;
@@ -569,20 +629,20 @@
           .then(
             response => {
               this.courseList = response.data.resultData.records;
-              this.courseType = this.courseList.length && this.courseList[0].id
-              this.getList()
-            })
+              this.courseType = this.courseList.length && this.courseList[0].id;
+              this.getList();
+            });
       },
       //分页查询
       getList() {
-        this.isFetching = true
+        this.isFetching = true;
         let paramsUrl = this.teacherType === 0 ?
           this.$api.composition.getTeacherList({
             current: this.tab.page,
             size: this.tab.pageSize
           }) : this.$api.jsdKfteacher.list({
             courseId: this.courseType
-          })
+          });
 
         paramsUrl.then(
           response => {
@@ -590,12 +650,12 @@
               this.dataList = response.data.resultData.records;
               this.total = response.data.resultData.total;
             } else {
-              this.dataList = response.data.resultData
+              this.dataList = response.data.resultData;
             }
           })
           .finally(() => {
-            this.isFetching = false
-          })
+            this.isFetching = false;
+          });
       },
       delItem(param) {
         this.$Modal.confirm({
@@ -610,21 +670,21 @@
                   this.$Message.success("操作成功");
                   this.getList();
                 }
-              })
+              });
           }
-        })
+        });
       },
       delItemTwo(param) {
         this.$Modal.confirm({
           title: '提示',
           content: this.nowStatus === 1 ? `确认要${param.disabled ? '启用' : '禁用'}该老师吗？` : '确认要删除该老师吗？',
           onOk: () => {
-            this.changeUrlFn(param)
+            this.changeUrlFn(param);
           }
-        })
+        });
       },
       changeUrlFn(param) {
-        let paramsUrl = ''
+        let paramsUrl = '';
 
         if (this.nowStatus === 1) {
           paramsUrl = param.disabled ? this.$api.jsdKfteacher.enable({
@@ -632,12 +692,12 @@
           }) : this.$api.jsdKfteacher.disabled({
             id: param.id,
             teacherId: this.addInfo.teacherId
-          })
+          });
         } else if (this.nowStatus === 2) {
           paramsUrl = this.$api.jsdKfteacher.remove({
             id: param.id,
             teacherId: this.addInfo.teacherId
-          })
+          });
         }
         paramsUrl.then(
           response => {
@@ -645,11 +705,11 @@
               this.$Message.success("操作成功");
               this.getList();
             }
-          })
+          });
       },
       submitOtherTeacher() {
         if (!this.addInfo.teacherId && this.relationshipType === 1) {
-          return this.$Message.error('请选择需要转交的老师')
+          return this.$Message.error('请选择需要转交的老师');
         }
         if (this.nowStatus === 3) {
           this.$api.jsdKfteacher.moveToTeacher({
@@ -660,40 +720,60 @@
             response => {
               if (response.data.code == "200") {
                 this.$Message.success("操作成功");
-                this.getList()
-                this.addInfo.students = 0
-                this.addInfo.teacherId = ''
+                this.getList();
+                this.addInfo.students = 0;
+                this.addInfo.teacherId = '';
               }
-            })
+            });
         } else {
-          this.changeUrlFn(this.addInfo)
+          this.changeUrlFn(this.addInfo);
         }
-        this.isOpenModalConfirm = false
+        this.isOpenModalConfirm = false;
+      },
+      submitAccount() {
+        if (!this.addInfo.account) {
+          return this.$Message.error('请输入账号');
+        } else if (!this.addInfo.password) {
+          return this.$Message.error('请输入密码');
+        }
+        this.$api.jsdKfteacher.moveToTeacher({
+          courseId: this.addInfo.courseId,
+          srcTeacher: this.addInfo.id,
+          targetTeacher: this.addInfo.teacherId
+        }).then(
+          response => {
+            if (response.data.code == "200") {
+              this.$Message.success("操作成功");
+              this.getList();
+              this.addInfo = {};
+              this.isOpenModalConfirm = false;
+            }
+          });
       },
       beforeUpload(file) {
-        let imgType = ['jpeg', 'png']
+        let imgType = ['jpeg', 'png'];
 
         if (file.type.indexOf(imgType[0]) == -1 && file.type.indexOf(imgType[1]) == -1) {
-          this.$Message.error('上传文件类型错误')
+          this.$Message.error('上传文件类型错误');
           return false;
         }
-        return true
+        return true;
       },
       handleSuccess(res, file) {
         if (res.code === 200) {
-          this.textType = '2'
-          this.addInfo.headImage = res.resultData.url
+          this.textType = '2';
+          this.addInfo.headImage = res.resultData.url;
         }
       },
       handleSize() {
-        this.$Message.info('文件超过限制')
+        this.$Message.info('文件超过限制');
       },
       handleErr() {
-        this.textType = '3'
-        this.$Message.error('上传失败，请重新上传')
+        this.textType = '3';
+        this.$Message.error('上传失败，请重新上传');
       },
     }
-  }
+  };
 </script>
 
 <style scoped lang="less">

@@ -4,6 +4,14 @@
       <Row class="g-search">
         <Col :span="4" class="g-t-left">
           <div class="g-flex-a-j-center">
+            <div class="-search-select-text">课程类型：</div>
+            <Select v-model="searchInfo.category" @on-change="selectChange" class="-search-selectOne">
+              <Option v-for="(item,index) in courseTypeList" :label="item.name" :value="item.id" :key="index"></Option>
+            </Select>
+          </div>
+        </Col>
+        <Col :span="4" class="g-t-left">
+          <div class="g-flex-a-j-center">
             <div class="-search-select-text">课程名称：</div>
             <Select v-model="searchInfo.courseId" @on-change="selectChange" class="-search-selectOne">
               <Option v-for="(item,index) in experienceLessonList" :label="item.name" :value="item.id" :key="index"></Option>
@@ -159,6 +167,7 @@
           status: '-1',
           type: '-1',
           orderMode: '0',
+          category: '0',
           antistop: ''
         },
         addInfo: {},
@@ -221,6 +230,24 @@
           {
             name: '手动开通',
             id: '4'
+          }
+        ],
+        courseTypeList: [
+          {
+            name: '乐小狮作文',
+            id: '0'
+          },
+          {
+            name: '乐小狮读写',
+            id: '1'
+          },
+          {
+            name: '乐小狮写字',
+            id: '2'
+          },
+          {
+            name: '小语轻作文',
+            id: '3'
           }
         ],
         orderType: ['单独购买', '开团购买', '跟团购买', '手动开通'],

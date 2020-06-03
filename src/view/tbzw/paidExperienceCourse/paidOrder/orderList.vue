@@ -4,6 +4,14 @@
       <Row class="g-search">
         <Col :span="4" class="g-t-left">
           <div class="g-flex-a-j-center">
+            <div class="-search-select-text">课程类型：</div>
+            <Select v-model="searchInfo.category" @on-change="selectChange" class="-search-selectOne">
+              <Option v-for="(item,index) in courseTypeList" :label="item.name" :value="item.id" :key="index"></Option>
+            </Select>
+          </div>
+        </Col>
+        <Col :span="4" class="g-t-left">
+          <div class="g-flex-a-j-center">
             <div class="-search-select-text">课程名称</div>
             <Select v-model="searchInfo.courseId" @on-change="selectChange" class="-search-selectOne">
               <Option v-for="(item,index) in experienceLessonList" :label="item.name" :value="item.id" :key="index"></Option>
@@ -123,6 +131,7 @@
           courseId: '-1',
           status: '-1',
           type: '-1',
+          category: '0',
           antistop: ''
         },
         addInfo: {},
@@ -169,6 +178,24 @@
         orderPageType: ['玖桔成都', '社群', '公众号投放'],
         dataList: [],
         experienceLessonList: [],
+        courseTypeList: [
+          {
+            name: '乐小狮作文',
+            id: '0'
+          },
+          {
+            name: '乐小狮读写',
+            id: '1'
+          },
+          {
+            name: '乐小狮写字',
+            id: '2'
+          },
+          {
+            name: '小语轻作文',
+            id: '3'
+          }
+        ],
         dateOption: {
           name: '创建时间',
           type: 'datetime',
