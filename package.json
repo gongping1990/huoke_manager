@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
-    "cos-js-sdk-v5": "^0.4.20",
+    "cos-js-sdk-v5": "^1.4.6",
     "dayjs": "^1.7.7",
     "echarts": "^4.2.0-rc.2",
     "fabric": "^3.4.0",
