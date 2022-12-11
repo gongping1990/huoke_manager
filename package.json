@@ -19,7 +19,7 @@
     "iview": "^3.1.4",
     "less": "^2.7.3",
     "less-loader": "^2.2.3",
-    "qs": "^6.5.2",
+    "qs": "^6.5.3",
     "vue": "^2.5.2",
     "vue-cropper": "^0.4.9",
     "vue-photo-preview": "^1.1.3",
